@@ -254,3 +254,6 @@ Testei com arquivos no formato de cada banco:
 
 ### 57. Importar extrato em planilha do Excel (.xlsx)
 - Vários bancos (Itaú, BB, Santander…) exportam o extrato como planilha do Excel. Antes o app só aceitava CSV e OFX. Agora aceita **.xlsx** direto: lê a primeira aba, entende as datas do Excel, ignora as linhas de título e de saldo, e segue para a mesma prévia de sempre. (Planilhas .xls antigas: o app pede para salvar como .xlsx ou CSV.) Funciona sem internet, sem instalar nada.
+
+### 58. Sininho avisa quando a sincronização parou
+- Se a sincronização estiver ligada mas falhando (token do GitHub vencido, sem permissão, senha diferente…), antes só aparecia "erro" escondido dentro da engrenagem — os aparelhos podiam ficar dias sem conversar sem você saber. Agora o sininho mostra **"Sincronização parada"** com o motivo e um botão **Tentar**. Some sozinho quando volta a funcionar.

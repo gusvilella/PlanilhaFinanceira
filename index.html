@@ -2941,7 +2941,9 @@ button:focus-visible, a:focus-visible, [role="button"]:focus-visible, [tabindex]
     if (!ui.firstSeen) { ui.firstSeen = todayIso; saveUi(); }
     const backupDays = -daysUntil(ui.lastBackup || ui.firstSeen);
     const needBackup = !sync && hasData && backupDays > 30;
-    $('#bellDot').hidden = !list.length && !renew.length && !faturasDue.length && !limAlert.length && !found.length && !prices.length && !needBackup;
+    // sincronização ligada mas falhando (token vencido, senha trocada…): avisa, senão os aparelhos param de conversar sem ninguém ver
+    const syncErr = sync && syncState.error ? syncState.error : '';
+    $('#bellDot').hidden = !list.length && !renew.length && !faturasDue.length && !limAlert.length && !found.length && !prices.length && !needBackup && !syncErr;
     const whenTxt = diff => diff < 0 ? `Venceu há ${-diff} dia${diff === -1 ? '' : 's'}` : diff === 0 ? 'Vence hoje' : `Vence em ${diff} dia${diff === 1 ? '' : 's'}`;
     const faturasHtml = faturasDue.length ? `<h4 style="margin-top:12px">Faturas do cartão</h4>` + faturasDue.map(c =>
       `<div class="note" data-bellopen="${c.id}" data-key="${c.fk}" style="cursor:pointer" title="Abrir fatura">${logoHtml({ brand: c.bank, name: c.name, icon: c.icon, color: c.color }, 'sm')}<div><strong>${esc(c.name)} · ${monthName(c.fk)}</strong><small style="color:${c.diff < 0 ? 'var(--red)' : ''}">${whenTxt(c.diff)} · ${money(c.fatura.amount)}</small></div><button class="mini" data-bellfat="${c.id}" data-key="${c.fk}">Paguei</button></div>`).join('') : '';
@@ -2949,7 +2951,8 @@ button:focus-visible, a:focus-visible, [role="button"]:focus-visible, [tabindex]
       `<div class="note"><span class="ldot" style="background:${l.color};width:10px;height:10px;border-radius:50%;flex:none"></span><div><strong>${esc(l.name)}</strong><small style="color:${l.state === 'over' ? 'var(--red)' : 'var(--amber)'}">${l.state === 'over' ? `⛔ Passou ${money(l.spent - l.limit)}` : `⚠️ ${Math.round(l.pct * 100)}% usado`} · ${money(l.spent)} de ${money(l.limit)}</small></div></div>`).join('') : '';
     const renewHtml = renew.length ? `<h4 style="margin-top:12px">Assinaturas renovando</h4>` + renew.map(a =>
       `<div class="note">${logoHtml(a, 'sm')}<div><strong>${esc(a.name)}</strong><small>${a.diff === 0 ? 'Cobra hoje' : `Cobra em ${a.diff} dia${a.diff === 1 ? '' : 's'}`} · ${money(a.amount)}</small></div></div>`).join('') : '';
-    $('#bellPop').innerHTML = (needBackup ? `<div class="note"><span class="det-ic">💾</span><div style="flex:1"><strong>Faça um backup</strong><small>${ui.lastBackup ? `O último foi há ${backupDays} dias.` : 'Seus dados ficam só neste navegador.'} Ou ligue a sincronização.</small></div><button class="mini" data-bellbackup>Backup</button></div>` : '')
+    $('#bellPop').innerHTML = (syncErr ? `<div class="note"><span class="det-ic">☁️</span><div style="flex:1"><strong>Sincronização parada</strong><small style="color:var(--red)">${esc(syncErr)}</small></div><button class="mini" data-bellsync>Tentar</button></div>` : '')
+      + (needBackup ? `<div class="note"><span class="det-ic">💾</span><div style="flex:1"><strong>Faça um backup</strong><small>${ui.lastBackup ? `O último foi há ${backupDays} dias.` : 'Seus dados ficam só neste navegador.'} Ou ligue a sincronização.</small></div><button class="mini" data-bellbackup>Backup</button></div>` : '')
       + `<h4${needBackup ? ' style="margin-top:12px"' : ''}>Contas a vencer</h4>` + (list.length ? list.map(f => {
       const diff = daysUntil(f.shownDate);
       const when = diff < 0 ? `Venceu há ${-diff} dia${diff === -1 ? '' : 's'}` : diff === 0 ? 'Vence hoje' : `Vence em ${diff} dia${diff === 1 ? '' : 's'}`;
@@ -3771,6 +3774,7 @@ button:focus-visible, a:focus-visible, [role="button"]:focus-visible, [tabindex]
     if (b) { togglePaid(b.dataset.bellpay, b.dataset.key); toast('Conta marcada como paga'); }
     const bf = e.target.closest('[data-bellfat]');
     if (bf) return toggleFaturaPaid(bf.dataset.bellfat, bf.dataset.key);
+    if (e.target.closest('[data-bellsync]')) { togglePop($('#bellPop'), false); pullNow(false); return; }
     if (e.target.closest('[data-bellbackup]')) {
       ui.lastBackup = todayIso; saveUi();
       download(`orcamento-backup-${todayIso}.json`, JSON.stringify(state, null, 2), 'application/json');
@@ -4245,6 +4249,7 @@ button:focus-visible, a:focus-visible, [role="button"]:focus-visible, [tabindex]
     return min < 1 ? 'agora' : min < 60 ? `há ${min} min` : new Date(syncState.at).toLocaleString('pt-BR', { day: '2-digit', month: '2-digit', hour: '2-digit', minute: '2-digit' });
   }
   function refreshSyncUi() {
+    if (!syncState.busy) renderBell();   // mostra/tira o aviso de sincronização parada no sininho
     const badge = $('#syncBadge'); if (badge) badge.textContent = syncStatusText();
     const box = $('#syncBox'); if (box) box.innerHTML = syncBoxHtml();
   }
