@@ -2879,6 +2879,7 @@ button:focus-visible, a:focus-visible, [role="button"]:focus-visible, [tabindex]
       <label class="fl" for="fDesc">Descrição</label><input class="input" id="fDesc" maxlength="60" placeholder="Ex.: Mercado, Gasolina…" value="${esc(v.desc)}" />
       ${catSelect('despesa', v.category, 'Categoria')}
       ${payField(item || prefill ? v : null)}
+      ${editing && v.installment ? checkField('fAllParc', `Aplicar a todas as ${v.installment.n} parcelas`, 'Descrição, categoria e forma de pagamento. Data e valor mudam só nesta parcela.', true) : ''}
       ${footer(editing, true)}</form>`, m => {
       m.querySelector('#fDup')?.addEventListener('click', () => openVariavel(null, { amount: item.amount, desc: item.desc, category: item.category, payCard: item.payCard || '', payAccount: item.payAccount || '' }));
       const amount = m.querySelector('#fAmount');
@@ -2923,6 +2924,9 @@ button:focus-visible, a:focus-visible, [role="button"]:focus-visible, [tabindex]
         if (data.category === '__new') data.category = '';
         if (editing) {
           Object.assign(state.variaveis.find(x => x.id === item.id), data);
+          if (item.installment && m.querySelector('#fAllParc')?.checked)
+            state.variaveis.filter(x => x.installment?.group === item.installment.group)
+              .forEach(x => Object.assign(x, { desc: data.desc, category: data.category, payCard: data.payCard, payAccount: data.payAccount }));
           undoToast('Despesa atualizada', undoSnap);
         } else if (m.querySelector('#fInst').checked) {
           const n = Math.max(2, Math.min(48, +m.querySelector('#fN').value || 2));
