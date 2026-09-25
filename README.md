@@ -57,6 +57,12 @@ Os lançamentos ficam nas abas:
 
 Cada aba tem um gráfico de rosca mostrando para onde vai o dinheiro, filtro/busca e **Gerenciar categorias** (nome e cor).
 
+- **Busca em todos os meses**: no Filtro de Receita e Despesa variável, marque *Buscar em todos os meses* para achar um lançamento de qualquer mês e ver o total.
+- **Duplicar**: na edição de uma receita ou despesa variável, *Duplicar* abre um lançamento igual com a data de hoje.
+- **Compras parceladas**: ao editar uma parcela, *Aplicar a todas as parcelas* muda descrição, categoria e forma de pagamento de todas.
+- **Desfazer**: depois de adicionar, editar, excluir, pagar fatura, restaurar backup ou apagar tudo, o aviso embaixo tem *Desfazer*.
+- **Backup**: sem sincronização, o sininho lembra de fazer backup a cada 30 dias.
+
 **Lançamento rápido** (botão **+** no canto, ou tecla `Q`): escreva do seu jeito, como `mercado 45,90 nubank`, `uber 23 crédito itaú`, `café 6,50 ontem` ou `recebi 300 freela pix nubank`. O app entende valor, data, categoria, e se foi na conta ou no cartão (também pelo final, ex.: `cartão 8890`), e mostra o que entendeu antes de lançar. Gastos frequentes viram ⭐ favoritos: um toque e está lançado.
 
 Outros detalhes:
