@@ -2,7 +2,7 @@
 
 Trabalho feito durante a noite, sem mudar o jeito como seus dados são guardados (tudo que já existe continua funcionando).
 
-Resumo: **63 itens** — 20 e poucos bugs corrigidos (alguns graves: sincronização que apagava lançamentos do outro aparelho, receita recorrente que sumia do passado, sininho fora da tela no celular, saldo que não descontava gastos do mesmo dia, limite do cartão errado), importação de extrato de mais bancos (inclusive Excel), app ~3x mais rápido com muitos lançamentos, e várias facilidades novas (desfazer, buscar em todos os meses, duplicar, transferir entre contas, pular um mês, parcelado e transferência no lançamento rápido, importar planilha do Excel…).
+Resumo: **64 itens** — 20 e poucos bugs corrigidos (alguns graves: sincronização que apagava lançamentos do outro aparelho, receita recorrente que sumia do passado, sininho fora da tela no celular, saldo que não descontava gastos do mesmo dia, limite do cartão errado), importação de extrato de mais bancos (inclusive Excel), app ~3x mais rápido com muitos lançamentos, e várias facilidades novas (desfazer, buscar em todos os meses, duplicar, transferir entre contas, pular um mês, parcelado e transferência no lançamento rápido, importar planilha do Excel…).
 
 Como testei: cada mudança foi verificada num navegador de verdade (Chromium), no tamanho de celular (320 e 390 px), tablet e computador, nos temas claro e escuro, com dados vazios, dados normais e 2.000+ lançamentos, além de milhares de toques aleatórios sem nenhum erro. Os campos novos nos dados são todos opcionais: `received`, `transfers`, `skip`, `balanceAt`, `paidTs`.
 
@@ -274,3 +274,6 @@ Testei com arquivos no formato de cada banco:
 
 ### 63. Sincronização envia na hora ao sair do app
 - Depois de uma mudança, o app esperava 2,5 segundos para enviar à nuvem. Se você lançava algo e fechava/trocava de app logo em seguida, o envio só acontecia na próxima vez que abrisse o app — e o outro aparelho ficava com os dados antigos até lá. Agora, ao sair do app com algo pendente, ele envia na hora.
+
+### 64. Importação percebe gastos que você já lançou à mão com outro nome
+- Se você lançou "iFood" à mão e depois importou o extrato em que ele aparece como "IFD*IFOOD SAO PAULO", o app não percebia (só comparava nomes iguais) e o gasto **contava duas vezes**. Agora, um lançamento do extrato com o **mesmo dia e o mesmo valor** de algo que você já tem vem desmarcado com o aviso "parece já lançado (mesmo dia e valor)". Se for mesmo outro gasto, é só marcar.
