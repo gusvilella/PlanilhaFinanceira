@@ -1517,7 +1517,13 @@ html.locked .lock { display: grid; }
     add('Assinaturas', '#d97706', assinaturasOf(key).filter(countable(key)).reduce((s, a) => s + a.amount, 0));
     add('Faturas do cartão', '#1d4ed8', totals(key).faturas);
     let list = [...groups.values()].sort((a, b) => b.value - a.value);
-    if (list.length > 6) { const rest = list.slice(5); list = [...list.slice(0, 5), { name: 'Outros', color: '#94a3b8', value: rest.reduce((s, g) => s + g.value, 0) }]; }
+    if (list.length > 6) {
+      // junta o resto em "Outros" (somando na categoria Outros, se ela já estiver entre as 5 maiores, pra não aparecer duas vezes)
+      const top = list.slice(0, 5).map(g => ({ ...g })), restV = list.slice(5).reduce((s, g) => s + g.value, 0);
+      const o = top.find(g => g.name === 'Outros');
+      if (o) o.value += restV; else top.push({ name: 'Outros', color: '#94a3b8', value: restV });
+      list = top.sort((a, b) => b.value - a.value);
+    }
     const total = list.reduce((s, g) => s + g.value, 0);
     box.innerHTML = `<h3>Para onde vai o dinheiro <button class="ov-link" data-pdf>Resumo em PDF ↓</button></h3><p class="ov-sub">Todas as despesas de ${monthName(key)}</p>`
       + (total ? donutHtml(list, total, 'Despesas') : '<div class="ov-empty">Sem despesas neste mês ainda.</div>');

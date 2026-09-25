@@ -24,3 +24,6 @@ Trabalho feito durante a noite, sem mudar o jeito como seus dados são guardados
 ### 3. Receita recorrente "a receber" é marcada mês a mês
 - **Antes:** numa receita que se repete todo mês e está como "Recebimento futuro" (ex.: um aluguel que você recebe quando o inquilino paga), tocar em "A receber" marcava como recebida **em todos os meses**, inclusive os que ainda não chegaram.
 - **Agora:** cada mês é marcado separadamente. O aviso de "Marcado como recebido" também ganhou o botão **Desfazer**, pra quando tocar sem querer.
+
+### 4. "Outros" não aparece mais duas vezes na Visão geral
+- No gráfico "Para onde vai o dinheiro", quando havia mais de 6 grupos, o app juntava os menores num item "Outros". Se você também tinha a categoria "Outros", apareciam **dois "Outros"** na legenda. Agora eles são somados num só.
