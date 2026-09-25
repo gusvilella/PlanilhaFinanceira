@@ -292,6 +292,21 @@ svg.i { width: 16px; height: 16px; flex: none; fill: none; stroke: currentColor;
 @media (max-width: 980px) { .evo-body { grid-template-columns: 1fr; } }
 @media (max-width: 640px) { .evo { padding: 14px 12px 16px; } }
 
+/* Escolha de conta/cartão */
+.bank-chips.pay-pick { display: block; }
+.pay-pick > .pay-sec:first-child { margin-bottom: 2px; }
+.pay-h { font-size: .72rem; font-weight: 700; color: var(--muted); text-transform: uppercase; letter-spacing: .06em; margin: 10px 0 6px; }
+.pay-sec { display: flex; flex-wrap: wrap; gap: 6px; }
+.pay-sec.cc { display: grid; grid-template-columns: repeat(auto-fill, minmax(210px, 1fr)); }
+.bank-chips .cc-btn { border-radius: 12px; padding: 7px 10px 7px 7px; gap: 10px; text-align: left; min-width: 0; }
+.mini-cc { position: relative; width: 50px; height: 32px; border-radius: 6px; flex: none; box-shadow: 0 2px 5px rgba(0, 0, 0, .18); }
+.mini-cc .logo { position: absolute; left: 4px; top: 4px; width: 14px; height: 14px; border-radius: 4px; }
+.mini-cc .flag { position: absolute; right: 3px; bottom: 3px; width: 20px; height: 13px; border-radius: 3px; }
+.cc-txt { display: grid; min-width: 0; line-height: 1.2; }
+.cc-txt b { font-size: .82rem; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.cc-txt small { font-size: .7rem; color: var(--muted); font-weight: 500; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.via .flag { width: 20px; height: 13px; border-radius: 3px; margin-left: 2px; }
+
 /* Contas */
 .acc { display: grid; grid-template-columns: 34px minmax(0, 1fr) 150px 30px; gap: 8px; align-items: center; margin-top: 8px; }
 .acc .logo { width: 34px; height: 34px; }
@@ -2289,17 +2304,31 @@ svg.i { width: 16px; height: 16px; flex: none; fill: none; stroke: currentColor;
   }
 
   // item: { payCard?, payAccount? }. Novo lançamento sem escolha usa a última forma de pagamento usada.
+  // Botão de cartão: mini cartão (cor do banco + bandeira) e texto que diferencia cartões do mesmo banco
+  function cardChipHtml(c) {
+    const b = BRANDS[c.bank], color = b ? b.color : (c.color || '#3b414b');
+    const sub = [FLAGS[c.flag]?.name, c.last4 ? '•' + esc(c.last4) : '', 'vence dia ' + pad(c.dueDay)].filter(Boolean).join(' · ');
+    return `<span class="mini-cc" style="background:linear-gradient(135deg, ${color}, color-mix(in srgb, ${color} 60%, #000))">${logoHtml({ brand: c.bank, name: c.name, icon: c.icon, color: c.color }, 'sm')}${flagHtml(c.flag)}</span>
+      <span class="cc-txt"><b>${esc(c.name)}</b><small>${sub}</small></span>`;
+  }
+  // Opções agrupadas: Dinheiro/outro · Contas · Cartões de crédito
+  function payOptionsHtml(sel, { receita = false, attr = 'data-card', noneLabel } = {}) {
+    const cards = receita ? [] : state.cards.filter(c => activeIn(c, view.month));
+    const btn = (v, inner, cls = '') => `<button type="button" ${attr}="${v}" class="${cls} ${v === sel ? 'on' : ''}">${inner}</button>`;
+    return `<div class="pay-sec">${btn('', ico('wallet') + (noneLabel || (receita ? 'Não informar' : 'Dinheiro / outro')))}</div>
+      ${state.accounts.length ? `<div class="pay-h">${receita ? 'Conta' : 'Conta · Pix, débito ou boleto'}</div>
+        <div class="pay-sec">${state.accounts.map(a => btn('acc:' + a.id, logoHtml(a, 'sm') + esc(a.name))).join('')}</div>` : ''}
+      ${cards.length ? `<div class="pay-h">Cartão de crédito</div>
+        <div class="pay-sec cc">${cards.map(c => btn('card:' + c.id, cardChipHtml(c), 'cc-btn')).join('')}</div>` : ''}`;
+  }
   function payField(item, receita = false) {
     const cards = receita ? [] : state.cards.filter(c => activeIn(c, view.month));
     if (!cards.length && !state.accounts.length) return '';
     const isNew = !item || item.payCard === undefined && item.payAccount === undefined;
     const sel = isNew ? (receita ? ui.lastIn : ui.lastPay) || '' : item.payCard ? 'card:' + item.payCard : item.payAccount ? 'acc:' + item.payAccount : '';
-    const opts = [...state.accounts.map(a => ['acc:' + a.id, logoHtml(a, 'sm') + esc(a.name)]),
-      ...cards.map(c => ['card:' + c.id, logoHtml({ brand: c.bank, name: c.name, icon: c.icon, color: c.color }, 'sm') + esc(c.name) + ' ' + flagHtml(c.flag)])];
-    const valid = opts.some(([v]) => v === sel) ? sel : '';
+    const valid = [...state.accounts.map(a => 'acc:' + a.id), ...cards.map(c => 'card:' + c.id)].includes(sel) ? sel : '';
     return `<label class="fl">${receita ? 'Recebido em' : 'Pago com'}</label>
-      <div class="bank-chips pay-pick" id="fPay" data-receita="${receita ? 1 : ''}"><button type="button" data-card="" class="${valid ? '' : 'on'}">${ico('wallet')}${receita ? 'Não informar' : 'Dinheiro / outro'}</button>
-      ${opts.map(([v, h]) => `<button type="button" data-card="${v}" class="${v === valid ? 'on' : ''}">${h}</button>`).join('')}</div>
+      <div class="bank-chips pay-pick" id="fPay" data-receita="${receita ? 1 : ''}">${payOptionsHtml(valid, { receita })}</div>
       <p class="help" id="payHelp"></p>`;
   }
   function bindPay(m) {
@@ -2327,7 +2356,7 @@ svg.i { width: 16px; height: 16px; flex: none; fill: none; stroke: currentColor;
   // Selo "no cartão" ao lado do nome
   function viaHtml(item) {
     const c = payCardOf(item);
-    if (c) return `<span class="via" title="Pago com o cartão ${esc(c.name)}">${logoHtml({ brand: c.bank, name: c.name, icon: c.icon, color: c.color })}${esc(c.name)}</span>`;
+    if (c) return `<span class="via" title="Cartão ${esc(c.name)} ${FLAGS[c.flag]?.name || ''}${c.last4 ? ' •' + esc(c.last4) : ''}">${logoHtml({ brand: c.bank, name: c.name, icon: c.icon, color: c.color })}${esc(c.name)}${c.last4 ? ' •' + esc(c.last4) : ''}${flagHtml(c.flag)}</span>`;
     const a = item.payAccount && state.accounts.find(x => x.id === item.payAccount);
     return a ? `<span class="via" title="Conta ${esc(a.name)}">${logoHtml(a)}${esc(a.name)}</span>` : '';
   }
@@ -2777,13 +2806,10 @@ svg.i { width: 16px; height: 16px; flex: none; fill: none; stroke: currentColor;
       return { ...r, amount: Math.abs(amt), kind, on: !skipReason, skipReason, category: suggestCategory(r.desc, kind === 'variavel' ? 'despesa' : 'receita') };
     }).sort((a, b) => b.date.localeCompare(a.date));
     let rows = build();
-    const srcOpts = [...state.accounts.map(a => ['acc:' + a.id, logoHtml(a, 'sm') + esc(a.name)]),
-      ...state.cards.map(c => ['card:' + c.id, logoHtml({ brand: c.bank, name: c.name, icon: c.icon, color: c.color }, 'sm') + esc(c.name) + ' ' + flagHtml(c.flag)])];
     openModal(`${modalHead('Importar extrato', `${esc(fileName)} · ${raw.length} lançamentos encontrados`)}
       <div class="imp-top">
         <label class="fl" style="margin:0">De onde é esse extrato?</label>
-        <div class="bank-chips" id="impSrc">${srcOpts.map(([v, h]) => `<button type="button" data-src="${v}" class="${v === source ? 'on' : ''}">${h}</button>`).join('')}
-          <button type="button" data-src="" class="${source ? '' : 'on'}">${ico('wallet')}Nenhuma conta</button></div>
+        <div class="bank-chips pay-pick" id="impSrc">${payOptionsHtml(source, { attr: 'data-src', noneLabel: 'Nenhuma conta' })}</div>
         <label class="check" style="margin:0"><input type="checkbox" id="impInv" /><span class="box">${ico('check')}</span><span><strong>Inverter entradas e saídas</strong><small>Use se os gastos aparecerem como entradas.</small></span></label>
       </div>
       <div class="imp-sum" id="impSum"></div>
