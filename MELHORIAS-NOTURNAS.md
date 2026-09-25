@@ -2,7 +2,7 @@
 
 Trabalho feito durante a noite, sem mudar o jeito como seus dados são guardados (tudo que já existe continua funcionando).
 
-Resumo: **67 itens** — 20 e poucos bugs corrigidos (alguns graves: sincronização que apagava lançamentos do outro aparelho, receita recorrente que sumia do passado, sininho fora da tela no celular, saldo que não descontava gastos do mesmo dia, limite do cartão errado), importação de extrato de mais bancos (inclusive Excel), app ~3x mais rápido com muitos lançamentos, e várias facilidades novas (desfazer, buscar em todos os meses, duplicar, transferir entre contas, pular um mês, parcelado e transferência no lançamento rápido, importar planilha do Excel…).
+Resumo: **68 itens** — 20 e poucos bugs corrigidos (alguns graves: sincronização que apagava lançamentos do outro aparelho, receita recorrente que sumia do passado, sininho fora da tela no celular, saldo que não descontava gastos do mesmo dia, limite do cartão errado), importação de extrato de mais bancos (inclusive Excel), app ~3x mais rápido com muitos lançamentos, e várias facilidades novas (desfazer, buscar em todos os meses, duplicar, transferir entre contas, pular um mês, parcelado e transferência no lançamento rápido, importar planilha do Excel…).
 
 Como testei: cada mudança foi verificada num navegador de verdade (Chromium), no tamanho de celular (320 e 390 px), tablet e computador, nos temas claro e escuro, com dados vazios, dados normais e 2.000+ lançamentos, além de milhares de toques aleatórios sem nenhum erro. Os campos novos nos dados são todos opcionais: `received`, `transfers`, `skip`, `balanceAt`, `paidTs`.
 
@@ -298,3 +298,8 @@ Revisei com mais cuidado a parte nova da importação que marca contas como paga
 - **Desfazer sempre:** quando a importação só marcava coisas como pagas (sem importar nada), o aviso não tinha Desfazer. Agora tem.
 - **Fatura certa:** dois pagamentos de fatura com o mesmo valor iam para a mesma fatura, e com dois cartões com fatura de mesmo valor o app podia escolher o errado. Agora cada fatura recebe um pagamento só, o app prefere o cartão que é pago por aquela conta e, se ainda houver dúvida, não marca nada.
 - Também passei a "escapar" o texto dos avisos da prévia de importação (proteção para nomes com caracteres especiais).
+
+### 68. Terceira revisão (mais profunda): 3 correções
+- **Salário de dois meses no mesmo extrato:** se o extrato tinha o salário de agosto e de setembro, só um era reconhecido como "já é a receita Salário"; o outro entrava de novo (receita em dobro naquele mês). Agora cada mês é reconhecido.
+- **Duas abas + sincronização:** a outra aba ficava com a informação velha de "última sincronização" e podia mostrar à toa o aviso "Chegaram dados mais novos…" (e trocar a cópia de segurança por uma igual). Agora as abas compartilham também o estado da sincronização.
+- **Pagamento de fatura importado no mesmo dia em que você corrigiu o saldo:** podia descontar a fatura duas vezes do saldo. Agora segue a mesma regra dos outros lançamentos importados (o saldo que você digitou já inclui o que aconteceu naquele dia).

@@ -4078,8 +4078,8 @@ button:focus-visible, a:focus-visible, [role="button"]:focus-visible, [tabindex]
     };
     // receita recorrente (salário) que aparece no extrato: mesmo valor e dia perto
     const recFor = (r, used) => {
-      const x = receitasOf(monthOf(r.date)).find(x => (x.recurring || x.pending) && !used.has(x.id) && x.amount === Math.abs(r.amount) && Math.abs(daysUntil(x.shownDate) - daysUntil(r.date)) <= 7);
-      if (x) used.add(x.id);
+      const x = receitasOf(monthOf(r.date)).find(x => (x.recurring || x.pending) && !used.has('rec' + x.id + monthOf(x.shownDate)) && x.amount === Math.abs(r.amount) && Math.abs(daysUntil(x.shownDate) - daysUntil(r.date)) <= 7);
+      if (x) used.add('rec' + x.id + monthOf(x.shownDate));   // recorrente: um por mês
       return x;
     };
     // pagamento de fatura no extrato da conta: acha a fatura lançada e não paga com o mesmo valor (mês da data, anterior ou seguinte)
@@ -4172,7 +4172,7 @@ button:focus-visible, a:focus-visible, [role="button"]:focus-visible, [tabindex]
           if (r.recv.recurring) ((state.received ||= {})[r.recv.key] ||= []).push(rc.id); else rc.pending = false; paidFat++; });
         rows.filter(r => r.payFixa && !r.on).forEach(r => { const l = state.paid[r.payFixa.key] ||= []; if (!l.includes(r.payFixa.id)) { l.push(r.payFixa.id); paidFat++; } });
         rows.filter(r => r.payFat && !r.on).forEach(r => { const f = state.faturas[r.payFat.card.id]?.[r.payFat.key];
-          if (f && !f.paid) { Object.assign(f, { paid: true, paidAt: r.date, paidTs: Date.now(), payAccount: source.slice(4) }); paidFat++; } });
+          if (f && !f.paid) { Object.assign(f, { paid: true, paidAt: r.date, payAccount: source.slice(4) }); delete f.paidTs; paidFat++; } });
         on.forEach((r, n) => {
           const base = { id: uid(), created: Date.now() + n, date: r.date, amount: r.amount, desc: r.desc.slice(0, 60), category: r.category, imported: true };
           if (r.kind === 'variavel') state.variaveis.push({ ...base, ...pay });
@@ -4705,6 +4705,10 @@ button:focus-visible, a:focus-visible, [role="button"]:focus-visible, [tabindex]
   // App aberto em duas abas do navegador: quando a outra aba salva, esta passa a usar os dados dela
   // (senão, ao salvar aqui, esta aba escreveria por cima do que foi lançado na outra)
   window.addEventListener('storage', e => {
+    // configuração da sincronização mudou na outra aba (ligou, desligou, sincronizou): usa a mesma aqui
+    if (e.key === SYNC_KEY || e.key === KEY) {
+      try { const sv = JSON.parse(localStorage.getItem(SYNC_KEY) || 'null'); sync = sv && sv.token && sv.gistId && sv.key ? sv : null; } catch (_) {}
+    }
     if (e.key !== KEY || !e.newValue) return;
     try { state = normalize(JSON.parse(e.newValue)); } catch (_) { return; }
     fillFilter(); render();
