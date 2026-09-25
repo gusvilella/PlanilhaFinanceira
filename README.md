@@ -1,5 +1,8 @@
 # Orçamento — Planilha Financeira
 
+
+**Abrir o app:** https://gusvilella.github.io/PlanilhaFinanceira/ (atualiza sozinho a cada mudança publicada)
+
 Web app simples para organizar o dinheiro do mês. Sem cadastro, sem instalação, sem servidor: o app inteiro está num único arquivo, `index.html`.
 
 ## Como abrir
