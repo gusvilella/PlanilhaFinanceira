@@ -226,3 +226,7 @@ Testei com arquivos no formato de cada banco:
 
 ### 50. Ver o que mudou o saldo de cada conta (celular)
 - Em **Saldo → Contas**, a linha "Atualizado sozinho: … em N lançamentos" agora abre com um toque e mostra a lista (data, o quê e quanto: salário +, aluguel −, transferências…). Antes essa lista só aparecia passando o mouse por cima, ou seja, não dava pra ver no celular.
+
+### 51. Gráfico "Próximos 30 dias" no toque do celular
+- **Antes:** tocar num ponto do gráfico de previsão mostrava sempre o **primeiro dia** (hoje), não o dia tocado, e a dica sumia ao tirar o dedo.
+- **Agora:** mostra o dia tocado e fica aberta até tocar fora; arrastar o dedo para os lados sobre o gráfico percorre os dias (para cima e para baixo continua rolando a página).

@@ -1699,7 +1699,10 @@ button:focus-visible, a:focus-visible, [role="button"]:focus-visible, [tabindex]
     const idxAt = ev => { const r = hit.getBoundingClientRect(); return Math.round(Math.min(Math.max((ev.clientX - r.left) / r.width, 0), 1) * (days.length - 1)); };
     let cur = 0;
     hit.addEventListener('pointermove', ev => show(cur = idxAt(ev)));
-    hit.addEventListener('pointerleave', hide);
+    // toque: mostra o dia tocado (toque não gera "pointermove") e deixa a dica aberta até tocar fora
+    hit.addEventListener('pointerdown', ev => show(cur = idxAt(ev)));
+    hit.addEventListener('pointerleave', ev => { if (ev.pointerType !== 'touch') hide(); });
+    hit.style.touchAction = 'pan-y';   // arrastar o dedo para os lados percorre os dias; para cima/baixo rola a página
     hit.addEventListener('focus', () => show(cur));
     hit.addEventListener('blur', hide);
     hit.addEventListener('keydown', ev => { if (ev.key === 'ArrowRight') show(cur = Math.min(cur + 1, 30)); if (ev.key === 'ArrowLeft') show(cur = Math.max(cur - 1, 0)); });
