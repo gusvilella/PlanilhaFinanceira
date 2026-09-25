@@ -1017,16 +1017,73 @@ html.locked .lock { display: grid; }
     return { categories: DEFAULT_CATEGORIES.map(c => ({ ...c })), receitas: [], variaveis: [], fixas: [], invest: {}, paid: {}, investments: [], accounts: [], assinaturas: [], cards: [], faturas: {}, metas: [], cdi: { rate: 14.9, date: '', source: 'padrao' } };
   }
 
+  // Conserta dados antigos ou incompletos (backup velho, sincronização, versões anteriores) sem jogar nada fora:
+  // listas que viraram null voltam a ser listas, datas/valores inválidos ganham um valor seguro, itens sem id ganham um.
+  function normalize(raw) {
+    const b = blank();
+    const s = { ...b, ...(raw && typeof raw === 'object' && !Array.isArray(raw) ? raw : {}) };
+    const isObj = v => v && typeof v === 'object' && !Array.isArray(v);
+    for (const k of ['categories', 'receitas', 'variaveis', 'fixas', 'investments', 'accounts', 'assinaturas', 'cards', 'metas'])
+      s[k] = Array.isArray(s[k]) ? s[k].filter(isObj) : b[k];
+    for (const k of ['invest', 'paid', 'faturas']) if (!isObj(s[k])) s[k] = {};
+    s.cdi = { ...b.cdi, ...(isObj(s.cdi) ? s.cdi : {}) };
+    if (!(+s.cdi.rate > 0)) s.cdi.rate = b.cdi.rate; else s.cdi.rate = +s.cdi.rate;
+    const num = v => Number.isFinite(+v) ? Math.round(+v) : 0;
+    const day = (v, d = 1) => Math.min(31, Math.max(1, Math.round(+v) || d));
+    const fixIso = v => {
+      const m = typeof v === 'string' && v.match(/^(\d{4})-(\d{1,2})-(\d{1,2})/);
+      return m ? `${m[1]}-${pad(+m[2])}-${pad(+m[3])}` : null;
+    };
+    const isKey = v => typeof v === 'string' && /^\d{4}-\d{2}$/.test(v);
+    const createdKey = x => x.created && isFinite(new Date(x.created)) ? monthOf(isoOf(new Date(x.created))) : curKeyNow();
+    const withId = x => { if (x.id === undefined || x.id === null || x.id === '') x.id = uid(); else x.id = String(x.id); };
+    [...s.receitas, ...s.variaveis].forEach(x => {
+      withId(x); x.amount = num(x.amount);
+      x.date = fixIso(x.date) || (x.created && isFinite(new Date(x.created)) ? isoOf(new Date(x.created)) : todayIso);
+    });
+    [...s.fixas, ...s.assinaturas, ...s.cards].forEach(x => {
+      withId(x);
+      if (!isKey(x.start)) x.start = createdKey(x);
+      if (x.end !== undefined && !isKey(x.end)) delete x.end;
+    });
+    s.fixas.forEach(x => { x.amount = num(x.amount); x.day = day(x.day); x.desc = String(x.desc ?? ''); });
+    s.assinaturas.forEach(x => { x.amount = num(x.amount); x.day = day(x.day); x.month = Math.min(12, Math.max(1, Math.round(+x.month) || 1)); x.name = String(x.name ?? ''); });
+    s.cards.forEach(x => { x.closeDay = day(x.closeDay, 3); x.dueDay = day(x.dueDay, 10); x.limit = num(x.limit); x.name = String(x.name ?? 'Cartão'); });
+    s.accounts.forEach(x => { withId(x); x.balance = num(x.balance); x.name = String(x.name ?? 'Conta'); if (x.updatedAt && !fixIso(x.updatedAt)) delete x.updatedAt; });
+    s.investments.forEach(x => { withId(x); x.balance = num(x.balance); x.rate = +x.rate >= 0 ? +x.rate : 0; x.name = String(x.name ?? 'Investimento');
+      if (!['cdi', 'pre', 'none'].includes(x.type)) x.type = 'none'; x.updatedAt = fixIso(x.updatedAt) || todayIso; });
+    s.metas.forEach(x => { withId(x); x.target = num(x.target); x.saved = num(x.saved); x.name = String(x.name ?? 'Meta');
+      if (!Array.isArray(x.investments)) x.investments = []; if (x.deadline && !isKey(x.deadline)) delete x.deadline; });
+    s.categories.forEach(x => { withId(x); if (!['receita', 'despesa'].includes(x.kind)) x.kind = 'despesa'; x.name = String(x.name ?? 'Categoria');
+      if (!/^#[0-9a-f]{6}$/i.test(x.color || '')) x.color = '#64748b'; });
+    for (const k of Object.keys(s.paid)) if (!Array.isArray(s.paid[k])) s.paid[k] = [];
+    for (const k of Object.keys(s.invest)) s.invest[k] = Math.min(100, Math.max(0, +s.invest[k] || 0));
+    for (const [id, fs] of Object.entries(s.faturas)) {
+      if (!isObj(fs)) { delete s.faturas[id]; continue; }
+      for (const [k, f] of Object.entries(fs)) { if (!isObj(f)) delete fs[k]; else f.amount = num(f.amount); }
+    }
+    if (s.favorites !== undefined && !Array.isArray(s.favorites)) s.favorites = [];
+    if (s.subIgnore !== undefined && !Array.isArray(s.subIgnore)) s.subIgnore = [];
+    for (const k of ['snapshots', 'received', 'subPrice']) if (s[k] !== undefined && !isObj(s[k])) delete s[k];
+    return s;
+  }
+  function curKeyNow() { return monthOf(todayIso); }
+
   function load() {
+    let raw = null;
     try {
-      const raw = localStorage.getItem(KEY);
-      if (raw) return { ...blank(), ...JSON.parse(raw) };
+      raw = localStorage.getItem(KEY);
+      if (raw) return normalize(JSON.parse(raw));
       // Migra dados da primeira versão do app, se existirem
       const old = JSON.parse(localStorage.getItem('grana:v1') || 'null');
       if (old && Array.isArray(old.transactions) && old.transactions.length) return migrate(old);
-    } catch (_) { /* dados corrompidos: começa do zero */ }
+    } catch (_) {
+      // Dados ilegíveis: guarda uma cópia antes de começar do zero, pra não perder nada de vez
+      if (raw) { try { localStorage.setItem(KEY + ':corrompido', raw); loadWarning = true; } catch (_) {} }
+    }
     return blank();
   }
+  let loadWarning = false;
 
   function migrate(old) {
     const s = blank();
@@ -3183,7 +3240,7 @@ html.locked .lock { display: grid; }
     try {
       const data = JSON.parse(await file.text());
       let next;
-      if (Array.isArray(data.receitas) && Array.isArray(data.variaveis)) next = { ...blank(), ...data };
+      if (Array.isArray(data.receitas) && Array.isArray(data.variaveis)) next = normalize(data);
       else if (Array.isArray(data.transactions)) next = migrate(data);
       else throw new Error('formato');
       if (!confirm('Restaurar este backup? Os dados atuais serão substituídos.')) return;
@@ -3567,7 +3624,7 @@ html.locked .lock { display: grid; }
 
   function applyRemote(remote, updatedAt) {
     applyingRemote = true;
-    state = { ...blank(), ...remote, updatedAt };
+    state = { ...normalize(remote), updatedAt };
     save();
     applyingRemote = false;
     fillFilter(); render();
@@ -3963,6 +4020,7 @@ html.locked .lock { display: grid; }
   if (lockCfg) lockNow();
   fillFilter();
   render();
+  if (loadWarning) toast('Os dados salvos estavam ilegíveis. Guardei uma cópia deles; restaure um backup se precisar.', 'OK', () => {});
   if (state.cdi.checked !== todayIso) fetchCdi();
   if (sync) pullNow();
 })();
