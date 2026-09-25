@@ -137,7 +137,12 @@ svg.i { width: 16px; height: 16px; flex: none; fill: none; stroke: currentColor;
 .logo img { width: 100%; height: 100%; object-fit: cover; }
 .logo.tile { background: #fff; box-shadow: inset 0 0 0 1px rgba(20, 23, 28, .09); }
 .logo.tile img { object-fit: contain; box-sizing: border-box; }
-.logo.tile svg { width: 60%; height: 60%; }
+.logo.tile svg { width: 60%; height: 60%; color: var(--c); }
+/* Tema escuro: quadrado escuro; "dk-inv" = logo preto que vira branco; "dk-keep" = logo que só fica legível no branco */
+:root[data-theme="dark"] .logo.tile { background: #262a31; box-shadow: inset 0 0 0 1px rgba(255, 255, 255, .07); }
+:root[data-theme="dark"] .logo.tile.dk-inv svg { color: #fff; }
+:root[data-theme="dark"] .logo.tile.dk-inv img { filter: invert(1) hue-rotate(180deg); }
+:root[data-theme="dark"] .logo.tile.dk-keep { background: #fff; }
 .logo.lg { width: 40px; height: 40px; border-radius: 11px; font-size: .85rem; }
 .logo.sm { width: 18px; height: 18px; border-radius: 5px; font-size: .5rem; }
 .logo-stack { display: inline-flex; vertical-align: middle; margin-right: 6px; }
@@ -597,15 +602,23 @@ svg.i { width: 16px; height: 16px; flex: none; fill: none; stroke: currentColor;
     return (0.299 * r + 0.587 * g + 0.114 * b) / 255 > 0.72;
   }
   // item: { brand?, icon? (imagem própria), name, color? }
+  const DARK_LOGO = { chatgpt: 'inv', uber: 'inv', c6: 'inv', disney: 'keep', btg: 'keep', bb: 'keep' };
   function logoHtml(item, cls = '') {
     if (item.icon) return `<span class="logo ${cls}"><img src="${item.icon}" alt="" /></span>`;
     const b = BRANDS[item.brand] || BRANDS[brandByName(item.name)];
     const color = b ? b.color : (item.color || '#64748b');
     const fg = lightColor(color) ? '#14171c' : '#fff';
     // Logo colorido oficial num quadrado branco, como ícone de app
-    if (b && b.img) return `<span class="logo tile ${cls}"><img src="${b.img}" alt="" style="padding:${b.full ? 0 : b.pad * 100}%" /></span>`;
-    // Ícone de uma cor só: desenhado na cor da marca sobre o branco
-    if (b && b.path) return `<span class="logo tile ${cls}" style="color:${lightColor(color) ? '#14171c' : color}"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="${b.path}"/></svg></span>`;
+    // No tema escuro o quadrado fica escuro; DARK_LOGO diz quais logos precisam de ajuste (ver CSS)
+    const key = b && Object.keys(BRANDS).find(k => BRANDS[k] === b);
+    const dk = DARK_LOGO[key] ? ' dk-' + DARK_LOGO[key] : '';
+    if (b && b.img) return `<span class="logo tile${dk} ${cls}"><img src="${b.img}" alt="" style="padding:${b.full ? 0 : b.pad * 100}%" /></span>`;
+    // Ícone de uma cor só: desenhado na cor da marca; marcas pretas viram brancas no tema escuro
+    if (b && b.path) {
+      const c = lightColor(color) ? '#14171c' : color;
+      const isDark = parseInt(c.slice(1, 3), 16) + parseInt(c.slice(3, 5), 16) + parseInt(c.slice(5, 7), 16) < 150;
+      return `<span class="logo tile${isDark ? ' dk-inv' : dk} ${cls}" style="--c:${c}"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="${b.path}"/></svg></span>`;
+    }
     const txt = b ? b.mono : (String(item.name || '?').trim().charAt(0).toUpperCase() || '?');
     return `<span class="logo ${cls}" style="background:${color};color:${fg}">${esc(txt)}</span>`;
   }
