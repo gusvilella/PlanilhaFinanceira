@@ -3113,6 +3113,7 @@ button:focus-visible, a:focus-visible, [role="button"]:focus-visible, [tabindex]
           box.innerHTML = `<div class="movebox" style="color:var(--ink)">Excluir só esta parcela (${item.installment.i}/${item.installment.n}) ou a compra inteira?
             <div style="display:flex;gap:8px;margin-top:8px;flex-wrap:wrap"><button type="button" class="btn-soft" id="delOne">Só esta parcela</button>
             <button type="button" class="btn-soft" id="delAll" style="color:var(--red)">Todas as ${item.installment.n} parcelas</button></div></div>`;
+          box.scrollIntoView({ block: 'nearest', behavior: 'smooth' });
           box.querySelector('#delOne').onclick = () => { state.variaveis = state.variaveis.filter(x => x.id !== item.id); done('Parcela excluída'); };
           box.querySelector('#delAll').onclick = () => { state.variaveis = state.variaveis.filter(x => x.installment?.group !== item.installment.group); done(`${item.installment.n} parcelas excluídas`); };
           return;
@@ -3276,6 +3277,7 @@ button:focus-visible, a:focus-visible, [role="button"]:focus-visible, [tabindex]
       box.innerHTML = `<div class="movebox" style="color:var(--ink)">Remover só em ${mn} ou ${startKey < view.month ? `de ${mn} em diante` : 'de vez'}?
         <div style="display:flex;gap:8px;margin-top:8px;flex-wrap:wrap"><button type="button" class="btn-soft" id="rmOne">Só em ${mn}</button>
         <button type="button" class="btn-soft" id="rmFwd" style="color:var(--red)">${startKey < view.month ? `De ${mn} em diante` : 'Excluir de vez'}</button></div></div>`;
+      box.scrollIntoView({ block: 'nearest', behavior: 'smooth' });
       box.querySelector('#rmOne').onclick = () => removeRecurringAware(listName, item, recurring, 'one');
       box.querySelector('#rmFwd').onclick = () => removeRecurringAware(listName, item, recurring, 'fwd');
       return;
