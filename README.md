@@ -81,6 +81,12 @@ Engrenagem → **Sincronizar entre aparelhos**. Usa um Gist secreto da sua conta
 
 Os dados vão **criptografados** (AES-GCM 256, chave derivada da senha com PBKDF2): o GitHub só guarda texto embaralhado. Sem a senha não dá para recuperar o conteúdo da nuvem. Cada mudança sobe sozinha em poucos segundos e os outros aparelhos baixam ao abrir o app. Se os dois aparelhos mudarem ao mesmo tempo sem internet, vale a versão salva por último.
 
+## Senha e digital
+
+Em **⚙ → Senha e digital** você cria um PIN de 4 dígitos para abrir o app. No celular (e no computador com Windows Hello / Touch ID) dá para ativar a **digital ou o rosto**. O app também se tranca sozinho quando fica mais de 1 minuto em segundo plano. O PIN não fica salvo em texto: só um hash dele fica no aparelho.
+
+Esqueceu o PIN? Em "Esqueci a senha" você pode apagar os dados deste aparelho e depois recuperar tudo conectando a sincronização de novo (ou pelo backup).
+
 ## Logos
 
 Os logos ficam embutidos no arquivo (funcionam sem internet):
