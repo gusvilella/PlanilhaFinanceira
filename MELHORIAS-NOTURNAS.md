@@ -7,7 +7,7 @@ Trabalho feito durante a noite, sem mudar o jeito como seus dados são guardados
 1. **Sincronização (o mais importante)**: se usa em dois aparelhos, lance algo num deles e abra o outro em outro dia. O lançamento aparece nos dois e **não some** mais (item 23).
 2. **Desfazer**: edite um gasto, salve e toque em "Desfazer" no aviso de baixo. Vale também para pagar fatura, excluir categoria, restaurar backup e "Apagar tudo".
 3. **Receita recorrente**: abra o Salário num mês depois do primeiro, desmarque "Receita recorrente" e salve. Os meses anteriores continuam com o salário.
-4. **Importar extrato** do C6, Itaú ou Mercado Pago (⚙ → Importar extrato). Antes davam erro ou valor errado.
+4. **Importar extrato** do C6, Itaú, Banco do Brasil ou Mercado Pago, em CSV **ou planilha do Excel (.xlsx)** (⚙ → Importar extrato). Antes davam erro ou valor errado, e .xlsx não era aceito.
 5. **Buscar em todos os meses**: aba Despesa variável → Filtro → digite "ifood" → marque "Buscar em todos os meses".
 6. **Celular**: arraste o dedo para os lados para trocar o mês; os botões pequenos ficaram mais fáceis de acertar.
 7. **Cartão que fecha depois do vencimento** (ex.: fecha 26, vence 5): confira o "disponível" do cartão; agora conta as compras feitas depois do fechamento.
@@ -247,3 +247,6 @@ Testei com arquivos no formato de cada banco:
 
 ### 56. Voltar para o mês atual é mais fácil de descobrir
 - Tocar no nome do mês sempre voltou para o mês atual, mas nada indicava isso. Agora, quando você está vendo outro mês, aparece um pequeno **"hoje"** verde embaixo do nome do mês. Também funciona pelo teclado (Tab + Enter) e pelo atalho `H`.
+
+### 57. Importar extrato em planilha do Excel (.xlsx)
+- Vários bancos (Itaú, BB, Santander…) exportam o extrato como planilha do Excel. Antes o app só aceitava CSV e OFX. Agora aceita **.xlsx** direto: lê a primeira aba, entende as datas do Excel, ignora as linhas de título e de saldo, e segue para a mesma prévia de sempre. (Planilhas .xls antigas: o app pede para salvar como .xlsx ou CSV.) Funciona sem internet, sem instalar nada.

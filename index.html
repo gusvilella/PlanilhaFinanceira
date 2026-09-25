@@ -1004,7 +1004,7 @@ button:focus-visible, a:focus-visible, [role="button"]:focus-visible, [tabindex]
   <button class="fab" id="fab" aria-label="Lançamento rápido" title="Lançamento rápido (Q)"><svg class="i"><use href="#i-plus"/></svg></button>
   <div class="overlay" id="overlay" hidden><div class="modal" id="modal" role="dialog" aria-modal="true"></div></div>
   <input type="file" id="importFile" accept="application/json,.json" hidden />
-  <input type="file" id="stmtFile" accept=".csv,.ofx,.txt,text/csv" hidden />
+  <input type="file" id="stmtFile" accept=".csv,.ofx,.txt,.xlsx,text/csv,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet" hidden />
   <input type="file" id="iconFile" accept="image/*" hidden />
   <div class="toast" id="toast" role="status" aria-live="polite"></div>
 
@@ -3963,12 +3963,67 @@ button:focus-visible, a:focus-visible, [role="button"]:focus-visible, [tabindex]
     return byName('Outros') || '';
   }
 
+  // Planilha do Excel (.xlsx): é um zip com XMLs. Abre com o descompactador do próprio navegador, lê a primeira
+  // aba e devolve as linhas como texto separado por ";" para o mesmo leitor de CSV.
+  async function xlsxToCsv(buf) {
+    const u8 = new Uint8Array(buf), dv = new DataView(buf), dec = new TextDecoder();
+    let eocd = -1;
+    for (let i = u8.length - 22; i >= Math.max(0, u8.length - 65557); i--) if (dv.getUint32(i, true) === 0x06054b50) { eocd = i; break; }
+    if (eocd < 0) throw new Error('Não consegui abrir essa planilha.');
+    const files = {};
+    for (let k = 0, p = dv.getUint32(eocd + 16, true), n = dv.getUint16(eocd + 10, true); k < n; k++) {
+      const nlen = dv.getUint16(p + 28, true);
+      files[dec.decode(u8.subarray(p + 46, p + 46 + nlen))] = { method: dv.getUint16(p + 10, true), size: dv.getUint32(p + 20, true), off: dv.getUint32(p + 42, true) };
+      p += 46 + nlen + dv.getUint16(p + 30, true) + dv.getUint16(p + 32, true);
+    }
+    const read = async name => {
+      const f = files[name]; if (!f) return null;
+      const start = f.off + 30 + dv.getUint16(f.off + 26, true) + dv.getUint16(f.off + 28, true), data = u8.subarray(start, start + f.size);
+      if (f.method === 0) return dec.decode(data);
+      if (typeof DecompressionStream === 'undefined') throw new Error('Este navegador não abre planilhas do Excel. Salve como CSV no Excel e importe o CSV.');
+      return new Response(new Blob([data]).stream().pipeThrough(new DecompressionStream('deflate-raw'))).text();
+    };
+    const xml = t => new DOMParser().parseFromString(t, 'application/xml');
+    const tags = (el, name) => [...el.getElementsByTagName(name)];
+    const ssXml = await read('xl/sharedStrings.xml');
+    const shared = ssXml ? tags(xml(ssXml), 'si').map(si => tags(si, 't').map(t => t.textContent).join('')) : [];
+    // estilos de data (formatos 14–22 e 45–47 prontos, ou formatos próprios com d/m/a)
+    const dateXf = new Set(), stXml = await read('xl/styles.xml');
+    if (stXml) {
+      const st = xml(stXml), custom = {};
+      tags(st, 'numFmt').forEach(f => { custom[f.getAttribute('numFmtId')] = f.getAttribute('formatCode') || ''; });
+      const xfs = st.getElementsByTagName('cellXfs')[0];
+      if (xfs) tags(xfs, 'xf').forEach((xf, i) => { const id = +xf.getAttribute('numFmtId');
+        if ((id >= 14 && id <= 22) || (id >= 45 && id <= 47) || (custom[id] && /[dy]/i.test(custom[id].replace(/"[^"]*"|\[[^\]]*\]/g, '')))) dateXf.add(i); });
+    }
+    const sheetName = files['xl/worksheets/sheet1.xml'] ? 'xl/worksheets/sheet1.xml' : Object.keys(files).filter(n => /^xl\/worksheets\/sheet\d+\.xml$/.test(n)).sort()[0];
+    if (!sheetName) throw new Error('A planilha está vazia.');
+    const colIdx = ref => { let n = 0; for (const ch of ref.replace(/\d+$/, '')) n = n * 26 + ch.charCodeAt(0) - 64; return n - 1; };
+    const serialDate = v => { const d = new Date(Date.UTC(1899, 11, 30) + Math.round(+v * 864e5)); return `${pad(d.getUTCDate())}/${pad(d.getUTCMonth() + 1)}/${d.getUTCFullYear()}`; };
+    const lines = tags(xml(await read(sheetName)), 'row').map(row => {
+      const out = [];
+      tags(row, 'c').forEach(c => {
+        const t = c.getAttribute('t'), v = c.getElementsByTagName('v')[0]?.textContent ?? '';
+        let val = t === 's' ? shared[+v] ?? '' : t === 'inlineStr' ? tags(c, 't').map(x => x.textContent).join('') : v;
+        if ((!t || t === 'n') && v !== '' && dateXf.has(+c.getAttribute('s')) && +v > 20000 && +v < 80000) val = serialDate(v);
+        out[c.getAttribute('r') ? colIdx(c.getAttribute('r')) : out.length] = val;
+      });
+      return Array.from(out, x => `"${String(x ?? '').replace(/"/g, '""')}"`).join(';');
+    });
+    return lines.join('\n');
+  }
+
   $('#stmtFile').addEventListener('change', async e => {
     const file = e.target.files[0]; e.target.value = '';
     if (!file) return;
-    let text = await file.text();
+    if (/\.xls$/i.test(file.name)) return toast('Planilha .xls antiga: abra no Excel e salve como .xlsx ou CSV.');
+    let text;
+    if (/\.xlsx$/i.test(file.name)) {
+      try { text = await xlsxToCsv(await file.arrayBuffer()); }
+      catch (err) { return toast(err.message || 'Não consegui abrir essa planilha'); }
+    } else text = await file.text();
     // extratos antigos em Latin-1 aparecem com "�": relê na codificação certa
-    if (text.includes('\ufffd')) text = new TextDecoder('windows-1252').decode(await file.arrayBuffer());
+    if (!/\.xlsx$/i.test(file.name) && text.includes('\ufffd')) text = new TextDecoder('windows-1252').decode(await file.arrayBuffer());
     let rows;
     try { rows = /<OFX>|OFXHEADER/i.test(text) ? parseOfx(text) : parseCsv(text); }
     catch (err) { return toast(err.message || 'Não consegui ler esse arquivo'); }
