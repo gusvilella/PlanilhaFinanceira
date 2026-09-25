@@ -277,3 +277,4 @@ Testei com arquivos no formato de cada banco:
 
 ### 64. Importação percebe gastos que você já lançou à mão com outro nome
 - Se você lançou "iFood" à mão e depois importou o extrato em que ele aparece como "IFD*IFOOD SAO PAULO", o app não percebia (só comparava nomes iguais) e o gasto **contava duas vezes**. Agora, um lançamento do extrato com o **mesmo dia e o mesmo valor** de algo que você já tem vem desmarcado com o aviso "parece já lançado (mesmo dia e valor)". Se for mesmo outro gasto, é só marcar.
+- O mesmo para **despesas fixas**: o aluguel pago no Pix ou a internet no cartão aparecem no extrato; agora vêm desmarcados com "já é a despesa fixa Aluguel" (mesmo valor e data perto do vencimento), para não contar duas vezes. Cada conta fixa do mês "absorve" uma linha só.
