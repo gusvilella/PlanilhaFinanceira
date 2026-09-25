@@ -10,6 +10,7 @@ Trabalho feito durante a noite, sem mudar o jeito como seus dados são guardados
 3. **Receita recorrente "a receber"**: marque como recebida em um mês e veja que os outros meses continuam "A receber". Agora tem "Desfazer" no aviso.
 4. **Importar extrato**: se tiver um CSV do C6, Itaú ou Mercado Pago, tente importar (⚙ → Importar extrato). Antes esses davam erro ou vinham com valor errado.
 5. **Nova despesa fixa com vencimento já passado** (ex.: hoje é dia 25 e ela vence dia 10): aparece a opção "Já paguei a deste mês", já marcada.
+6. **Desfazer em todo lugar**: edite um gasto, salve e toque em "Desfazer" no aviso de baixo. Funciona também ao marcar fatura como paga, excluir categoria, restaurar backup e até em "Apagar tudo".
 
 ## O que mudou
 
@@ -76,3 +77,11 @@ Testei com arquivos no formato de cada banco:
 ### 14. A previsão dos próximos 30 dias conta a fatura do cartão que ainda não foi lançada
 - **Antes:** a previsão de saldo só descontava as faturas que você já tinha digitado. Se a fatura do Nubank vence dia 10 e você ainda não lançou o valor, a previsão fingia que ela não existia, mesmo com as compras já registradas no cartão — o saldo previsto ficava otimista demais.
 - **Agora:** para faturas que vencem nos próximos 30 dias e ainda não foram lançadas, a previsão desconta a **prévia** (as compras e parcelas que já estão no cartão), no dia do vencimento, com o nome "Fatura Nubank (prévia)". Quando você lança o valor real, ele passa a valer no lugar da prévia.
+
+### 15. "Desfazer" em muito mais lugares
+- Antes só dava pra desfazer exclusões. Agora o aviso que aparece embaixo tem **Desfazer** também quando você:
+  - adiciona ou edita receita, despesa fixa, despesa variável (inclusive parcelada), assinatura, cartão, investimento, meta ou o saldo das contas;
+  - salva ou move uma fatura, ou marca uma fatura como paga/em aberto;
+  - exclui uma categoria;
+  - restaura um backup (volta para os dados de antes);
+  - usa **Apagar tudo** (por 5 segundos dá pra voltar atrás).

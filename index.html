@@ -1935,6 +1935,7 @@ button:focus-visible, a:focus-visible, [role="button"]:focus-visible, [tabindex]
       drawSrc();
       m.querySelector('#f').addEventListener('submit', e => {
         e.preventDefault();
+        const undoSnap = JSON.stringify(state);
         const data = { name: m.querySelector('#fName').value.trim(), emoji: g.emoji, target: cents(target), deadline: m.querySelector('#fDeadline').value,
           saved: src === 'manual' ? cents(savedIn) : 0, investments: src === 'inv' ? g.investments : [] };
         if (!data.name) return showErr('Dê um nome pra meta.');
@@ -1942,7 +1943,7 @@ button:focus-visible, a:focus-visible, [role="button"]:focus-visible, [tabindex]
         if (src === 'inv' && !data.investments.length) return showErr('Escolha pelo menos um investimento.');
         if (editing) Object.assign(state.metas.find(x => x.id === item.id), data);
         else state.metas.push({ ...data, id: uid(), created: Date.now() });
-        toast(editing ? 'Meta atualizada' : 'Meta criada 🎯');
+        undoToast(editing ? 'Meta atualizada' : 'Meta criada 🎯', undoSnap);
         commit();
       });
       if (editing) m.querySelector('#fDelete').addEventListener('click', () => {
@@ -2064,6 +2065,7 @@ button:focus-visible, a:focus-visible, [role="button"]:focus-visible, [tabindex]
       drawPick(); drawCycle(); bindPay(m);
       m.querySelector('#f').addEventListener('submit', e => {
         e.preventDefault();
+        const undoSnap = JSON.stringify(state);
         const name = (m.querySelector('#fName')?.value || '').trim();
         if (!name) return showErr('Escolha o serviço ou dê um nome.');
         const data = { brand: a.brand || '', name, icon: a.icon || '', color: a.color || '', amount: cents(amount), cycle: a.cycle,
@@ -2082,7 +2084,7 @@ button:focus-visible, a:focus-visible, [role="button"]:focus-visible, [tabindex]
             state.assinaturas.push({ ...data, id: uid(), created: old.created, start: view.month, end });
           } else Object.assign(old, data);
         }
-        toast(editing ? 'Assinatura atualizada' : 'Assinatura adicionada');
+        undoToast(editing ? 'Assinatura atualizada' : 'Assinatura adicionada', undoSnap);
         commit();
       });
       if (editing) m.querySelector('#fDelete').addEventListener('click', () => removeRecurringAware('assinaturas', item, true));
@@ -2334,6 +2336,7 @@ button:focus-visible, a:focus-visible, [role="button"]:focus-visible, [tabindex]
       prev();
       m.querySelector('#f').addEventListener('submit', e => {
         e.preventDefault();
+        const undoSnap = JSON.stringify(state);
         const name = nameInput.value.trim();
         if (!name) return showErr('Escolha o banco ou dê um nome ao cartão.');
         if (!c.flag) return showErr('Escolha a bandeira do cartão.');
@@ -2347,7 +2350,7 @@ button:focus-visible, a:focus-visible, [role="button"]:focus-visible, [tabindex]
           const amount = cents(m.querySelector('#fAmount'));
           if (amount) (state.faturas[id] ||= {})[focusKey({ ...data, id }, view.month)] = { amount, paid: false };
         }
-        toast(editing ? 'Cartão atualizado' : 'Cartão adicionado');
+        undoToast(editing ? 'Cartão atualizado' : 'Cartão adicionado', undoSnap);
         commit();
       });
       if (editing) m.querySelector('#fDelete').addEventListener('click', () => removeRecurringAware('cards', item, true));
@@ -2395,10 +2398,11 @@ button:focus-visible, a:focus-visible, [role="button"]:focus-visible, [tabindex]
       m.querySelector('#fPrev').addEventListener('click', () => openFatura(card, addMonths(key, -1)));
       m.querySelector('#fNext').addEventListener('click', () => openFatura(card, next));
       m.querySelector('#fMove')?.addEventListener('click', () => {
+        const undoSnap = JSON.stringify(state);
         state.faturas[card.id][next] = { ...state.faturas[card.id][key], paid: false };
         delete state.faturas[card.id][key];
         commit();
-        toast(`Movida para a fatura de ${monthName(next)} (vence ${dm(faturaDates(card, next).due)})`);
+        undoToast(`Movida para a fatura de ${monthName(next)} (vence ${dm(faturaDates(card, next).due)})`, undoSnap);
       });
       m.querySelector('#fClear')?.addEventListener('click', () => {
         const snap = JSON.stringify(state.faturas);
@@ -2408,13 +2412,14 @@ button:focus-visible, a:focus-visible, [role="button"]:focus-visible, [tabindex]
       });
       m.querySelector('#f').addEventListener('submit', e => {
         e.preventDefault();
+        const undoSnap = JSON.stringify(state);
         const a = cents(amount);
         if (!a) return showErr('Digite o valor da fatura.');
         const paid = m.querySelector('#fPaid').checked;
         const prevF = (state.faturas[card.id] || {})[key];
         (state.faturas[card.id] ||= {})[key] = { amount: a, paid,
           ...(paid ? { paidAt: prevF?.paidAt || todayIso, payAccount: prevF?.payAccount ?? (card.payAccount || '') } : {}) };
-        toast(`Fatura de ${mn} salva (vence ${dm(due)})`);
+        undoToast(`Fatura de ${mn} salva (vence ${dm(due)})`, undoSnap);
         commit();
       });
     });
@@ -2424,10 +2429,11 @@ button:focus-visible, a:focus-visible, [role="button"]:focus-visible, [tabindex]
     const f = (state.faturas[cardId] || {})[key];
     if (!f) return;
     const card = state.cards.find(c => c.id === cardId);
+    const undoSnap = JSON.stringify(state);
     f.paid = !f.paid;
     if (f.paid) { f.paidAt = todayIso; f.payAccount = card?.payAccount || ''; } else { delete f.paidAt; delete f.payAccount; }
     save(); render();
-    toast(f.paid ? 'Fatura marcada como paga' : 'Fatura em aberto');
+    undoToast(f.paid ? 'Fatura marcada como paga' : 'Fatura em aberto', undoSnap);
   }
 
   // ================= Investimentos =================
@@ -2535,6 +2541,7 @@ button:focus-visible, a:focus-visible, [role="button"]:focus-visible, [tabindex]
       refresh();
       m.querySelector('#f').addEventListener('submit', e => {
         e.preventDefault();
+        const undoSnap = JSON.stringify(state);
         const name = m.querySelector('#fName').value.trim();
         if (!name) return showErr('Dê um nome, ex.: Conta Mercado Pago.');
         let balance = cents(amount);
@@ -2544,7 +2551,7 @@ button:focus-visible, a:focus-visible, [role="button"]:focus-visible, [tabindex]
           rate: Math.max(0, +rate.value || 0), balance, updatedAt: todayIso };
         if (editing) Object.assign(state.investments.find(x => x.id === item.id), data);
         else state.investments.push({ ...data, id: uid(), created: Date.now() });
-        toast(editing ? 'Investimento atualizado' : 'Investimento adicionado');
+        undoToast(editing ? 'Investimento atualizado' : 'Investimento adicionado', undoSnap);
         commit();
       });
       if (editing) m.querySelector('#fDelete').addEventListener('click', () => {
@@ -2623,6 +2630,7 @@ button:focus-visible, a:focus-visible, [role="button"]:focus-visible, [tabindex]
       draw();
       m.querySelector('#f').addEventListener('submit', e => {
         e.preventDefault();
+        const undoSnap = JSON.stringify(state);
         if (draft.some(a => !a.name.trim())) return showErr('Dê um nome para todas as contas.');
         state.accounts = draft.map(a => {
           const typed = a.neg ? -a.abs : a.abs;
@@ -2632,7 +2640,7 @@ button:focus-visible, a:focus-visible, [role="button"]:focus-visible, [tabindex]
           return { id: a.id, name: a.name.trim(), brand: a.brand || '', icon: a.icon || '', color: a.color,
             balance: keep ? old.balance : typed, updatedAt: keep ? old.updatedAt : todayIso };
         });
-        toast('Saldo das contas atualizado');
+        undoToast('Saldo das contas atualizado', undoSnap);
         commit();
       });
     });
@@ -2827,6 +2835,7 @@ button:focus-visible, a:focus-visible, [role="button"]:focus-visible, [tabindex]
       bindPay(m);
       m.querySelector('#f').addEventListener('submit', e => {
         e.preventDefault();
+        const undoSnap = JSON.stringify(state);
         const data = {
           date: m.querySelector('#fDate').value, amount: cents(m.querySelector('#fAmount')),
           desc: m.querySelector('#fDesc').value.trim(), category: m.querySelector('#fCategory').value,
@@ -2837,7 +2846,7 @@ button:focus-visible, a:focus-visible, [role="button"]:focus-visible, [tabindex]
         if (!data.amount) return showErr('Digite o valor.');
         if (data.category === '__new') data.category = '';
         upsertRecurringAware(state.receitas, item, data, 'recurring');
-        toast(editing ? 'Receita atualizada' : 'Receita adicionada');
+        undoToast(editing ? 'Receita atualizada' : 'Receita adicionada', undoSnap);
         goToMonthOf(data.date, item);
         commit();
       });
@@ -2890,6 +2899,7 @@ button:focus-visible, a:focus-visible, [role="button"]:focus-visible, [tabindex]
       }
       m.querySelector('#f').addEventListener('submit', e => {
         e.preventDefault();
+        const undoSnap = JSON.stringify(state);
         const data = {
           date: m.querySelector('#fDate').value, amount: cents(amount),
           desc: m.querySelector('#fDesc').value.trim(), category: m.querySelector('#fCategory').value, ...readPay(m),
@@ -2899,7 +2909,7 @@ button:focus-visible, a:focus-visible, [role="button"]:focus-visible, [tabindex]
         if (data.category === '__new') data.category = '';
         if (editing) {
           Object.assign(state.variaveis.find(x => x.id === item.id), data);
-          toast('Despesa atualizada');
+          undoToast('Despesa atualizada', undoSnap);
         } else if (m.querySelector('#fInst').checked) {
           const n = Math.max(2, Math.min(48, +m.querySelector('#fN').value || 2));
           const group = uid(), base = Math.floor(data.amount / n), rest = data.amount - base * n;
@@ -2908,10 +2918,10 @@ button:focus-visible, a:focus-visible, [role="button"]:focus-visible, [tabindex]
             state.variaveis.push({ ...data, id: uid(), created: Date.now() + i, date: dateIn(key, +data.date.slice(8)),
               amount: base + (i === 0 ? rest : 0), installment: { group, i: i + 1, n } });
           }
-          toast(`Parcelado em ${n}x`);
+          undoToast(`Parcelado em ${n}x`, undoSnap);
         } else {
           state.variaveis.push({ ...data, id: uid(), created: Date.now() });
-          toast('Despesa adicionada');
+          undoToast('Despesa adicionada', undoSnap);
         }
         goToMonthOf(data.date, item);
         commit();
@@ -2952,6 +2962,7 @@ button:focus-visible, a:focus-visible, [role="button"]:focus-visible, [tabindex]
       if (!editing) { m.querySelector('#fDay').addEventListener('change', paidNow); m.querySelector('#fDueNext').addEventListener('change', paidNow); paidNow(); }
       m.querySelector('#f').addEventListener('submit', e => {
         e.preventDefault();
+        const undoSnap = JSON.stringify(state);
         const data = { amount: cents(m.querySelector('#fAmount')), desc: m.querySelector('#fDesc').value.trim(), day: +m.querySelector('#fDay').value, dueNext: m.querySelector('#fDueNext').checked, ...readPay(m) };
         if (!data.amount) return showErr('Digite o valor.');
         if (!data.desc) return showErr('Dê um nome, ex.: Aluguel.');
@@ -2971,7 +2982,7 @@ button:focus-visible, a:focus-visible, [role="button"]:focus-visible, [tabindex]
         } else {
           Object.assign(state.fixas.find(x => x.id === item.id), data);
         }
-        toast(editing ? 'Despesa fixa atualizada' : 'Despesa fixa adicionada');
+        undoToast(editing ? 'Despesa fixa atualizada' : 'Despesa fixa adicionada', undoSnap);
         commit();
       });
       if (editing) m.querySelector('#fDelete').addEventListener('click', () => removeRecurringAware('fixas', item, true));
@@ -3155,8 +3166,10 @@ button:focus-visible, a:focus-visible, [role="button"]:focus-visible, [tabindex]
         const id = e.target.closest('.cat-edit').dataset.id;
         const used = [...state.receitas, ...state.variaveis].filter(x => x.category === id).length;
         if (used && !confirm(`${used} lançamento(s) usam esta categoria e ficarão "Sem categoria". Excluir mesmo assim?`)) return;
+        const undoSnap = JSON.stringify(state), name = cat(id)?.name || 'Categoria';
         state.categories = state.categories.filter(c => c.id !== id);
         save(); draw(m);
+        toast(`${name} excluída`, 'Desfazer', () => { state = normalize(JSON.parse(undoSnap)); save(); if (!$('#overlay').hidden) draw(m); fillFilter(); render(); });
       });
       m.querySelector('#catAdd').addEventListener('click', () => {
         state.categories.push({ id: uid(), kind, name: 'Nova categoria', color: PALETTE[catsOf(kind).length % PALETTE.length] });
@@ -3201,7 +3214,7 @@ button:focus-visible, a:focus-visible, [role="button"]:focus-visible, [tabindex]
       m.querySelector('#mRestore').onclick = () => $('#importFile').click();
       m.querySelector('#mClear').onclick = () => {
         if (!confirm('Apagar todos os lançamentos? Isso não pode ser desfeito.')) return;
-        state = blank(); commit(); toast('Tudo apagado');
+        const undoSnap = JSON.stringify(state); state = blank(); commit(); undoToast('Tudo apagado', undoSnap);
       };
     });
   }
@@ -3324,7 +3337,7 @@ button:focus-visible, a:focus-visible, [role="button"]:focus-visible, [tabindex]
       else if (Array.isArray(data.transactions)) next = migrate(data);
       else throw new Error('formato');
       if (!confirm('Restaurar este backup? Os dados atuais serão substituídos.')) return;
-      state = next; commit(); toast('Backup restaurado');
+      const undoSnap = JSON.stringify(state); state = next; commit(); fillFilter(); undoToast('Backup restaurado', undoSnap);
     } catch (_) { toast('Arquivo de backup inválido'); }
   });
 
@@ -3454,6 +3467,8 @@ button:focus-visible, a:focus-visible, [role="button"]:focus-visible, [tabindex]
   applyFont(ui.font);
   applyTheme(ui.theme || (matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light'));
 
+  // Aviso com "Desfazer" que volta todos os dados para como estavam antes (snap = JSON.stringify(state) tirado antes da mudança)
+  function undoToast(msg, snap) { toast(msg, 'Desfazer', () => { state = normalize(JSON.parse(snap)); fillFilter(); commit(); }); }
   let toastTimer;
   function toast(msg, actionLabel, action) {
     const el = $('#toast');
