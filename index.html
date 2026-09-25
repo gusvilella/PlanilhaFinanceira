@@ -1409,7 +1409,7 @@ button:focus-visible, a:focus-visible, [role="button"]:focus-visible, [tabindex]
     $('#kDespesas').textContent = money(t.despesas);
     // cada "rótulo valor" fica junto na mesma linha
     $('#kDespesasSub').innerHTML = [['Fixas', t.fixas], ['Variáveis', t.variaveis], ['Assinaturas', t.assinaturas], ['Faturas', t.faturas]]
-      .filter(([, v]) => v).map(([n, v]) => `<span style="white-space:nowrap">${n} ${esc(money(v))}</span>`).join(' · ');
+      .filter(([, v]) => v).map(([n, v]) => `<span style="display:inline-block">${n} <span style="white-space:nowrap">${esc(money(v))}</span></span>`).join(' · ');
     const signed = c => (c < 0 && !ui.hidden ? '–' : '') + money(Math.abs(c));
     if (state.accounts.length) {
       // Com contas cadastradas, o saldo é o dinheiro real somado de todas elas
@@ -1417,7 +1417,7 @@ button:focus-visible, a:focus-visible, [role="button"]:focus-visible, [tabindex]
       $('#kSaldo').textContent = signed(total);
       $('#kSaldo').classList.toggle('neg', total < 0);
       $('#kSaldo').title = state.accounts.map(a => `${a.name}: ${brl.format(accBalance(a) / 100)}`).join('\n');
-      $('#kSaldoSub').innerHTML = `<span class="logo-stack">${state.accounts.slice(0, 5).map(a => logoHtml(a, 'sm')).join('')}</span><span style="white-space:nowrap">sobra do mês ${esc(signed(t.saldo))}</span>`;
+      $('#kSaldoSub').innerHTML = `<span class="logo-stack">${state.accounts.slice(0, 5).map(a => logoHtml(a, 'sm')).join('')}</span>sobra do mês <span style="white-space:nowrap">${esc(signed(t.saldo))}</span>`;
     } else {
       $('#kSaldo').textContent = signed(t.saldo);
       $('#kSaldo').classList.toggle('neg', t.saldo < 0);
