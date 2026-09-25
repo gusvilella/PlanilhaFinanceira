@@ -60,3 +60,7 @@ Testei com arquivos no formato de cada banco:
 - O cinza dos textos secundários ficou um pouquinho mais escuro no tema claro (e um pouquinho mais claro no escuro), para ler melhor, principalmente em sol forte. A diferença é sutil; a cara do app é a mesma.
 - Ao navegar com a tecla **Tab** no computador, o botão selecionado ganha um contorno verde bem visível.
 - Ao fechar uma janela, o foco volta para o botão que a abriu; as abas e janelas agora são anunciadas corretamente por leitores de tela.
+
+### 11. App mais rápido com muitos lançamentos
+- Com 2.000 lançamentos, cada toque (trocar de aba, de mês, esconder valores) levava 60 a 85 milésimos de segundo num computador rápido; no celular isso vira meio segundo de travadinha. Agora leva 17 a 40 (cerca de **3 vezes mais rápido**).
+- Como: o app refazia as mesmas contas dezenas de vezes a cada tela (por exemplo, o limite do cartão olha 4 anos de parcelas e o saldo das contas refaz os meses desde a última atualização). Agora cada conta é feita uma vez por tela e reaproveitada. Conferi que **todos os números mostrados continuam idênticos** (comparei 4 meses × 8 abas antes e depois).

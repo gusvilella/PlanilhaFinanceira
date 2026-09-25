@@ -1152,25 +1152,41 @@ button:focus-visible, a:focus-visible, [role="button"]:focus-visible, [tabindex]
   // ================= Itens do mês =================
   const activeIn = (item, key) => item.start <= key && (!item.end || key <= item.end);
 
-  function receitasOf(key) {
+  // Cache de cálculos válido só durante um desenho da tela (render): a mesma conta (ex.: gastos de um mês) é pedida
+  // dezenas de vezes por tela; fora do render nada fica guardado, então nunca fica desatualizado.
+  let memo = null;
+  const cached = (k, compute) => {
+    if (!memo) return compute();
+    if (memo.has(k)) return memo.get(k);
+    const v = compute(); memo.set(k, v); return v;
+  };
+  const withMemo = fn => (...args) => { if (memo) return fn(...args); memo = new Map(); try { return fn(...args); } finally { memo = null; } };
+
+  function receitasOf(key) { return cached('r' + key, () => receitasOfRaw(key)); }
+  function receitasOfRaw(key) {
     return state.receitas
       .filter(r => r.recurring ? activeIn({ start: monthOf(r.date), end: r.end }, key) : monthOf(r.date) === key)
       .map(r => ({ ...r, shownDate: r.recurring ? dateIn(key, +r.date.slice(8)) : r.date,
         // recorrente "a receber": cada mês é marcado como recebido separadamente (state.received[mês])
         pending: r.pending && !(r.recurring && ((state.received || {})[key] || []).includes(r.id)) }));
   }
-  const variaveisOf = key => state.variaveis.filter(v => monthOf(v.date) === key).map(v => ({ ...v, shownDate: v.date }));
+  const variaveisOf = key => cached('v' + key, () => {
+    // durante o render, separa os gastos por mês uma vez só em vez de varrer a lista inteira a cada mês pedido
+    const list = memo ? (cached('vidx', () => { const m = new Map(); for (const v of state.variaveis) { const k = monthOf(v.date); if (!m.has(k)) m.set(k, []); m.get(k).push(v); } return m; }).get(key) || [])
+      : state.variaveis.filter(v => monthOf(v.date) === key);
+    return list.map(v => ({ ...v, shownDate: v.date }));
+  });
   // Despesa fixa pertence ao mês "key" (conta nas despesas dele); se "vence no mês seguinte", a data de pagamento é no próximo mês
-  const fixasOf = key => state.fixas.filter(f => activeIn(f, key))
-    .map(f => ({ ...f, key, shownDate: dateIn(f.dueNext ? addMonths(key, 1) : key, f.day), paid: !!(state.paid[key] || []).includes(f.id) }));
+  const fixasOf = key => cached('f' + key, () => state.fixas.filter(f => activeIn(f, key))
+    .map(f => ({ ...f, key, shownDate: dateIn(f.dueNext ? addMonths(key, 1) : key, f.day), paid: !!(state.paid[key] || []).includes(f.id) })));
   const daysUntil = iso => Math.round((new Date(iso + 'T12:00:00') - new Date(todayIso + 'T12:00:00')) / 864e5);
   // Situação da despesa fixa: no cartão (já está na fatura), paga, a vencer ou atrasada
   const fixaState = f => f.payCard && payCardOf(f) ? 'card' : f.paid ? 'paid' : daysUntil(f.shownDate) < 0 ? 'late' : 'due';
 
   const MESES = ['jan', 'fev', 'mar', 'abr', 'mai', 'jun', 'jul', 'ago', 'set', 'out', 'nov', 'dez'];
   // Assinaturas ativas no mês; as anuais só são cobradas no mês de renovação
-  const assinaturasOf = key => state.assinaturas.filter(a => activeIn(a, key) && (a.cycle !== 'anual' || a.month === +key.slice(5)))
-    .map(a => ({ ...a, shownDate: dateIn(key, a.day) }));
+  const assinaturasOf = key => cached('a' + key, () => state.assinaturas.filter(a => activeIn(a, key) && (a.cycle !== 'anual' || a.month === +key.slice(5)))
+    .map(a => ({ ...a, shownDate: dateIn(key, a.day) })));
   const perMonth = a => a.cycle === 'anual' ? Math.round(a.amount / 12) : a.amount;
 
   // Cartões ativos no mês, com a fatura daquele mês (vence no dia de vencimento do cartão)
@@ -1185,7 +1201,8 @@ button:focus-visible, a:focus-visible, [role="button"]:focus-visible, [tabindex]
   // ----- Saldo das contas -----
   // Saldo atual = saldo informado + movimentos ligados à conta depois da data informada (até hoje):
   // receitas recebidas nela, gastos pagos com ela (Pix/débito/boleto) e faturas pagas com ela
-  function accountMoves(acc) {
+  function accountMoves(acc) { return cached('am' + acc.id + acc.updatedAt + acc.balance, () => accountMovesRaw(acc)); }
+  function accountMovesRaw(acc) {
     const from = acc.updatedAt || todayIso, out = [];
     if (from >= todayIso) return out;
     const inRange = iso => iso > from && iso <= todayIso;
@@ -1248,7 +1265,8 @@ button:focus-visible, a:focus-visible, [role="button"]:focus-visible, [tabindex]
     return !!(f && f.amount > 0);
   }
   // Itens pagos no cartão que caem na fatura que vence em "key" (podem ter sido cobrados neste mês ou no anterior)
-  function itemsOnCard(cardId, key) {
+  function itemsOnCard(cardId, key) { return cached('ic' + cardId + key, () => itemsOnCardRaw(cardId, key)); }
+  function itemsOnCardRaw(cardId, key) {
     const card = state.cards.find(c => c.id === cardId);
     const out = [];
     for (const k of [addMonths(key, -1), key]) out.push(
@@ -1270,7 +1288,8 @@ button:focus-visible, a:focus-visible, [role="button"]:focus-visible, [tabindex]
   }
   const countable = key => i => !inFatura(i, key);
 
-  function totals(key) {
+  function totals(key) { return cached('t' + key, () => totalsRaw(key)); }
+  function totalsRaw(key) {
     const rec = receitasOf(key);
     const receita = rec.filter(r => !r.pending).reduce((s, r) => s + r.amount, 0);
     const aReceber = rec.filter(r => r.pending).reduce((s, r) => s + r.amount, 0);
@@ -1285,7 +1304,8 @@ button:focus-visible, a:focus-visible, [role="button"]:focus-visible, [tabindex]
   }
 
   // ================= Render =================
-  function render() {
+  const render = withMemo(renderNow);
+  function renderNow() {
     const [y, m] = view.month.split('-').map(Number);
     const lbl = new Date(y, m - 1, 1).toLocaleDateString('pt-BR', { month: 'long', year: 'numeric' });
     $('#monthLabel').textContent = lbl.charAt(0).toUpperCase() + lbl.slice(1);
@@ -1770,7 +1790,7 @@ button:focus-visible, a:focus-visible, [role="button"]:focus-visible, [tabindex]
       : `<div class="ins"><span class="ic">💡</span><div>Lance receitas e despesas por alguns meses pra ver as comparações aqui.</div></div>`;
   }
   let evoResize;
-  window.addEventListener('resize', () => { clearTimeout(evoResize); evoResize = setTimeout(renderEvo, 150); });
+  window.addEventListener('resize', () => { clearTimeout(evoResize); evoResize = setTimeout(withMemo(renderEvo), 150); });
 
   // ================= Limite por categoria =================
   const spentIn = (catId, key) => variaveisOf(key).filter(v => v.category === catId).reduce((s, v) => s + v.amount, 0);
@@ -2071,7 +2091,15 @@ button:focus-visible, a:focus-visible, [role="button"]:focus-visible, [tabindex]
     paramount: /paramount/, applemusic: /apple ?music/, deezer: /deezer/, icloud: /icloud/, chatgpt: /openai|chatgpt/, claude: /anthropic|claude\.ai/,
     xbox: /xbox|game ?pass/, playstation: /playstation|\bpsn\b|sony ?interactive/, discord: /discord/, twitch: /twitch/, duolingo: /duolingo/, canva: /canva/,
     ms365: /microsoft ?365|office ?365|\bmsft\b/, adobe: /adobe/, notion: /notion/, dropbox: /dropbox/, audible: /audible/, ifood: /clube ?ifood|ifood ?club/, uber: /uber ?one/ };
-  const brandOfDesc = d => { const n = norm(d); for (const [k, re] of Object.entries(SUB_RE)) if (re.test(n)) return k; return ''; };
+  // resultado só depende do texto: guardado pra não rodar ~30 expressões por lançamento a cada tela
+  const brandCache = new Map();
+  const brandOfDesc = d => {
+    const n = norm(d);
+    if (brandCache.has(n)) return brandCache.get(n);
+    let out = ''; for (const [k, re] of Object.entries(SUB_RE)) if (re.test(n)) { out = k; break; }
+    if (brandCache.size > 5000) brandCache.clear();
+    brandCache.set(n, out); return out;
+  };
   const squash = t => norm(t).replace(/[^a-z0-9]/g, '');
   const merchantKey = d => norm(d).replace(/\(\d+\/\d+\)|parc(ela)?\s*\d+.*$/g, '').replace(/[^a-z ]/g, ' ')
     .replace(/\b(pag|pagto|pgto|compra|debito|credito|cartao|pix|www|com|br|ltda|sa|me|eireli|de|da|do)\b/g, ' ').replace(/\s+/g, ' ').trim().split(' ').slice(0, 3).join(' ');
@@ -2086,7 +2114,8 @@ button:focus-visible, a:focus-visible, [role="button"]:focus-visible, [tabindex]
     return state.assinaturas.find(a => activeIn(a, key) && ((b && a.brand === b) || (squash(a.name).length >= 4 && n.includes(squash(a.name)))));
   }
   // Gastos que se repetem todo mês com valor parecido (ou serviços conhecidos) e ainda não estão em Assinaturas
-  function detectSubs() {
+  function detectSubs() { return cached('subs', detectSubsRaw); }
+  function detectSubsRaw() {
     const ignore = new Set(state.subIgnore || []), groups = {};
     for (const v of state.variaveis) {
       if (v.installment || !v.amount || !v.desc) continue;
