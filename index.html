@@ -1249,20 +1249,22 @@ button:focus-visible, a:focus-visible, [role="button"]:focus-visible, [tabindex]
   function accountMoves(acc) { return cached('am' + acc.id + acc.updatedAt + acc.balance, () => accountMovesRaw(acc)); }
   function accountMovesRaw(acc) {
     const from = acc.updatedAt || todayIso, out = [];
-    if (from >= todayIso) return out;
-    const inRange = iso => iso > from && iso <= todayIso;
+    if (from > todayIso) return out;
+    // Conta o que aconteceu depois do saldo informado. No mesmo dia, só o que foi lançado depois do momento em que você
+    // informou o saldo (balanceAt); sem esse horário (dados antigos), o mesmo dia fica de fora, como antes.
+    const inRange = (iso, ts) => iso <= todayIso && (iso > from || (iso === from && !!acc.balanceAt && !!ts && ts > acc.balanceAt));
     for (let k = addMonths(monthOf(from), -1); k <= curKey(); k = addMonths(k, 1)) {
-      receitasOf(k).filter(r => r.payAccount === acc.id && !r.pending && inRange(r.shownDate))
+      receitasOf(k).filter(r => r.payAccount === acc.id && !r.pending && inRange(r.shownDate, !r.imported && r.created))
         .forEach(r => out.push({ date: r.shownDate, amount: r.amount, label: r.desc || 'Receita' }));
       [...variaveisOf(k).map(i => [i, i.desc || cat(i.category)?.name]), ...fixasOf(k).map(i => [i, i.desc]), ...assinaturasOf(k).map(i => [i, i.name])]
-        .filter(([i]) => i.payAccount === acc.id && !i.payCard && inRange(i.shownDate))
+        .filter(([i]) => i.payAccount === acc.id && !i.payCard && inRange(i.shownDate, !i.imported && i.created))
         .forEach(([i, label]) => out.push({ date: i.shownDate, amount: -i.amount, label: label || 'Despesa' }));
     }
     for (const card of state.cards) for (const [k, f] of Object.entries(state.faturas[card.id] || {}))
-      if (f.paid && f.payAccount === acc.id && f.paidAt && inRange(f.paidAt)) out.push({ date: f.paidAt, amount: -f.amount, label: `Fatura ${card.name} (${monthName(k)})` });
+      if (f.paid && f.payAccount === acc.id && f.paidAt && inRange(f.paidAt, f.paidTs)) out.push({ date: f.paidAt, amount: -f.amount, label: `Fatura ${card.name} (${monthName(k)})` });
     // transferências entre as suas contas: saem de uma e entram na outra (não são receita nem despesa)
     const accName = id => state.accounts.find(a => a.id === id)?.name || 'outra conta';
-    for (const t of state.transfers || []) if (inRange(t.date)) {
+    for (const t of state.transfers || []) if (inRange(t.date, t.created)) {
       if (t.from === acc.id) out.push({ date: t.date, amount: -t.amount, label: `Transferência para ${accName(t.to)}` });
       if (t.to === acc.id) out.push({ date: t.date, amount: t.amount, label: `Transferência de ${accName(t.from)}` });
     }
@@ -2493,7 +2495,7 @@ button:focus-visible, a:focus-visible, [role="button"]:focus-visible, [tabindex]
         const paid = m.querySelector('#fPaid').checked;
         const prevF = (state.faturas[card.id] || {})[key];
         (state.faturas[card.id] ||= {})[key] = { amount: a, paid,
-          ...(paid ? { paidAt: prevF?.paidAt || todayIso, payAccount: prevF?.payAccount ?? (card.payAccount || '') } : {}) };
+          ...(paid ? { paidAt: prevF?.paidAt || todayIso, paidTs: prevF?.paid ? prevF.paidTs : Date.now(), payAccount: prevF?.payAccount ?? (card.payAccount || '') } : {}) };
         undoToast(`Fatura de ${mn} salva (vence ${dm(due)})`, undoSnap);
         commit();
       });
@@ -2506,7 +2508,7 @@ button:focus-visible, a:focus-visible, [role="button"]:focus-visible, [tabindex]
     const card = state.cards.find(c => c.id === cardId);
     const undoSnap = JSON.stringify(state);
     f.paid = !f.paid;
-    if (f.paid) { f.paidAt = todayIso; f.payAccount = card?.payAccount || ''; } else { delete f.paidAt; delete f.payAccount; }
+    if (f.paid) { f.paidAt = todayIso; f.paidTs = Date.now(); f.payAccount = card?.payAccount || ''; } else { delete f.paidAt; delete f.paidTs; delete f.payAccount; }
     save(); render();
     undoToast(f.paid ? 'Fatura marcada como paga' : 'Fatura em aberto', undoSnap);
   }
@@ -2715,7 +2717,7 @@ button:focus-visible, a:focus-visible, [role="button"]:focus-visible, [tabindex]
           // Se o valor não mudou, mantém o ponto de partida (os lançamentos continuam atualizando); se mudou, recomeça daqui
           const keep = old && typed === accBalance(old);
           return { id: a.id, name: a.name.trim(), brand: a.brand || '', icon: a.icon || '', color: a.color,
-            balance: keep ? old.balance : typed, updatedAt: keep ? old.updatedAt : todayIso };
+            balance: keep ? old.balance : typed, updatedAt: keep ? old.updatedAt : todayIso, ...(keep ? (old.balanceAt ? { balanceAt: old.balanceAt } : {}) : { balanceAt: Date.now() }) };
         });
         undoToast('Saldo das contas atualizado', undoSnap);
         commit();

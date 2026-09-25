@@ -12,7 +12,8 @@ Trabalho feito durante a noite, sem mudar o jeito como seus dados são guardados
 6. **Celular**: arraste o dedo para os lados para trocar o mês; os botões pequenos ficaram mais fáceis de acertar.
 7. **Cartão que fecha depois do vencimento** (ex.: fecha 26, vence 5): confira o "disponível" do cartão; agora conta as compras feitas depois do fechamento.
 8. **Sininho no celular**: toque no sininho; a lista de avisos agora aparece inteira na tela (antes abria quase toda fora da tela).
-9. **Previsão de 30 dias** (Visão geral): agora desconta a prévia da fatura do cartão que ainda não foi lançada.
+9. **Saldo da conta no mesmo dia**: corrija o saldo de uma conta em Contas e, logo depois, lance um gasto pago com ela. O saldo agora desconta na hora.
+10. **Previsão de 30 dias** (Visão geral): agora desconta a prévia da fatura do cartão que ainda não foi lançada.
 
 ## Pontos para você decidir (não mexi)
 
@@ -179,3 +180,7 @@ Testei com arquivos no formato de cada banco:
 - Em **Saldo → Contas**, com duas contas ou mais, aparece **"⇄ Transferir entre contas"**: escolha de qual conta sai, para qual entra, o valor e a data. O saldo das duas se ajusta sozinho e isso **não conta como receita nem como despesa** (antes, pra refletir uma transferência, só lançando uma receita e uma despesa falsas, o que bagunçava os totais do mês).
 - A mesma janela mostra as últimas transferências com opção de excluir (com Desfazer). Elas também saem no "Exportar todos os meses".
 - Guardado num campo novo e opcional (`transfers`); dados antigos não mudam.
+
+### 39. Gasto lançado no mesmo dia em que você corrigiu o saldo agora desconta
+- **Antes:** se você corrigia o saldo de uma conta hoje (em Saldo → Contas) e depois lançava um gasto, uma receita, uma transferência ou pagava uma fatura com essa conta **no mesmo dia**, o saldo **não mudava nunca** — o app só contava o que tinha data depois do dia da correção.
+- **Agora:** o app guarda também o horário em que você informou o saldo (campo novo e opcional), e conta o que foi lançado depois desse momento, mesmo que no mesmo dia. O que já existia antes continua igual (conferi que todos os números dos dados de teste ficaram idênticos). Extratos importados não entram nessa regra, porque o saldo que você digitou já inclui o que aconteceu no dia.
