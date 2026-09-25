@@ -1562,7 +1562,8 @@ button:focus-visible, a:focus-visible, [role="button"]:focus-visible, [tabindex]
       <ul class="legend">${groups.map(g => {
         const pct = Math.round(g.value / total * 100);
         // com id de categoria: tocar filtra a lista por ela (tocar de novo tira o filtro)
-        const pick = g.id !== undefined && g.id !== '' ? ` data-catpick="${esc(g.id)}" role="button" tabindex="0" title="Filtrar por ${esc(g.name)}" class="${view.cat === g.id ? 'on' : view.cat ? 'dim' : ''}"` : '';
+        const pick = g.id !== undefined && g.id !== '' ? ` data-catpick="${esc(g.id)}" role="button" tabindex="0" title="Filtrar por ${esc(g.name)}" class="${view.cat === g.id ? 'on' : view.cat ? 'dim' : ''}"`
+          : g.go ? ` data-go="${g.go}" data-catpick="" role="button" tabindex="0" title="Ver ${esc(g.name)}"` : '';
         return `<li${pick}><span class="ldot" style="background:${g.color}"></span><span class="pct" style="background:${g.color}1f;color:${g.color}">${pct}%</span><span class="lname" title="${esc(g.name)}">${esc(g.name)}</span></li>`;
       }).join('')}</ul>`;
   }
@@ -1617,7 +1618,11 @@ button:focus-visible, a:focus-visible, [role="button"]:focus-visible, [tabindex]
       <div class="ov ov-cards" id="ovCards"></div>
       <div class="ov ov-goals" id="ovGoals"></div>`;
     renderForecast(); renderCalendar(); renderWhere(); renderOvCards(); renderOvGoals();
-    el.querySelectorAll('[data-go]').forEach(b => b.addEventListener('click', () => { ui.tab = b.dataset.go; saveUi(); fillFilter(); render(); }));
+    el.querySelectorAll('[data-go]').forEach(b => b.addEventListener('click', () => { ui.tab = b.dataset.go; view.cat = ''; saveUi(); fillFilter(); render(); }));
+    // categoria no gráfico "Para onde vai": abre Despesa variável filtrada por ela
+    el.querySelectorAll('#ovWhere [data-catpick]:not([data-go])').forEach(li => li.addEventListener('click', () => {
+      ui.tab = 'variavel'; saveUi(); fillFilter(); view.cat = li.dataset.catpick; $('#fCat').value = view.cat; render(); scrollTo({ top: $('#tabs').offsetTop - 10, behavior: 'smooth' });
+    }));
     el.querySelector('[data-pdf]')?.addEventListener('click', () => printReport());
   }
 
@@ -1717,11 +1722,12 @@ button:focus-visible, a:focus-visible, [role="button"]:focus-visible, [tabindex]
   function renderWhere() {
     const key = view.month, box = $('#ovWhere');
     const groups = new Map();
-    const add = (name, color, v) => { if (!v) return; const g = groups.get(name) || { name, color, value: 0 }; g.value += v; groups.set(name, g); };
-    variaveisOf(key).filter(countable(key)).forEach(v => { const c = cat(v.category); add(c?.name || 'Sem categoria', c?.color || '#94a3b8', v.amount); });
-    add('Contas fixas', '#475569', fixasOf(key).filter(countable(key)).reduce((s, f) => s + f.amount, 0));
-    add('Assinaturas', '#d97706', assinaturasOf(key).filter(countable(key)).reduce((s, a) => s + a.amount, 0));
-    add('Faturas do cartão', '#1d4ed8', totals(key).faturas);
+    // extra: id da categoria (tocar filtra a aba Despesa variável) ou aba para onde ir
+    const add = (name, color, v, extra = {}) => { if (!v) return; const g = groups.get(name) || { name, color, value: 0, ...extra }; g.value += v; groups.set(name, g); };
+    variaveisOf(key).filter(countable(key)).forEach(v => { const c = cat(v.category); add(c?.name || 'Sem categoria', c?.color || '#94a3b8', v.amount, c ? { id: c.id } : {}); });
+    add('Contas fixas', '#475569', fixasOf(key).filter(countable(key)).reduce((s, f) => s + f.amount, 0), { go: 'fixa' });
+    add('Assinaturas', '#d97706', assinaturasOf(key).filter(countable(key)).reduce((s, a) => s + a.amount, 0), { go: 'assin' });
+    add('Faturas do cartão', '#1d4ed8', totals(key).faturas, { go: 'cartoes' });
     let list = [...groups.values()].sort((a, b) => b.value - a.value);
     if (list.length > 6) {
       // junta o resto em "Outros" (somando na categoria Outros, se ela já estiver entre as 5 maiores, pra não aparecer duas vezes)

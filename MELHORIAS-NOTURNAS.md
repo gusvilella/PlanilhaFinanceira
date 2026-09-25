@@ -174,6 +174,7 @@ Testei com arquivos no formato de cada banco:
 
 ### 35. Tocar numa categoria do gráfico filtra a lista
 - Nas abas Receita e Despesa variável, tocar numa categoria da legenda do gráfico de rosca (ex.: "Carro 24%") mostra só os lançamentos dela; as outras ficam apagadinhas. Tocar de novo volta a mostrar tudo. É o mesmo filtro do botão Filtro, só que mais rápido.
+- Na **Visão geral**, em "Para onde vai o dinheiro", tocar numa categoria abre a Despesa variável já filtrada por ela; tocar em "Contas fixas", "Assinaturas" ou "Faturas do cartão" abre a aba correspondente.
 
 ### 36. Sininho do celular abria fora da tela ⚠️
 - **Antes:** no celular, o sininho fica do lado esquerdo, mas a janelinha de avisos abria "para a esquerda" dele — ou seja, quase toda **fora da tela**. Só aparecia um pedacinho dos botões "Paguei"; dava para ver os avisos só no computador.
