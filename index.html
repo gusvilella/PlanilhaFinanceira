@@ -2754,7 +2754,7 @@ button:focus-visible, a:focus-visible, [role="button"]:focus-visible, [tabindex]
         const row = e.target.closest('.acc'); const a = draft[+row.dataset.i];
         a.name = e.target.value;
         // Nome digitado igual a um banco conhecido ganha o logo dele
-        if (!a.brand || BRANDS[a.brand].name !== a.name.trim()) a.brand = brandByName(a.name) || '';
+        if (!a.brand || BRANDS[a.brand]?.name !== a.name.trim()) a.brand = brandByName(a.name) || '';
         row.querySelector('[data-icon]').innerHTML = logoHtml(a);
       });
       list.addEventListener('click', e => {
