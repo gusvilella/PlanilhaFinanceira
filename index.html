@@ -526,6 +526,13 @@ svg.i { width: 16px; height: 16px; flex: none; fill: none; stroke: currentColor;
 .menu-item { display: flex; align-items: center; gap: 10px; width: 100%; border: 0; background: var(--field); border-radius: 12px; padding: 12px 14px; margin-top: 8px; font-size: .88rem; font-weight: 600; text-align: left; cursor: pointer; color: var(--ink); }
 .menu-item:hover { filter: brightness(.97); }
 .menu-item.danger { color: var(--red); }
+.sync-steps { margin: 6px 0 0; padding-left: 18px; font-size: .84rem; line-height: 1.5; color: var(--ink-2); }
+.sync-steps li { margin-bottom: 6px; }
+.sync-steps a { color: var(--green); font-weight: 700; }
+.sync-status { display: flex; align-items: center; gap: 10px; background: var(--field); border-radius: 12px; padding: 12px 14px; margin: 8px 0 4px; font-size: .86rem; }
+.sync-status .dot { width: 9px; height: 9px; border-radius: 50%; background: var(--green); flex: none; }
+.sync-status .dot.err { background: var(--red); }
+.sync-status .dot.busy { background: var(--amber); }
 
 .toast {
   position: fixed; left: 50%; bottom: 24px; transform: translate(-50%, 20px);
@@ -824,9 +831,12 @@ svg.i { width: 16px; height: 16px; flex: none; fill: none; stroke: currentColor;
   }
 
   let state = load();
+  let applyingRemote = false;
   function save() {
+    if (!applyingRemote) state.updatedAt = Date.now();
     try { localStorage.setItem(KEY, JSON.stringify(state)); }
     catch (_) { toast('Não foi possível salvar neste navegador'); }
+    if (!applyingRemote && typeof scheduleSync === 'function') scheduleSync();
   }
 
   let ui = { tab: 'variavel', hidden: false, theme: null, sortAsc: false, font: 'Urbanist' };
@@ -2453,6 +2463,7 @@ svg.i { width: 16px; height: 16px; flex: none; fill: none; stroke: currentColor;
       <div class="font-pick" id="mFonts">${FONTS.map(f => `<button type="button" data-font="${f}" style="font-family:'${f}'" class="${f === ui.font ? 'on' : ''}"><span>Aa</span>${f}</button>`).join('')}</div>
       <p class="fl">App</p>
       <button class="menu-item" id="mInstall">📲 Instalar como app</button>
+      <button class="menu-item" id="mSync">☁️ Sincronizar entre aparelhos <span id="syncBadge" style="margin-left:auto;font-weight:500;font-size:.78rem;color:var(--muted)"></span></button>
       <p class="fl">Dados</p>
       <button class="menu-item" id="mStmt">🏦 Importar extrato do banco (CSV/OFX)</button>
       <button class="menu-item" id="mCsv">📄 Exportar mês para planilha (CSV)</button>
@@ -2466,6 +2477,8 @@ svg.i { width: 16px; height: 16px; flex: none; fill: none; stroke: currentColor;
         m.querySelectorAll('#mFonts button').forEach(x => x.classList.toggle('on', x === b));
       };
       m.querySelector('#mInstall').onclick = () => installApp();
+      m.querySelector('#mSync').onclick = () => openSync();
+      m.querySelector('#syncBadge').textContent = syncStatusText();
       m.querySelector('#mStmt').onclick = () => $('#stmtFile').click();
       m.querySelector('#mCsv').onclick = () => { exportCsv(); closeModal(); };
       m.querySelector('#mBackup').onclick = () => { download(`orcamento-backup-${todayIso}.json`, JSON.stringify(state, null, 2), 'application/json'); closeModal(); };
@@ -2828,6 +2841,184 @@ svg.i { width: 16px; height: 16px; flex: none; fill: none; stroke: currentColor;
     });
   }
 
+  // ================= Sincronizar entre aparelhos (GitHub Gist criptografado) =================
+  // Os dados vão criptografados (AES-GCM 256, chave derivada da sua senha com PBKDF2) para um Gist secreto da sua
+  // conta do GitHub. O GitHub só guarda texto embaralhado. Cada aparelho usa o mesmo token + a mesma senha.
+  const SYNC_KEY = 'orcamento:sync', SYNC_FILE = 'orcamento-sync.json';
+  let sync = null;
+  try { sync = JSON.parse(localStorage.getItem(SYNC_KEY) || 'null'); } catch (_) {}
+  let syncState = { busy: false, error: '', at: sync?.lastSyncAt || 0 };
+  const saveSync = () => { try { if (sync) localStorage.setItem(SYNC_KEY, JSON.stringify(sync)); else localStorage.removeItem(SYNC_KEY); } catch (_) {} };
+  const b64 = buf => btoa(String.fromCharCode(...new Uint8Array(buf)));
+  const unb64 = str => Uint8Array.from(atob(str), c => c.charCodeAt(0));
+
+  async function deriveKey(pass, saltB64) {
+    const base = await crypto.subtle.importKey('raw', new TextEncoder().encode(pass), 'PBKDF2', false, ['deriveKey']);
+    return crypto.subtle.deriveKey({ name: 'PBKDF2', salt: unb64(saltB64), iterations: 250000, hash: 'SHA-256' }, base, { name: 'AES-GCM', length: 256 }, true, ['encrypt', 'decrypt']);
+  }
+  const keyFromRaw = raw => crypto.subtle.importKey('raw', unb64(raw), { name: 'AES-GCM' }, false, ['encrypt', 'decrypt']);
+  async function encryptState(key, salt) {
+    const iv = crypto.getRandomValues(new Uint8Array(12));
+    const data = await crypto.subtle.encrypt({ name: 'AES-GCM', iv }, key, new TextEncoder().encode(JSON.stringify(state)));
+    return JSON.stringify({ app: 'orcamento', v: 1, salt, iv: b64(iv), updatedAt: state.updatedAt || Date.now(), data: b64(data) });
+  }
+  async function decryptPayload(payload, key) {
+    const plain = await crypto.subtle.decrypt({ name: 'AES-GCM', iv: unb64(payload.iv) }, key, unb64(payload.data));
+    return JSON.parse(new TextDecoder().decode(plain));
+  }
+  async function gh(path, token, opts = {}) {
+    const res = await fetch('https://api.github.com' + path, { ...opts, headers: { Authorization: 'Bearer ' + token, Accept: 'application/vnd.github+json', ...(opts.body ? { 'Content-Type': 'application/json' } : {}) } });
+    if (res.status === 401) throw new Error('Token inválido ou expirado.');
+    if (res.status === 403 || res.status === 404) throw new Error('O token não tem permissão de Gist.');
+    if (!res.ok) throw new Error('GitHub respondeu com erro ' + res.status + '.');
+    return res.json();
+  }
+  async function readGist(token, id) {
+    const g = await gh('/gists/' + id, token);
+    const f = g.files[SYNC_FILE];
+    if (!f) throw new Error('Arquivo de sincronização não encontrado.');
+    const content = f.truncated ? await (await fetch(f.raw_url)).text() : f.content;
+    return JSON.parse(content);
+  }
+  async function findGist(token) {
+    for (let page = 1; page <= 5; page++) {
+      const list = await gh(`/gists?per_page=100&page=${page}`, token);
+      const hit = list.find(g => g.files && g.files[SYNC_FILE]);
+      if (hit) return hit.id;
+      if (list.length < 100) break;
+    }
+    return null;
+  }
+
+  function applyRemote(remote, updatedAt) {
+    applyingRemote = true;
+    state = { ...blank(), ...remote, updatedAt };
+    save();
+    applyingRemote = false;
+    fillFilter(); render();
+  }
+
+  async function pushNow() {
+    if (!sync || !navigator.onLine) return;
+    syncState = { ...syncState, busy: true, error: '' };
+    try {
+      const key = await keyFromRaw(sync.key);
+      const content = await encryptState(key, sync.salt);
+      await gh('/gists/' + sync.gistId, sync.token, { method: 'PATCH', body: JSON.stringify({ files: { [SYNC_FILE]: { content } } }) });
+      sync.lastRemote = state.updatedAt; sync.lastSyncAt = Date.now(); saveSync();
+      syncState = { busy: false, error: '', at: sync.lastSyncAt };
+    } catch (e) { syncState = { ...syncState, busy: false, error: e.message }; }
+    refreshSyncUi();
+  }
+  async function pullNow(quiet = true) {
+    if (!sync || !navigator.onLine) return;
+    syncState = { ...syncState, busy: true, error: '' };
+    refreshSyncUi();
+    try {
+      const payload = await readGist(sync.token, sync.gistId);
+      const localChanged = (state.updatedAt || 0) > (sync.lastRemote || 0);
+      if (payload.updatedAt > (sync.lastRemote || 0) && (!localChanged || payload.updatedAt >= state.updatedAt)) {
+        const remote = await decryptPayload(payload, await keyFromRaw(sync.key));
+        applyRemote(remote, payload.updatedAt);
+        sync.lastRemote = payload.updatedAt;
+        if (!quiet || document.visibilityState === 'visible') toast('Dados atualizados de outro aparelho ☁️');
+      } else if (localChanged) {
+        await pushNow();
+      }
+      sync.lastSyncAt = Date.now(); saveSync();
+      syncState = { busy: false, error: '', at: sync.lastSyncAt };
+    } catch (e) {
+      syncState = { ...syncState, busy: false, error: e.name === 'OperationError' ? 'Senha de sincronização diferente da usada no outro aparelho.' : e.message };
+    }
+    refreshSyncUi();
+  }
+  let syncTimer;
+  function scheduleSync() {
+    if (!sync) return;
+    clearTimeout(syncTimer);
+    syncTimer = setTimeout(pushNow, 2500);
+  }
+  function syncStatusText() {
+    if (!sync) return 'desligado';
+    if (syncState.error) return 'erro';
+    if (syncState.busy) return 'sincronizando…';
+    if (!syncState.at) return 'ligado';
+    const min = Math.round((Date.now() - syncState.at) / 60000);
+    return min < 1 ? 'agora' : min < 60 ? `há ${min} min` : new Date(syncState.at).toLocaleString('pt-BR', { day: '2-digit', month: '2-digit', hour: '2-digit', minute: '2-digit' });
+  }
+  function refreshSyncUi() {
+    const badge = $('#syncBadge'); if (badge) badge.textContent = syncStatusText();
+    const box = $('#syncBox'); if (box) box.innerHTML = syncBoxHtml();
+  }
+  const syncBoxHtml = () => `<div class="sync-status"><span class="dot ${syncState.error ? 'err' : syncState.busy ? 'busy' : ''}"></span>
+    <div>${syncState.error ? esc(syncState.error) : syncState.busy ? 'Sincronizando…' : `Sincronizado ${syncStatusText() === 'agora' ? 'agora mesmo' : syncStatusText()}`}</div></div>`;
+
+  function openSync() {
+    if (sync) {
+      openModal(`${modalHead('Sincronizar entre aparelhos', 'Ligado. As mudanças sobem sozinhas e os outros aparelhos baixam ao abrir o app.')}
+        <div id="syncBox">${syncBoxHtml()}</div>
+        <p class="help">Dados criptografados com a sua senha num Gist secreto do GitHub. Pra usar em outro aparelho, abra o app lá e conecte com o mesmo token e a mesma senha.</p>
+        <div class="actions"><button type="button" class="btn del" id="syncOff">Desconectar</button><span class="grow"></span>
+          <button type="button" class="btn cancel" data-close>Fechar</button><button type="button" class="btn save" id="syncNow">Sincronizar agora</button></div>`, m => {
+        m.querySelector('#syncNow').onclick = () => pullNow(false);
+        m.querySelector('#syncOff').onclick = () => {
+          if (!confirm('Desconectar este aparelho? Os dados continuam aqui e na nuvem, só param de sincronizar.')) return;
+          sync = null; saveSync(); syncState = { busy: false, error: '', at: 0 }; closeModal(); toast('Sincronização desligada');
+        };
+      });
+      return;
+    }
+    openModal(`<form id="f">${modalHead('Sincronizar entre aparelhos', 'Use os mesmos dados no celular e no computador, grátis, pelo seu GitHub.')}
+      <ol class="sync-steps">
+        <li>Crie um token no GitHub só com permissão de Gist: <a href="https://github.com/settings/tokens/new?scopes=gist&description=Orcamento%20app" target="_blank" rel="noopener">abrir o GitHub ↗</a> → role até o fim → <b>Generate token</b> → copie.</li>
+        <li>Cole o token aqui e crie uma senha de sincronização. Use <b>o mesmo token e a mesma senha</b> em todos os aparelhos.</li>
+      </ol>
+      <label class="fl" for="sToken">Token do GitHub</label><input class="input" id="sToken" placeholder="ghp_…" autocomplete="off" spellcheck="false" />
+      <label class="fl" for="sPass">Senha de sincronização</label><input class="input" id="sPass" type="password" autocomplete="new-password" placeholder="Mínimo 8 caracteres" />
+      <p class="help">🔒 Os dados vão criptografados com essa senha: nem o GitHub consegue ler. Guarde bem: sem ela não dá pra recuperar os dados da nuvem.</p>
+      <div class="err" id="fErr"></div>
+      <div class="actions"><span class="grow"></span><button type="button" class="btn cancel" data-close>Cancelar</button><button type="submit" class="btn save" id="fSave">Conectar</button></div></form>`, m => {
+      m.querySelector('#f').addEventListener('submit', async e => {
+        e.preventDefault();
+        const token = m.querySelector('#sToken').value.trim(), pass = m.querySelector('#sPass').value;
+        if (!token) return showErr('Cole o token do GitHub.');
+        if (pass.length < 8) return showErr('A senha precisa ter pelo menos 8 caracteres.');
+        const btn = m.querySelector('#fSave'); btn.disabled = true; btn.textContent = 'Conectando…';
+        try {
+          const id = await findGist(token);
+          if (id) {
+            const payload = await readGist(token, id);
+            const key = await deriveKey(pass, payload.salt);
+            let remote;
+            try { remote = await decryptPayload(payload, key); } catch (_) { throw new Error('Senha diferente da usada no outro aparelho.'); }
+            const raw = b64(await crypto.subtle.exportKey('raw', key));
+            const hasLocal = state.receitas.length + state.variaveis.length + state.fixas.length + state.accounts.length + state.cards.length > 0;
+            const useCloud = !hasLocal || confirm(`Já existem dados na nuvem (salvos em ${new Date(payload.updatedAt).toLocaleString('pt-BR')}).\n\nOK = usar os dados da nuvem neste aparelho\nCancelar = enviar os dados DESTE aparelho para a nuvem (substitui os de lá)`);
+            sync = { token, gistId: id, salt: payload.salt, key: raw, lastRemote: 0 };
+            if (useCloud) { applyRemote(remote, payload.updatedAt); sync.lastRemote = payload.updatedAt; sync.lastSyncAt = Date.now(); saveSync(); }
+            else { saveSync(); await pushNow(); }
+          } else {
+            const salt = b64(crypto.getRandomValues(new Uint8Array(16)));
+            const key = await deriveKey(pass, salt);
+            state.updatedAt = state.updatedAt || Date.now();
+            const content = await encryptState(key, salt);
+            const g = await gh('/gists', token, { method: 'POST', body: JSON.stringify({ description: 'Orçamento: dados sincronizados (criptografados)', public: false, files: { [SYNC_FILE]: { content } } }) });
+            sync = { token, gistId: g.id, salt, key: b64(await crypto.subtle.exportKey('raw', key)), lastRemote: state.updatedAt, lastSyncAt: Date.now() };
+            saveSync();
+          }
+          syncState = { busy: false, error: '', at: Date.now() };
+          closeModal(); toast('Sincronização ligada ☁️');
+        } catch (err) {
+          btn.disabled = false; btn.textContent = 'Conectar';
+          showErr(err.message === 'Failed to fetch' ? 'Sem conexão com o GitHub. Verifique a internet.' : err.message);
+        }
+      });
+    });
+  }
+  // Baixa mudanças ao abrir o app e ao voltar pra ele; envia pendências ao reconectar
+  document.addEventListener('visibilitychange', () => { if (document.visibilityState === 'visible') pullNow(); });
+  window.addEventListener('online', () => pullNow());
+
   // ================= Instalar como app (PWA) =================
   let installPrompt = null;
   window.addEventListener('beforeinstallprompt', e => { e.preventDefault(); installPrompt = e; });
@@ -2860,6 +3051,7 @@ svg.i { width: 16px; height: 16px; flex: none; fill: none; stroke: currentColor;
   fillFilter();
   render();
   if (state.cdi.checked !== todayIso) fetchCdi();
+  if (sync) pullNow();
 })();
   </script>
 </body>

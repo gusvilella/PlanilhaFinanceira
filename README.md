@@ -61,7 +61,17 @@ Outros detalhes:
 
 ## Dados
 
-Tudo fica salvo no `localStorage` do navegador. Faça backup pela engrenagem de vez em quando, porque limpar os dados do navegador apaga os lançamentos. Dados da versão anterior do app são migrados automaticamente.
+Tudo fica salvo no `localStorage` do navegador. Faça backup pela engrenagem de vez em quando, porque limpar os dados do navegador apaga os lançamentos. Dados de versões anteriores do app são migrados automaticamente.
+
+## Sincronizar celular e computador
+
+Engrenagem → **Sincronizar entre aparelhos**. Usa um Gist secreto da sua conta do GitHub, de graça:
+
+1. Crie um token no GitHub só com permissão de **gist** (o app tem o link direto).
+2. Cole o token e crie uma **senha de sincronização**.
+3. Nos outros aparelhos, conecte com **o mesmo token e a mesma senha**.
+
+Os dados vão **criptografados** (AES-GCM 256, chave derivada da senha com PBKDF2): o GitHub só guarda texto embaralhado. Sem a senha não dá para recuperar o conteúdo da nuvem. Cada mudança sobe sozinha em poucos segundos e os outros aparelhos baixam ao abrir o app. Se os dois aparelhos mudarem ao mesmo tempo sem internet, vale a versão salva por último.
 
 ## Logos
 
