@@ -454,6 +454,15 @@ html.locked .lock { place-items: normal; overflow-y: auto; }
 .acc-total span { color: var(--muted); font-size: .85rem; }
 .acc-total strong { font-size: 1.3rem; font-weight: 800; }
 .acc-note { grid-column: 1 / -1; margin: 2px 0 4px 42px; font-size: .72rem; color: var(--muted); }
+.acc-note summary { cursor: pointer; list-style: none; }
+.acc-note summary::-webkit-details-marker { display: none; }
+.acc-note .acc-more { color: var(--green); font-weight: 700; margin-left: 4px; }
+.acc-note[open] .acc-more { display: none; }
+.acc-note ul { list-style: none; margin: 6px 0 2px; padding: 0; display: grid; gap: 3px; max-height: 180px; overflow-y: auto; }
+.acc-note li { display: flex; justify-content: space-between; gap: 10px; }
+.acc-note li span { min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.acc-note li b { font-weight: 600; color: var(--ink-2); font-variant-numeric: tabular-nums; flex: none; }
+.acc-note li b.in { color: var(--green); }
 .acc-empty { color: var(--muted); font-size: .85rem; padding: 6px 0 4px; }
 @media (max-width: 640px) { .acc { grid-template-columns: 30px minmax(0, 1fr) 120px 26px; gap: 6px; } .acc .logo { width: 30px; height: 30px; } .row .date .logo { width: 28px; height: 28px; } }
 
@@ -2751,7 +2760,8 @@ button:focus-visible, a:focus-visible, [role="button"]:focus-visible, [tabindex]
           <div class="money"><button type="button" class="sign" data-sign tabindex="-1" title="Tocar para marcar como negativo (cheque especial)">${a.neg ? '–R$' : 'R$'}</button>
             <input inputmode="numeric" data-money value="${centsText(a.abs)}" data-cents="${a.abs}" aria-label="Saldo" /></div>
           <button type="button" class="x" data-rm aria-label="Remover conta">${ico('x')}</button></div>
-          ${a.moves && a.moves.length ? `<p class="acc-note" title="${esc(a.moves.map(x => `${dm(x.date)} ${x.label}: ${brl.format(x.amount / 100)}`).join('\n'))}">Atualizado sozinho: ${brl.format(a.balance / 100)} informado em ${dm(a.updatedAt)} ${a.moves.reduce((s, x) => s + x.amount, 0) < 0 ? '−' : '+'} ${brl.format(Math.abs(a.moves.reduce((s, x) => s + x.amount, 0)) / 100)} em ${a.moves.length} lançamento${a.moves.length > 1 ? 's' : ''}</p>` : ''}`).join('')
+          ${a.moves && a.moves.length ? `<details class="acc-note"><summary>Atualizado sozinho: ${brl.format(a.balance / 100)} informado em ${dm(a.updatedAt)} ${a.moves.reduce((s, x) => s + x.amount, 0) < 0 ? '−' : '+'} ${brl.format(Math.abs(a.moves.reduce((s, x) => s + x.amount, 0)) / 100)} em ${a.moves.length} lançamento${a.moves.length > 1 ? 's' : ''} <span class="acc-more">ver</span></summary>
+            <ul>${a.moves.slice(-30).reverse().map(x => `<li><span>${dm(x.date)} · ${esc(x.label)}</span><b class="${x.amount < 0 ? '' : 'in'}">${x.amount < 0 ? '−' : '+'}${brl.format(Math.abs(x.amount) / 100)}</b></li>`).join('')}</ul></details>` : ''}`).join('')
           : `<p class="acc-empty">Nenhuma conta ainda. Escolha um banco abaixo.</p>`;
         list.querySelectorAll('[data-money]').forEach(inp => {
           const i = +inp.closest('.acc').dataset.i;

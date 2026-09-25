@@ -223,3 +223,6 @@ Testei com arquivos no formato de cada banco:
 
 ### 49. Rede de segurança na sincronização
 - Se este aparelho tinha mudanças que ainda não tinham subido (ex.: sem internet) e chegam dados mais novos de outro aparelho, a versão da nuvem continua valendo, mas agora o app **guarda uma cópia do que estava aqui** e avisa: "Chegaram dados mais novos de outro aparelho…" com o botão **"Manter os deste aparelho"** (fica 10 segundos na tela). Se perder o aviso, na engrenagem aparece **"Voltar aos dados de antes da última sincronização"**. Testei com os dois aparelhos simulados: nada se perde.
+
+### 50. Ver o que mudou o saldo de cada conta (celular)
+- Em **Saldo → Contas**, a linha "Atualizado sozinho: … em N lançamentos" agora abre com um toque e mostra a lista (data, o quê e quanto: salário +, aluguel −, transferências…). Antes essa lista só aparecia passando o mouse por cima, ou seja, não dava pra ver no celular.
