@@ -1272,12 +1272,13 @@ button:focus-visible, a:focus-visible, [role="button"]:focus-visible, [tabindex]
     const f = (state.faturas[c.id] || {})[faturaKeyFor(c, item.shownDate)];
     return !!(f && f.amount > 0);
   }
-  // Itens pagos no cartão que caem na fatura que vence em "key" (podem ter sido cobrados neste mês ou no anterior)
+  // Itens pagos no cartão que caem na fatura que vence em "key": cobrados neste mês, no anterior ou até dois meses antes
+  // (cartão que fecha depois do dia do vencimento, ex.: fecha 26 e vence 5: compra de 28/12 vai para a fatura de fevereiro)
   function itemsOnCard(cardId, key) { return cached('ic' + cardId + key, () => itemsOnCardRaw(cardId, key)); }
   function itemsOnCardRaw(cardId, key) {
     const card = state.cards.find(c => c.id === cardId);
     const out = [];
-    for (const k of [addMonths(key, -1), key]) out.push(
+    for (const k of [addMonths(key, -2), addMonths(key, -1), key]) out.push(
       ...fixasOf(k).map(i => ({ ...i, kind: 'Despesa fixa', label: i.desc })),
       ...assinaturasOf(k).map(i => ({ ...i, kind: 'Assinatura', label: i.name })),
       ...variaveisOf(k).map(i => ({ ...i, kind: i.installment ? `Parcela ${i.installment.i}/${i.installment.n}` : 'Despesa variável', label: (i.desc || cat(i.category)?.name || 'Despesa') + (i.installment ? ` (${i.installment.i}/${i.installment.n})` : '') })));
