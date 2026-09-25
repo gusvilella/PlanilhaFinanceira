@@ -72,6 +72,7 @@ Testei com arquivos no formato de cada banco:
 
 ### 11. App mais rápido com muitos lançamentos
 - Com 2.000 lançamentos, cada toque (trocar de aba, de mês, esconder valores) levava 60 a 85 milésimos de segundo num computador rápido; no celular isso vira meio segundo de travadinha. Agora leva 17 a 40 (cerca de **3 vezes mais rápido**).
+- Depois, com muitos lançamentos no mês (ex.: depois de importar um extrato grande), cada toque ainda levava ~125 ms porque o navegador calculava o layout da página duas vezes; reordenei o desenho da tela e caiu para ~65 ms.
 - Como: o app refazia as mesmas contas dezenas de vezes a cada tela (por exemplo, o limite do cartão olha 4 anos de parcelas e o saldo das contas refaz os meses desde a última atualização). Agora cada conta é feita uma vez por tela e reaproveitada. Conferi que **todos os números mostrados continuam idênticos** (comparei 4 meses × 8 abas antes e depois).
 
 ### 12. Despesa fixa nova não nasce "Atrasada"

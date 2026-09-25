@@ -1382,9 +1382,10 @@ button:focus-visible, a:focus-visible, [role="button"]:focus-visible, [tabindex]
     const geral = ui.tab === 'geral';
     $('#overview').hidden = !geral;
     $('#mainGrid').hidden = geral;
+    // a Evolução mede a largura do gráfico: desenhando antes da tabela, o navegador não precisa calcular o layout duas vezes
+    renderEvo();
     if (geral) renderOverview(); else { renderTable(); renderChart(); }
     renderBell();
-    renderEvo();
   }
 
   const fmtPct = p => (Math.round(p * 10) / 10).toLocaleString('pt-BR') + '%';
