@@ -488,6 +488,8 @@ html.locked .lock { place-items: normal; overflow-y: auto; }
 .row .date { color: var(--muted); font-size: .8rem; }
 .row .name { font-weight: 500; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 .row .name small { color: var(--muted); font-weight: 500; margin-left: 4px; }
+/* nome + selo do cartão/conta em até 2 linhas, sem esconder o selo com "…" */
+.row .name > span { display: -webkit-box; -webkit-box-orient: vertical; -webkit-line-clamp: 2; line-clamp: 2; overflow: hidden; white-space: normal; overflow-wrap: anywhere; }
 .row .val { text-align: right; font-weight: 600; white-space: nowrap; }
 .row.head .val { font-weight: 600; }
 .row .edit { border: 0; background: transparent; color: var(--muted); padding: 6px; border-radius: 8px; display: grid; place-items: center; }

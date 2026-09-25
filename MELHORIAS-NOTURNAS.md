@@ -105,7 +105,7 @@ Testei com arquivos no formato de cada banco:
 
 ### 20. Nomes não somem cortados nas listas do celular
 - **Antes:** no celular, cada lançamento mostrava só uma linha: se o nome fosse um pouco maior, o selo do cartão/conta ("Nubank •1234") e avisos como "não cobra este mês" eram cortados com "…" e sumiam (ex.: aparecia só "Netflix…").
-- **Agora:** o nome pode usar até 2 linhas, então o selo do cartão/conta e os avisos aparecem.
+- **Agora:** o nome pode usar até 2 linhas, então o selo do cartão/conta e os avisos aparecem. Vale também no computador, onde o mesmo corte acontecia (ex.: "Farmácia 27…" escondia o cartão usado).
 
 ### 21. Editar compra parcelada de uma vez
 - **Antes:** para renomear, trocar a categoria ou o cartão de uma compra parcelada (ex.: "Geladeira" em 6x), era preciso abrir e editar parcela por parcela.
