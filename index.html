@@ -250,7 +250,14 @@ svg.i { width: 16px; height: 16px; flex: none; fill: none; stroke: currentColor;
 .limit-sub { font-size: .72rem; color: var(--muted); margin-top: 4px; }
 .cat-edit .money { width: 150px; flex: none; padding: 0 10px; }
 .cat-edit .money input { padding: 8px 0; }
-@media (max-width: 640px) { .cat-edit { flex-wrap: wrap; } .cat-edit .input { flex: 1; min-width: 0; } .cat-edit .money { width: calc(100% - 42px); margin-left: 42px; } }
+@media (max-width: 640px) {
+  /* celular: cor · nome · excluir na primeira linha, limite embaixo (o ✕ fica junto da categoria dele) */
+  .cat-edit { flex-wrap: wrap; padding-bottom: 10px; border-bottom: 1px solid var(--line); }
+  .cat-edit:last-child { border-bottom: 0; }
+  .cat-edit .input { flex: 1; min-width: 0; }
+  .cat-edit .x { order: 1; }
+  .cat-edit .money { order: 2; width: calc(100% - 42px); margin-left: 42px; }
+}
 
 /* Evolução */
 .evo { margin-top: 22px; padding: 18px 20px 20px; position: relative; }
@@ -631,7 +638,16 @@ html.locked .lock { display: grid; }
 .imp-row .v.in { color: var(--green); }
 .imp-row select { padding: 6px 26px 6px 8px; font-size: .78rem; border-radius: 8px; background-position: right 8px center; }
 .imp-row input[type=checkbox] { width: 16px; height: 16px; accent-color: var(--green); }
-@media (max-width: 640px) { .imp-row { grid-template-columns: 22px minmax(0, 1fr) 90px; } .imp-row .d { display: none; } .imp-row select { grid-column: 2 / -1; } }
+@media (max-width: 640px) {
+  /* celular: linha 1 = marcar · descrição · valor; linha 2 = data · categoria */
+  .imp-row { grid-template-columns: 24px 44px minmax(0, 1fr) auto; row-gap: 6px; }
+  .imp-row input[type=checkbox] { grid-row: 1; grid-column: 1; width: 20px; height: 20px; }
+  .imp-row .t { grid-row: 1; grid-column: 2 / 4; }
+  .imp-row .v { grid-row: 1; grid-column: 4; }
+  .imp-row .d { grid-row: 2; grid-column: 2; }
+  .imp-row select { grid-row: 2; grid-column: 3 / -1; }
+}
+.imp-row .v { white-space: nowrap; }
 .modal-head { display: flex; justify-content: space-between; align-items: flex-start; gap: 10px; }
 .modal h3 { margin: 0; font-size: 1.05rem; font-weight: 700; }
 .modal .sub { margin: 3px 0 14px; color: var(--muted); font-size: .8rem; }
