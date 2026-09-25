@@ -257,3 +257,6 @@ Testei com arquivos no formato de cada banco:
 
 ### 58. Sininho avisa quando a sincronização parou
 - Se a sincronização estiver ligada mas falhando (token do GitHub vencido, sem permissão, senha diferente…), antes só aparecia "erro" escondido dentro da engrenagem — os aparelhos podiam ficar dias sem conversar sem você saber. Agora o sininho mostra **"Sincronização parada"** com o motivo e um botão **Tentar**. Some sozinho quando volta a funcionar.
+
+### 59. Transferência pelo lançamento rápido
+- No lançamento rápido, `transferi 200 nubank itau` (ou `transferir 50 do itaú para o nubank`) cria uma transferência entre as contas: a primeira conta citada é a de onde o dinheiro sai. A prévia mostra "Nubank → Itaú" antes de lançar, e tem Desfazer.
