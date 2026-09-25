@@ -33,7 +33,9 @@ No topo ficam os 4 números do mês:
 - **Despesas**: despesas fixas + variáveis.
 - **Saldo**: em **Contas**, informe quanto tem em cada banco (Itaú, Bradesco, Nubank, Mercado Pago…); o cartão mostra a soma de todas, e embaixo a sobra do mês (receita − investir − despesas). Toque em "R$" para marcar uma conta como negativa (cheque especial). Os bancos aparecem com logo; toque no ícone para usar uma imagem sua. Sem contas cadastradas, o cartão mostra só a sobra do mês.
 
-Os lançamentos ficam em três abas:
+**Visão geral** (primeira aba): um painel com a previsão do saldo nos próximos 30 dias (com aviso se a conta vai ficar negativa e detalhe de cada dia ao passar o mouse), o calendário do mês com o que entra e sai em cada dia, para onde vai o dinheiro (todas as despesas), a fatura da vez de cada cartão com o uso do limite, e metas e patrimônio.
+
+Os lançamentos ficam nas abas:
 
 - **Receita**: salário, freelas etc. Marque *Receita recorrente* para repetir todo mês, ou *Recebimento futuro* para só contar quando você marcar como recebido.
 - **Despesa fixa**: aluguel, internet, academia… Vale deste mês em diante, com dia de vencimento. Toque em *Pendente/Pago* para marcar o pagamento. O sino avisa as contas que vencem nos próximos dias.
