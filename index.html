@@ -873,8 +873,12 @@ svg.i { width: 16px; height: 16px; flex: none; fill: none; stroke: currentColor;
       .map(r => ({ ...r, shownDate: r.recurring ? dateIn(key, +r.date.slice(8)) : r.date }));
   }
   const variaveisOf = key => state.variaveis.filter(v => monthOf(v.date) === key).map(v => ({ ...v, shownDate: v.date }));
+  // Despesa fixa pertence ao mês "key" (conta nas despesas dele); se "vence no mês seguinte", a data de pagamento é no próximo mês
   const fixasOf = key => state.fixas.filter(f => activeIn(f, key))
-    .map(f => ({ ...f, shownDate: dateIn(key, f.day), paid: !!(state.paid[key] || []).includes(f.id) }));
+    .map(f => ({ ...f, key, shownDate: dateIn(f.dueNext ? addMonths(key, 1) : key, f.day), paid: !!(state.paid[key] || []).includes(f.id) }));
+  const daysUntil = iso => Math.round((new Date(iso + 'T12:00:00') - new Date(todayIso + 'T12:00:00')) / 864e5);
+  // Situação da despesa fixa: no cartão (já está na fatura), paga, a vencer ou atrasada
+  const fixaState = f => f.payCard && payCardOf(f) ? 'card' : f.paid ? 'paid' : daysUntil(f.shownDate) < 0 ? 'late' : 'due';
 
   const MESES = ['jan', 'fev', 'mar', 'abr', 'mai', 'jun', 'jul', 'ago', 'set', 'out', 'nov', 'dez'];
   // Assinaturas ativas no mês; as anuais só são cobradas no mês de renovação
@@ -898,7 +902,7 @@ svg.i { width: 16px; height: 16px; flex: none; fill: none; stroke: currentColor;
     const from = acc.updatedAt || todayIso, out = [];
     if (from >= todayIso) return out;
     const inRange = iso => iso > from && iso <= todayIso;
-    for (let k = monthOf(from); k <= curKey(); k = addMonths(k, 1)) {
+    for (let k = addMonths(monthOf(from), -1); k <= curKey(); k = addMonths(k, 1)) {
       receitasOf(k).filter(r => r.payAccount === acc.id && !r.pending && inRange(r.shownDate))
         .forEach(r => out.push({ date: r.shownDate, amount: r.amount, label: r.desc || 'Receita' }));
       [...variaveisOf(k).map(i => [i, i.desc || cat(i.category)?.name]), ...fixasOf(k).map(i => [i, i.desc]), ...assinaturasOf(k).map(i => [i, i.name])]
@@ -1065,10 +1069,11 @@ svg.i { width: 16px; height: 16px; flex: none; fill: none; stroke: currentColor;
 
     const body = rows.map(r => {
       let label, extra = '';
-      if (isFixa && r.payCard && payCardOf(r)) {
-        label = `<span class="tag status paid" title="Paga automaticamente no cartão">No cartão</span>`;
+      if (isFixa && fixaState(r) === 'card') {
+        label = `<span class="tag status paid" title="Paga no cartão: já está na fatura">No cartão</span>`;
       } else if (isFixa) {
-        label = `<button class="tag status ${r.paid ? 'paid' : 'pending'}" data-pay="${r.id}" title="Marcar como ${r.paid ? 'pendente' : 'pago'}">${r.paid ? 'Pago' : 'Pendente'}</button>`;
+        const st = { paid: ['paid', 'Paga'], due: ['open', 'A vencer'], late: ['late', 'Atrasada'] }[fixaState(r)];
+        label = `<button class="tag status ${st[0]}" data-pay="${r.id}" title="${r.paid ? 'Marcar como não paga' : 'Marcar como paga'}">${st[1]}</button>`;
       } else if (ui.tab === 'receita' && r.pending) {
         label = `<button class="tag status pending" data-receive="${r.id}" title="Marcar como recebido">A receber</button>`;
       } else {
@@ -1080,7 +1085,7 @@ svg.i { width: 16px; height: 16px; flex: none; fill: none; stroke: currentColor;
       const sign = ui.tab === 'receita' ? '+ ' : '- ';
       const cls = ui.tab === 'receita' ? (r.pending ? '' : 'pos') : '';
       return `<div class="row">
-        <span class="date num">${isFixa ? 'Dia ' + pad(r.day) : ddmm(r.shownDate)}</span>
+        <span class="date num">${isFixa ? (r.dueNext ? `${ddmm(r.shownDate)}<small style="display:block;font-size:.66rem">mês seguinte</small>` : 'Dia ' + pad(r.day)) : ddmm(r.shownDate)}</span>
         <div class="name"><span>${esc(r.desc || cat(r.category)?.name || '—')}${extra}</span><div class="tag-m">${label}</div></div>
         <span class="cat">${label}</span>
         ${ui.tab === 'receita' ? `<span class="val num ${cls}">${ui.hidden ? '' : sign}${money(r.amount)}</span>` : valHtml(r, view.month, (ui.hidden ? '' : sign) + money(r.amount))}
@@ -2025,9 +2030,9 @@ svg.i { width: 16px; height: 16px; flex: none; fill: none; stroke: currentColor;
 
   // Contas fixas vencendo nos próximos 3 dias (ou vencidas) no mês atual
   function dueSoon() {
-    const key = mkey(today.getFullYear(), today.getMonth());
-    return fixasOf(key).filter(f => !f.paid && Math.min(f.day, daysIn(key)) - today.getDate() <= 3)
-      .sort((a, b) => a.day - b.day);
+    return [addMonths(curKey(), -1), curKey()].flatMap(fixasOf)
+      .filter(f => ['due', 'late'].includes(fixaState(f)) && daysUntil(f.shownDate) <= 3)
+      .sort((a, b) => a.shownDate.localeCompare(b.shownDate));
   }
   // Assinaturas cobradas hoje ou nos próximos 3 dias
   function renewSoon() {
@@ -2060,9 +2065,9 @@ svg.i { width: 16px; height: 16px; flex: none; fill: none; stroke: currentColor;
     const renewHtml = renew.length ? `<h4 style="margin-top:12px">Assinaturas renovando</h4>` + renew.map(a =>
       `<div class="note">${logoHtml(a, 'sm')}<div><strong>${esc(a.name)}</strong><small>${a.diff === 0 ? 'Cobra hoje' : `Cobra em ${a.diff} dia${a.diff === 1 ? '' : 's'}`} · ${money(a.amount)}</small></div></div>`).join('') : '';
     $('#bellPop').innerHTML = `<h4>Contas a vencer</h4>` + (list.length ? list.map(f => {
-      const diff = Math.min(f.day, daysIn(key)) - today.getDate();
+      const diff = daysUntil(f.shownDate);
       const when = diff < 0 ? `Venceu há ${-diff} dia${diff === -1 ? '' : 's'}` : diff === 0 ? 'Vence hoje' : `Vence em ${diff} dia${diff === 1 ? '' : 's'}`;
-      return `<div class="note"><div><strong>${esc(f.desc)}</strong><small style="color:${diff < 0 ? 'var(--red)' : ''}">${when} · ${money(f.amount)}</small></div><button class="mini" data-bellpay="${f.id}">Paguei</button></div>`;
+      return `<div class="note"><div><strong>${esc(f.desc)}</strong><small style="color:${diff < 0 ? 'var(--red)' : ''}">${when} · ${money(f.amount)}</small></div><button class="mini" data-bellpay="${f.id}" data-key="${f.key}">Paguei</button></div>`;
     }).join('') : `<p class="empty" style="padding:6px 0">${faturasDue.length ? 'Nenhuma conta fixa pendente' : 'Tudo em dia por aqui ✓'}</p>`) + faturasHtml + limHtml + renewHtml;
   }
 
@@ -2274,18 +2279,19 @@ svg.i { width: 16px; height: 16px; flex: none; fill: none; stroke: currentColor;
       <label class="fl" for="fDesc">Descrição</label><input class="input" id="fDesc" maxlength="60" placeholder="Ex.: Aluguel, Internet…" value="${esc(f.desc)}" />
       <label class="fl" for="fDay">Vencimento (dia do mês)</label>
       <select class="select" id="fDay">${Array.from({ length: 31 }, (_, i) => `<option value="${i + 1}" ${i + 1 === f.day ? 'selected' : ''}>Todo dia ${pad(i + 1)}</option>`).join('')}</select>
+      ${checkField('fDueNext', 'Vence no mês seguinte', 'Ex.: o plano de saúde de setembro que você paga dia 5 de outubro. Conta nas despesas de setembro e vence em outubro.', f.dueNext)}
       ${payField(item ? f : null)}
       ${footer(editing)}</form>`, m => {
       bindMoney(m.querySelector('#fAmount'));
       bindPay(m);
       m.querySelector('#f').addEventListener('submit', e => {
         e.preventDefault();
-        const data = { amount: cents(m.querySelector('#fAmount')), desc: m.querySelector('#fDesc').value.trim(), day: +m.querySelector('#fDay').value, ...readPay(m) };
+        const data = { amount: cents(m.querySelector('#fAmount')), desc: m.querySelector('#fDesc').value.trim(), day: +m.querySelector('#fDay').value, dueNext: m.querySelector('#fDueNext').checked, ...readPay(m) };
         if (!data.amount) return showErr('Digite o valor.');
         if (!data.desc) return showErr('Dê um nome, ex.: Aluguel.');
         if (!editing) {
           state.fixas.push({ ...data, id: uid(), created: Date.now(), start: view.month });
-        } else if (item.start < view.month && (item.amount !== data.amount || item.day !== data.day || item.desc !== data.desc)) {
+        } else if (item.start < view.month && (item.amount !== data.amount || item.day !== data.day || item.desc !== data.desc || !!item.dueNext !== data.dueNext)) {
           // Mudou no meio do caminho: encerra a antiga no mês anterior e cria a nova a partir deste mês
           const old = state.fixas.find(x => x.id === item.id);
           const end = old.end;
@@ -2637,7 +2643,7 @@ svg.i { width: 16px; height: 16px; flex: none; fill: none; stroke: currentColor;
   document.addEventListener('click', e => { if (!e.target.closest('.pop')) document.querySelectorAll('.pop').forEach(p => { p.hidden = true; }); });
   $('#bellPop').addEventListener('click', e => {
     const b = e.target.closest('[data-bellpay]');
-    if (b) { togglePaid(b.dataset.bellpay, monthOf(todayIso)); toast('Conta marcada como paga'); }
+    if (b) { togglePaid(b.dataset.bellpay, b.dataset.key); toast('Conta marcada como paga'); }
     const bf = e.target.closest('[data-bellfat]');
     if (bf) return toggleFaturaPaid(bf.dataset.bellfat, bf.dataset.key);
     const bo = e.target.closest('[data-bellopen]');
