@@ -11,6 +11,7 @@ Trabalho feito durante a noite, sem mudar o jeito como seus dados são guardados
 4. **Importar extrato**: se tiver um CSV do C6, Itaú ou Mercado Pago, tente importar (⚙ → Importar extrato). Antes esses davam erro ou vinham com valor errado.
 5. **Nova despesa fixa com vencimento já passado** (ex.: hoje é dia 25 e ela vence dia 10): aparece a opção "Já paguei a deste mês", já marcada.
 6. **Desfazer em todo lugar**: edite um gasto, salve e toque em "Desfazer" no aviso de baixo. Funciona também ao marcar fatura como paga, excluir categoria, restaurar backup e até em "Apagar tudo".
+7. **Buscar em todos os meses**: na aba Despesa variável, toque em Filtro, digite "ifood" e marque "Buscar em todos os meses".
 
 ## O que mudou
 
@@ -85,3 +86,7 @@ Testei com arquivos no formato de cada banco:
   - exclui uma categoria;
   - restaura um backup (volta para os dados de antes);
   - usa **Apagar tudo** (por 5 segundos dá pra voltar atrás).
+
+### 16. Buscar em todos os meses
+- No **Filtro** das abas Receita e Despesa variável há a opção **"Buscar em todos os meses"**. Com ela marcada, a busca por nome (ou por categoria) mostra os lançamentos de qualquer mês, com o ano embaixo da data, e o total de tudo o que foi encontrado (ex.: "quanto gastei de iFood desde sempre?"). Mostra até os 300 mais recentes na lista; o total considera todos.
+- De quebra, corrigi um problema de layout no celular: quando o título da tabela era comprido, o cartão todo ficava mais largo que a tela e o botão "Adicionar" era cortado.
