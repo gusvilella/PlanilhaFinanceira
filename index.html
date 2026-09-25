@@ -822,6 +822,12 @@ html.locked .lock { place-items: normal; overflow-y: auto; }
   /* dvh = altura visível de verdade (no iPhone, 100vh inclui a área atrás da barra do Safari e escondia os botões) */
   .modal { border-radius: 22px 22px 0 0; max-height: 92vh; max-height: 92dvh; padding-bottom: calc(20px + env(safe-area-inset-bottom)); }
 }
+/* tablet: abas numa linha só, rolando para o lado (antes o texto quebrava: "Visão / geral") */
+@media (max-width: 980px) {
+  .tabs { display: flex; width: 100%; overflow-x: auto; scrollbar-width: none; padding: 2px; margin-left: -2px; }
+  .tabs::-webkit-scrollbar { display: none; }
+  .tabs button { flex: none; white-space: nowrap; }
+}
 /* celulares pequenos (320px): o seletor de mês cabe sem empurrar a página para o lado */
 @media (max-width: 360px) {
   .top-right { gap: 4px; }
