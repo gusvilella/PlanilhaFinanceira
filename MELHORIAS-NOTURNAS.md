@@ -2,7 +2,7 @@
 
 Trabalho feito durante a noite, sem mudar o jeito como seus dados são guardados (tudo que já existe continua funcionando).
 
-Resumo: **62 itens** — 20 e poucos bugs corrigidos (alguns graves: sincronização que apagava lançamentos do outro aparelho, receita recorrente que sumia do passado, sininho fora da tela no celular, saldo que não descontava gastos do mesmo dia, limite do cartão errado), importação de extrato de mais bancos (inclusive Excel), app ~3x mais rápido com muitos lançamentos, e várias facilidades novas (desfazer, buscar em todos os meses, duplicar, transferir entre contas, pular um mês, parcelado e transferência no lançamento rápido, importar planilha do Excel…).
+Resumo: **63 itens** — 20 e poucos bugs corrigidos (alguns graves: sincronização que apagava lançamentos do outro aparelho, receita recorrente que sumia do passado, sininho fora da tela no celular, saldo que não descontava gastos do mesmo dia, limite do cartão errado), importação de extrato de mais bancos (inclusive Excel), app ~3x mais rápido com muitos lançamentos, e várias facilidades novas (desfazer, buscar em todos os meses, duplicar, transferir entre contas, pular um mês, parcelado e transferência no lançamento rápido, importar planilha do Excel…).
 
 Como testei: cada mudança foi verificada num navegador de verdade (Chromium), no tamanho de celular (320 e 390 px), tablet e computador, nos temas claro e escuro, com dados vazios, dados normais e 2.000+ lançamentos, além de milhares de toques aleatórios sem nenhum erro. Os campos novos nos dados são todos opcionais: `received`, `transfers`, `skip`, `balanceAt`, `paidTs`.
 
@@ -271,3 +271,6 @@ Testei com arquivos no formato de cada banco:
 
 ### 62. Botão "Adicionar" que às vezes não fazia nada
 - Achado pelo teste de toques aleatórios: se você marcava "Parcelado", digitava um número fora do permitido (ex.: 60 parcelas, o máximo é 48) e depois desmarcava, o botão **Adicionar parava de funcionar sem nenhum aviso** (o navegador bloqueava o envio por causa de um campo escondido). Agora o app faz só a própria checagem, que já mostra mensagens claras ("Digite o valor", "Escolha a data"…) e limita as parcelas a 48.
+
+### 63. Sincronização envia na hora ao sair do app
+- Depois de uma mudança, o app esperava 2,5 segundos para enviar à nuvem. Se você lançava algo e fechava/trocava de app logo em seguida, o envio só acontecia na próxima vez que abrisse o app — e o outro aparelho ficava com os dados antigos até lá. Agora, ao sair do app com algo pendente, ele envia na hora.

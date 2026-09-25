@@ -4250,8 +4250,12 @@ button:focus-visible, a:focus-visible, [role="button"]:focus-visible, [tabindex]
   function scheduleSync() {
     if (!sync) return;
     clearTimeout(syncTimer);
-    syncTimer = setTimeout(pushNow, 2500);
+    syncTimer = setTimeout(() => { syncTimer = null; pushNow(); }, 2500);
   }
+  // Saindo do app (trocou de app, fechou a aba) com mudança ainda esperando para subir: envia já
+  document.addEventListener('visibilitychange', () => {
+    if (document.visibilityState === 'hidden' && syncTimer) { clearTimeout(syncTimer); syncTimer = null; pushNow(); }
+  });
   function syncStatusText() {
     if (!sync) return 'desligado';
     if (syncState.error) return 'erro';
