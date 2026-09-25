@@ -3925,7 +3925,12 @@ button:focus-visible, a:focus-visible, [role="button"]:focus-visible, [tabindex]
     let d;
     if (/\bontem\b/.test(t)) { const x = new Date(todayIso + 'T12:00:00'); x.setDate(x.getDate() - 1); out.date = isoOf(x); t = t.replace(/\bontem\b/, ' '); }
     else if (/\banteontem\b/.test(t)) { const x = new Date(todayIso + 'T12:00:00'); x.setDate(x.getDate() - 2); out.date = isoOf(x); t = t.replace(/\banteontem\b/, ' '); }
-    else if ((d = t.match(/\b(\d{1,2})\/(\d{1,2})(?:\/(\d{2,4}))?\b/))) { out.date = parseDate(d[0].length <= 5 ? `${d[0]}/${todayIso.slice(0, 4)}` : d[0]) || todayIso; t = t.replace(d[0], ' '); }
+    else if ((d = t.match(/\b(\d{1,2})\/(\d{1,2})(?:\/(\d{2,4}))?\b/))) {
+      out.date = parseDate(d[3] ? d[0] : `${d[0]}/${todayIso.slice(0, 4)}`) || todayIso;
+      // sem ano: "28/12" digitado em janeiro é o dezembro que passou, não o do fim do ano
+      if (!d[3] && daysUntil(out.date) > 60) out.date = `${+out.date.slice(0, 4) - 1}${out.date.slice(4)}`;
+      t = t.replace(d[0], ' ');
+    }
     t = t.replace(/\bhoje\b/, ' ');
     // valor: "45,90", "23", "6,5", "1.500", "1.234,56", "12.5"
     const m = t.match(/(?:r\$\s*)?(\d{1,3}(?:\.\d{3})+(?:,\d{1,2})?|\d+(?:[.,]\d{1,2})?)/);
@@ -3992,7 +3997,7 @@ button:focus-visible, a:focus-visible, [role="button"]:focus-visible, [tabindex]
           <div class="l"><span>Descrição</span><b>${esc(q.desc || '—')}</b></div>
           <div class="l"><span>Categoria</span><b>${esc(cat(q.category)?.name || 'Sem categoria')}</b></div>
           <div class="l"><span>${q.kind === 'receita' ? 'Recebido em' : 'Pago com'}</span><b>${payLabel(q)}</b></div>
-          <div class="l"><span>Data</span><b>${q.date === todayIso ? 'Hoje' : new Date(q.date + 'T12:00:00').toLocaleDateString('pt-BR', { day: '2-digit', month: 'short' })}</b></div>`;
+          <div class="l"><span>Data</span><b>${q.date === todayIso ? 'Hoje' : new Date(q.date + 'T12:00:00').toLocaleDateString('pt-BR', { day: '2-digit', month: 'short', ...(q.date.slice(0, 4) !== todayIso.slice(0, 4) ? { year: 'numeric' } : {}) })}</b></div>`;
       };
       input.addEventListener('input', preview);
       input.addEventListener('keydown', e => { if (e.key === 'Enter' && q && q.amount > 0) { e.preventDefault(); saveQuick(q); } });

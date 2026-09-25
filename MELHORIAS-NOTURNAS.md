@@ -98,3 +98,7 @@ Testei com arquivos no formato de cada banco:
 ### 18. Arrastar para os lados troca o mês (celular)
 - No celular, arrastar o dedo para a **esquerda** vai para o próximo mês e para a **direita** volta um mês, com uma animaçãozinha. Não atrapalha a rolagem da página (só vale um arrasto bem horizontal) nem a barra de abas, os gráficos e os campos de texto.
 - Também impedi que o navegador entenda um arrasto lateral como "voltar página" (no app instalado isso podia fechar a tela sem querer).
+
+### 19. Lançamento rápido na virada do ano
+- **Antes:** em janeiro, escrever `presente 150 28/12` no lançamento rápido registrava o gasto em **dezembro do ano seguinte** (no futuro), porque a data sem ano sempre usava o ano atual.
+- **Agora:** uma data sem ano que cairia mais de 2 meses no futuro é entendida como do ano passado. E a prévia mostra o ano quando ele não é o atual ("28 de dez. de 2026"), pra você conferir antes de lançar.
