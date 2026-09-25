@@ -1028,6 +1028,8 @@ button:focus-visible, a:focus-visible, [role="button"]:focus-visible, [tabindex]
   let todayIso = isoOf(today);
   const mkey = (y, m) => `${y}-${pad(m + 1)}`;               // m: 0-11
   const monthOf = iso => iso.slice(0, 7);
+  // meses pulados (skip) que continuam valendo para a parte nova quando um recorrente é dividido num mês
+  const skipFrom = (old, key) => { const k = (old.skip || []).filter(x => x >= key); return k.length ? { skip: k } : {}; };
   const addMonths = (key, n) => { const [y, m] = key.split('-').map(Number); const d = new Date(y, m - 1 + n, 1); return mkey(d.getFullYear(), d.getMonth()); };
   const daysIn = key => { const [y, m] = key.split('-').map(Number); return new Date(y, m, 0).getDate(); };
   const dateIn = (key, day) => `${key}-${pad(Math.min(day, daysIn(key)))}`;
@@ -2254,7 +2256,7 @@ button:focus-visible, a:focus-visible, [role="button"]:focus-visible, [tabindex]
             // Reajuste: o valor antigo fica no histórico e o novo vale deste mês em diante
             const end = old.end;
             Object.assign(old, { name: data.name, icon: data.icon, brand: data.brand }, { end: addMonths(view.month, -1) });
-            state.assinaturas.push({ ...data, id: uid(), created: old.created, start: view.month, end });
+            state.assinaturas.push({ ...data, id: uid(), created: old.created, start: view.month, end, ...skipFrom(old, view.month) });
           } else Object.assign(old, data);
         }
         undoToast(editing ? 'Assinatura atualizada' : 'Assinatura adicionada', undoSnap);
@@ -3256,7 +3258,7 @@ button:focus-visible, a:focus-visible, [role="button"]:focus-visible, [tabindex]
           const old = state.fixas.find(x => x.id === item.id);
           const end = old.end;
           old.end = addMonths(view.month, -1);
-          const nf = { ...data, id: uid(), created: old.created, start: view.month, end };
+          const nf = { ...data, id: uid(), created: old.created, start: view.month, end, ...skipFrom(old, view.month) };
           state.fixas.push(nf);
           if ((state.paid[view.month] || []).includes(old.id)) state.paid[view.month].push(nf.id);
         } else {
@@ -3344,7 +3346,7 @@ button:focus-visible, a:focus-visible, [role="button"]:focus-visible, [tabindex]
       if (changed) {
         const end = old.end;
         old.end = addMonths(view.month, -1);
-        list.push({ ...data, id: uid(), created: old.created, date: dateIn(view.month, +data.date.slice(8)), end });
+        list.push({ ...data, id: uid(), created: old.created, date: dateIn(view.month, +data.date.slice(8)), end, ...skipFrom(old, view.month) });
         return;
       }
       return;
