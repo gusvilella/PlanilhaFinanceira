@@ -283,3 +283,4 @@ Testei com arquivos no formato de cada banco:
 ### 65. Importar o extrato da conta já marca a fatura como paga
 - Quando o extrato da conta tem o pagamento da fatura do cartão ("Pagamento de fatura") e existe uma fatura lançada e ainda não paga **com o mesmo valor**, a prévia avisa "pagamento da fatura Nubank de setembro: vai ser marcada como paga". Ao importar, a fatura fica paga na data do pagamento e sai do saldo daquela conta. Tem Desfazer.
 - Do mesmo jeito, uma **despesa fixa** reconhecida no extrato (ex.: o Pix do aluguel) é marcada como **Paga** naquele mês — some o "Atrasada" e o aviso do sininho.
+- E uma **receita "a receber"** (ex.: um freela de R$ 1.200 esperado para o dia 20) que aparece no extrato com o mesmo valor, até 7 dias de diferença, é marcada como **recebida**, sem lançar de novo.
