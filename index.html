@@ -166,8 +166,10 @@ svg.i { width: 16px; height: 16px; flex: none; fill: none; stroke: currentColor;
 .svc.on { border-color: var(--green); background: var(--green-soft); }
 .svc span { max-width: 100%; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; padding: 0 2px; }
 .svc-search { margin-bottom: 8px; }
-.two { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
-.seg2 button.on[data-cy] { background: var(--card); color: var(--ink); box-shadow: var(--shadow); }
+.two { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 10px; }
+.two > div, .three > div { min-width: 0; }
+.input[type=month], .input[type=date] { min-width: 0; }
+.seg2 button.on[data-src], .seg2 button.on[data-cy] { background: var(--card); color: var(--ink); box-shadow: var(--shadow); }
 .picked { display: flex; align-items: center; gap: 12px; background: var(--field); border-radius: 14px; padding: 10px 12px; }
 .picked .input { background: var(--card); }
 .picked .grow { flex: 1; min-width: 0; }
@@ -215,6 +217,28 @@ svg.i { width: 16px; height: 16px; flex: none; fill: none; stroke: currentColor;
 .inside .it .logo { width: 20px; height: 20px; border-radius: 6px; font-size: .55rem; }
 .inside .sum { display: flex; justify-content: space-between; border-top: 1px solid var(--field-line); margin-top: 6px; padding-top: 8px; font-weight: 700; }
 .inside .warn { color: var(--amber); font-weight: 600; margin-top: 6px; }
+
+/* Metas e medidores */
+.meter { height: 8px; border-radius: 99px; background: var(--field); overflow: hidden; margin-top: 7px; }
+.meter i { display: block; height: 100%; border-radius: 99px; background: var(--green); transition: width .5s cubic-bezier(.2, .8, .2, 1); }
+.meter.warn i { background: var(--amber); }
+.meter.over i { background: var(--red); }
+.meter.info i { background: var(--blue); }
+.goal-emoji { width: 32px; height: 32px; border-radius: 9px; display: grid; place-items: center; background: var(--field); font-size: 1.05rem; }
+.goal-meta { display: flex; justify-content: space-between; gap: 8px; margin-top: 4px; font-size: .74rem; color: var(--muted); font-weight: 500; white-space: normal; }
+.goal-meta b { color: var(--ink-2); font-weight: 700; }
+.row.goal { grid-template-columns: 60px minmax(0, 1fr) 150px 34px; }
+.row.goal .name { white-space: normal; }
+.emoji-pick { display: flex; flex-wrap: wrap; gap: 6px; }
+.emoji-pick button { width: 40px; height: 40px; border-radius: 11px; border: 1.5px solid var(--field-line); background: var(--field); font-size: 1.15rem; }
+.emoji-pick button.on { border-color: var(--green); background: var(--green-soft); }
+.stat-hero { text-align: center; padding: 8px 0 4px; }
+.stat-hero small { display: block; font-size: .78rem; color: var(--muted); }
+.stat-hero strong { display: block; font-size: 2rem; font-weight: 800; letter-spacing: -.02em; margin: 2px 0; }
+.stat-rows { display: grid; gap: 8px; margin-top: 14px; font-size: .84rem; }
+.stat-rows div { display: flex; justify-content: space-between; gap: 10px; }
+.stat-rows span { color: var(--muted); }
+@media (max-width: 640px) { .row.goal { grid-template-columns: 44px minmax(0, 1fr) 28px; } .row.goal .val { grid-column: 2; text-align: left; } }
 
 /* Contas */
 .acc { display: grid; grid-template-columns: 34px minmax(0, 1fr) 150px 30px; gap: 8px; align-items: center; margin-top: 8px; }
@@ -583,6 +607,7 @@ svg.i { width: 16px; height: 16px; flex: none; fill: none; stroke: currentColor;
       <button role="tab" data-tab="assin">Assinaturas</button>
       <button role="tab" data-tab="cartoes">Cartões</button>
       <button role="tab" data-tab="invest">Investimentos</button>
+      <button role="tab" data-tab="metas">Metas</button>
     </nav>
 
     <section class="grid">
@@ -714,7 +739,7 @@ svg.i { width: 16px; height: 16px; flex: none; fill: none; stroke: currentColor;
   const UI_KEY = 'orcamento:ui';
 
   function blank() {
-    return { categories: DEFAULT_CATEGORIES.map(c => ({ ...c })), receitas: [], variaveis: [], fixas: [], invest: {}, paid: {}, investments: [], accounts: [], assinaturas: [], cards: [], faturas: {}, cdi: { rate: 14.9, date: '', source: 'padrao' } };
+    return { categories: DEFAULT_CATEGORIES.map(c => ({ ...c })), receitas: [], variaveis: [], fixas: [], invest: {}, paid: {}, investments: [], accounts: [], assinaturas: [], cards: [], faturas: {}, metas: [], cdi: { rate: 14.9, date: '', source: 'padrao' } };
   }
 
   function load() {
@@ -909,7 +934,7 @@ svg.i { width: 16px; height: 16px; flex: none; fill: none; stroke: currentColor;
 
     $('#eyeBtn').innerHTML = ico(ui.hidden ? 'eye-off' : 'eye');
     document.querySelectorAll('#tabs button').forEach(b => b.classList.toggle('active', b.dataset.tab === ui.tab));
-    $('#manageBtn').hidden = ['fixa', 'assin', 'cartoes'].includes(ui.tab);
+    $('#manageBtn').hidden = ['fixa', 'assin', 'cartoes', 'metas'].includes(ui.tab);
     $('#manageBtn').innerHTML = ui.tab === 'invest'
       ? `${ico('invest')}CDI ${fmtRate(state.cdi.rate)} ao ano${state.cdi.date ? ` · ${state.cdi.date}` : ''} ${ico('pencil', 'width:12px;height:12px')}`
       : `${ico('tag')}Gerenciar categorias`;
@@ -940,6 +965,7 @@ svg.i { width: 16px; height: 16px; flex: none; fill: none; stroke: currentColor;
     if (ui.tab === 'invest') return renderInvestTable();
     if (ui.tab === 'assin') return renderAssinTable();
     if (ui.tab === 'cartoes') return renderCardsTable();
+    if (ui.tab === 'metas') return renderMetasTable();
     const titles = { receita: 'Receita', fixa: 'Despesas fixas', variavel: 'Despesas variáveis' };
     $('#tableTitle').textContent = titles[ui.tab];
     const rows = rowsForTab();
@@ -994,6 +1020,7 @@ svg.i { width: 16px; height: 16px; flex: none; fill: none; stroke: currentColor;
     if (ui.tab === 'invest') return renderInvestChart();
     if (ui.tab === 'assin') return renderAssinChart();
     if (ui.tab === 'cartoes') return renderCardsChart();
+    if (ui.tab === 'metas') return renderMetasChart();
     let groups = [];
     const key = view.month;
     if (ui.tab === 'fixa') {
@@ -1037,6 +1064,141 @@ svg.i { width: 16px; height: 16px; flex: none; fill: none; stroke: currentColor;
         const pct = Math.round(g.value / total * 100);
         return `<li><span class="ldot" style="background:${g.color}"></span><span class="pct" style="background:${g.color}1f;color:${g.color}">${pct}%</span><span class="lname" title="${esc(g.name)}">${esc(g.name)}</span></li>`;
       }).join('')}</ul>`;
+  }
+
+  // ================= Metas =================
+  const GOAL_EMOJI = ['🎯', '🛟', '🏖️', '✈️', '🚗', '🏠', '🎓', '💍', '💻', '🎮', '👶', '🐶'];
+  const monthsBetween = (a, b) => (+b.slice(0, 4) - +a.slice(0, 4)) * 12 + (+b.slice(5) - +a.slice(5));
+  const goalSaved = g => g.investments && g.investments.length
+    ? state.investments.filter(i => g.investments.includes(i.id)).reduce((s, i) => s + estimate(i), 0)
+    : (g.saved || 0);
+  function goalInfo(g) {
+    const saved = goalSaved(g), left = Math.max(g.target - saved, 0);
+    const months = g.deadline ? monthsBetween(curKey(), g.deadline) + 1 : 0;
+    const done = saved >= g.target;
+    const late = !done && g.deadline && g.deadline < curKey();
+    return { saved, left, pct: g.target ? Math.min(saved / g.target, 1) : 0, done, late, perMonth: !done && months > 0 ? Math.ceil(left / months) : 0, months };
+  }
+  // Média das despesas dos últimos 3 meses com movimento (para a reserva de emergência)
+  function avgExpenses() {
+    const vals = [1, 2, 3].map(n => totals(addMonths(curKey(), -n)).despesas).filter(v => v > 0);
+    if (!vals.length) { const now = totals(curKey()).despesas; return now; }
+    return Math.round(vals.reduce((s, v) => s + v, 0) / vals.length);
+  }
+  const monthLabel = key => { const l = new Date(+key.slice(0, 4), +key.slice(5) - 1, 1).toLocaleDateString('pt-BR', { month: 'short', year: 'numeric' }); return l.replace('.', '').replace(' de ', '/'); };
+
+  function renderMetasTable() {
+    $('#tableTitle').textContent = 'Metas';
+    const q = view.query.trim().toLowerCase();
+    const rows = state.metas.filter(g => !q || g.name.toLowerCase().includes(q));
+    if (!rows.length) {
+      $('#table').innerHTML = `<div class="empty">${q ? 'Nada encontrado com esse filtro.' : 'Nenhuma meta ainda.<br>Viagem, carro novo, reserva de emergência…'}${q ? '' : `<br><button class="btn-soft" data-add>${ico('plus')}Criar meta</button>`}</div>`;
+      return;
+    }
+    $('#table').innerHTML = rows.map(g => {
+      const i = goalInfo(g);
+      const cls = i.done ? '' : i.late ? 'over' : 'info';
+      const status = i.done ? '✓ Meta alcançada' : i.late ? `Prazo passou (${monthLabel(g.deadline)})` : i.perMonth ? `Guardar <b>${money(i.perMonth)}</b>/mês até ${monthLabel(g.deadline)}` : 'Sem prazo';
+      return `<div class="row goal">
+        <span class="date"><span class="goal-emoji">${g.emoji || '🎯'}</span></span>
+        <div class="name"><span>${esc(g.name)}${g.investments && g.investments.length ? `<small>ligada aos investimentos</small>` : ''}</span>
+          <div class="meter ${cls}" role="progressbar" aria-valuenow="${Math.round(i.pct * 100)}" aria-valuemin="0" aria-valuemax="100" aria-label="Progresso da meta"><i style="width:${i.pct * 100}%"></i></div>
+          <div class="goal-meta"><span>${Math.round(i.pct * 100)}% · ${status}</span></div></div>
+        <span class="val num">${money(i.saved)}<small style="display:block;color:var(--muted);font-weight:500">de ${money(g.target)}</small></span>
+        <button class="edit" data-edit="${g.id}" aria-label="Editar meta">${ico('pencil', 'width:14px;height:14px')}</button>
+      </div>`;
+    }).join('');
+  }
+
+  function renderMetasChart() {
+    if (!state.metas.length) { $('#chart').innerHTML = `<div class="chart-empty">${ico('pie')}<span>O resumo das suas metas aparece aqui</span></div>`; return; }
+    const infos = state.metas.map(goalInfo);
+    const saved = infos.reduce((s, i) => s + i.saved, 0), target = state.metas.reduce((s, g) => s + g.target, 0);
+    const perMonth = infos.reduce((s, i) => s + i.perMonth, 0);
+    const t = totals(curKey());
+    $('#chart').innerHTML = `<div class="stat-hero"><small>Guardado para as metas</small><strong>${money(saved)}</strong><small>de ${money(target)} · ${target ? Math.round(saved / target * 100) : 0}%</small></div>
+      <div class="meter info" style="height:10px"><i style="width:${target ? Math.min(saved / target, 1) * 100 : 0}%"></i></div>
+      <div class="stat-rows">
+        <div><span>Pra cumprir os prazos</span><b class="num">${money(perMonth)}/mês</b></div>
+        <div><span>Você reserva pra investir</span><b class="num">${money(t.investir)}/mês</b></div>
+        <div><span>Metas concluídas</span><b>${infos.filter(i => i.done).length} de ${infos.length}</b></div>
+      </div>
+      ${perMonth > t.investir && t.receita ? `<p class="help" style="margin-top:12px">⚠️ As metas pedem ${money(perMonth - t.investir)} a mais por mês do que você reserva em "Investir". Ajuste os prazos ou o quanto investe.</p>` : ''}`;
+  }
+
+  function openMeta(item) {
+    const editing = !!item;
+    const g = item ? { ...item, investments: [...(item.investments || [])] } : { name: '', emoji: '🎯', target: 0, deadline: addMonths(curKey(), 12), saved: 0, investments: [] };
+    openModal(`<form id="f">${modalHead(editing ? 'Editar meta' : 'Nova meta', 'Um objetivo com valor e prazo. O app diz quanto guardar por mês.')}
+      <div class="emoji-pick" id="gEmoji">${GOAL_EMOJI.map(e => `<button type="button" class="${e === g.emoji ? 'on' : ''}">${e}</button>`).join('')}</div>
+      <label class="fl" for="fName">Nome</label><input class="input" id="fName" maxlength="40" placeholder="Ex.: Viagem pro Nordeste" value="${esc(g.name)}" />
+      <div class="two">
+        <div>${moneyField('fAmount', g.target, 'Quanto quer juntar')}</div>
+        <div><label class="fl" for="fDeadline">Até quando</label><input class="input" type="month" id="fDeadline" value="${g.deadline || ''}" /></div>
+      </div>
+      <button type="button" class="link" id="gReserve">🛟 Calcular reserva de emergência (6 meses de despesas)</button>
+      <p class="help" id="gReserveHelp"></p>
+      <label class="fl">De onde vem o dinheiro</label>
+      <div class="seg2" id="gSrc"><button type="button" data-src="manual">Digitar quanto já guardei</button><button type="button" data-src="inv">Somar meus investimentos</button></div>
+      <div id="gManual">${moneyField('fSaved', g.saved || 0, 'Guardado até agora')}</div>
+      <div id="gInv"></div>
+      <p class="help" id="gHelp"></p>
+      ${footer(editing)}</form>`, m => {
+      let src = g.investments.length ? 'inv' : 'manual';
+      const target = m.querySelector('#fAmount'), savedIn = m.querySelector('#fSaved');
+      const help = () => {
+        const tmp = { ...g, target: cents(target), deadline: m.querySelector('#fDeadline').value, saved: cents(savedIn), investments: src === 'inv' ? g.investments : [] };
+        const i = goalInfo(tmp);
+        m.querySelector('#gHelp').textContent = !tmp.target ? '' : i.done ? 'Meta já alcançada 🎉' : i.late ? 'O prazo já passou.' : i.perMonth ? `Faltam ${brl.format(i.left / 100)}: guarde uns ${brl.format(i.perMonth / 100)} por mês (${i.months} ${i.months === 1 ? 'mês' : 'meses'}).` : '';
+      };
+      const drawSrc = () => {
+        m.querySelectorAll('#gSrc button').forEach(b => b.classList.toggle('on', b.dataset.src === src));
+        m.querySelector('#gManual').hidden = src !== 'manual';
+        m.querySelector('#gInv').innerHTML = src !== 'inv' ? '' : state.investments.length
+          ? `<div class="bank-chips" id="gInvPick">${state.investments.map(i => `<button type="button" data-inv="${i.id}" class="${g.investments.includes(i.id) ? 'on' : ''}">${esc(i.name)} · ${brl.format(estimate(i) / 100)}</button>`).join('')}</div>`
+          : `<p class="help">Você ainda não tem investimentos cadastrados na aba Investimentos.</p>`;
+        help();
+      };
+      m.querySelector('#gEmoji').addEventListener('click', e => { const b = e.target.closest('button'); if (!b) return; g.emoji = b.textContent; m.querySelectorAll('#gEmoji button').forEach(x => x.classList.toggle('on', x === b)); });
+      m.querySelector('#gSrc').addEventListener('click', e => { const b = e.target.closest('[data-src]'); if (b) { src = b.dataset.src; drawSrc(); } });
+      m.querySelector('#gInv').addEventListener('click', e => {
+        const b = e.target.closest('[data-inv]'); if (!b) return;
+        const id = b.dataset.inv;
+        g.investments = g.investments.includes(id) ? g.investments.filter(x => x !== id) : [...g.investments, id];
+        b.classList.toggle('on'); help();
+      });
+      const setTarget = bindMoney(target, help);
+      bindMoney(savedIn, help);
+      m.querySelector('#fDeadline').addEventListener('input', help);
+      m.querySelector('#gReserve').addEventListener('click', () => {
+        const avg = avgExpenses();
+        if (!avg) { m.querySelector('#gReserveHelp').textContent = 'Lance suas despesas primeiro pra eu calcular a média.'; return; }
+        setTarget(avg * 6);
+        if (!m.querySelector('#fName').value.trim()) m.querySelector('#fName').value = 'Reserva de emergência';
+        g.emoji = '🛟'; m.querySelectorAll('#gEmoji button').forEach(x => x.classList.toggle('on', x.textContent === '🛟'));
+        m.querySelector('#gReserveHelp').textContent = `Sua média de despesas é ${brl.format(avg / 100)} por mês → 6 meses = ${brl.format(avg * 6 / 100)}.`;
+        help();
+      });
+      drawSrc();
+      m.querySelector('#f').addEventListener('submit', e => {
+        e.preventDefault();
+        const data = { name: m.querySelector('#fName').value.trim(), emoji: g.emoji, target: cents(target), deadline: m.querySelector('#fDeadline').value,
+          saved: src === 'manual' ? cents(savedIn) : 0, investments: src === 'inv' ? g.investments : [] };
+        if (!data.name) return showErr('Dê um nome pra meta.');
+        if (!data.target) return showErr('Quanto você quer juntar?');
+        if (src === 'inv' && !data.investments.length) return showErr('Escolha pelo menos um investimento.');
+        if (editing) Object.assign(state.metas.find(x => x.id === item.id), data);
+        else state.metas.push({ ...data, id: uid(), created: Date.now() });
+        toast(editing ? 'Meta atualizada' : 'Meta criada 🎯');
+        commit();
+      });
+      if (editing) m.querySelector('#fDelete').addEventListener('click', () => {
+        const snap = JSON.stringify(state.metas);
+        state.metas = state.metas.filter(x => x.id !== item.id);
+        closeModal(); commit();
+        toast('Meta excluída', 'Desfazer', () => { state.metas = JSON.parse(snap); commit(); });
+      });
+    });
   }
 
   // ================= Assinaturas =================
@@ -2157,12 +2319,12 @@ svg.i { width: 16px; height: 16px; flex: none; fill: none; stroke: currentColor;
     themeTimer = setTimeout(() => root.classList.remove('theme-anim'), 900);
   });
 
-  const openAdd = () => ({ receita: openReceita, fixa: openFixa, variavel: openVariavel, invest: openInvestment, assin: openAssinatura, cartoes: openCartao })[ui.tab]();
+  const openAdd = () => ({ receita: openReceita, fixa: openFixa, variavel: openVariavel, invest: openInvestment, assin: openAssinatura, cartoes: openCartao, metas: openMeta })[ui.tab]();
   $('#addBtn').addEventListener('click', () => openAdd());
 
   $('#table').addEventListener('click', e => {
     if (e.target.closest('[data-add]')) return openAdd();
-    if (e.target.closest('#sortBtn') && !['invest', 'assin', 'cartoes'].includes(ui.tab)) { ui.sortAsc = !ui.sortAsc; saveUi(); return renderTable(); }
+    if (e.target.closest('#sortBtn') && !['invest', 'assin', 'cartoes', 'metas'].includes(ui.tab)) { ui.sortAsc = !ui.sortAsc; saveUi(); return renderTable(); }
     const fpay = e.target.closest('[data-fpay]');
     if (fpay) return toggleFaturaPaid(fpay.dataset.fpay, fpay.dataset.key);
     const fat = e.target.closest('[data-fatura]');
@@ -2187,6 +2349,7 @@ svg.i { width: 16px; height: 16px; flex: none; fill: none; stroke: currentColor;
     else if (ui.tab === 'invest') openInvestment(state.investments.find(x => x.id === id));
     else if (ui.tab === 'assin') openAssinatura(state.assinaturas.find(x => x.id === id));
     else if (ui.tab === 'cartoes') openFatura(state.cards.find(x => x.id === id), ed.dataset.key);
+    else if (ui.tab === 'metas') openMeta(state.metas.find(x => x.id === id));
     else openVariavel(state.variaveis.find(x => x.id === id));
   });
 
@@ -2217,7 +2380,7 @@ svg.i { width: 16px; height: 16px; flex: none; fill: none; stroke: currentColor;
 
   function fillFilter() {
     const sel = $('#fCat');
-    sel.hidden = ['fixa', 'invest', 'assin', 'cartoes'].includes(ui.tab);
+    sel.hidden = ['fixa', 'invest', 'assin', 'cartoes', 'metas'].includes(ui.tab);
     const kind = ui.tab === 'receita' ? 'receita' : 'despesa';
     sel.innerHTML = `<option value="">Todas as categorias</option>` + catsOf(kind).map(c => `<option value="${c.id}">${esc(c.name)}</option>`).join('');
     sel.value = view.cat;

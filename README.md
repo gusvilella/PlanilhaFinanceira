@@ -43,6 +43,8 @@ Os lançamentos ficam em três abas:
 
 **Importar extrato** (engrenagem → *Importar extrato do banco*): aceita CSV (Nubank conta e cartão, Inter, Itaú e outros com colunas de data/descrição/valor, separados por vírgula ou ponto e vírgula) e OFX. Mostra uma prévia para conferir: você diz de qual conta ou cartão é o extrato, cada lançamento vem com categoria sugerida (por palavras como iFood, posto, farmácia e pelo que você já categorizou antes) e o que já foi lançado, pagamentos de fatura e estornos vêm desmarcados. Dá para desfazer logo depois de importar.
 
+- **Metas**: objetivos com valor e prazo (viagem, carro, reserva de emergência…). O app mostra o progresso e quanto guardar por mês para chegar lá. O guardado pode ser digitado ou vir dos seus investimentos (soma o saldo estimado deles). O botão *Calcular reserva de emergência* usa 6 meses da sua média de despesas. O resumo avisa se as metas pedem mais do que você reserva em Investir.
+
 Cada aba tem um gráfico de rosca mostrando para onde vai o dinheiro, filtro/busca e **Gerenciar categorias** (nome e cor).
 
 Outros detalhes:
