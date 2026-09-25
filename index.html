@@ -1956,7 +1956,7 @@ button:focus-visible, a:focus-visible, [role="button"]:focus-visible, [tabindex]
         <span class="date"><span class="goal-emoji">${g.emoji || '🎯'}</span></span>
         <div class="name"><span>${esc(g.name)}${g.investments && g.investments.length ? `<small>ligada aos investimentos</small>` : ''}</span>
           <div class="meter ${cls}" role="progressbar" aria-valuenow="${Math.round(i.pct * 100)}" aria-valuemin="0" aria-valuemax="100" aria-label="Progresso da meta"><i style="width:${i.pct * 100}%"></i></div>
-          <div class="goal-meta"><span>${Math.round(i.pct * 100)}% · ${status}</span></div></div>
+          <div class="goal-meta"><span>${Math.round(i.pct * 100)}% · ${status}</span>${!i.done && !(g.investments && g.investments.length) ? `<button type="button" class="link" data-goaladd="${g.id}" style="white-space:nowrap;flex:none">+ Guardar</button>` : ''}</div></div>
         <span class="val num">${money(i.saved)}<small style="display:block;color:var(--muted);font-weight:500">de ${money(g.target)}</small></span>
         <button class="edit" data-edit="${g.id}" aria-label="Editar meta">${ico('pencil', 'width:14px;height:14px')}</button>
       </div>`;
@@ -2051,6 +2051,35 @@ button:focus-visible, a:focus-visible, [role="button"]:focus-visible, [tabindex]
         state.metas = state.metas.filter(x => x.id !== item.id);
         closeModal(); commit();
         toast('Meta excluída', 'Desfazer', () => { state.metas = JSON.parse(snap); commit(); });
+      });
+    });
+  }
+
+  // Guardar um valor numa meta (manual) sem abrir a edição completa; opcionalmente tirando de uma conta
+  function openGoalAdd(g) {
+    openModal(`<form id="f">${modalHead(`${g.emoji || '🎯'} ${esc(g.name)}`, `Guardado até agora: ${brl.format((g.saved || 0) / 100)} de ${brl.format(g.target / 100)}.`)}
+      <div class="seg2" id="gaMv"><button type="button" data-mv="in" class="on">+ Guardar</button><button type="button" data-mv="out">− Retirar</button></div>
+      ${moneyField('fAmount', 0, 'Valor')}
+      ${state.accounts.length ? `<label class="fl" for="gaAcc" id="gaAccLbl">Sai da conta</label><select class="select" id="gaAcc"><option value="">Não mexer nas contas</option>${state.accounts.map(a => `<option value="${a.id}">${esc(a.name)}</option>`).join('')}</select>` : ''}
+      <p class="help" id="gaHelp"></p>
+      ${footer(false).replace('>Adicionar<', '>Salvar<')}</form>`, m => {
+      let mv = 'in';
+      const amount = m.querySelector('#fAmount');
+      const help = () => { const c = cents(amount), after = Math.max((g.saved || 0) + (mv === 'in' ? c : -c), 0);
+        m.querySelector('#gaHelp').textContent = c ? `Fica em ${brl.format(after / 100)} (${g.target ? Math.min(100, Math.round(after / g.target * 100)) : 0}% da meta).` : ''; };
+      bindMoney(amount, help);
+      m.querySelector('#gaMv').addEventListener('click', e => { const b = e.target.closest('[data-mv]'); if (!b) return; mv = b.dataset.mv;
+        m.querySelectorAll('#gaMv button').forEach(x => x.classList.toggle('on', x === b));
+        if (m.querySelector('#gaAccLbl')) m.querySelector('#gaAccLbl').textContent = mv === 'in' ? 'Sai da conta' : 'Volta para a conta'; help(); });
+      m.querySelector('#f').addEventListener('submit', e => {
+        e.preventDefault();
+        const c = cents(amount); if (!c) return showErr('Digite o valor.');
+        const undoSnap = JSON.stringify(state), meta = state.metas.find(x => x.id === g.id), acc = m.querySelector('#gaAcc')?.value;
+        meta.saved = Math.max((meta.saved || 0) + (mv === 'in' ? c : -c), 0);
+        if (acc) (state.transfers ||= []).push({ id: uid(), created: Date.now(), date: todayIso, amount: c, from: mv === 'in' ? acc : '', to: mv === 'in' ? '' : acc,
+          inv: 'meta:' + g.id, desc: `${mv === 'in' ? 'Guardado na meta' : 'Retirado da meta'} ${meta.name}` });
+        undoToast(meta.saved >= meta.target ? `Meta ${meta.name} alcançada! 🎉` : `${brl.format(c / 100)} ${mv === 'in' ? 'guardados' : 'retirados'}`, undoSnap);
+        commit();
       });
     });
   }
@@ -3549,7 +3578,7 @@ button:focus-visible, a:focus-visible, [role="button"]:focus-visible, [tabindex]
     }
     const accN = id => state.accounts.find(a => a.id === id)?.name || '';
     (state.transfers || []).slice().sort((a, b) => a.date.localeCompare(b.date))
-      .forEach(t => lines.push([monthOf(t.date), d(t.date), t.inv ? 'Investimento' : 'Transferência entre contas', t.inv ? t.desc : `${accN(t.from)} → ${accN(t.to)}`, t.inv ? accN(t.from || t.to) : t.desc || '', '', val(t.amount)]));
+      .forEach(t => lines.push([monthOf(t.date), d(t.date), t.inv ? (String(t.inv).startsWith('meta:') ? 'Meta' : 'Investimento') : 'Transferência entre contas', t.inv ? t.desc : `${accN(t.from)} → ${accN(t.to)}`, t.inv ? accN(t.from || t.to) : t.desc || '', '', val(t.amount)]));
     download(`orcamento-completo-${todayIso}.csv`, '\ufeff' + lines.map(l => l.map(cell).join(';')).join('\r\n'), 'text/csv;charset=utf-8');
     toast(`${lines.length - 1} lançamentos exportados`);
   }
@@ -3637,6 +3666,8 @@ button:focus-visible, a:focus-visible, [role="button"]:focus-visible, [tabindex]
       save(); render(); toast('Marcado como recebido', 'Desfazer', () => { const o = JSON.parse(snap); state.receitas = o.r; state.received = o.x; commit(); });
       return;
     }
+    const ga = e.target.closest('[data-goaladd]');
+    if (ga) return openGoalAdd(state.metas.find(x => x.id === ga.dataset.goaladd));
     const ed = e.target.closest('[data-edit]');
     if (!ed) return;
     const id = ed.dataset.edit;

@@ -207,3 +207,6 @@ Testei com arquivos no formato de cada banco:
 
 ### 45. Aviso de baixo (com "Desfazer") mais fácil de usar no celular
 - O aviso aparecia encostado no botão verde "+" e quebrava o texto em duas linhas; o "Desfazer" tinha só 16 pixels de altura (fácil de errar e tocar no "+"). Agora o aviso fica um pouco acima do "+", numa linha só, e o "Desfazer" tem uma área de toque bem maior.
+
+### 46. "+ Guardar" nas metas
+- Cada meta com valor digitado (não ligada a investimentos) ganhou o botão **"+ Guardar"**: informe quanto guardou (ou retirou) sem abrir a edição completa. Dá para dizer de qual conta o dinheiro saiu, e o saldo dela acompanha. Quando a meta é alcançada, o aviso comemora 🎉 (e tem Desfazer).
