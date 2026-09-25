@@ -4233,7 +4233,12 @@ button:focus-visible, a:focus-visible, [role="button"]:focus-visible, [tabindex]
         const fav = state.favorites[+f.dataset.i];
         saveQuick({ ...parseQuick(fav.text), date: todayIso });
       });
-      m.querySelector('#qaFull').onclick = () => (ui.tab === 'receita' ? openReceita : openVariavel)();
+      // leva o que já foi digitado para o formulário completo
+      m.querySelector('#qaFull').onclick = () => {
+        const p = input.value.trim() ? parseQuick(input.value) : null;
+        if (!p) return (ui.tab === 'receita' ? openReceita : openVariavel)();
+        (p.kind === 'receita' ? openReceita : openVariavel)(null, { date: p.date, amount: p.amount, desc: p.desc, category: p.category, payCard: p.payCard, payAccount: p.payAccount });
+      };
       drawFavs(); preview();
     });
   }

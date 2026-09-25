@@ -199,3 +199,6 @@ Testei com arquivos no formato de cada banco:
 ### 43. Pular só um mês de uma conta fixa, assinatura ou receita recorrente
 - Ao **excluir** algo que se repete todo mês (despesa fixa, assinatura, receita recorrente), o app agora pergunta: **"Só em setembro"** (pula só aquele mês — ex.: academia trancada em dezembro, assinatura pausada) ou **"De setembro em diante"** (como era antes). Se a coisa começou naquele mês, a segunda opção vira "Excluir de vez".
 - Os meses pulados ficam guardados num campo novo e opcional (`skip`) do próprio item. Na aba Assinaturas, o item pulado mostra "pulada este mês".
+
+### 44. "Formulário completo" do lançamento rápido não perde o que você digitou
+- No lançamento rápido, tocar em "Formulário completo" abria um formulário em branco. Agora ele já vem preenchido com o que o app entendeu (valor, descrição, categoria, data, conta ou cartão) — útil para acertar um detalhe ou marcar como parcelado.
