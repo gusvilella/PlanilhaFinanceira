@@ -11,7 +11,8 @@ Trabalho feito durante a noite, sem mudar o jeito como seus dados são guardados
 5. **Buscar em todos os meses**: aba Despesa variável → Filtro → digite "ifood" → marque "Buscar em todos os meses".
 6. **Celular**: arraste o dedo para os lados para trocar o mês; os botões pequenos ficaram mais fáceis de acertar.
 7. **Cartão que fecha depois do vencimento** (ex.: fecha 26, vence 5): confira o "disponível" do cartão; agora conta as compras feitas depois do fechamento.
-8. **Previsão de 30 dias** (Visão geral): agora desconta a prévia da fatura do cartão que ainda não foi lançada.
+8. **Sininho no celular**: toque no sininho; a lista de avisos agora aparece inteira na tela (antes abria quase toda fora da tela).
+9. **Previsão de 30 dias** (Visão geral): agora desconta a prévia da fatura do cartão que ainda não foi lançada.
 
 ## Pontos para você decidir (não mexi)
 
@@ -165,3 +166,7 @@ Testei com arquivos no formato de cada banco:
 
 ### 35. Tocar numa categoria do gráfico filtra a lista
 - Nas abas Receita e Despesa variável, tocar numa categoria da legenda do gráfico de rosca (ex.: "Carro 24%") mostra só os lançamentos dela; as outras ficam apagadinhas. Tocar de novo volta a mostrar tudo. É o mesmo filtro do botão Filtro, só que mais rápido.
+
+### 36. Sininho do celular abria fora da tela ⚠️
+- **Antes:** no celular, o sininho fica do lado esquerdo, mas a janelinha de avisos abria "para a esquerda" dele — ou seja, quase toda **fora da tela**. Só aparecia um pedacinho dos botões "Paguei"; dava para ver os avisos só no computador.
+- **Agora:** no celular ela abre para a direita, ocupa quase a largura da tela e rola se tiver muitos avisos. No computador continua igual.

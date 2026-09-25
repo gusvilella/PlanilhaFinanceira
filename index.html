@@ -816,6 +816,8 @@ html.locked .lock { place-items: normal; overflow-y: auto; }
   .row .name > span { display: -webkit-box; -webkit-box-orient: vertical; -webkit-line-clamp: 2; line-clamp: 2; overflow: hidden; white-space: normal; overflow-wrap: anywhere; }
   .head-actions .t { display: none; }
   .pop { width: min(280px, calc(100vw - 28px)); }
+  /* no celular o sininho fica à esquerda: a janelinha abre para a direita (antes saía da tela) */
+  .bell .pop { right: auto; left: 0; width: min(320px, calc(100vw - 28px)); max-height: 70vh; overflow-y: auto; }
   .overlay { place-items: end center; padding: 0; }
   /* dvh = altura visível de verdade (no iPhone, 100vh inclui a área atrás da barra do Safari e escondia os botões) */
   .modal { border-radius: 22px 22px 0 0; max-height: 92vh; max-height: 92dvh; padding-bottom: calc(20px + env(safe-area-inset-bottom)); }
