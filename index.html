@@ -4530,6 +4530,14 @@ button:focus-visible, a:focus-visible, [role="button"]:focus-visible, [tabindex]
   if (lockCfg) lockNow();
   fillFilter();
   render();
+  // Atalhos do ícone do app instalado (segurar o ícone): ?acao=rapido abre o lançamento rápido, ?aba=… abre uma aba
+  { const qs = new URLSearchParams(location.search);
+    if (qs.has('acao') || qs.has('aba')) {
+      const aba = qs.get('aba');
+      if (aba && ['geral', 'receita', 'fixa', 'variavel', 'assin', 'cartoes', 'invest', 'metas'].includes(aba)) { ui.tab = aba; saveUi(); fillFilter(); render(); }
+      if (qs.get('acao') === 'rapido') openQuick();
+      try { history.replaceState(null, '', location.pathname); } catch (_) {}
+    } }
   if (loadWarning) toast('Os dados salvos estavam ilegíveis. Guardei uma cópia deles; restaure um backup se precisar.', 'OK', () => {});
   if (state.cdi.checked !== todayIso) fetchCdi();
   if (sync) pullNow();

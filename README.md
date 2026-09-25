@@ -22,6 +22,8 @@ Para ter o app com ícone na tela inicial, abrindo em tela cheia e funcionando s
 
 Na engrenagem também tem **Instalar como app**, com essas instruções.
 
+No app instalado, segure o ícone para ver os atalhos **Lançamento rápido** e **Visão geral** (Android e computador).
+
 Os dados ficam em cada aparelho. Para usar o mesmo conteúdo no celular e no computador, veja **Sincronizar** mais abaixo.
 
 ## Como funciona

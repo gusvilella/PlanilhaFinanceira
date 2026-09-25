@@ -234,3 +234,6 @@ Testei com arquivos no formato de cada banco:
 
 ### 52. Valor em reais na legenda dos gráficos de rosca
 - As legendas dos gráficos de rosca mostravam só a porcentagem; o valor em reais só aparecia passando o mouse (impossível no celular). Agora cada item mostra o valor embaixo do nome, em letra pequena (ex.: "Comida 14% · R$ 98,65").
+
+### 53. Atalho no ícone do app instalado
+- No Android (e no computador), segurando o ícone do app instalado aparecem os atalhos **"Lançamento rápido"** (abre direto na janela de lançar) e **"Visão geral"**. No iPhone o sistema não oferece isso para apps da web. Se a senha estiver ligada, a janela aparece depois de desbloquear.
