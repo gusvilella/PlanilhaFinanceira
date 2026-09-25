@@ -1361,6 +1361,13 @@ button:focus-visible, a:focus-visible, [role="button"]:focus-visible, [tabindex]
 
     $('#eyeBtn').innerHTML = ico(ui.hidden ? 'eye-off' : 'eye');
     document.querySelectorAll('#tabs button').forEach(b => { b.classList.toggle('active', b.dataset.tab === ui.tab); b.setAttribute('aria-selected', b.dataset.tab === ui.tab); });
+    // celular: a barra de abas rola até a aba ativa (ex.: ao ir para Metas pelo link da Visão geral)
+    { const strip = $('#tabs'), act = strip.querySelector('.active');
+      if (act && strip.scrollWidth > strip.clientWidth) {
+        const sr = strip.getBoundingClientRect(), ar = act.getBoundingClientRect();
+        const dx = ar.left < sr.left ? ar.left - sr.left - 12 : ar.right > sr.right ? ar.right - sr.right + 12 : 0;
+        if (dx) strip.scrollBy({ left: dx, behavior: matchMedia('(prefers-reduced-motion: reduce)').matches ? 'auto' : 'smooth' });
+      } }
     $('#manageBtn').hidden = ['fixa', 'assin', 'cartoes', 'metas'].includes(ui.tab);
     $('#manageBtn').innerHTML = ui.tab === 'invest'
       ? `${ico('invest')}CDI ${fmtRate(state.cdi.rate)} ao ano${state.cdi.date ? ` · ${state.cdi.date}` : ''} ${ico('pencil', 'width:12px;height:12px')}`

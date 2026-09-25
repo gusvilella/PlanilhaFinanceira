@@ -137,3 +137,6 @@ Testei com arquivos no formato de cada banco:
 ### 28. Janelas no iPhone e rolagem dentro delas
 - A altura máxima das janelas usava uma medida que, no Safari do iPhone, inclui a área atrás da barra de endereço — o fim da janela (com o botão **Salvar**) podia ficar escondido atrás da barra. Agora usa a altura visível de verdade.
 - Rolar até o fim de uma janela não arrasta mais a página de trás junto.
+
+### 29. A aba ativa sempre aparece na barra de abas (celular)
+- No celular a barra de abas rola para o lado. Indo para Metas ou Cartões pelos links "Ver metas →"/"Ver todos →" da Visão geral (ou abrindo o app numa dessas abas), a aba marcada ficava **fora da tela**, e parecia que nenhuma estava selecionada. Agora a barra rola sozinha até a aba ativa.
