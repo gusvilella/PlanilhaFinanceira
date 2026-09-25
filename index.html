@@ -4114,6 +4114,8 @@ button:focus-visible, a:focus-visible, [role="button"]:focus-visible, [tabindex]
         payFat, payFixa, recv, sub: sub?.id, category: catFor(r.desc, kind === 'variavel' ? 'despesa' : 'receita') };
     }).sort((a, b) => b.date.localeCompare(a.date)); };
     let rows = build();
+    // linha reconhecida (fixa, fatura, receita a receber): desmarcada só marca como pago/recebido; marcada entra como lançamento novo
+    const reasonText = r => r.on && (r.payFixa || r.payFat || r.recv) ? 'marcada: entra como lançamento novo (desmarque para só marcar como pago/recebido)' : r.skipReason;
     openModal(`${modalHead('Importar extrato', `${esc(fileName)} · ${raw.length} lançamentos encontrados`)}
       <div class="imp-top">
         <label class="fl" style="margin:0">De onde é esse extrato?</label>
@@ -4131,7 +4133,7 @@ button:focus-visible, a:focus-visible, [role="button"]:focus-visible, [tabindex]
         m.querySelector('#impList').innerHTML = rows.map((r, i) => `<div class="imp-row ${r.on ? '' : 'off'}" data-i="${i}">
           <input type="checkbox" ${r.on ? 'checked' : ''} aria-label="Importar este lançamento" />
           <span class="d">${ddmm(r.date)}</span>
-          <span class="t" title="${esc(r.desc)}">${esc(r.desc)}${r.skipReason ? `<small>${esc(r.skipReason)}</small>` : ''}</span>
+          <span class="t" title="${esc(r.desc)}">${esc(r.desc)}${r.skipReason ? `<small>${esc(reasonText(r))}</small>` : ''}</span>
           <select class="select">${opt(r.kind === 'variavel' ? 'despesa' : 'receita')}</select>
           <span class="v ${r.kind === 'receita' ? 'in' : ''}">${r.kind === 'receita' ? '+ ' : '- '}${brl.format(r.amount / 100)}</span></div>`).join('');
         m.querySelectorAll('.imp-row select').forEach((sel, i) => { sel.value = rows[i].category; });
@@ -4153,7 +4155,7 @@ button:focus-visible, a:focus-visible, [role="button"]:focus-visible, [tabindex]
       m.querySelector('#impList').addEventListener('change', e => {
         const row = e.target.closest('.imp-row'); if (!row) return;
         const r = rows[+row.dataset.i];
-        if (e.target.type === 'checkbox') { r.on = e.target.checked; row.classList.toggle('off', !r.on); sum(); }
+        if (e.target.type === 'checkbox') { r.on = e.target.checked; row.classList.toggle('off', !r.on); const sm = row.querySelector('.t small'); if (sm) sm.textContent = reasonText(r); sum(); }
         else r.category = e.target.value;
       });
       m.querySelector('#impAll').addEventListener('click', () => { const all = rows.every(r => r.on); rows.forEach(r => { r.on = !all; }); draw(); });

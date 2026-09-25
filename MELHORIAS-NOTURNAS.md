@@ -294,7 +294,7 @@ Fiz uma revisão cuidadosa de todo o código que mudei durante a noite e achei 4
 
 ### 67. Segunda revisão: importação que marca pago/recebido (3 correções)
 Revisei com mais cuidado a parte nova da importação que marca contas como pagas/recebidas:
-- **Não conta duas vezes se você marcar a linha:** antes, se você marcasse de volta uma linha reconhecida (ex.: o Pix do aluguel), o app importava o gasto **e** marcava a despesa fixa como paga — contando duas vezes. Agora: linha desmarcada = só marca como pago/recebido; linha marcada = importa como lançamento novo, sem mexer na fixa.
+- **Não conta duas vezes se você marcar a linha:** antes, se você marcasse de volta uma linha reconhecida (ex.: o Pix do aluguel), o app importava o gasto **e** marcava a despesa fixa como paga — contando duas vezes. Agora: linha desmarcada = só marca como pago/recebido; linha marcada = importa como lançamento novo, sem mexer na fixa. O texto embaixo de cada linha muda na hora conforme você marca/desmarca, pra ficar claro o que vai acontecer.
 - **Desfazer sempre:** quando a importação só marcava coisas como pagas (sem importar nada), o aviso não tinha Desfazer. Agora tem.
 - **Fatura certa:** dois pagamentos de fatura com o mesmo valor iam para a mesma fatura, e com dois cartões com fatura de mesmo valor o app podia escolher o errado. Agora cada fatura recebe um pagamento só, o app prefere o cartão que é pago por aquela conta e, se ainda houver dúvida, não marca nada.
 - Também passei a "escapar" o texto dos avisos da prévia de importação (proteção para nomes com caracteres especiais).
