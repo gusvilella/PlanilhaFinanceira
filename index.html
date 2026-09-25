@@ -1863,6 +1863,12 @@ button:focus-visible, a:focus-visible, [role="button"]:focus-visible, [tabindex]
       const name = cat(c.id)?.name || 'Sem categoria', p = Math.round(c.diff / c.before * 100);
       out.push([c.diff > 0 ? '↑' : '↓', `<b>${esc(name)}</b> ${c.diff > 0 ? 'subiu' : 'caiu'} ${Math.abs(p)}%`, `${money(c.now)} contra ${money(c.before)} em ${shortMonth(prev)}`]);
     });
+    // Mês atual: quanto dá pra gastar por dia até o fim do mês com o que sobra (receita − investir − despesas já previstas)
+    if (k === curKey() && t.receita) {
+      const daysLeft = daysIn(k) - today.getDate() + 1;
+      out.push(t.saldo > 0 ? ['📅', `Dá para gastar <b>${money(Math.floor(t.saldo / daysLeft))}</b> por dia`, `até o fim do mês (${daysLeft} dia${daysLeft > 1 ? 's' : ''}), mantendo o que você separou pra investir`]
+        : ['⛔', `O mês já está <b>${money(-t.saldo)}</b> no vermelho`, 'Contando o que você separou pra investir']);
+    }
     const avg = avgExpenses();
     if (avg) out.push(['🧮', `Média de despesas: <b>${money(avg)}</b>/mês`, 'Últimos 3 meses com lançamentos']);
     if (t.receita) {

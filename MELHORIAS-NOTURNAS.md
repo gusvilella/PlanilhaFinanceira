@@ -191,3 +191,6 @@ Testei com arquivos no formato de cada banco:
 
 ### 41. Calendário da Visão geral no tablet
 - Em telas médias (tablet ou janela do computador estreita), cada dia do calendário virava um quadrado enorme e o calendário ocupava quase uma tela inteira. Agora os dias têm altura fixa e o calendário ficou com menos da metade da altura.
+
+### 42. "Dá para gastar R$ X por dia"
+- Na Evolução (embaixo das abas), no mês atual, aparece quanto dá para gastar **por dia** até o fim do mês: a sobra do mês (receita − o que você separou pra investir − despesas já previstas, como fixas, assinaturas e faturas) dividida pelos dias que faltam, contando hoje. Se o mês já passou do limite, avisa quanto está no vermelho.
