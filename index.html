@@ -1132,6 +1132,8 @@ button:focus-visible, a:focus-visible, [role="button"]:focus-visible, [tabindex]
       for (const [k, f] of Object.entries(fs)) { if (!isObj(f)) delete fs[k]; else f.amount = num(f.amount); }
     }
     if (s.favorites !== undefined && !Array.isArray(s.favorites)) s.favorites = [];
+    if (s.transfers !== undefined) s.transfers = (Array.isArray(s.transfers) ? s.transfers.filter(isObj) : [])
+      .map(t => ({ ...t, id: String(t.id || uid()), amount: Math.abs(num(t.amount)), date: fixIso(t.date) || todayIso }));
     if (s.subIgnore !== undefined && !Array.isArray(s.subIgnore)) s.subIgnore = [];
     for (const k of ['snapshots', 'received', 'subPrice']) if (s[k] !== undefined && !isObj(s[k])) delete s[k];
     return s;
@@ -1258,6 +1260,12 @@ button:focus-visible, a:focus-visible, [role="button"]:focus-visible, [tabindex]
     }
     for (const card of state.cards) for (const [k, f] of Object.entries(state.faturas[card.id] || {}))
       if (f.paid && f.payAccount === acc.id && f.paidAt && inRange(f.paidAt)) out.push({ date: f.paidAt, amount: -f.amount, label: `Fatura ${card.name} (${monthName(k)})` });
+    // transferências entre as suas contas: saem de uma e entram na outra (não são receita nem despesa)
+    const accName = id => state.accounts.find(a => a.id === id)?.name || 'outra conta';
+    for (const t of state.transfers || []) if (inRange(t.date)) {
+      if (t.from === acc.id) out.push({ date: t.date, amount: -t.amount, label: `Transferência para ${accName(t.to)}` });
+      if (t.to === acc.id) out.push({ date: t.date, amount: t.amount, label: `Transferência de ${accName(t.from)}` });
+    }
     return out.sort((a, b) => a.date.localeCompare(b.date));
   }
   const accBalance = acc => acc.balance + accountMoves(acc).reduce((s, m) => s + m.amount, 0);
@@ -2640,9 +2648,11 @@ button:focus-visible, a:focus-visible, [role="button"]:focus-visible, [tabindex]
       <p class="fl" style="margin-top:16px">Adicionar conta</p>
       <div class="bank-chips" id="bankChips"></div>
       <div class="acc-total"><span>Saldo total</span><strong class="num" id="accTotal"></strong></div>
+      ${state.accounts.length >= 2 ? `<button type="button" class="btn-soft" id="accTransfer" style="margin-top:10px">⇄ Transferir entre contas</button>` : ''}
       <div class="err" id="fErr"></div>
       <div class="actions"><span class="grow"></span><button type="button" class="btn cancel" data-close>Cancelar</button><button type="submit" class="btn save" id="fSave">Salvar</button></div></form>`, m => {
       const list = m.querySelector('#accList');
+      m.querySelector('#accTransfer')?.addEventListener('click', () => { if (modalDirty && !confirm('Descartar as mudanças nos saldos?')) return; openTransfer(); });
       const total = () => {
         const t = draft.reduce((s, a) => s + (a.neg ? -a.abs : a.abs), 0);
         const el = m.querySelector('#accTotal');
@@ -2708,6 +2718,41 @@ button:focus-visible, a:focus-visible, [role="button"]:focus-visible, [tabindex]
             balance: keep ? old.balance : typed, updatedAt: keep ? old.updatedAt : todayIso };
         });
         undoToast('Saldo das contas atualizado', undoSnap);
+        commit();
+      });
+    });
+  }
+
+  // Transferência entre as suas contas (ex.: Nubank → Mercado Pago). Guardada em state.transfers (campo opcional).
+  function openTransfer() {
+    const accs = state.accounts, opts = sel => accs.map(a => `<option value="${a.id}" ${a.id === sel ? 'selected' : ''}>${esc(a.name)}</option>`).join('');
+    const recent = (state.transfers || []).slice().sort((a, b) => b.date.localeCompare(a.date)).slice(0, 5);
+    const name = id => esc(accs.find(a => a.id === id)?.name || 'conta removida');
+    openModal(`<form id="f">${modalHead('Transferir entre contas', 'Move dinheiro de uma conta sua para outra. Não conta como receita nem como despesa.')}
+      <div class="two"><div><label class="fl" for="tFrom">De</label><select class="select" id="tFrom">${opts(accs[0].id)}</select></div>
+        <div><label class="fl" for="tTo">Para</label><select class="select" id="tTo">${opts(accs[1].id)}</select></div></div>
+      ${moneyField('fAmount', 0)}
+      <div class="two"><div><label class="fl" for="tDate">Data</label><input type="date" class="input" id="tDate" value="${todayIso}" /></div>
+        <div><label class="fl" for="tDesc">Descrição <span style="color:var(--muted);font-weight:500">(opcional)</span></label><input class="input" id="tDesc" maxlength="40" placeholder="Ex.: guardar na reserva" /></div></div>
+      ${recent.length ? `<p class="fl">Últimas transferências</p><div id="tList">${recent.map(t => `<div class="last-hint" style="margin-top:4px"><span>${dm(t.date)} · ${name(t.from)} → ${name(t.to)} · ${brl.format(t.amount / 100)}${t.desc ? ` · ${esc(t.desc)}` : ''}</span><button type="button" class="link" data-tdel="${t.id}" style="color:var(--red)">Excluir</button></div>`).join('')}</div>` : ''}
+      ${footer(false).replace('>Adicionar<', '>Transferir<')}</form>`, m => {
+      bindMoney(m.querySelector('#fAmount'));
+      m.querySelector('#tList')?.addEventListener('click', e => {
+        const b = e.target.closest('[data-tdel]'); if (!b) return;
+        const undoSnap = JSON.stringify(state);
+        state.transfers = state.transfers.filter(t => t.id !== b.dataset.tdel);
+        closeModal(); commit(); undoToast('Transferência excluída', undoSnap);
+      });
+      m.querySelector('#f').addEventListener('submit', e => {
+        e.preventDefault();
+        const t = { id: uid(), from: m.querySelector('#tFrom').value, to: m.querySelector('#tTo').value, amount: cents(m.querySelector('#fAmount')),
+          date: m.querySelector('#tDate').value, desc: m.querySelector('#tDesc').value.trim(), created: Date.now() };
+        if (t.from === t.to) return showErr('Escolha duas contas diferentes.');
+        if (!t.amount) return showErr('Digite o valor.');
+        if (!t.date) return showErr('Escolha a data.');
+        const undoSnap = JSON.stringify(state);
+        (state.transfers ||= []).push(t);
+        undoToast(`${brl.format(t.amount / 100)} transferidos para ${name(t.to)}`, undoSnap);
         commit();
       });
     });
@@ -3443,6 +3488,9 @@ button:focus-visible, a:focus-visible, [role="button"]:focus-visible, [tabindex]
       assinaturasOf(k).forEach(a => lines.push([k, d(a.shownDate), 'Assinatura', a.name, a.cycle === 'anual' ? 'Anual' : 'Mensal', via(a), val(-a.amount)]));
       cardsOf(k).filter(c => c.fatura).forEach(c => lines.push([k, d(c.shownDate), 'Fatura do cartão', c.name, c.fatura.paid ? 'Paga' : 'Em aberto', '', val(-c.fatura.amount)]));
     }
+    const accN = id => state.accounts.find(a => a.id === id)?.name || '';
+    (state.transfers || []).slice().sort((a, b) => a.date.localeCompare(b.date))
+      .forEach(t => lines.push([monthOf(t.date), d(t.date), 'Transferência entre contas', `${accN(t.from)} → ${accN(t.to)}`, t.desc || '', '', val(t.amount)]));
     download(`orcamento-completo-${todayIso}.csv`, '\ufeff' + lines.map(l => l.map(cell).join(';')).join('\r\n'), 'text/csv;charset=utf-8');
     toast(`${lines.length - 1} lançamentos exportados`);
   }

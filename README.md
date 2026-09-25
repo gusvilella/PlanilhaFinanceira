@@ -31,7 +31,7 @@ No topo ficam os 4 números do mês:
 - **Receita**: tudo o que entrou.
 - **Investir**: quanto da receita você separa para investir. Em **Ajustar**, escolha a porcentagem ou digite o valor.
 - **Despesas**: despesas fixas + variáveis.
-- **Saldo**: em **Contas**, informe quanto tem em cada banco (Itaú, Bradesco, Nubank, Mercado Pago…); o cartão mostra a soma de todas, e embaixo a sobra do mês (receita − investir − despesas). Toque em "R$" para marcar uma conta como negativa (cheque especial). Os bancos aparecem com logo; toque no ícone para usar uma imagem sua. Sem contas cadastradas, o cartão mostra só a sobra do mês.
+- **Saldo**: em **Contas**, informe quanto tem em cada banco (Itaú, Bradesco, Nubank, Mercado Pago…); o cartão mostra a soma de todas, e embaixo a sobra do mês (receita − investir − despesas). Toque em "R$" para marcar uma conta como negativa (cheque especial). Com duas contas ou mais, *Transferir entre contas* move dinheiro de uma para outra sem contar como receita ou despesa. Os bancos aparecem com logo; toque no ícone para usar uma imagem sua. Sem contas cadastradas, o cartão mostra só a sobra do mês.
 
 **Visão geral** (primeira aba): um painel com a previsão do saldo nos próximos 30 dias (com aviso se a conta vai ficar negativa e detalhe de cada dia ao passar o mouse), o calendário do mês com o que entra e sai em cada dia, para onde vai o dinheiro (todas as despesas), a fatura da vez de cada cartão com o uso do limite, e metas e patrimônio.
 

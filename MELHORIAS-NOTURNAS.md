@@ -174,3 +174,8 @@ Testei com arquivos no formato de cada banco:
 ### 37. Celulares pequenos (tela de 320px) sem rolagem para o lado
 - Em celulares bem estreitos (iPhone SE antigo, alguns Android de entrada), o seletor de mês ficava 2 a 6 pixels mais largo que a tela, e a página toda "escorregava" para o lado ao rolar. Agora o nome do mês encolhe um pouco e tudo cabe.
 - Nas janelas de fatura e de importar extrato, o botão **Salvar/Importar** ficava parcialmente fora da tela nesses celulares. Agora os botões do rodapé descem para uma segunda linha quando não cabem.
+
+### 38. Transferir dinheiro entre as suas contas
+- Em **Saldo → Contas**, com duas contas ou mais, aparece **"⇄ Transferir entre contas"**: escolha de qual conta sai, para qual entra, o valor e a data. O saldo das duas se ajusta sozinho e isso **não conta como receita nem como despesa** (antes, pra refletir uma transferência, só lançando uma receita e uma despesa falsas, o que bagunçava os totais do mês).
+- A mesma janela mostra as últimas transferências com opção de excluir (com Desfazer). Elas também saem no "Exportar todos os meses".
+- Guardado num campo novo e opcional (`transfers`); dados antigos não mudam.
