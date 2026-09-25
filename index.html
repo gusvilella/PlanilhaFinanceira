@@ -6,6 +6,12 @@
   <title>Orçamento — Planilha Financeira</title>
   <meta name="description" content="Planilha financeira simples para organizar o dia a dia." />
   <meta name="theme-color" content="#eef0f2" />
+  <link rel="manifest" href="manifest.webmanifest" />
+  <link rel="apple-touch-icon" href="apple-touch-icon.png" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="default" />
+  <meta name="apple-mobile-web-app-title" content="Orçamento" />
   <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns=%27http://www.w3.org/2000/svg%27 viewBox=%270 0 100 100%27%3E%3Crect width=%27100%27 height=%27100%27 rx=%2724%27 fill=%27%2316956a%27/%3E%3Ccircle cx=%2750%27 cy=%2750%27 r=%2724%27 fill=%27none%27 stroke=%27white%27 stroke-width=%2712%27 stroke-dasharray=%27110 41%27/%3E%3C/svg%3E" />
   <style>
 /* Fontes embutidas no próprio arquivo (funcionam sem internet). Licença SIL Open Font License. */
@@ -2042,6 +2048,8 @@ svg.i { width: 16px; height: 16px; flex: none; fill: none; stroke: currentColor;
     openModal(`${modalHead('Configurações', 'Seus dados ficam salvos só neste navegador.')}
       <p class="fl" style="margin-top:4px">Fonte</p>
       <div class="font-pick" id="mFonts">${FONTS.map(f => `<button type="button" data-font="${f}" style="font-family:'${f}'" class="${f === ui.font ? 'on' : ''}"><span>Aa</span>${f}</button>`).join('')}</div>
+      <p class="fl">App</p>
+      <button class="menu-item" id="mInstall">📲 Instalar como app</button>
       <p class="fl">Dados</p>
       <button class="menu-item" id="mCsv">📄 Exportar mês para planilha (CSV)</button>
       <button class="menu-item" id="mBackup">💾 Fazer backup completo</button>
@@ -2053,6 +2061,7 @@ svg.i { width: 16px; height: 16px; flex: none; fill: none; stroke: currentColor;
         applyFont(b.dataset.font, true);
         m.querySelectorAll('#mFonts button').forEach(x => x.classList.toggle('on', x === b));
       };
+      m.querySelector('#mInstall').onclick = () => installApp();
       m.querySelector('#mCsv').onclick = () => { exportCsv(); closeModal(); };
       m.querySelector('#mBackup').onclick = () => { download(`orcamento-backup-${todayIso}.json`, JSON.stringify(state, null, 2), 'application/json'); closeModal(); };
       m.querySelector('#mRestore').onclick = () => $('#importFile').click();
@@ -2236,6 +2245,35 @@ svg.i { width: 16px; height: 16px; flex: none; fill: none; stroke: currentColor;
     el.classList.add('show');
     clearTimeout(toastTimer);
     toastTimer = setTimeout(() => el.classList.remove('show'), actionLabel ? 5000 : 2200);
+  }
+
+  // ================= Instalar como app (PWA) =================
+  let installPrompt = null;
+  window.addEventListener('beforeinstallprompt', e => { e.preventDefault(); installPrompt = e; });
+  window.addEventListener('appinstalled', () => { installPrompt = null; toast('App instalado ✓'); });
+  const standalone = () => matchMedia('(display-mode: standalone)').matches || navigator.standalone;
+  async function installApp() {
+    if (standalone()) return toast('O app já está instalado neste aparelho');
+    if (installPrompt) {
+      installPrompt.prompt();
+      const { outcome } = await installPrompt.userChoice;
+      installPrompt = null;
+      if (outcome === 'accepted') closeModal();
+      return;
+    }
+    const ios = /iphone|ipad|ipod/i.test(navigator.userAgent);
+    const local = location.protocol === 'file:';
+    openModal(`${modalHead('Instalar como app', 'Fica com ícone na tela inicial, abre em tela cheia e funciona sem internet.')}
+      ${local ? `<p class="help" style="font-size:.85rem;color:var(--amber)">Você abriu o arquivo direto do computador. Pra instalar, o app precisa estar publicado num endereço (ex.: GitHub Pages). Veja o passo a passo no README.</p>` : ''}
+      <p class="fl">${ios ? 'No iPhone (Safari)' : 'No celular Android (Chrome)'}</p>
+      <p class="help" style="font-size:.85rem">${ios ? 'Toque em <b>Compartilhar</b> (o quadrado com a seta) e depois em <b>Adicionar à Tela de Início</b>.' : 'Toque nos <b>⋮</b> no canto de cima e depois em <b>Instalar app</b> ou <b>Adicionar à tela inicial</b>.'}</p>
+      <p class="fl">No computador (Chrome ou Edge)</p>
+      <p class="help" style="font-size:.85rem">Clique no ícone de instalar na barra de endereço (um monitor com uma seta) ou no menu <b>⋮ → Instalar Orçamento</b>.</p>
+      <div class="actions"><span class="grow"></span><button class="btn save" data-close>Entendi</button></div>`);
+  }
+  // O service worker só funciona quando o app está publicado (http/https), não abrindo o arquivo direto
+  if ('serviceWorker' in navigator && location.protocol.startsWith('http')) {
+    window.addEventListener('load', () => navigator.serviceWorker.register('sw.js').catch(() => {}));
   }
 
   fillFilter();

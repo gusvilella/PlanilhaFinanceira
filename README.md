@@ -6,6 +6,21 @@ Web app simples para organizar o dinheiro do mês. Sem cadastro, sem instalaçã
 
 Baixe o projeto, extraia a pasta e dê dois cliques no `index.html`. Também dá para publicar no GitHub Pages / Netlify / Vercel e usar no celular.
 
+## Instalar no celular (app)
+
+Para ter o app com ícone na tela inicial, abrindo em tela cheia e funcionando sem internet, ele precisa estar publicado num endereço. O jeito grátis é o GitHub Pages:
+
+1. No GitHub, abra o repositório → **Settings** → **Pages**.
+2. Em **Branch**, escolha a branch do app e a pasta `/ (root)` e clique em **Save**.
+3. Depois de uns minutos o endereço aparece no topo da página (algo como `https://seu-usuario.github.io/PlanilhaFinanceira/`).
+4. Abra esse endereço no celular:
+   - **Android (Chrome)**: menu **⋮** → **Instalar app**.
+   - **iPhone (Safari)**: **Compartilhar** → **Adicionar à Tela de Início**.
+
+Na engrenagem também tem **Instalar como app**, com essas instruções.
+
+Os dados ficam em cada aparelho. Para usar o mesmo conteúdo no celular e no computador, veja **Sincronizar** mais abaixo.
+
 ## Como funciona
 
 No topo ficam os 4 números do mês:
