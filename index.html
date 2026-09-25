@@ -1878,12 +1878,18 @@ button:focus-visible, a:focus-visible, [role="button"]:focus-visible, [tabindex]
       tip.style.left = (slotL - tw - 6 >= 0 ? slotL - tw - 6 : Math.min(slotR + 6, wrap.clientWidth - tw)) + 'px';
       tip.style.top = '4px';
     };
+    // toque: 1º toque mostra os valores do mês, 2º toque no mesmo mês abre ele (no mouse, clique abre direto)
+    let touchShown = null, lastType = 'mouse';
     wrap.querySelectorAll('g.m').forEach(g => {
-      g.addEventListener('pointerenter', () => show(g));
+      g.addEventListener('pointerdown', ev => { lastType = ev.pointerType; });
+      g.addEventListener('pointerenter', ev => { if (ev.pointerType !== 'touch') show(g); });
       g.addEventListener('focus', () => show(g));
-      g.addEventListener('pointerleave', () => tip.classList.remove('on'));
+      g.addEventListener('pointerleave', ev => { if (ev.pointerType !== 'touch') tip.classList.remove('on'); });
       g.addEventListener('blur', () => tip.classList.remove('on'));
-      g.addEventListener('click', () => { view.month = data[+g.dataset.i].k; render(); });
+      g.addEventListener('click', () => {
+        if (lastType === 'touch' && touchShown !== g) { touchShown = g; show(g); return; }
+        view.month = data[+g.dataset.i].k; render();
+      });
       g.addEventListener('keydown', e => { if (e.key === 'Enter') { view.month = data[+g.dataset.i].k; render(); } });
     });
   }

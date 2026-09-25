@@ -229,4 +229,5 @@ Testei com arquivos no formato de cada banco:
 
 ### 51. Gráfico "Próximos 30 dias" no toque do celular
 - **Antes:** tocar num ponto do gráfico de previsão mostrava sempre o **primeiro dia** (hoje), não o dia tocado, e a dica sumia ao tirar o dedo.
-- **Agora:** mostra o dia tocado e fica aberta até tocar fora; arrastar o dedo para os lados sobre o gráfico percorre os dias (para cima e para baixo continua rolando a página).
+- No gráfico da **Evolução**, no celular, tocar num mês pulava direto para ele sem mostrar os valores. Agora o 1º toque mostra receita, despesas e sobra daquele mês; o 2º toque no mesmo mês abre ele. No computador continua: passar o mouse mostra, clicar abre.
+- **Agora (previsão):** mostra o dia tocado e fica aberta até tocar fora; arrastar o dedo para os lados sobre o gráfico percorre os dias (para cima e para baixo continua rolando a página).
