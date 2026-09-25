@@ -400,7 +400,9 @@ svg.i { width: 16px; height: 16px; flex: none; fill: none; stroke: currentColor;
 html.locked .app, html.locked .fab, html.locked #overlay, html.locked .toast { visibility: hidden; }
 .lock { position: fixed; inset: 0; z-index: 100; background: var(--bg); display: none; place-items: center; padding: 24px; }
 html.locked .lock { display: grid; }
-.lock-box { width: 100%; max-width: 300px; text-align: center; }
+.lock-box { width: 100%; max-width: 300px; text-align: center; margin: auto; }
+/* tela baixa (celular deitado, celular pequeno): rola e o teclado fica menor, pra alcançar o 0 e o apagar */
+html.locked .lock { place-items: normal; overflow-y: auto; }
 .lock-box img { width: 64px; height: 64px; border-radius: 18px; margin-bottom: 14px; }
 .lock-box h2 { margin: 0 0 4px; font-size: 1.2rem; font-weight: 700; }
 .lock-box p { margin: 0; color: var(--muted); font-size: .85rem; min-height: 1.3em; }
@@ -416,6 +418,19 @@ html.locked .lock { display: grid; }
 .keypad button.ghost { background: transparent; box-shadow: none; font-size: 1rem; color: var(--muted); }
 .keypad button svg.i { width: 26px; height: 26px; }
 .lock-forgot { margin-top: 22px; border: 0; background: none; color: var(--muted); font-size: .8rem; text-decoration: underline; }
+@media (max-height: 620px) {
+  .pin-dots { margin: 14px 0 16px; }
+  .lock-box img { width: 44px; height: 44px; margin-bottom: 8px; }
+  .keypad { grid-template-columns: repeat(3, 58px); gap: 10px; }
+  .keypad button { width: 58px; height: 58px; font-size: 1.25rem; }
+}
+/* celular deitado: informações à esquerda, teclado à direita */
+@media (max-height: 460px) and (orientation: landscape) {
+  .lock-box { max-width: 560px; display: grid; grid-template-columns: 1fr auto; column-gap: 32px; align-items: center; align-content: center; }
+  .lock-box > * { grid-column: 1; }
+  .lock-box .keypad { grid-column: 2; grid-row: 1 / span 6; }
+  .lock-box img { justify-self: center; }
+}
 .pin-input { letter-spacing: .5em; text-align: center; font-size: 1.3rem; }
 
 /* Contas */

@@ -126,3 +126,7 @@ Testei com arquivos no formato de cada banco:
 ### 25. Atalhos de teclado (computador)
 - Novos: **`/`** abre a busca da aba e **`H`** volta para o mês atual (os antigos continuam: `N` novo, `Q` rápido, `←` `→` mês, `Esc` fecha).
 - Correção: com a senha ligada, apertar `N` ou `Q` na tela de senha abria uma janela escondida atrás dela, que aparecia depois de desbloquear. Agora os atalhos não fazem nada enquanto o app está trancado.
+
+### 26. Tela de senha cabe em qualquer tela
+- **Antes:** com o celular deitado (ou num celular pequeno), a tela de senha ficava cortada embaixo e **não rolava**: a última linha do teclado (o **0** e o apagar) e o "Esqueci a senha" ficavam inalcançáveis — quem tem 0 na senha não conseguia entrar sem virar o celular.
+- **Agora:** em telas baixas o teclado fica um pouco menor e a tela rola se precisar; com o celular deitado, as informações ficam à esquerda e o teclado à direita. Em celular em pé normal, nada mudou.
