@@ -188,3 +188,6 @@ Testei com arquivos no formato de cada banco:
 
 ### 40. Aporte e resgate de investimento mexem na conta de onde o dinheiro saiu
 - Ao editar um investimento e fazer um **aporte**, agora dá para escolher **"Sai da conta"** (ex.: Nubank); num **resgate**, **"Entra na conta"**. O saldo da conta acompanha sozinho e o movimento aparece no detalhe da conta ("Aporte em Mercado Pago"). Se deixar "Não mexer nas contas", fica como antes.
+
+### 41. Calendário da Visão geral no tablet
+- Em telas médias (tablet ou janela do computador estreita), cada dia do calendário virava um quadrado enorme e o calendário ocupava quase uma tela inteira. Agora os dias têm altura fixa e o calendário ficou com menos da metade da altura.
