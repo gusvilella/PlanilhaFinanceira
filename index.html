@@ -2418,7 +2418,7 @@ button:focus-visible, a:focus-visible, [role="button"]:focus-visible, [tabindex]
         <br><button type="button" class="btn-soft" id="fMove">${ico('right', 'width:13px;height:13px')}Mover para a fatura de ${monthName(next)}</button></div>` : ''}
       ${checkField('fPaid', 'Fatura paga', '', f ? f.paid : false)}
       <div class="err" id="fErr"></div>
-      <div class="actions">${f ? `<button type="button" class="btn del" id="fClear">Apagar fatura</button>` : ''}
+      <div class="actions">${f ? `<button type="button" class="btn del" id="fFatClear">Apagar fatura</button>` : ''}
         <button type="button" class="link" id="fEditCard" style="margin-left:${f ? '6px' : '0'}">Editar cartão</button><span class="grow"></span>
         <button type="button" class="btn cancel" data-close>Cancelar</button><button type="submit" class="btn save" id="fSave">Salvar</button></div></form>`, m => {
       const amount = m.querySelector('#fAmount');
@@ -2446,7 +2446,7 @@ button:focus-visible, a:focus-visible, [role="button"]:focus-visible, [tabindex]
         commit();
         undoToast(`Movida para a fatura de ${monthName(next)} (vence ${dm(faturaDates(card, next).due)})`, undoSnap);
       });
-      m.querySelector('#fClear')?.addEventListener('click', () => {
+      m.querySelector('#fFatClear')?.addEventListener('click', () => {
         const snap = JSON.stringify(state.faturas);
         delete state.faturas[card.id][key];
         commit();
