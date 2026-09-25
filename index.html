@@ -568,6 +568,9 @@ html.locked .lock { place-items: normal; overflow-y: auto; }
 .imp-list { max-height: 46vh; overflow-y: auto; border: 1px solid var(--line); border-radius: 12px; }
 .imp-row { display: grid; grid-template-columns: 26px 52px minmax(0, 1fr) 150px 110px; gap: 8px; align-items: center; padding: 8px 10px; border-bottom: 1px solid var(--line); font-size: .82rem; }
 .imp-row:last-child { border-bottom: 0; }
+/* extratos grandes: o navegador só desenha as linhas que estão aparecendo */
+.imp-row { content-visibility: auto; contain-intrinsic-size: auto 49px; }
+@media (max-width: 640px) { .imp-row { contain-intrinsic-size: auto 84px; } }
 .imp-row.off { opacity: .45; }
 /* ===== Resumo do mês (impressão / PDF) ===== */
 #report { display: none; }
@@ -3750,7 +3753,12 @@ button:focus-visible, a:focus-visible, [role="button"]:focus-visible, [tabindex]
     const guessCard = /fatura|cartao|card|credit/.test(nameHint) || raw.filter(r => r.amount > 0).length > raw.length * 0.7;
     let source = guessCard && state.cards.length ? 'card:' + state.cards[0].id : state.accounts.length ? 'acc:' + state.accounts[0].id : '';
     let invert = false;
-    const isDup = (r, kind) => (kind === 'receita' ? state.receitas : state.variaveis).some(x => x.date === r.date && x.amount === Math.abs(r.amount) && (norm(x.desc) === norm(r.desc) || x.imported));
+    // índices montados uma vez (antes, cada linha do extrato varria todos os lançamentos, lento com extratos grandes)
+    const dupIdx = list => { const exact = new Set(), imp = new Set(); for (const x of list) { exact.add(`${x.date}|${x.amount}|${norm(x.desc)}`); if (x.imported) imp.add(`${x.date}|${x.amount}`); } return { exact, imp }; };
+    const dups = { receita: dupIdx(state.receitas), variavel: dupIdx(state.variaveis) };
+    const isDup = (r, kind) => { const d = dups[kind], a = Math.abs(r.amount); return d.exact.has(`${r.date}|${a}|${norm(r.desc)}`) || d.imp.has(`${r.date}|${a}`); };
+    const catMemo = new Map();
+    const catFor = (desc, kind) => { const k = kind + '|' + norm(desc); if (!catMemo.has(k)) catMemo.set(k, suggestCategory(desc, kind)); return catMemo.get(k); };
     const build = () => raw.map(r => {
       const amt = invert ? -r.amount : r.amount;
       const card = source.startsWith('card:');
@@ -3758,7 +3766,7 @@ button:focus-visible, a:focus-visible, [role="button"]:focus-visible, [tabindex]
       const kind = out ? 'variavel' : 'receita';
       const sub = out ? subFor(r.desc, monthOf(r.date)) : null;
       const skipReason = card && !out ? 'pagamento ou estorno' : /pagamento.*fatura|fatura.*(cartao|card)|pgto.*fat|pag fat/.test(norm(r.desc)) ? 'pagamento de fatura' : isDup(r, kind === 'variavel' ? 'variavel' : 'receita') ? 'já lançado' : sub ? 'já está em Assinaturas' : '';
-      return { ...r, amount: Math.abs(amt), kind, on: !skipReason, skipReason, sub: sub?.id, category: suggestCategory(r.desc, kind === 'variavel' ? 'despesa' : 'receita') };
+      return { ...r, amount: Math.abs(amt), kind, on: !skipReason, skipReason, sub: sub?.id, category: catFor(r.desc, kind === 'variavel' ? 'despesa' : 'receita') };
     }).sort((a, b) => b.date.localeCompare(a.date));
     let rows = build();
     openModal(`${modalHead('Importar extrato', `${esc(fileName)} · ${raw.length} lançamentos encontrados`)}

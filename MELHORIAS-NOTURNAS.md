@@ -158,3 +158,6 @@ Testei com arquivos no formato de cada banco:
 
 ### 33. Despesa fixa mostra quanto falta pagar no mês
 - Embaixo do total da aba Despesa fixa agora aparece **"Já pago R$ X"** e **"Falta pagar R$ Y"** (ou "Tudo pago ✓"). As contas pagas no cartão contam como pagas, já que entram na fatura.
+
+### 34. Importar extrato grande ficou 2x mais rápido
+- Com um extrato de 1.500 linhas, a prévia levava ~0,7 s num computador rápido (uns 3 s no celular), e de novo a cada troca de conta. Agora ~0,35 s: a checagem de "já lançado" e a sugestão de categoria usam um índice montado uma vez só, e o navegador só desenha as linhas que estão aparecendo na tela.
