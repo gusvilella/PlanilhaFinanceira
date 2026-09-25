@@ -260,3 +260,7 @@ Testei com arquivos no formato de cada banco:
 
 ### 59. Transferência pelo lançamento rápido
 - No lançamento rápido, `transferi 200 nubank itau` (ou `transferir 50 do itaú para o nubank`) cria uma transferência entre as contas: a primeira conta citada é a de onde o dinheiro sai. A prévia mostra "Nubank → Itaú" antes de lançar, e tem Desfazer.
+
+### 60. App aberto em duas abas não perde lançamentos
+- **Antes:** com o app aberto em duas abas do navegador (acontece bastante no computador), cada aba guardava sua própria cópia; lançar algo na aba 1 e depois na aba 2 fazia a aba 2 salvar **por cima**, e o lançamento da aba 1 sumia. Reproduzi: só o da aba 2 sobrava.
+- **Agora:** quando uma aba salva, a outra atualiza na hora com os dados novos. No mesmo teste, os dois lançamentos ficam.

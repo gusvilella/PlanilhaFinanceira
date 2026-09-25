@@ -4627,6 +4627,13 @@ button:focus-visible, a:focus-visible, [role="button"]:focus-visible, [tabindex]
     render();
   }
   document.addEventListener('visibilitychange', () => { if (document.visibilityState === 'visible') refreshDay(); });
+  // App aberto em duas abas do navegador: quando a outra aba salva, esta passa a usar os dados dela
+  // (senão, ao salvar aqui, esta aba escreveria por cima do que foi lançado na outra)
+  window.addEventListener('storage', e => {
+    if (e.key !== KEY || !e.newValue) return;
+    try { state = normalize(JSON.parse(e.newValue)); } catch (_) { return; }
+    fillFilter(); render();
+  });
   setInterval(refreshDay, 60000);
 
   if (lockCfg) lockNow();
