@@ -147,3 +147,6 @@ Testei com arquivos no formato de cada banco:
 ### 31. Não perde mais o que você digitou ao tocar fora da janela
 - **Antes:** no celular, um toque sem querer na parte escura acima da janela (ou a tecla Esc no computador) fechava o formulário e **perdia tudo o que tinha sido digitado**.
 - **Agora:** se você já preencheu algo, o app pergunta "Descartar o que você preencheu?". Se a janela está intacta, fecha direto como antes. Os botões Cancelar e ✕ continuam fechando sem perguntar.
+
+### 32. Lembrete de backup no sininho
+- Os dados ficam só no navegador; se ele for limpo, tudo some. Agora, **se a sincronização estiver desligada** e passar **mais de 30 dias sem backup**, o sininho mostra "Faça um backup" com um botão que baixa o arquivo na hora. Fazer backup pela engrenagem também zera a contagem. Quem usa a sincronização não vê o lembrete. (Para você, a contagem começa hoje, então não vai aparecer de cara.)

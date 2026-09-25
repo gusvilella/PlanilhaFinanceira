@@ -2755,7 +2755,12 @@ button:focus-visible, a:focus-visible, [role="button"]:focus-visible, [tabindex]
     })();
     const limAlert = limitsOf(curKey()).filter(l => l.state !== 'ok');
     const found = detectSubs(), prices = priceChanges();
-    $('#bellDot').hidden = !list.length && !renew.length && !faturasDue.length && !limAlert.length && !found.length && !prices.length;
+    // Lembrete de backup: dados só neste navegador (sem sincronização) e mais de 30 dias sem backup
+    const hasData = state.receitas.length + state.variaveis.length + state.fixas.length > 5;
+    if (!ui.firstSeen) { ui.firstSeen = todayIso; saveUi(); }
+    const backupDays = -daysUntil(ui.lastBackup || ui.firstSeen);
+    const needBackup = !sync && hasData && backupDays > 30;
+    $('#bellDot').hidden = !list.length && !renew.length && !faturasDue.length && !limAlert.length && !found.length && !prices.length && !needBackup;
     const whenTxt = diff => diff < 0 ? `Venceu há ${-diff} dia${diff === -1 ? '' : 's'}` : diff === 0 ? 'Vence hoje' : `Vence em ${diff} dia${diff === 1 ? '' : 's'}`;
     const faturasHtml = faturasDue.length ? `<h4 style="margin-top:12px">Faturas do cartão</h4>` + faturasDue.map(c =>
       `<div class="note" data-bellopen="${c.id}" data-key="${c.fk}" style="cursor:pointer" title="Abrir fatura">${logoHtml({ brand: c.bank, name: c.name, icon: c.icon, color: c.color }, 'sm')}<div><strong>${esc(c.name)} · ${monthName(c.fk)}</strong><small style="color:${c.diff < 0 ? 'var(--red)' : ''}">${whenTxt(c.diff)} · ${money(c.fatura.amount)}</small></div><button class="mini" data-bellfat="${c.id}" data-key="${c.fk}">Paguei</button></div>`).join('') : '';
@@ -2763,7 +2768,8 @@ button:focus-visible, a:focus-visible, [role="button"]:focus-visible, [tabindex]
       `<div class="note"><span class="ldot" style="background:${l.color};width:10px;height:10px;border-radius:50%;flex:none"></span><div><strong>${esc(l.name)}</strong><small style="color:${l.state === 'over' ? 'var(--red)' : 'var(--amber)'}">${l.state === 'over' ? `⛔ Passou ${money(l.spent - l.limit)}` : `⚠️ ${Math.round(l.pct * 100)}% usado`} · ${money(l.spent)} de ${money(l.limit)}</small></div></div>`).join('') : '';
     const renewHtml = renew.length ? `<h4 style="margin-top:12px">Assinaturas renovando</h4>` + renew.map(a =>
       `<div class="note">${logoHtml(a, 'sm')}<div><strong>${esc(a.name)}</strong><small>${a.diff === 0 ? 'Cobra hoje' : `Cobra em ${a.diff} dia${a.diff === 1 ? '' : 's'}`} · ${money(a.amount)}</small></div></div>`).join('') : '';
-    $('#bellPop').innerHTML = `<h4>Contas a vencer</h4>` + (list.length ? list.map(f => {
+    $('#bellPop').innerHTML = (needBackup ? `<div class="note"><span class="det-ic">💾</span><div style="flex:1"><strong>Faça um backup</strong><small>${ui.lastBackup ? `O último foi há ${backupDays} dias.` : 'Seus dados ficam só neste navegador.'} Ou ligue a sincronização.</small></div><button class="mini" data-bellbackup>Backup</button></div>` : '')
+      + `<h4${needBackup ? ' style="margin-top:12px"' : ''}>Contas a vencer</h4>` + (list.length ? list.map(f => {
       const diff = daysUntil(f.shownDate);
       const when = diff < 0 ? `Venceu há ${-diff} dia${diff === -1 ? '' : 's'}` : diff === 0 ? 'Vence hoje' : `Vence em ${diff} dia${diff === 1 ? '' : 's'}`;
       return `<div class="note"><div><strong>${esc(f.desc)}</strong><small style="color:${diff < 0 ? 'var(--red)' : ''}">${when} · ${money(f.amount)}</small></div><button class="mini" data-bellpay="${f.id}" data-key="${f.key}">Paguei</button></div>`;
@@ -3277,7 +3283,7 @@ button:focus-visible, a:focus-visible, [role="button"]:focus-visible, [tabindex]
       m.querySelector('#mCsv').onclick = () => { exportCsv(); closeModal(); };
       m.querySelector('#mCsvAll').onclick = () => { exportCsvAll(); closeModal(); };
       m.querySelector('#mPdf').onclick = () => printReport();
-      m.querySelector('#mBackup').onclick = () => { download(`orcamento-backup-${todayIso}.json`, JSON.stringify(state, null, 2), 'application/json'); closeModal(); };
+      m.querySelector('#mBackup').onclick = () => { ui.lastBackup = todayIso; saveUi(); download(`orcamento-backup-${todayIso}.json`, JSON.stringify(state, null, 2), 'application/json'); closeModal(); };
       m.querySelector('#mRestore').onclick = () => $('#importFile').click();
       m.querySelector('#mClear').onclick = () => {
         if (!confirm('Apagar todos os lançamentos? Isso não pode ser desfeito.')) return;
@@ -3536,6 +3542,11 @@ button:focus-visible, a:focus-visible, [role="button"]:focus-visible, [tabindex]
     if (b) { togglePaid(b.dataset.bellpay, b.dataset.key); toast('Conta marcada como paga'); }
     const bf = e.target.closest('[data-bellfat]');
     if (bf) return toggleFaturaPaid(bf.dataset.bellfat, bf.dataset.key);
+    if (e.target.closest('[data-bellbackup]')) {
+      ui.lastBackup = todayIso; saveUi();
+      download(`orcamento-backup-${todayIso}.json`, JSON.stringify(state, null, 2), 'application/json');
+      togglePop($('#bellPop'), false); render(); return;
+    }
     const bo = e.target.closest('[data-bellopen]');
     if (bo) { togglePop($('#bellPop'), false); openFatura(state.cards.find(x => x.id === bo.dataset.bellopen), bo.dataset.key); }
   });
