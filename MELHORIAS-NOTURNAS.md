@@ -4,16 +4,14 @@ Trabalho feito durante a noite, sem mudar o jeito como seus dados são guardados
 
 ## Para você testar de manhã
 
-1. **Receita recorrente**: abra o Salário num mês depois do primeiro, desmarque "Receita recorrente" e salve. Os meses anteriores continuam com o salário.
-2. **App aberto na virada do dia**: se você deixa o app aberto no celular, ele agora percebe quando o dia muda (o "hoje" do calendário, as contas que vencem e a data padrão dos lançamentos acompanham).
-
-3. **Receita recorrente "a receber"**: marque como recebida em um mês e veja que os outros meses continuam "A receber". Agora tem "Desfazer" no aviso.
-4. **Importar extrato**: se tiver um CSV do C6, Itaú ou Mercado Pago, tente importar (⚙ → Importar extrato). Antes esses davam erro ou vinham com valor errado.
-5. **Nova despesa fixa com vencimento já passado** (ex.: hoje é dia 25 e ela vence dia 10): aparece a opção "Já paguei a deste mês", já marcada.
-6. **Desfazer em todo lugar**: edite um gasto, salve e toque em "Desfazer" no aviso de baixo. Funciona também ao marcar fatura como paga, excluir categoria, restaurar backup e até em "Apagar tudo".
-7. **Buscar em todos os meses**: na aba Despesa variável, toque em Filtro, digite "ifood" e marque "Buscar em todos os meses".
-8. **Arrastar para trocar o mês** (celular): arraste o dedo para a esquerda na tela (fora das abas) para ir ao próximo mês, e para a direita para voltar.
-9. **Sincronização (importante)**: se você usa em dois aparelhos, lance algo no celular e depois abra o computador (ou o contrário) num outro dia. O lançamento deve aparecer nos dois e **não sumir**.
+1. **Sincronização (o mais importante)**: se usa em dois aparelhos, lance algo num deles e abra o outro em outro dia. O lançamento aparece nos dois e **não some** mais (item 23).
+2. **Desfazer**: edite um gasto, salve e toque em "Desfazer" no aviso de baixo. Vale também para pagar fatura, excluir categoria, restaurar backup e "Apagar tudo".
+3. **Receita recorrente**: abra o Salário num mês depois do primeiro, desmarque "Receita recorrente" e salve. Os meses anteriores continuam com o salário.
+4. **Importar extrato** do C6, Itaú ou Mercado Pago (⚙ → Importar extrato). Antes davam erro ou valor errado.
+5. **Buscar em todos os meses**: aba Despesa variável → Filtro → digite "ifood" → marque "Buscar em todos os meses".
+6. **Celular**: arraste o dedo para os lados para trocar o mês; os botões pequenos ficaram mais fáceis de acertar.
+7. **Cartão que fecha depois do vencimento** (ex.: fecha 26, vence 5): confira o "disponível" do cartão; agora conta as compras feitas depois do fechamento.
+8. **Previsão de 30 dias** (Visão geral): agora desconta a prévia da fatura do cartão que ainda não foi lançada.
 
 ## O que mudou
 
