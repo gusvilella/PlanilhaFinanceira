@@ -3972,6 +3972,7 @@ button:focus-visible, a:focus-visible, [role="button"]:focus-visible, [tabindex]
   const SYNC_KEY = 'orcamento:sync', SYNC_FILE = 'orcamento-sync.json';
   let sync = null;
   try { sync = JSON.parse(localStorage.getItem(SYNC_KEY) || 'null'); } catch (_) {}
+  if (sync && (!sync.token || !sync.gistId || !sync.key)) sync = null;   // configuração incompleta: como desligada
   let syncState = { busy: false, error: '', at: sync?.lastSyncAt || 0 };
   const saveSync = () => { try { if (sync) localStorage.setItem(SYNC_KEY, JSON.stringify(sync)); else localStorage.removeItem(SYNC_KEY); } catch (_) {} };
   const b64 = buf => btoa(String.fromCharCode(...new Uint8Array(buf)));
@@ -4258,6 +4259,8 @@ button:focus-visible, a:focus-visible, [role="button"]:focus-visible, [tabindex]
   const LOCK_KEY = 'orcamento:lock';
   let lockCfg = null;
   try { lockCfg = JSON.parse(localStorage.getItem(LOCK_KEY) || 'null'); } catch (_) {}
+  // configuração de senha danificada (sem hash/sal) trancaria o app sem nenhuma senha possível: ignora
+  if (lockCfg && (typeof lockCfg.hash !== 'string' || typeof lockCfg.salt !== 'string')) { lockCfg = null; document.documentElement.classList.remove('locked'); }
   const saveLock = () => { try { lockCfg ? localStorage.setItem(LOCK_KEY, JSON.stringify(lockCfg)) : localStorage.removeItem(LOCK_KEY); } catch (_) {} };
   async function hashPin(pin, salt) {
     const base = await crypto.subtle.importKey('raw', new TextEncoder().encode(pin), 'PBKDF2', false, ['deriveBits']);
