@@ -3460,6 +3460,7 @@ button:focus-visible, a:focus-visible, [role="button"]:focus-visible, [tabindex]
       <button class="menu-item" id="mCsvAll">🗂️ Exportar todos os meses (CSV)</button>
       <button class="menu-item" id="mBackup">💾 Fazer backup completo</button>
       <button class="menu-item" id="mRestore">📂 Restaurar backup</button>
+      ${(() => { try { return localStorage.getItem(KEY + ':antes-sync'); } catch (_) { return null; } })() ? `<button class="menu-item" id="mBeforeSync">↩️ Voltar aos dados de antes da última sincronização</button>` : ''}
       <button class="menu-item danger" id="mClear">🗑️ Apagar tudo</button>
       <div class="actions"><span class="grow"></span><button class="btn cancel" data-close>Fechar</button></div>`, m => {
       m.querySelector('#mFonts').onclick = e => {
@@ -3478,6 +3479,7 @@ button:focus-visible, a:focus-visible, [role="button"]:focus-visible, [tabindex]
       m.querySelector('#mPdf').onclick = () => printReport();
       m.querySelector('#mBackup').onclick = () => { ui.lastBackup = todayIso; saveUi(); download(`orcamento-backup-${todayIso}.json`, JSON.stringify(state, null, 2), 'application/json'); closeModal(); };
       m.querySelector('#mRestore').onclick = () => $('#importFile').click();
+      m.querySelector('#mBeforeSync')?.addEventListener('click', () => { if (confirm('Trocar os dados atuais pela cópia guardada antes da última sincronização? A cópia vai para a nuvem também.')) restoreBeforeSync(); });
       m.querySelector('#mClear').onclick = () => {
         if (!confirm('Apagar todos os lançamentos? Isso não pode ser desfeito.')) return;
         const undoSnap = JSON.stringify(state); state = blank(); commit(); undoToast('Tudo apagado', undoSnap);
@@ -3799,7 +3801,7 @@ button:focus-visible, a:focus-visible, [role="button"]:focus-visible, [tabindex]
   // Aviso com "Desfazer" que volta todos os dados para como estavam antes (snap = JSON.stringify(state) tirado antes da mudança)
   function undoToast(msg, snap) { toast(msg, 'Desfazer', () => { state = normalize(JSON.parse(snap)); fillFilter(); commit(); }); }
   let toastTimer;
-  function toast(msg, actionLabel, action) {
+  function toast(msg, actionLabel, action, ms) {
     const el = $('#toast');
     el.textContent = msg;
     if (actionLabel) {
@@ -3810,7 +3812,7 @@ button:focus-visible, a:focus-visible, [role="button"]:focus-visible, [tabindex]
     }
     el.classList.add('show');
     clearTimeout(toastTimer);
-    toastTimer = setTimeout(() => el.classList.remove('show'), actionLabel ? 5000 : 2200);
+    toastTimer = setTimeout(() => el.classList.remove('show'), ms || (actionLabel ? 5000 : 2200));
   }
 
   // ================= Importar extrato (CSV / OFX) =================
@@ -4114,9 +4116,13 @@ button:focus-visible, a:focus-visible, [role="button"]:focus-visible, [tabindex]
       const localChanged = (state.updatedAt || 0) > (sync.lastRemote || 0);
       if (payload.updatedAt > (sync.lastRemote || 0) && (!localChanged || payload.updatedAt >= state.updatedAt)) {
         const remote = await decryptPayload(payload, await keyFromRaw(sync.key));
+        // este aparelho tinha mudanças que ainda não tinham subido: guarda uma cópia antes de trocar pelos da nuvem
+        const localSnap = localChanged ? JSON.stringify(state) : null;
+        if (localSnap) try { localStorage.setItem(KEY + ':antes-sync', localSnap); } catch (_) {}
         applyRemote(remote, payload.updatedAt);
         sync.lastRemote = payload.updatedAt;
-        if (!quiet || document.visibilityState === 'visible') toast('Dados atualizados de outro aparelho ☁️');
+        if (localSnap) toast('Chegaram dados mais novos de outro aparelho. Guardei uma cópia do que estava aqui.', 'Manter os deste aparelho', () => restoreBeforeSync(), 10000);
+        else if (!quiet || document.visibilityState === 'visible') toast('Dados atualizados de outro aparelho ☁️');
       } else if (localChanged) {
         await pushNow();
       }
@@ -4126,6 +4132,15 @@ button:focus-visible, a:focus-visible, [role="button"]:focus-visible, [tabindex]
       syncState = { ...syncState, busy: false, error: e.name === 'OperationError' ? 'Senha de sincronização diferente da usada no outro aparelho.' : e.message };
     }
     refreshSyncUi();
+  }
+  // Volta para a cópia guardada antes da sincronização trocar os dados (e envia ela para a nuvem)
+  function restoreBeforeSync() {
+    let raw = null; try { raw = localStorage.getItem(KEY + ':antes-sync'); } catch (_) {}
+    if (!raw) return toast('Não há cópia guardada');
+    const undoSnap = JSON.stringify(state);
+    state = normalize(JSON.parse(raw));
+    closeModal(); fillFilter(); commit();   // commit salva com horário novo: vira a versão mais nova e sobe para a nuvem
+    undoToast('Dados deste aparelho restaurados', undoSnap);
   }
   let syncTimer;
   function scheduleSync() {

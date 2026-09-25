@@ -20,7 +20,7 @@ Trabalho feito durante a noite, sem mudar o jeito como seus dados são guardados
 ## Pontos para você decidir (não mexi)
 
 - **Despesa fixa paga "com a conta"**: quando o vencimento passa, o saldo da conta já desconta o valor automaticamente (como débito automático), mas a conta continua aparecendo como **Atrasada** no sininho até você tocar em "Paguei". Não mudei porque as duas leituras fazem sentido (lembrete × saldo) e mudar alteraria saldos que você já usa. Se preferir, dá para: (a) marcar como paga sozinha quando vence, ou (b) só descontar do saldo quando você marcar como paga.
-- **Sincronização com os dois aparelhos mexendo ao mesmo tempo sem internet**: continua valendo a versão salva por último (como já estava no README). Juntar as mudanças dos dois lados seria uma mudança grande.
+- **Sincronização com os dois aparelhos mexendo ao mesmo tempo sem internet**: continua valendo a versão salva por último (como já estava no README); juntar as mudanças dos dois lados seria uma mudança grande. Mas agora nada se perde sem aviso (item 49).
 
 ## O que mudou
 
@@ -220,3 +220,6 @@ Testei com arquivos no formato de cada banco:
 
 ### 48. Calendário: tocar num item abre ele
 - Na Visão geral, depois de escolher um dia no calendário, tocar num item da lista (receita, conta fixa, assinatura, gasto ou fatura) abre a janela dele para editar ou marcar como pago. Antes a lista só mostrava.
+
+### 49. Rede de segurança na sincronização
+- Se este aparelho tinha mudanças que ainda não tinham subido (ex.: sem internet) e chegam dados mais novos de outro aparelho, a versão da nuvem continua valendo, mas agora o app **guarda uma cópia do que estava aqui** e avisa: "Chegaram dados mais novos de outro aparelho…" com o botão **"Manter os deste aparelho"** (fica 10 segundos na tela). Se perder o aviso, na engrenagem aparece **"Voltar aos dados de antes da última sincronização"**. Testei com os dois aparelhos simulados: nada se perde.
