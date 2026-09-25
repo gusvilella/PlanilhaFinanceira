@@ -90,3 +90,6 @@ Testei com arquivos no formato de cada banco:
 ### 16. Buscar em todos os meses
 - No **Filtro** das abas Receita e Despesa variável há a opção **"Buscar em todos os meses"**. Com ela marcada, a busca por nome (ou por categoria) mostra os lançamentos de qualquer mês, com o ano embaixo da data, e o total de tudo o que foi encontrado (ex.: "quanto gastei de iFood desde sempre?"). Mostra até os 300 mais recentes na lista; o total considera todos.
 - De quebra, corrigi um problema de layout no celular: quando o título da tabela era comprido, o cartão todo ficava mais largo que a tela e o botão "Adicionar" era cortado.
+
+### 17. Duplicar lançamento
+- Ao abrir uma receita ou despesa variável para editar, agora tem o botão **Duplicar** (ao lado de Excluir). Ele abre um lançamento novo já preenchido com o mesmo valor, descrição, categoria e forma de pagamento, com a **data de hoje**. Bom para gastos que se repetem mas não são fixos (feira, gasolina, diarista).

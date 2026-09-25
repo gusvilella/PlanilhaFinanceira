@@ -2773,8 +2773,8 @@ button:focus-visible, a:focus-visible, [role="button"]:focus-visible, [tabindex]
   const catSelect = (kind, selected, label) => `<label class="fl" for="fCategory">${label}</label>
     <select class="select" id="fCategory"><option value="">Selecione…</option>${catsOf(kind).map(c => `<option value="${c.id}" ${c.id === selected ? 'selected' : ''}>${esc(c.name)}</option>`).join('')}
     <option value="__new">+ Nova categoria…</option></select>`;
-  const footer = (editing) => `<div class="err" id="fErr"></div><div class="actions">
-    ${editing ? `<button type="button" class="btn del" id="fDelete">Excluir</button>` : ''}<span class="grow"></span>
+  const footer = (editing, dup) => `<div class="err" id="fErr"></div><div class="actions">
+    ${editing ? `<button type="button" class="btn del" id="fDelete">Excluir</button>` : ''}${editing && dup ? `<button type="button" class="link" id="fDup" style="margin-left:10px" title="Criar um novo lançamento igual a este, com a data de hoje">Duplicar</button>` : ''}<span class="grow"></span>
     <button type="button" class="btn cancel" data-close>Cancelar</button>
     <button type="submit" class="btn save" id="fSave">${editing ? 'Salvar' : 'Adicionar'}</button></div>`;
 
@@ -2826,18 +2826,20 @@ button:focus-visible, a:focus-visible, [role="button"]:focus-visible, [tabindex]
   }
 
   // ---------- Receita ----------
-  function openReceita(item) {
+  // prefill: valores de um lançamento duplicado (novo lançamento já preenchido)
+  function openReceita(item, prefill) {
     const editing = !!item;
-    const r = item || { date: defaultDate(), amount: 0, desc: '', category: '', recurring: false, pending: false };
+    const r = item || { date: defaultDate(), amount: 0, desc: '', category: '', recurring: false, pending: false, ...prefill };
     openModal(`<form id="f">${modalHead(editing ? 'Editar Receita' : 'Nova Receita', r.recurring ? 'Se repete todo mês.' : 'Lançamento deste mês.')}
       <label class="fl" for="fDate">Data</label><input type="date" class="input" id="fDate" value="${r.date}" required />
       ${checkField('fPending', 'Recebimento futuro', 'Não conta na sua receita até você marcar como recebido.', r.pending)}
       ${moneyField('fAmount', r.amount)}
       <label class="fl" for="fDesc">Descrição</label><input class="input" id="fDesc" maxlength="60" placeholder="Ex.: Salário, Freela…" value="${esc(r.desc)}" />
       ${catSelect('receita', r.category, 'Tipo de renda')}
-      ${payField(item ? r : null, true)}
+      ${payField(item || prefill ? r : null, true)}
       ${checkField('fRecurring', 'Receita recorrente', 'Repete todo mês, como o salário.', r.recurring)}
-      ${footer(editing)}</form>`, m => {
+      ${footer(editing, true)}</form>`, m => {
+      m.querySelector('#fDup')?.addEventListener('click', () => openReceita(null, { amount: item.amount, desc: item.desc, category: item.category, payAccount: item.payAccount || '', payCard: '' }));
       bindMoney(m.querySelector('#fAmount'));
       bindNewCategory(m, 'receita');
       bindPay(m);
@@ -2863,9 +2865,9 @@ button:focus-visible, a:focus-visible, [role="button"]:focus-visible, [tabindex]
   }
 
   // ---------- Despesa variável ----------
-  function openVariavel(item) {
+  function openVariavel(item, prefill) {
     const editing = !!item;
-    const v = item || { date: defaultDate(), amount: 0, desc: '', category: '' };
+    const v = item || { date: defaultDate(), amount: 0, desc: '', category: '', ...prefill };
     openModal(`<form id="f">${modalHead(editing ? 'Editar Despesa Variável' : 'Nova Despesa Variável', v.installment ? `Parcela ${v.installment.i} de ${v.installment.n}.` : 'Lançamento deste mês.')}
       <label class="fl" for="fDate">Data</label><input type="date" class="input" id="fDate" value="${v.date}" required />
       ${moneyField('fAmount', v.amount)}
@@ -2873,8 +2875,9 @@ button:focus-visible, a:focus-visible, [role="button"]:focus-visible, [tabindex]
         `<div class="inline" id="instBox" hidden><input type="number" class="input" id="fN" min="2" max="48" value="2" /><span id="instHint"></span></div>`}
       <label class="fl" for="fDesc">Descrição</label><input class="input" id="fDesc" maxlength="60" placeholder="Ex.: Mercado, Gasolina…" value="${esc(v.desc)}" />
       ${catSelect('despesa', v.category, 'Categoria')}
-      ${payField(item ? v : null)}
-      ${footer(editing)}</form>`, m => {
+      ${payField(item || prefill ? v : null)}
+      ${footer(editing, true)}</form>`, m => {
+      m.querySelector('#fDup')?.addEventListener('click', () => openVariavel(null, { amount: item.amount, desc: item.desc, category: item.category, payCard: item.payCard || '', payAccount: item.payAccount || '' }));
       const amount = m.querySelector('#fAmount');
       const hint = () => {
         if (editing) return;
