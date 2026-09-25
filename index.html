@@ -543,6 +543,21 @@ html.locked .lock { display: grid; }
 .imp-row { display: grid; grid-template-columns: 26px 52px minmax(0, 1fr) 150px 110px; gap: 8px; align-items: center; padding: 8px 10px; border-bottom: 1px solid var(--line); font-size: .82rem; }
 .imp-row:last-child { border-bottom: 0; }
 .imp-row.off { opacity: .45; }
+.det-banner { display: flex; align-items: center; gap: 12px; padding: 12px 14px; margin-bottom: 10px; border-radius: 14px; background: var(--field); border: 1px solid var(--line); font-size: .84rem; }
+.det-banner .grow { flex: 1; min-width: 0; }
+.det-banner strong { display: block; font-weight: 600; }
+.det-banner small { display: block; color: var(--muted); font-size: .76rem; margin-top: 2px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.det-banner .btn-soft { flex: none; margin: 0; }
+.det-ic { width: 32px; height: 32px; border-radius: 10px; display: grid; place-items: center; background: var(--green-soft); color: var(--green); flex: none; }
+.det-ic svg.i { width: 17px; height: 17px; }
+.det-list { margin-top: 6px; max-height: 50vh; overflow: auto; }
+.det-row { display: flex; align-items: center; gap: 12px; padding: 10px 2px; border-bottom: 1px solid var(--line); font-size: .84rem; transition: opacity .15s; }
+.det-row:last-child { border-bottom: 0; }
+.det-row.off { opacity: .45; }
+.det-row .check { margin: 0; padding: 0; background: none; border: 0; }
+.det-row .t { flex: 1; min-width: 0; }
+.det-row .t strong { display: block; font-weight: 600; }
+.det-row .t small { display: block; color: var(--muted); font-size: .76rem; margin-top: 2px; }
 .imp-row .d { color: var(--muted); font-size: .76rem; }
 .imp-row .t { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 .imp-row .t small { display: block; color: var(--amber); font-size: .7rem; font-weight: 600; }
@@ -719,6 +734,7 @@ html.locked .lock { display: grid; }
     <symbol id="i-finger" viewBox="0 0 24 24"><path d="M12 10a2 2 0 0 0-2 2c0 1.02-.1 2.51-.26 4"/><path d="M14 13.12c0 2.38 0 6.38-1 8.88"/><path d="M17.29 21.02c.12-.6.43-2.3.5-3.02"/><path d="M2 12a10 10 0 0 1 18-6"/><path d="M2 16h.01"/><path d="M21.8 16c.2-2 .131-5.354 0-6"/><path d="M5 19.5C5.5 18 6 15 6 12a6 6 0 0 1 .34-2"/><path d="M8.65 22c.21-.66.45-1.32.57-2"/><path d="M9 6.8a6 6 0 0 1 9 5.2v2"/></symbol>
     <symbol id="i-back" viewBox="0 0 24 24"><path d="M21 4H8l-7 8 7 8h13a2 2 0 0 0 2-2V6a2 2 0 0 0-2-2Z"/><path d="m18 9-6 6M12 9l6 6"/></symbol>
     <symbol id="i-check" viewBox="0 0 24 24"><path d="M20 6 9 17l-5-5"/></symbol>
+    <symbol id="i-spark" viewBox="0 0 24 24"><path d="M12 3l1.8 5.2L19 10l-5.2 1.8L12 17l-1.8-5.2L5 10l5.2-1.8z"/><path d="M19 15l.8 2.2L22 18l-2.2.8L19 21l-.8-2.2L16 18l2.2-.8z"/></symbol>
     <symbol id="i-sort" viewBox="0 0 24 24"><path d="m7 15 5 5 5-5M7 9l5-5 5 5"/></symbol>
   </svg>
 
@@ -1757,7 +1773,7 @@ html.locked .lock { display: grid; }
     const rows = state.assinaturas.filter(a => activeIn(a, view.month) && (!q || a.name.toLowerCase().includes(q)))
       .sort((a, b) => perMonth(b) - perMonth(a));
     if (!rows.length) {
-      $('#table').innerHTML = `<div class="empty">${q ? 'Nada encontrado com esse filtro.' : 'Nenhuma assinatura ainda.<br>Netflix, Spotify, Crunchyroll… tudo num lugar só.'}${q ? '' : `<br><button class="btn-soft" data-add>${ico('plus')}Adicionar</button>`}</div>`;
+      $('#table').innerHTML = (q ? '' : detectBanner()) + `<div class="empty">${q ? 'Nada encontrado com esse filtro.' : 'Nenhuma assinatura ainda.<br>Netflix, Spotify, Crunchyroll… tudo num lugar só.'}${q ? '' : `<br><button class="btn-soft" data-add>${ico('plus')}Adicionar</button>`}</div>`;
       return;
     }
     const charged = new Set(assinaturasOf(view.month).map(a => a.id));
@@ -1778,7 +1794,7 @@ html.locked .lock { display: grid; }
     const month = rows.reduce((s, a) => s + perMonth(a), 0);
     const now = assinaturasOf(view.month).reduce((s, a) => s + a.amount, 0);
     const inside = assinaturasOf(view.month).filter(a => inFatura(a, view.month)).reduce((s, a) => s + a.amount, 0);
-    $('#table').innerHTML = head + body + `
+    $('#table').innerHTML = detectBanner() + head + body + `
       <div class="total"><span>Custo por mês</span><strong class="num negc">${money(month)}</strong></div>
       <div class="yield"><span>Cobrado neste mês ${money(now)}${inside ? ` · ${money(inside)} já nas faturas` : ''}</span><span>Por ano <strong class="num" style="color:var(--red)">${money(month * 12)}</strong></span></div>`;
   }
@@ -1879,6 +1895,127 @@ html.locked .lock { display: grid; }
         commit();
       });
       if (editing) m.querySelector('#fDelete').addEventListener('click', () => removeRecurringAware('assinaturas', item, true));
+    });
+  }
+
+  // ================= Detector de assinaturas =================
+  // Como cada serviço costuma aparecer no extrato
+  const SUB_RE = { youtubemusic: /youtube ?music/, youtube: /youtube|google ?yt/, netflix: /netflix/, spotify: /spotify/, crunchyroll: /crunchyroll/,
+    prime: /amazon ?prime|prime ?video|amazonprime/, disney: /disney/, hbomax: /hbo ?max|\bhbo\b|max\.com/, globoplay: /globo ?play/, appletv: /apple ?tv/,
+    paramount: /paramount/, applemusic: /apple ?music/, deezer: /deezer/, icloud: /icloud/, chatgpt: /openai|chatgpt/, claude: /anthropic|claude\.ai/,
+    xbox: /xbox|game ?pass/, playstation: /playstation|\bpsn\b|sony ?interactive/, discord: /discord/, twitch: /twitch/, duolingo: /duolingo/, canva: /canva/,
+    ms365: /microsoft ?365|office ?365|\bmsft\b/, adobe: /adobe/, notion: /notion/, dropbox: /dropbox/, audible: /audible/, ifood: /clube ?ifood|ifood ?club/, uber: /uber ?one/ };
+  const brandOfDesc = d => { const n = norm(d); for (const [k, re] of Object.entries(SUB_RE)) if (re.test(n)) return k; return ''; };
+  const squash = t => norm(t).replace(/[^a-z0-9]/g, '');
+  const merchantKey = d => norm(d).replace(/\(\d+\/\d+\)|parc(ela)?\s*\d+.*$/g, '').replace(/[^a-z ]/g, ' ')
+    .replace(/\b(pag|pagto|pgto|compra|debito|credito|cartao|pix|www|com|br|ltda|sa|me|eireli|de|da|do)\b/g, ' ').replace(/\s+/g, ' ').trim().split(' ').slice(0, 3).join(' ');
+  const mdiff = (a, b) => (+b.slice(0, 4) - +a.slice(0, 4)) * 12 + (+b.slice(5) - +a.slice(5));
+  const niceName = d => {
+    const t = String(d).replace(/[*_#]+/g, ' ').replace(/\b\d[\d/.\-:]*\b/g, ' ').replace(/\s+/g, ' ').trim().slice(0, 40);
+    return t === t.toUpperCase() ? t.toLowerCase().replace(/(^|\s)\S/g, c => c.toUpperCase()) : t;
+  };
+  // A assinatura cadastrada que corresponde a um lançamento (pelo serviço ou pelo nome)
+  function subFor(desc, key) {
+    const b = brandOfDesc(desc), n = squash(desc);
+    return state.assinaturas.find(a => activeIn(a, key) && ((b && a.brand === b) || (squash(a.name).length >= 4 && n.includes(squash(a.name)))));
+  }
+  // Gastos que se repetem todo mês com valor parecido (ou serviços conhecidos) e ainda não estão em Assinaturas
+  function detectSubs() {
+    const ignore = new Set(state.subIgnore || []), groups = {};
+    for (const v of state.variaveis) {
+      if (v.installment || !v.amount || !v.desc) continue;
+      const b = brandOfDesc(v.desc), k = b ? 'b:' + b : 'm:' + merchantKey(v.desc);
+      if (k.length < 5 || ignore.has(k)) continue;
+      (groups[k] ||= []).push(v);
+    }
+    const out = [];
+    for (const [k, items] of Object.entries(groups)) {
+      const brand = k.startsWith('b:') ? k.slice(2) : '';
+      const byMonth = {};
+      items.forEach(v => (byMonth[monthOf(v.date)] ||= []).push(v));
+      const months = Object.keys(byMonth).sort(), lastMonth = months[months.length - 1];
+      if (mdiff(lastMonth, curKey()) > 2) continue;                       // parou de cobrar
+      const last = byMonth[lastMonth].sort((a, b) => a.date.localeCompare(b.date))[byMonth[lastMonth].length - 1];
+      if (subFor(last.desc, lastMonth) || (brand && state.assinaturas.some(a => a.brand === brand && activeIn(a, curKey())))) continue;
+      if (!brand) {
+        const recent = months.slice(-3);
+        if (recent.length < 3 || recent.some(m => byMonth[m].length > 1)) continue;   // várias compras no mês: não é assinatura
+        if (mdiff(recent[0], recent[2]) > 3) continue;
+        const amts = recent.map(m => byMonth[m][0].amount), days = recent.map(m => +byMonth[m][0].date.slice(8));
+        if (Math.max(...amts) > Math.min(...amts) * 1.1 || Math.max(...days) - Math.min(...days) > 6) continue;
+      }
+      out.push({ key: k, brand, name: brand ? BRANDS[brand].name : niceName(last.desc), amount: last.amount, day: +last.date.slice(8), months: months.length,
+        lastMonth, payCard: last.payCard || '', payAccount: last.payAccount || '', ids: byMonth[lastMonth].map(v => v.id), color: brand ? '' : PALETTE[out.length % PALETTE.length] });
+    }
+    return out.sort((a, b) => b.amount - a.amount);
+  }
+  // Reajustes vistos nos extratos importados
+  const priceChanges = () => Object.entries(state.subPrice || {}).map(([id, p]) => ({ ...p, sub: state.assinaturas.find(a => a.id === id) }))
+    .filter(p => p.sub && p.sub.amount !== p.amount);
+  const priceText = p => `${p.amount > p.sub.amount ? 'Subiu' : 'Baixou'} de ${money(p.sub.amount)} para ${money(p.amount)}`;
+  function applyPrice(id, accept) {
+    const p = state.subPrice?.[id], old = state.assinaturas.find(a => a.id === id);
+    if (state.subPrice) delete state.subPrice[id];
+    if (accept && p && old) {
+      const from = monthOf(p.date);
+      if (old.start < from) {
+        // O preço antigo fica no histórico e o novo vale do mês da cobrança em diante
+        const nu = { ...old, id: uid(), amount: p.amount, start: from, end: old.end };
+        old.end = addMonths(from, -1);
+        state.assinaturas.push(nu);
+      } else old.amount = p.amount;
+      toast(`${old.name} agora custa ${money(p.amount)}`);
+    }
+    commit();
+  }
+  const detectBanner = () => {
+    const found = detectSubs(), prices = priceChanges();
+    return (found.length ? `<div class="det-banner"><span class="det-ic">${ico('spark')}</span><span class="grow"><strong>${found.length === 1 ? 'Achei 1 possível assinatura' : `Achei ${found.length} possíveis assinaturas`}</strong><small>${esc(found.slice(0, 3).map(d => d.name).join(', '))}${found.length > 3 ? '…' : ''} se repete${found.length > 1 ? 'm' : ''} nos seus gastos</small></span><button class="btn-soft" type="button" data-detect>Revisar</button></div>` : '')
+      + prices.map(p => `<div class="det-banner">${logoHtml(p.sub, 'sm')}<span class="grow"><strong>${esc(p.sub.name)} mudou de preço</strong><small>${priceText(p)} em ${monthName(monthOf(p.date))}</small></span><button class="link" type="button" data-subprice="${p.sub.id}" data-ok="0">Ignorar</button><button class="btn-soft" type="button" data-subprice="${p.sub.id}" data-ok="1">Atualizar</button></div>`).join('');
+  };
+  document.addEventListener('click', e => {
+    if (e.target.closest('[data-detect]')) { togglePop($('#bellPop'), false); return openSubDetect(); }
+    const sp = e.target.closest('[data-subprice]');
+    if (sp) { togglePop($('#bellPop'), false); applyPrice(sp.dataset.subprice, sp.dataset.ok === '1'); }
+  });
+
+  function openSubDetect() {
+    const list = detectSubs();
+    if (!list.length) return toast('Nenhuma assinatura nova encontrada');
+    const sel = new Set(list.map((_, i) => i));
+    const via = d => d.payCard ? ' · ' + esc(state.cards.find(c => c.id === d.payCard)?.name || 'cartão') : d.payAccount ? ' · ' + esc(state.accounts.find(a => a.id === d.payAccount)?.name || 'conta') : '';
+    openModal(`${modalHead('Possíveis assinaturas', 'Gastos que se repetem todo mês. Marque o que é assinatura.')}
+      <div class="det-list" id="detList">${list.map((d, i) => `<div class="det-row" data-i="${i}">
+        <label class="check"><input type="checkbox" checked /><span class="box">${ico('check')}</span></label>
+        ${logoHtml(d, 'sm')}
+        <span class="t"><strong>${esc(d.name)}</strong><small>${money(d.amount)}/mês · dia ${pad(d.day)} · ${d.months > 1 ? `apareceu em ${d.months} meses` : 'serviço de assinatura'}${via(d)}</small></span>
+        <button type="button" class="link" data-no="${i}" title="Não perguntar de novo">Não é</button></div>`).join('')}</div>
+      <p class="help">O gasto do último mês vira a assinatura, pra não contar duas vezes. Os meses anteriores continuam no histórico.</p>
+      <div class="actions"><span class="grow"></span><button type="button" class="btn cancel" data-close>Cancelar</button><button type="button" class="btn save" id="detGo"></button></div>`, m => {
+      const sync = () => {
+        m.querySelectorAll('.det-row').forEach(r => { const on = sel.has(+r.dataset.i); r.classList.toggle('off', !on); r.querySelector('input').checked = on; });
+        m.querySelector('#detGo').textContent = sel.size ? `Adicionar ${sel.size}` : 'Adicionar';
+        m.querySelector('#detGo').disabled = !sel.size;
+      };
+      onModalClose = () => render();
+      m.querySelector('#detList').addEventListener('change', e => { const i = +e.target.closest('.det-row').dataset.i; e.target.checked ? sel.add(i) : sel.delete(i); sync(); });
+      m.querySelector('#detList').addEventListener('click', e => {
+        const no = e.target.closest('[data-no]'); if (!no) return;
+        const i = +no.dataset.no;
+        (state.subIgnore ||= []).push(list[i].key); save();
+        sel.delete(i); no.closest('.det-row').remove(); sync();
+        if (!m.querySelector('.det-row')) { closeModal(); commit(); }
+      });
+      m.querySelector('#detGo').addEventListener('click', () => {
+        const snap = JSON.stringify({ a: state.assinaturas, v: state.variaveis });
+        const chosen = list.filter((_, i) => sel.has(i)), drop = new Set(chosen.flatMap(d => d.ids));
+        chosen.forEach((d, n) => state.assinaturas.push({ brand: d.brand, name: d.name, icon: '', color: d.color, amount: d.amount, cycle: 'mensal', day: d.day,
+          month: +d.lastMonth.slice(5), payCard: d.payCard, payAccount: d.payAccount, id: uid(), created: Date.now() + n, start: d.lastMonth }));
+        state.variaveis = state.variaveis.filter(v => !drop.has(v.id));
+        closeModal(); commit();
+        toast(`${chosen.length} assinatura${chosen.length > 1 ? 's' : ''} adicionada${chosen.length > 1 ? 's' : ''}`, 'Desfazer', () => { const o = JSON.parse(snap); state.assinaturas = o.a; state.variaveis = o.v; commit(); });
+      });
+      sync();
     });
   }
 
@@ -2368,7 +2505,8 @@ html.locked .lock { display: grid; }
       return out.sort((a, b) => a.diff - b.diff);
     })();
     const limAlert = limitsOf(curKey()).filter(l => l.state !== 'ok');
-    $('#bellDot').hidden = !list.length && !renew.length && !faturasDue.length && !limAlert.length;
+    const found = detectSubs(), prices = priceChanges();
+    $('#bellDot').hidden = !list.length && !renew.length && !faturasDue.length && !limAlert.length && !found.length && !prices.length;
     const key = mkey(today.getFullYear(), today.getMonth());
     const whenTxt = diff => diff < 0 ? `Venceu há ${-diff} dia${diff === -1 ? '' : 's'}` : diff === 0 ? 'Vence hoje' : `Vence em ${diff} dia${diff === 1 ? '' : 's'}`;
     const faturasHtml = faturasDue.length ? `<h4 style="margin-top:12px">Faturas do cartão</h4>` + faturasDue.map(c =>
@@ -2381,7 +2519,10 @@ html.locked .lock { display: grid; }
       const diff = daysUntil(f.shownDate);
       const when = diff < 0 ? `Venceu há ${-diff} dia${diff === -1 ? '' : 's'}` : diff === 0 ? 'Vence hoje' : `Vence em ${diff} dia${diff === 1 ? '' : 's'}`;
       return `<div class="note"><div><strong>${esc(f.desc)}</strong><small style="color:${diff < 0 ? 'var(--red)' : ''}">${when} · ${money(f.amount)}</small></div><button class="mini" data-bellpay="${f.id}" data-key="${f.key}">Paguei</button></div>`;
-    }).join('') : `<p class="empty" style="padding:6px 0">${faturasDue.length ? 'Nenhuma conta fixa pendente' : 'Tudo em dia por aqui ✓'}</p>`) + faturasHtml + limHtml + renewHtml;
+    }).join('') : `<p class="empty" style="padding:6px 0">${faturasDue.length ? 'Nenhuma conta fixa pendente' : 'Tudo em dia por aqui ✓'}</p>`) + faturasHtml + limHtml + renewHtml
+      + (found.length || prices.length ? `<h4 style="margin-top:12px">Assinaturas</h4>` : '')
+      + (found.length ? `<div class="note"><span class="det-ic">${ico('spark')}</span><div style="flex:1"><strong>${found.length === 1 ? '1 possível assinatura' : `${found.length} possíveis assinaturas`}</strong><small>${esc(found.slice(0, 3).map(d => d.name).join(', '))}</small></div><button class="mini" data-detect>Revisar</button></div>` : '')
+      + prices.map(p => `<div class="note">${logoHtml(p.sub, 'sm')}<div style="flex:1"><strong>${esc(p.sub.name)}</strong><small>${priceText(p)}</small></div><button class="mini" data-subprice="${p.sub.id}" data-ok="1">Atualizar</button></div>`).join('');
   }
 
   // ================= Modal genérico =================
@@ -3125,8 +3266,9 @@ html.locked .lock { display: grid; }
       const card = source.startsWith('card:');
       const out = card ? amt > 0 : amt < 0;          // é gasto?
       const kind = out ? 'variavel' : 'receita';
-      const skipReason = card && !out ? 'pagamento ou estorno' : /pagamento.*fatura|fatura.*(cartao|card)|pgto.*fat|pag fat/.test(norm(r.desc)) ? 'pagamento de fatura' : isDup(r, kind === 'variavel' ? 'variavel' : 'receita') ? 'já lançado' : '';
-      return { ...r, amount: Math.abs(amt), kind, on: !skipReason, skipReason, category: suggestCategory(r.desc, kind === 'variavel' ? 'despesa' : 'receita') };
+      const sub = out ? subFor(r.desc, monthOf(r.date)) : null;
+      const skipReason = card && !out ? 'pagamento ou estorno' : /pagamento.*fatura|fatura.*(cartao|card)|pgto.*fat|pag fat/.test(norm(r.desc)) ? 'pagamento de fatura' : isDup(r, kind === 'variavel' ? 'variavel' : 'receita') ? 'já lançado' : sub ? 'já está em Assinaturas' : '';
+      return { ...r, amount: Math.abs(amt), kind, on: !skipReason, skipReason, sub: sub?.id, category: suggestCategory(r.desc, kind === 'variavel' ? 'despesa' : 'receita') };
     }).sort((a, b) => b.date.localeCompare(a.date));
     let rows = build();
     openModal(`${modalHead('Importar extrato', `${esc(fileName)} · ${raw.length} lançamentos encontrados`)}
@@ -3157,7 +3299,7 @@ html.locked .lock { display: grid; }
         const outs = on.filter(r => r.kind === 'variavel').reduce((s, r) => s + r.amount, 0), ins = on.filter(r => r.kind === 'receita').reduce((s, r) => s + r.amount, 0);
         m.querySelector('#impSum').innerHTML = `<span><b>${on.length}</b> selecionados</span><span>Saídas <b>${brl.format(outs / 100)}</b></span><span>Entradas <b>${brl.format(ins / 100)}</b></span><span>${rows.length - on.length} de fora</span>`;
         m.querySelector('#impGo').textContent = `Importar ${on.length}`;
-        m.querySelector('#impGo').disabled = !on.length;
+        m.querySelector('#impGo').disabled = !on.length && !rows.some(r => r.sub);
       };
       m.querySelector('#impSrc').addEventListener('click', e => {
         const b = e.target.closest('[data-src]'); if (!b) return;
@@ -3181,10 +3323,21 @@ html.locked .lock { display: grid; }
           if (r.kind === 'variavel') state.variaveis.push({ ...base, ...pay });
           else state.receitas.push({ ...base, payAccount: pay.payAccount, pending: false, recurring: false });
         });
+        // Cobrança de assinatura com valor diferente do cadastrado: avisa do reajuste
+        let changed = 0;
+        rows.filter(r => r.sub).sort((a, b) => a.date.localeCompare(b.date)).forEach(r => {
+          const a = state.assinaturas.find(x => x.id === r.sub);
+          const seen = state.subPrice?.[r.sub];
+          if (!a || (seen && seen.date > r.date)) return;
+          if (r.amount !== a.amount) { (state.subPrice ||= {})[r.sub] = { amount: r.amount, date: r.date }; changed++; }
+          else if (seen) delete state.subPrice[r.sub];
+        });
         const latest = on.map(r => r.date).sort().pop();
+        if (!latest) { commit(); closeModal(); return toast(changed ? 'Uma assinatura mudou de preço, veja no sininho' : 'Nada para importar'); }
         view.month = monthOf(latest); ui.tab = on.some(r => r.kind === 'variavel') ? 'variavel' : 'receita'; saveUi();
         commit(); fillFilter();
-        toast(`${on.length} lançamentos importados`, 'Desfazer', () => { const o = JSON.parse(snap); state.variaveis = o.v; state.receitas = o.r; commit(); });
+        const nFound = detectSubs().length;
+        toast(`${on.length} lançamentos importados${nFound ? ` · ${nFound} possíve${nFound > 1 ? 'is' : 'l'} assinatura${nFound > 1 ? 's' : ''} no sininho` : ''}`, 'Desfazer', () => { const o = JSON.parse(snap); state.variaveis = o.v; state.receitas = o.r; commit(); });
       });
       draw();
     });
