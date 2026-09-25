@@ -13,6 +13,7 @@ Trabalho feito durante a noite, sem mudar o jeito como seus dados são guardados
 6. **Desfazer em todo lugar**: edite um gasto, salve e toque em "Desfazer" no aviso de baixo. Funciona também ao marcar fatura como paga, excluir categoria, restaurar backup e até em "Apagar tudo".
 7. **Buscar em todos os meses**: na aba Despesa variável, toque em Filtro, digite "ifood" e marque "Buscar em todos os meses".
 8. **Arrastar para trocar o mês** (celular): arraste o dedo para a esquerda na tela (fora das abas) para ir ao próximo mês, e para a direita para voltar.
+9. **Sincronização (importante)**: se você usa em dois aparelhos, lance algo no celular e depois abra o computador (ou o contrário) num outro dia. O lançamento deve aparecer nos dois e **não sumir**.
 
 ## O que mudou
 
@@ -113,3 +114,7 @@ Testei com arquivos no formato de cada banco:
 
 ### 22. Exportar todos os meses para planilha
 - Na engrenagem, além de "Exportar mês", agora tem **"Exportar todos os meses (CSV)"**: um arquivo só com todos os lançamentos desde o primeiro, com colunas de Mês, Data, Tipo, Descrição, Categoria/Status, Pago com e Valor. Abre direto no Excel ou no Google Planilhas.
+
+### 23. Sincronização não apaga mais o que você lançou no outro aparelho ⚠️
+- **O problema (grave):** ao abrir o app num dia novo, ele atualiza sozinho umas informações calculadas (o "retrato" do patrimônio do mês e a taxa do CDI) e salvava isso como se fosse uma mudança sua, com o horário de agora. Aí, ao sincronizar, este aparelho parecia ter os dados "mais novos" e **mandava os dados antigos dele para a nuvem, por cima do que você tinha lançado no outro aparelho**. Exemplo real que reproduzi: lancei um bônus no aparelho A; no dia seguinte abri o aparelho B; o bônus sumiu do B **e também do A** depois de recarregar.
+- **Agora:** essas atualizações automáticas são salvas sem contar como mudança sua, então só o que você lança/edita decide quem é mais novo. Testei o mesmo roteiro com um GitHub simulado: o bônus aparece no B e continua no A.

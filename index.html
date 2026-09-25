@@ -1137,11 +1137,14 @@ button:focus-visible, a:focus-visible, [role="button"]:focus-visible, [tabindex]
 
   let state = load();
   let applyingRemote = false;
-  function save() {
-    if (!applyingRemote) state.updatedAt = Date.now();
+  // quiet = dado calculado pelo próprio app (retrato do patrimônio, taxa do CDI): salva aqui, mas não conta como
+  // mudança sua. Senão, só de abrir o app num dia novo este aparelho pareceria "mais novo" que a nuvem e
+  // mandaria os dados antigos por cima do que você lançou no outro aparelho.
+  function save(quiet = false) {
+    if (!applyingRemote && !quiet) state.updatedAt = Date.now();
     try { localStorage.setItem(KEY, JSON.stringify(state)); }
     catch (_) { toast('Não foi possível salvar neste navegador'); }
-    if (!applyingRemote && typeof scheduleSync === 'function') scheduleSync();
+    if (!applyingRemote && !quiet && typeof scheduleSync === 'function') scheduleSync();
   }
 
   let ui = { tab: 'geral', hidden: false, theme: null, sortAsc: false, font: 'Urbanist' };
@@ -1686,7 +1689,7 @@ button:focus-visible, a:focus-visible, [role="button"]:focus-visible, [tabindex]
     if (!state.accounts.length && !state.investments.length) return;
     const val = state.accounts.reduce((s, a) => s + accBalance(a), 0) + state.investments.reduce((s, i) => s + estimate(i), 0);
     state.snapshots ||= {};
-    if (state.snapshots[curKey()] !== val) { state.snapshots[curKey()] = val; save(); }
+    if (state.snapshots[curKey()] !== val) { state.snapshots[curKey()] = val; save(true); }
   }
   const shortMonth = key => new Date(+key.slice(0, 4), +key.slice(5) - 1, 1).toLocaleDateString('pt-BR', { month: 'short' }).replace('.', '');
   // Valores redondos para o eixo (0 / 1.000 / 2.000…)
@@ -2666,7 +2669,7 @@ button:focus-visible, a:focus-visible, [role="button"]:focus-visible, [tabindex]
       const rate = parseFloat(String(last.valor).replace(',', '.'));
       if (!(rate > 0 && rate < 100)) throw new Error('valor');
       state.cdi = { rate, date: last.data.slice(0, 5), source: 'bcb', checked: todayIso };
-      save(); render();
+      save(true); render();
       return true;
     } catch (_) { return false; }
     finally { clearTimeout(timer); }
