@@ -1265,8 +1265,8 @@ button:focus-visible, a:focus-visible, [role="button"]:focus-visible, [tabindex]
     // transferências entre as suas contas: saem de uma e entram na outra (não são receita nem despesa)
     const accName = id => state.accounts.find(a => a.id === id)?.name || 'outra conta';
     for (const t of state.transfers || []) if (inRange(t.date, t.created)) {
-      if (t.from === acc.id) out.push({ date: t.date, amount: -t.amount, label: `Transferência para ${accName(t.to)}` });
-      if (t.to === acc.id) out.push({ date: t.date, amount: t.amount, label: `Transferência de ${accName(t.from)}` });
+      if (t.from === acc.id) out.push({ date: t.date, amount: -t.amount, label: t.inv ? t.desc : `Transferência para ${accName(t.to)}` });
+      if (t.to === acc.id) out.push({ date: t.date, amount: t.amount, label: t.inv ? t.desc : `Transferência de ${accName(t.from)}` });
     }
     return out.sort((a, b) => a.date.localeCompare(b.date));
   }
@@ -2588,7 +2588,9 @@ button:focus-visible, a:focus-visible, [role="button"]:focus-visible, [tabindex]
       <label class="fl">Aporte ou resgate <span style="color:var(--muted);font-weight:500">(opcional)</span></label>
       <div class="seg2" id="fMv"><button type="button" data-mv="in" class="on">+ Aportar</button><button type="button" data-mv="out">− Resgatar</button></div>
       <div class="money"><span>R$</span><input id="fMove" inputmode="numeric" value="0,00" data-cents="0" autocomplete="off" aria-label="Valor do aporte ou resgate" /></div>
-      <p class="help" id="mvHelp"></p>` : ''}
+      <p class="help" id="mvHelp"></p>
+      ${state.accounts.length ? `<label class="fl" for="fMvAcc" id="mvAccLbl">Sai da conta</label>
+      <select class="select" id="fMvAcc"><option value="">Não mexer nas contas</option>${state.accounts.map(a => `<option value="${a.id}">${esc(a.name)}</option>`).join('')}</select>` : ''}` : ''}
       ${footer(editing)}</form>`, m => {
       const type = m.querySelector('#fType'), rate = m.querySelector('#fRate'), amount = m.querySelector('#fAmount');
       let mv = 'in';
@@ -2612,7 +2614,9 @@ button:focus-visible, a:focus-visible, [role="button"]:focus-visible, [tabindex]
         bindMoney(m.querySelector('#fMove'), refresh);
         m.querySelector('#fMv').addEventListener('click', e => {
           const b = e.target.closest('button'); if (!b) return;
-          mv = b.dataset.mv; m.querySelectorAll('#fMv button').forEach(x => x.classList.toggle('on', x === b)); refresh();
+          mv = b.dataset.mv; m.querySelectorAll('#fMv button').forEach(x => x.classList.toggle('on', x === b));
+          if (m.querySelector('#mvAccLbl')) m.querySelector('#mvAccLbl').textContent = mv === 'in' ? 'Sai da conta' : 'Entra na conta';
+          refresh();
         });
       }
       refresh();
@@ -2626,7 +2630,13 @@ button:focus-visible, a:focus-visible, [role="button"]:focus-visible, [tabindex]
         if (balance < 0) return showErr('O resgate é maior que o saldo.');
         const data = { name, institution: m.querySelector('#fInst').value.trim(), type: type.value,
           rate: Math.max(0, +rate.value || 0), balance, updatedAt: todayIso };
-        if (editing) Object.assign(state.investments.find(x => x.id === item.id), data);
+        if (editing) {
+          Object.assign(state.investments.find(x => x.id === item.id), data);
+          // aporte tirado de uma conta / resgate que caiu numa conta: o saldo da conta acompanha (vira uma transferência)
+          const mvC = cents(m.querySelector('#fMove')), acc = m.querySelector('#fMvAcc')?.value;
+          if (mvC && acc) (state.transfers ||= []).push({ id: uid(), created: Date.now(), date: todayIso, amount: mvC,
+            from: mv === 'in' ? acc : '', to: mv === 'in' ? '' : acc, inv: item.id, desc: `${mv === 'in' ? 'Aporte em' : 'Resgate de'} ${name}` });
+        }
         else state.investments.push({ ...data, id: uid(), created: Date.now() });
         undoToast(editing ? 'Investimento atualizado' : 'Investimento adicionado', undoSnap);
         commit();
@@ -2728,7 +2738,7 @@ button:focus-visible, a:focus-visible, [role="button"]:focus-visible, [tabindex]
   // Transferência entre as suas contas (ex.: Nubank → Mercado Pago). Guardada em state.transfers (campo opcional).
   function openTransfer() {
     const accs = state.accounts, opts = sel => accs.map(a => `<option value="${a.id}" ${a.id === sel ? 'selected' : ''}>${esc(a.name)}</option>`).join('');
-    const recent = (state.transfers || []).slice().sort((a, b) => b.date.localeCompare(a.date)).slice(0, 5);
+    const recent = (state.transfers || []).filter(t => !t.inv).slice().sort((a, b) => b.date.localeCompare(a.date)).slice(0, 5);
     const name = id => esc(accs.find(a => a.id === id)?.name || 'conta removida');
     openModal(`<form id="f">${modalHead('Transferir entre contas', 'Move dinheiro de uma conta sua para outra. Não conta como receita nem como despesa.')}
       <div class="two"><div><label class="fl" for="tFrom">De</label><select class="select" id="tFrom">${opts(accs[0].id)}</select></div>
@@ -3492,7 +3502,7 @@ button:focus-visible, a:focus-visible, [role="button"]:focus-visible, [tabindex]
     }
     const accN = id => state.accounts.find(a => a.id === id)?.name || '';
     (state.transfers || []).slice().sort((a, b) => a.date.localeCompare(b.date))
-      .forEach(t => lines.push([monthOf(t.date), d(t.date), 'Transferência entre contas', `${accN(t.from)} → ${accN(t.to)}`, t.desc || '', '', val(t.amount)]));
+      .forEach(t => lines.push([monthOf(t.date), d(t.date), t.inv ? 'Investimento' : 'Transferência entre contas', t.inv ? t.desc : `${accN(t.from)} → ${accN(t.to)}`, t.inv ? accN(t.from || t.to) : t.desc || '', '', val(t.amount)]));
     download(`orcamento-completo-${todayIso}.csv`, '\ufeff' + lines.map(l => l.map(cell).join(';')).join('\r\n'), 'text/csv;charset=utf-8');
     toast(`${lines.length - 1} lançamentos exportados`);
   }

@@ -184,3 +184,6 @@ Testei com arquivos no formato de cada banco:
 ### 39. Gasto lançado no mesmo dia em que você corrigiu o saldo agora desconta
 - **Antes:** se você corrigia o saldo de uma conta hoje (em Saldo → Contas) e depois lançava um gasto, uma receita, uma transferência ou pagava uma fatura com essa conta **no mesmo dia**, o saldo **não mudava nunca** — o app só contava o que tinha data depois do dia da correção.
 - **Agora:** o app guarda também o horário em que você informou o saldo (campo novo e opcional), e conta o que foi lançado depois desse momento, mesmo que no mesmo dia. O que já existia antes continua igual (conferi que todos os números dos dados de teste ficaram idênticos). Extratos importados não entram nessa regra, porque o saldo que você digitou já inclui o que aconteceu no dia.
+
+### 40. Aporte e resgate de investimento mexem na conta de onde o dinheiro saiu
+- Ao editar um investimento e fazer um **aporte**, agora dá para escolher **"Sai da conta"** (ex.: Nubank); num **resgate**, **"Entra na conta"**. O saldo da conta acompanha sozinho e o movimento aparece no detalhe da conta ("Aporte em Mercado Pago"). Se deixar "Não mexer nas contas", fica como antes.
