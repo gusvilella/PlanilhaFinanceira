@@ -162,3 +162,6 @@ Testei com arquivos no formato de cada banco:
 
 ### 34. Importar extrato grande ficou 2x mais rápido
 - Com um extrato de 1.500 linhas, a prévia levava ~0,7 s num computador rápido (uns 3 s no celular), e de novo a cada troca de conta. Agora ~0,35 s: a checagem de "já lançado" e a sugestão de categoria usam um índice montado uma vez só, e o navegador só desenha as linhas que estão aparecendo na tela.
+
+### 35. Tocar numa categoria do gráfico filtra a lista
+- Nas abas Receita e Despesa variável, tocar numa categoria da legenda do gráfico de rosca (ex.: "Carro 24%") mostra só os lançamentos dela; as outras ficam apagadinhas. Tocar de novo volta a mostrar tudo. É o mesmo filtro do botão Filtro, só que mais rápido.

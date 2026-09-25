@@ -488,6 +488,10 @@ html.locked .lock { place-items: normal; overflow-y: auto; }
 .row .date { color: var(--muted); font-size: .8rem; }
 .row .name { font-weight: 500; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 .row .name small { color: var(--muted); font-weight: 500; margin-left: 4px; }
+.legend li[data-catpick] { cursor: pointer; border-radius: 8px; transition: opacity .15s; }
+.legend li[data-catpick]:hover { background: var(--field); }
+.legend li.dim { opacity: .4; }
+.legend li.on .lname { font-weight: 700; }
 /* nome + selo do cartão/conta em até 2 linhas, sem esconder o selo com "…" */
 .row .name > span { display: -webkit-box; -webkit-box-orient: vertical; -webkit-line-clamp: 2; line-clamp: 2; overflow: hidden; white-space: normal; overflow-wrap: anywhere; }
 .row .val { text-align: right; font-weight: 600; white-space: nowrap; }
@@ -1484,7 +1488,7 @@ button:focus-visible, a:focus-visible, [role="button"]:focus-visible, [tabindex]
       const src = ui.tab === 'receita' ? receitasOf(key).filter(r => !r.pending) : variaveisOf(key);
       const sums = new Map();
       src.forEach(r => sums.set(r.category, (sums.get(r.category) || 0) + r.amount));
-      groups = [...sums].map(([id, value]) => { const c = cat(id); return { name: c?.name || 'Sem categoria', color: c?.color || '#94a3b8', value }; });
+      groups = [...sums].map(([id, value]) => { const c = cat(id); return { id: id || '', name: c?.name || 'Sem categoria', color: c?.color || '#94a3b8', value }; });
     }
     groups = groups.filter(g => g.value > 0).sort((a, b) => b.value - a.value);
     const total = groups.reduce((s, g) => s + g.value, 0);
@@ -1518,7 +1522,9 @@ button:focus-visible, a:focus-visible, [role="button"]:focus-visible, [tabindex]
       </div>
       <ul class="legend">${groups.map(g => {
         const pct = Math.round(g.value / total * 100);
-        return `<li><span class="ldot" style="background:${g.color}"></span><span class="pct" style="background:${g.color}1f;color:${g.color}">${pct}%</span><span class="lname" title="${esc(g.name)}">${esc(g.name)}</span></li>`;
+        // com id de categoria: tocar filtra a lista por ela (tocar de novo tira o filtro)
+        const pick = g.id !== undefined && g.id !== '' ? ` data-catpick="${esc(g.id)}" role="button" tabindex="0" title="Filtrar por ${esc(g.name)}" class="${view.cat === g.id ? 'on' : view.cat ? 'dim' : ''}"` : '';
+        return `<li${pick}><span class="ldot" style="background:${g.color}"></span><span class="pct" style="background:${g.color}1f;color:${g.color}">${pct}%</span><span class="lname" title="${esc(g.name)}">${esc(g.name)}</span></li>`;
       }).join('')}</ul>`;
   }
 
@@ -3572,6 +3578,9 @@ button:focus-visible, a:focus-visible, [role="button"]:focus-visible, [tabindex]
   $('#fSearch').addEventListener('input', e => { view.query = e.target.value; render(); });
   $('#fCat').addEventListener('change', e => { view.cat = e.target.value; render(); });
   $('#fAll').addEventListener('change', e => { view.allMonths = e.target.checked; render(); });
+  const catPick = li => { view.cat = view.cat === li.dataset.catpick ? '' : li.dataset.catpick; $('#fCat').value = view.cat; render(); };
+  $('#chart').addEventListener('click', e => { const li = e.target.closest('[data-catpick]'); if (li) catPick(li); });
+  $('#chart').addEventListener('keydown', e => { const li = e.target.closest('[data-catpick]'); if (li && (e.key === 'Enter' || e.key === ' ')) { e.preventDefault(); catPick(li); } });
   $('#fClear').addEventListener('click', () => { view.query = ''; view.cat = ''; view.allMonths = false; $('#fAll').checked = false; $('#fSearch').value = ''; $('#fCat').value = ''; render(); togglePop($('#filterPop'), false); });
 
   // Atalhos: N = novo, Q = rápido, / = buscar, H = mês atual, ← → = mês, Esc = fechar
