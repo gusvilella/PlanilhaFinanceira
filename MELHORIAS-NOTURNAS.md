@@ -268,3 +268,6 @@ Testei com arquivos no formato de cada banco:
 
 ### 61. Total e média na tabela da Evolução
 - Em Evolução → "Ver tabela", agora tem as linhas **Total** (soma do período: 6 ou 12 meses) e **Média/mês** (considerando os meses com lançamento) para receita, despesas e sobra. Com "12 meses", vira um resumo do ano.
+
+### 62. Botão "Adicionar" que às vezes não fazia nada
+- Achado pelo teste de toques aleatórios: se você marcava "Parcelado", digitava um número fora do permitido (ex.: 60 parcelas, o máximo é 48) e depois desmarcava, o botão **Adicionar parava de funcionar sem nenhum aviso** (o navegador bloqueava o envio por causa de um campo escondido). Agora o app faz só a própria checagem, que já mostra mensagens claras ("Digite o valor", "Escolha a data"…) e limita as parcelas a 48.

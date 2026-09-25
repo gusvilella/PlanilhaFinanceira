@@ -2038,7 +2038,7 @@ button:focus-visible, a:focus-visible, [role="button"]:focus-visible, [tabindex]
   function openMeta(item) {
     const editing = !!item;
     const g = item ? { ...item, investments: [...(item.investments || [])] } : { name: '', emoji: '🎯', target: 0, deadline: addMonths(curKey(), 12), saved: 0, investments: [] };
-    openModal(`<form id="f">${modalHead(editing ? 'Editar meta' : 'Nova meta', 'Um objetivo com valor e prazo. O app diz quanto guardar por mês.')}
+    openModal(`<form id="f" novalidate>${modalHead(editing ? 'Editar meta' : 'Nova meta', 'Um objetivo com valor e prazo. O app diz quanto guardar por mês.')}
       <div class="emoji-pick" id="gEmoji">${GOAL_EMOJI.map(e => `<button type="button" class="${e === g.emoji ? 'on' : ''}">${e}</button>`).join('')}</div>
       <label class="fl" for="fName">Nome</label><input class="input" id="fName" maxlength="40" placeholder="Ex.: Viagem pro Nordeste" value="${esc(g.name)}" />
       <div class="two">
@@ -2113,7 +2113,7 @@ button:focus-visible, a:focus-visible, [role="button"]:focus-visible, [tabindex]
 
   // Guardar um valor numa meta (manual) sem abrir a edição completa; opcionalmente tirando de uma conta
   function openGoalAdd(g) {
-    openModal(`<form id="f">${modalHead(`${g.emoji || '🎯'} ${esc(g.name)}`, `Guardado até agora: ${brl.format((g.saved || 0) / 100)} de ${brl.format(g.target / 100)}.`)}
+    openModal(`<form id="f" novalidate>${modalHead(`${g.emoji || '🎯'} ${esc(g.name)}`, `Guardado até agora: ${brl.format((g.saved || 0) / 100)} de ${brl.format(g.target / 100)}.`)}
       <div class="seg2" id="gaMv"><button type="button" data-mv="in" class="on">+ Guardar</button><button type="button" data-mv="out">− Retirar</button></div>
       ${moneyField('fAmount', 0, 'Valor')}
       ${state.accounts.length ? `<label class="fl" for="gaAcc" id="gaAccLbl">Sai da conta</label><select class="select" id="gaAcc"><option value="">Não mexer nas contas</option>${state.accounts.map(a => `<option value="${a.id}">${esc(a.name)}</option>`).join('')}</select>` : ''}
@@ -2189,7 +2189,7 @@ button:focus-visible, a:focus-visible, [role="button"]:focus-visible, [tabindex]
     const editing = !!item;
     const a = item ? { ...item } : { brand: '', name: '', icon: '', amount: 0, cycle: 'mensal', day: +defaultDate().slice(8), month: +view.month.slice(5) };
     const services = Object.entries(BRANDS).filter(([, b]) => b.kind === 'sub');
-    openModal(`<form id="f">${modalHead(editing ? 'Editar assinatura' : 'Nova assinatura', 'Streaming, música, apps… o que é cobrado todo mês ou todo ano.')}
+    openModal(`<form id="f" novalidate>${modalHead(editing ? 'Editar assinatura' : 'Nova assinatura', 'Streaming, música, apps… o que é cobrado todo mês ou todo ano.')}
       <div id="svcPick"></div>
       <label class="fl" for="fAmount">Valor</label>
       <div class="money"><span>R$</span><input id="fAmount" inputmode="numeric" value="${centsText(a.amount)}" data-cents="${a.amount}" autocomplete="off" /></div>
@@ -2473,7 +2473,7 @@ button:focus-visible, a:focus-visible, [role="button"]:focus-visible, [tabindex]
     const editing = !!item;
     const c = item ? { ...item } : { bank: '', name: '', flag: '', last4: '', closeDay: 3, dueDay: 10, limit: 0, count: true, icon: '' };
     const banks = Object.keys(BRANDS).filter(k => BRANDS[k].kind === 'bank');
-    openModal(`<form id="f">${modalHead(editing ? 'Editar cartão' : 'Novo cartão de crédito', 'Banco, bandeira e datas da fatura.')}
+    openModal(`<form id="f" novalidate>${modalHead(editing ? 'Editar cartão' : 'Novo cartão de crédito', 'Banco, bandeira e datas da fatura.')}
       <div id="ccPrev"></div>
       <label class="fl">Banco</label>
       <div class="bank-chips" id="ccBanks">${banks.map(k => `<button type="button" data-bank="${k}" class="${k === c.bank ? 'on' : ''}">${logoHtml({ brand: k }, 'sm')}${esc(BRANDS[k].name)}</button>`).join('')}
@@ -2550,7 +2550,7 @@ button:focus-visible, a:focus-visible, [role="button"]:focus-visible, [tabindex]
     const st = faturaState(card, key, f);
     const next = addMonths(key, 1), nextF = (state.faturas[card.id] || {})[next];
     const stTxt = { open: 'aberta, ainda recebendo compras', closed: 'fechada, esperando pagamento', late: 'vencida', paid: 'paga' }[st];
-    openModal(`<form id="f">${modalHead(`Fatura de ${mn}`, `${esc(card.name)}${card.last4 ? ` •••• ${esc(card.last4)}` : ''}`)}
+    openModal(`<form id="f" novalidate>${modalHead(`Fatura de ${mn}`, `${esc(card.name)}${card.last4 ? ` •••• ${esc(card.last4)}` : ''}`)}
       <div class="fnav"><button type="button" id="fPrev" aria-label="Fatura anterior">${ico('left')}</button>
         <div><strong>Fecha ${dm(close)} · vence ${dm(due)}</strong><small>${f || st !== 'late' ? `Fatura ${stTxt}` : 'Já venceu'}</small></div>
         <button type="button" id="fNext" aria-label="Próxima fatura">${ico('right')}</button></div>
@@ -2683,7 +2683,7 @@ button:focus-visible, a:focus-visible, [role="button"]:focus-visible, [tabindex]
     const editing = !!item;
     const inv = item || { name: '', institution: '', type: 'cdi', rate: 100, balance: 0, updatedAt: todayIso };
     const now = editing ? estimate(inv) : 0;
-    openModal(`<form id="f">${modalHead(editing ? 'Editar investimento' : 'Novo investimento', 'Onde seu dinheiro está guardado e quanto rende.')}
+    openModal(`<form id="f" novalidate>${modalHead(editing ? 'Editar investimento' : 'Novo investimento', 'Onde seu dinheiro está guardado e quanto rende.')}
       <label class="fl" for="fName">Nome</label><input class="input" id="fName" maxlength="40" placeholder="Ex.: Conta Mercado Pago, CDB, Tesouro Selic…" value="${esc(inv.name)}" />
       <label class="fl" for="fInst">Instituição <span style="color:var(--muted);font-weight:500">(opcional)</span></label><input class="input" id="fInst" maxlength="40" placeholder="Ex.: Mercado Pago" value="${esc(inv.institution || '')}" />
       <label class="fl" for="fType">Rendimento</label>
@@ -2765,7 +2765,7 @@ button:focus-visible, a:focus-visible, [role="button"]:focus-visible, [tabindex]
 
   function openAccounts() {
     const draft = state.accounts.map(a => { const cur = accBalance(a); return { ...a, cur, moves: accountMoves(a), brand: a.brand || brandByName(a.name) || '', neg: cur < 0, abs: Math.abs(cur) }; });
-    openModal(`<form id="f">${modalHead('Minhas contas', 'Quanto tem em cada conta agora. A soma vira o seu saldo.')}
+    openModal(`<form id="f" novalidate>${modalHead('Minhas contas', 'Quanto tem em cada conta agora. A soma vira o seu saldo.')}
       <div id="accList"></div>
       <p class="fl" style="margin-top:16px">Adicionar conta</p>
       <div class="bank-chips" id="bankChips"></div>
@@ -2851,7 +2851,7 @@ button:focus-visible, a:focus-visible, [role="button"]:focus-visible, [tabindex]
     const accs = state.accounts, opts = sel => accs.map(a => `<option value="${a.id}" ${a.id === sel ? 'selected' : ''}>${esc(a.name)}</option>`).join('');
     const recent = (state.transfers || []).filter(t => !t.inv).slice().sort((a, b) => b.date.localeCompare(a.date)).slice(0, 5);
     const name = id => esc(accs.find(a => a.id === id)?.name || 'conta removida');
-    openModal(`<form id="f">${modalHead('Transferir entre contas', 'Move dinheiro de uma conta sua para outra. Não conta como receita nem como despesa.')}
+    openModal(`<form id="f" novalidate>${modalHead('Transferir entre contas', 'Move dinheiro de uma conta sua para outra. Não conta como receita nem como despesa.')}
       <div class="two"><div><label class="fl" for="tFrom">De</label><select class="select" id="tFrom">${opts(accs[0].id)}</select></div>
         <div><label class="fl" for="tTo">Para</label><select class="select" id="tTo">${opts(accs[1].id)}</select></div></div>
       ${moneyField('fAmount', 0)}
@@ -2898,7 +2898,7 @@ button:focus-visible, a:focus-visible, [role="button"]:focus-visible, [tabindex]
 
   function openCdi() {
     const src = state.cdi.source === 'bcb' ? `Buscado no Banco Central em ${state.cdi.date}.` : state.cdi.source === 'manual' ? 'Valor informado por você.' : 'Valor aproximado. Confira e ajuste se precisar.';
-    openModal(`<form id="f">${modalHead('Taxa do CDI', 'Usada para estimar quanto seus investimentos rendem.')}
+    openModal(`<form id="f" novalidate>${modalHead('Taxa do CDI', 'Usada para estimar quanto seus investimentos rendem.')}
       <label class="fl" for="fCdi">CDI ao ano</label>
       <div class="suffix"><input class="input num" id="fCdi" type="number" inputmode="decimal" min="0" max="100" step="0.01" value="${state.cdi.rate}" /><span>% a.a.</span></div>
       <p class="help" id="cdiHelp">${src}</p>
@@ -3096,7 +3096,7 @@ button:focus-visible, a:focus-visible, [role="button"]:focus-visible, [tabindex]
   function openReceita(item, prefill) {
     const editing = !!item;
     const r = item || { date: defaultDate(), amount: 0, desc: '', category: '', recurring: false, pending: false, ...prefill };
-    openModal(`<form id="f">${modalHead(editing ? 'Editar Receita' : 'Nova Receita', r.recurring ? 'Se repete todo mês.' : 'Lançamento deste mês.')}
+    openModal(`<form id="f" novalidate>${modalHead(editing ? 'Editar Receita' : 'Nova Receita', r.recurring ? 'Se repete todo mês.' : 'Lançamento deste mês.')}
       <label class="fl" for="fDate">Data</label><input type="date" class="input" id="fDate" value="${r.date}" required />
       ${checkField('fPending', 'Recebimento futuro', 'Não conta na sua receita até você marcar como recebido.', r.pending)}
       ${moneyField('fAmount', r.amount)}
@@ -3135,7 +3135,7 @@ button:focus-visible, a:focus-visible, [role="button"]:focus-visible, [tabindex]
   function openVariavel(item, prefill) {
     const editing = !!item;
     const v = item || { date: defaultDate(), amount: 0, desc: '', category: '', ...prefill };
-    openModal(`<form id="f">${modalHead(editing ? 'Editar Despesa Variável' : 'Nova Despesa Variável', v.installment ? `Parcela ${v.installment.i} de ${v.installment.n}.` : 'Lançamento deste mês.')}
+    openModal(`<form id="f" novalidate>${modalHead(editing ? 'Editar Despesa Variável' : 'Nova Despesa Variável', v.installment ? `Parcela ${v.installment.i} de ${v.installment.n}.` : 'Lançamento deste mês.')}
       <label class="fl" for="fDate">Data</label><input type="date" class="input" id="fDate" value="${v.date}" required />
       ${moneyField('fAmount', v.amount)}
       ${editing ? '' : checkField('fInst', 'Parcelado', 'Divide o valor total nos próximos meses.', false) +
@@ -3234,7 +3234,7 @@ button:focus-visible, a:focus-visible, [role="button"]:focus-visible, [tabindex]
   function openFixa(item) {
     const editing = !!item;
     const f = item || { amount: 0, desc: '', day: +defaultDate().slice(8) };
-    openModal(`<form id="f">${modalHead(editing ? 'Editar Despesa Fixa' : 'Nova Despesa Fixa', 'Vale deste mês em diante.')}
+    openModal(`<form id="f" novalidate>${modalHead(editing ? 'Editar Despesa Fixa' : 'Nova Despesa Fixa', 'Vale deste mês em diante.')}
       ${moneyField('fAmount', f.amount)}
       <label class="fl" for="fDesc">Descrição</label><input class="input" id="fDesc" maxlength="60" placeholder="Ex.: Aluguel, Internet…" value="${esc(f.desc)}" />
       <label class="fl" for="fDay">Vencimento (dia do mês)</label>
@@ -4283,7 +4283,7 @@ button:focus-visible, a:focus-visible, [role="button"]:focus-visible, [tabindex]
       });
       return;
     }
-    openModal(`<form id="f">${modalHead('Sincronizar entre aparelhos', 'Use os mesmos dados no celular e no computador, grátis, pelo seu GitHub.')}
+    openModal(`<form id="f" novalidate>${modalHead('Sincronizar entre aparelhos', 'Use os mesmos dados no celular e no computador, grátis, pelo seu GitHub.')}
       <ol class="sync-steps">
         <li>Crie um token no GitHub só com permissão de Gist: <a href="https://github.com/settings/tokens/new?scopes=gist&description=Orcamento%20app" target="_blank" rel="noopener">abrir o GitHub ↗</a> → role até o fim → <b>Generate token</b> → copie.</li>
         <li>Cole o token aqui e crie uma senha de sincronização. Use <b>o mesmo token e a mesma senha</b> em todos os aparelhos.</li>
@@ -4555,7 +4555,7 @@ button:focus-visible, a:focus-visible, [role="button"]:focus-visible, [tabindex]
   async function openLockSettings() {
     const bioOk = await bioAvailable();
     if (lockCfg) {
-      openModal(`<form id="f">${modalHead('Senha para abrir o app', 'Ligada neste aparelho.')}
+      openModal(`<form id="f" novalidate>${modalHead('Senha para abrir o app', 'Ligada neste aparelho.')}
         <label class="fl" for="lkCur">Senha atual</label><input class="input pin-input" id="lkCur" type="password" inputmode="numeric" maxlength="6" autocomplete="off" />
         ${bioOk ? checkField('lkBio', 'Usar digital / Face ID', 'Desbloqueia com a biometria do aparelho; a senha continua funcionando.', !!lockCfg.credId) : ''}
         <div class="err" id="fErr"></div>
@@ -4577,7 +4577,7 @@ button:focus-visible, a:focus-visible, [role="button"]:focus-visible, [tabindex]
       });
       return;
     }
-    openModal(`<form id="f">${modalHead('Senha para abrir o app', 'Pede a senha ao abrir e depois de 1 minuto fora do app.')}
+    openModal(`<form id="f" novalidate>${modalHead('Senha para abrir o app', 'Pede a senha ao abrir e depois de 1 minuto fora do app.')}
       <label class="fl" for="lkNew">Nova senha (4 a 6 números)</label><input class="input pin-input" id="lkNew" type="password" inputmode="numeric" maxlength="6" autocomplete="off" />
       <label class="fl" for="lkNew2">Repita a senha</label><input class="input pin-input" id="lkNew2" type="password" inputmode="numeric" maxlength="6" autocomplete="off" />
       ${bioOk ? checkField('lkBio', 'Usar digital / Face ID também', 'Mais rápido: desbloqueia com a biometria do aparelho.', true) : `<p class="help">A digital/Face ID fica disponível quando você abre o app pelo endereço publicado (GitHub Pages) num aparelho com biometria.</p>`}
