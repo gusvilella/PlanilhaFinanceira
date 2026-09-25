@@ -243,3 +243,6 @@ Testei com arquivos no formato de cada banco:
 
 ### 55. Compra parcelada pelo lançamento rápido
 - No lançamento rápido dá para escrever o número de parcelas: `tv 2400 12x nubank` ou `geladeira 3.000 em 10x`. A prévia mostra "12x de R$ 200,00" e o app cria as parcelas mês a mês, igual ao formulário completo (com Desfazer).
+
+### 56. Voltar para o mês atual é mais fácil de descobrir
+- Tocar no nome do mês sempre voltou para o mês atual, mas nada indicava isso. Agora, quando você está vendo outro mês, aparece um pequeno **"hoje"** verde embaixo do nome do mês. Também funciona pelo teclado (Tab + Enter) e pelo atalho `H`.

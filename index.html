@@ -115,7 +115,8 @@ svg.i { width: 16px; height: 16px; flex: none; fill: none; stroke: currentColor;
 }
 .month button { border: 0; background: transparent; color: var(--muted); border-radius: 8px; padding: 6px; display: grid; place-items: center; }
 .month button:hover { background: var(--field); color: var(--ink); }
-.month .label { min-width: 130px; text-align: center; font-size: .85rem; font-weight: 600; color: var(--ink); }
+.month .label { min-width: 130px; text-align: center; font-size: .85rem; font-weight: 600; color: var(--ink); cursor: pointer; }
+.month .label.away::after { content: "hoje"; display: block; font-size: .62rem; font-weight: 700; color: var(--green); line-height: 1; margin-top: 1px; }
 
 /* Indicadores */
 .kpis { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 18px; margin-bottom: 26px; }
@@ -920,7 +921,7 @@ button:focus-visible, a:focus-visible, [role="button"]:focus-visible, [tabindex]
         </div>
         <div class="month">
           <button id="prevMonth" aria-label="Mês anterior"><svg class="i"><use href="#i-left"/></svg></button>
-          <span class="label" id="monthLabel"></span>
+          <span class="label" id="monthLabel" role="button" tabindex="0"></span>
           <button id="nextMonth" aria-label="Próximo mês"><svg class="i"><use href="#i-right"/></svg></button>
         </div>
       </div>
@@ -1394,6 +1395,11 @@ button:focus-visible, a:focus-visible, [role="button"]:focus-visible, [tabindex]
     const [y, m] = view.month.split('-').map(Number);
     const lbl = new Date(y, m - 1, 1).toLocaleDateString('pt-BR', { month: 'long', year: 'numeric' });
     $('#monthLabel').textContent = lbl.charAt(0).toUpperCase() + lbl.slice(1);
+    // fora do mês atual: mostra "hoje" (tocar no nome do mês volta pro mês atual)
+    const away = view.month !== curKey();
+    $('#monthLabel').classList.toggle('away', away);
+    $('#monthLabel').title = away ? 'Voltar para o mês atual' : '';
+    $('#monthLabel').setAttribute('aria-label', `${$('#monthLabel').textContent}${away ? ' (tocar volta para o mês atual)' : ''}`);
 
     const t = totals(view.month);
     $('#kReceita').textContent = money(t.receita);
@@ -3686,6 +3692,7 @@ button:focus-visible, a:focus-visible, [role="button"]:focus-visible, [tabindex]
   }, { passive: true });
   $('#nextMonth').addEventListener('click', () => { view.month = addMonths(view.month, 1); render(); });
   $('#monthLabel').addEventListener('click', () => { view.month = monthOf(todayIso); render(); });
+  $('#monthLabel').addEventListener('keydown', e => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); view.month = monthOf(todayIso); render(); } });
   $('#eyeBtn').addEventListener('click', () => { ui.hidden = !ui.hidden; saveUi(); render(); });
   $('#investBtn').addEventListener('click', openInvest);
   $('#accountsBtn').addEventListener('click', openAccounts);
