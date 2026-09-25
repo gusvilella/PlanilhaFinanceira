@@ -27,3 +27,7 @@ Trabalho feito durante a noite, sem mudar o jeito como seus dados são guardados
 
 ### 4. "Outros" não aparece mais duas vezes na Visão geral
 - No gráfico "Para onde vai o dinheiro", quando havia mais de 6 grupos, o app juntava os menores num item "Outros". Se você também tinha a categoria "Outros", apareciam **dois "Outros"** na legenda. Agora eles são somados num só.
+
+### 5. Sininho enxerga a virada do mês
+- **Antes:** no dia 29 ou 30, uma conta que vence dia 1º ou uma assinatura cobrada dia 2 do mês seguinte **não aparecia** no sininho ("vence em 3 dias"), porque ele só olhava o mês atual.
+- **Agora:** ele olha também o começo do mês seguinte.

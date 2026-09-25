@@ -2557,16 +2557,15 @@ html.locked .lock { display: grid; }
     });
   }
 
-  // Contas fixas vencendo nos próximos 3 dias (ou vencidas) no mês atual
+  // Contas fixas vencendo nos próximos 3 dias (ou vencidas); olha o mês seguinte também, pra virada do mês
   function dueSoon() {
-    return [addMonths(curKey(), -1), curKey()].flatMap(fixasOf)
+    return [addMonths(curKey(), -1), curKey(), addMonths(curKey(), 1)].flatMap(fixasOf)
       .filter(f => ['due', 'late'].includes(fixaState(f)) && daysUntil(f.shownDate) <= 3)
       .sort((a, b) => a.shownDate.localeCompare(b.shownDate));
   }
-  // Assinaturas cobradas hoje ou nos próximos 3 dias
+  // Assinaturas cobradas hoje ou nos próximos 3 dias (inclusive as do começo do mês seguinte)
   function renewSoon() {
-    const key = mkey(today.getFullYear(), today.getMonth());
-    return assinaturasOf(key).map(a => ({ ...a, diff: Math.min(a.day, daysIn(key)) - today.getDate() }))
+    return [curKey(), addMonths(curKey(), 1)].flatMap(assinaturasOf).map(a => ({ ...a, diff: daysUntil(a.shownDate) }))
       .filter(a => a.diff >= 0 && a.diff <= 3).sort((a, b) => a.diff - b.diff);
   }
   function renderBell() {
@@ -2586,7 +2585,6 @@ html.locked .lock { display: grid; }
     const limAlert = limitsOf(curKey()).filter(l => l.state !== 'ok');
     const found = detectSubs(), prices = priceChanges();
     $('#bellDot').hidden = !list.length && !renew.length && !faturasDue.length && !limAlert.length && !found.length && !prices.length;
-    const key = mkey(today.getFullYear(), today.getMonth());
     const whenTxt = diff => diff < 0 ? `Venceu há ${-diff} dia${diff === -1 ? '' : 's'}` : diff === 0 ? 'Vence hoje' : `Vence em ${diff} dia${diff === 1 ? '' : 's'}`;
     const faturasHtml = faturasDue.length ? `<h4 style="margin-top:12px">Faturas do cartão</h4>` + faturasDue.map(c =>
       `<div class="note" data-bellopen="${c.id}" data-key="${c.fk}" style="cursor:pointer" title="Abrir fatura">${logoHtml({ brand: c.bank, name: c.name, icon: c.icon, color: c.color }, 'sm')}<div><strong>${esc(c.name)} · ${monthName(c.fk)}</strong><small style="color:${c.diff < 0 ? 'var(--red)' : ''}">${whenTxt(c.diff)} · ${money(c.fatura.amount)}</small></div><button class="mini" data-bellfat="${c.id}" data-key="${c.fk}">Paguei</button></div>`).join('') : '';
