@@ -27,7 +27,8 @@ Outros detalhes:
 
 - O olho ao lado de "Orçamento" esconde os valores.
 - Alterar ou excluir algo recorrente num mês posterior vale daquele mês em diante, e o passado não muda.
-- A engrenagem tem tema escuro, exportação do mês para CSV (abre no Excel / Google Planilhas), backup e restauração.
+- O ícone de lua/sol ao lado da engrenagem alterna entre tema claro e escuro.
+- A engrenagem tem exportação do mês para CSV (abre no Excel / Google Planilhas), backup e restauração.
 - Atalhos: `N` novo lançamento, `←` `→` troca o mês, `Esc` fecha.
 
 ## Dados

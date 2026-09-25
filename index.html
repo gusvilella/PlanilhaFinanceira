@@ -79,6 +79,20 @@ svg.i { width: 16px; height: 16px; flex: none; fill: none; stroke: currentColor;
 .ghost-ico:hover { background: var(--card); color: var(--ink); }
 .top-right { display: flex; align-items: center; gap: 8px; }
 .bell { position: relative; }
+
+/* Botão de tema: sol e lua se alternam girando */
+.theme-btn { position: relative; width: 30px; height: 30px; overflow: hidden; }
+.theme-btn svg.i { position: absolute; top: 50%; left: 50%; width: 18px; height: 18px; margin: -9px 0 0 -9px;
+  transition: transform .5s cubic-bezier(.34, 1.4, .5, 1), opacity .35s ease; }
+.theme-btn .sun { opacity: 0; transform: rotate(-90deg) scale(.4); }
+.theme-btn .moon { opacity: 1; transform: rotate(0) scale(1); }
+:root[data-theme="dark"] .theme-btn .sun { opacity: 1; transform: rotate(0) scale(1); }
+:root[data-theme="dark"] .theme-btn .moon { opacity: 0; transform: rotate(90deg) scale(.4); }
+.theme-btn:hover .moon { transform: rotate(-15deg) scale(1.05); }
+:root[data-theme="dark"] .theme-btn:hover .sun { transform: rotate(45deg) scale(1.05); }
+:root[data-theme="dark"] .theme-btn:hover .moon { transform: rotate(90deg) scale(.4); }
+.theme-anim, .theme-anim *, .theme-anim *::before { transition: background-color .45s ease, color .45s ease, border-color .45s ease, box-shadow .45s ease, fill .45s ease, stroke .45s ease !important; }
+.theme-anim .theme-btn svg.i { transition: transform .5s cubic-bezier(.34, 1.4, .5, 1), opacity .35s ease !important; }
 .bell .dot { position: absolute; top: 5px; right: 5px; width: 8px; height: 8px; border-radius: 50%; background: var(--red); border: 2px solid var(--bg); }
 .month {
   display: flex; align-items: center; gap: 4px;
@@ -368,6 +382,10 @@ svg.i { width: 16px; height: 16px; flex: none; fill: none; stroke: currentColor;
             <span class="dot" id="bellDot" hidden></span>
             <div class="pop" id="bellPop" hidden></div>
           </div>
+          <button class="ghost-ico theme-btn" id="themeBtn" title="Alternar tema" aria-label="Alternar tema claro/escuro">
+            <svg class="i sun" viewBox="0 0 24 24"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M4.93 19.07l1.41-1.41M17.66 6.34l1.41-1.41"/></svg>
+            <svg class="i moon" viewBox="0 0 24 24"><path d="M20.99 12.79A9 9 0 1 1 11.21 3a7 7 0 0 0 9.78 9.79Z"/></svg>
+          </button>
           <button class="ghost-ico" id="menuBtn" title="Configurações" aria-label="Configurações"><svg class="i" style="width:18px;height:18px"><use href="#i-gear"/></svg></button>
         </div>
         <div class="month">
@@ -1020,15 +1038,12 @@ svg.i { width: 16px; height: 16px; flex: none; fill: none; stroke: currentColor;
 
   // ---------- Menu ----------
   function openMenu() {
-    const dark = document.documentElement.dataset.theme === 'dark';
     openModal(`${modalHead('Configurações', 'Seus dados ficam salvos só neste navegador.')}
-      <button class="menu-item" id="mTheme">${dark ? '☀️ Usar tema claro' : '🌙 Usar tema escuro'}</button>
       <button class="menu-item" id="mCsv">📄 Exportar mês para planilha (CSV)</button>
       <button class="menu-item" id="mBackup">💾 Fazer backup completo</button>
       <button class="menu-item" id="mRestore">📂 Restaurar backup</button>
       <button class="menu-item danger" id="mClear">🗑️ Apagar tudo</button>
       <div class="actions"><span class="grow"></span><button class="btn cancel" data-close>Fechar</button></div>`, m => {
-      m.querySelector('#mTheme').onclick = () => { applyTheme(dark ? 'light' : 'dark', true); closeModal(); };
       m.querySelector('#mCsv').onclick = () => { exportCsv(); closeModal(); };
       m.querySelector('#mBackup').onclick = () => { download(`orcamento-backup-${todayIso}.json`, JSON.stringify(state, null, 2), 'application/json'); closeModal(); };
       m.querySelector('#mRestore').onclick = () => $('#importFile').click();
@@ -1087,6 +1102,15 @@ svg.i { width: 16px; height: 16px; flex: none; fill: none; stroke: currentColor;
   $('#investBtn').addEventListener('click', openInvest);
   $('#manageBtn').addEventListener('click', openCategories);
   $('#menuBtn').addEventListener('click', openMenu);
+  $('#themeBtn').addEventListener('click', () => {
+    const next = document.documentElement.dataset.theme === 'dark' ? 'light' : 'dark';
+    // Transição suave das cores só durante a troca
+    const root = document.documentElement;
+    root.classList.add('theme-anim');
+    clearTimeout(themeTimer);
+    themeTimer = setTimeout(() => root.classList.remove('theme-anim'), 500);
+    applyTheme(next, true);
+  });
 
   const openAdd = () => ({ receita: openReceita, fixa: openFixa, variavel: openVariavel })[ui.tab]();
   $('#addBtn').addEventListener('click', () => openAdd());
@@ -1157,6 +1181,7 @@ svg.i { width: 16px; height: 16px; flex: none; fill: none; stroke: currentColor;
   });
 
   // ================= Tema e aviso =================
+  let themeTimer;
   function applyTheme(theme, persist) {
     document.documentElement.dataset.theme = theme;
     document.querySelector('meta[name="theme-color"]').content = theme === 'dark' ? '#0f1114' : '#eef0f2';
