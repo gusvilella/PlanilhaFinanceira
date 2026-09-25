@@ -65,7 +65,7 @@ Cada aba tem um gráfico de rosca mostrando para onde vai o dinheiro, filtro/bus
 - **Desfazer**: depois de adicionar, editar, excluir, pagar fatura, restaurar backup ou apagar tudo, o aviso embaixo tem *Desfazer*.
 - **Backup**: sem sincronização, o sininho lembra de fazer backup a cada 30 dias.
 
-**Lançamento rápido** (botão **+** no canto, ou tecla `Q`): escreva do seu jeito, como `mercado 45,90 nubank`, `uber 23 crédito itaú`, `café 6,50 ontem` ou `recebi 300 freela pix nubank`. O app entende valor, data, categoria, e se foi na conta ou no cartão (também pelo final, ex.: `cartão 8890`), e mostra o que entendeu antes de lançar. Gastos frequentes viram ⭐ favoritos: um toque e está lançado.
+**Lançamento rápido** (botão **+** no canto, ou tecla `Q`): escreva do seu jeito, como `mercado 45,90 nubank`, `uber 23 crédito itaú`, `café 6,50 ontem`, `tv 2400 12x nubank` (parcelado) ou `recebi 300 freela pix nubank`. O app entende valor, data, categoria, e se foi na conta ou no cartão (também pelo final, ex.: `cartão 8890`), e mostra o que entendeu antes de lançar. Gastos frequentes viram ⭐ favoritos: um toque e está lançado.
 
 Outros detalhes:
 

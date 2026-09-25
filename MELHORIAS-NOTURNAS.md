@@ -240,3 +240,6 @@ Testei com arquivos no formato de cada banco:
 
 ### 54. Tema automático acompanha o celular
 - Se você nunca escolheu o tema na mão (lua/sol), o app segue o tema do sistema. Antes ele só olhava isso ao abrir; agora, se o celular muda para o escuro à noite com o app aberto, o app muda junto. Se você escolheu um tema, ele continua valendo.
+
+### 55. Compra parcelada pelo lançamento rápido
+- No lançamento rápido dá para escrever o número de parcelas: `tv 2400 12x nubank` ou `geladeira 3.000 em 10x`. A prévia mostra "12x de R$ 200,00" e o app cria as parcelas mês a mês, igual ao formulário completo (com Desfazer).

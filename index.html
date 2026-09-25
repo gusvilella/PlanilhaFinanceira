@@ -4267,6 +4267,9 @@ button:focus-visible, a:focus-visible, [role="button"]:focus-visible, [tabindex]
       t = t.replace(d[0], ' ');
     }
     t = t.replace(/\bhoje\b/, ' ');
+    // parcelado: "12x", "em 10x", "3 x" (antes do valor, pra "12x" não virar R$ 12)
+    const px = t.match(/\b(?:em\s+)?(\d{1,2})\s?x\b/);
+    if (px && +px[1] >= 2 && +px[1] <= 48) { out.parcelas = +px[1]; t = t.replace(px[0], ' '); }
     // valor: "45,90", "23", "6,5", "1.500", "1.234,56", "12.5"
     const m = t.match(/(?:r\$\s*)?(\d{1,3}(?:\.\d{3})+(?:,\d{1,2})?|\d+(?:[.,]\d{1,2})?)/);
     if (m) {
@@ -4294,6 +4297,14 @@ button:focus-visible, a:focus-visible, [role="button"]:focus-visible, [tabindex]
   }
   function saveQuick(q) {
     const base = { id: uid(), created: Date.now(), date: q.date, amount: q.amount, desc: q.desc.slice(0, 60), category: q.category };
+    if (q.kind !== 'receita' && q.parcelas) {
+      // compra parcelada: uma parcela por mês, a primeira leva os centavos que sobram (igual ao formulário)
+      const undoSnap = JSON.stringify(state), n = q.parcelas, group = uid(), each = Math.floor(q.amount / n), rest = q.amount - each * n;
+      for (let i = 0; i < n; i++) state.variaveis.push({ ...base, id: uid(), created: Date.now() + i, date: dateIn(addMonths(monthOf(q.date), i), +q.date.slice(8)),
+        amount: each + (i === 0 ? rest : 0), payCard: q.payCard, payAccount: q.payAccount, installment: { group, i: i + 1, n } });
+      commit();
+      return undoToast(`${brl.format(q.amount / 100)} em ${n}x de ${brl.format(each / 100)} lançado`, undoSnap);
+    }
     if (q.kind === 'receita') state.receitas.push({ ...base, payAccount: q.payAccount, pending: false, recurring: false });
     else state.variaveis.push({ ...base, payCard: q.payCard, payAccount: q.payAccount });
     const list = q.kind === 'receita' ? 'receitas' : 'variaveis', id = base.id;
@@ -4310,7 +4321,7 @@ button:focus-visible, a:focus-visible, [role="button"]:focus-visible, [tabindex]
     state.favorites ||= [];
     openModal(`${modalHead('Lançamento rápido', 'Escreva do seu jeito e aperte Enter.')}
       <input class="input qa-input" id="qaText" placeholder="mercado 45,90 nubank" autocomplete="off" autofocus enterkeyhint="done" />
-      <div class="qa-hint">Ex.: <code>uber 23 crédito itaú</code> <code>café 6,50 ontem</code> <code>recebi 300 freela pix nubank</code></div>
+      <div class="qa-hint">Ex.: <code>uber 23 crédito itaú</code> <code>café 6,50 ontem</code> <code>tv 2400 12x nubank</code> <code>recebi 300 freela pix nubank</code></div>
       <div class="qa-preview" id="qaPrev"></div>
       <p class="fl" style="display:flex;justify-content:space-between;align-items:center">Favoritos <span style="font-weight:500;color:var(--muted);font-size:.74rem">toque pra lançar na hora</span></p>
       <div class="favs" id="qaFavs"></div>
@@ -4329,6 +4340,7 @@ button:focus-visible, a:focus-visible, [role="button"]:focus-visible, [tabindex]
         m.querySelector('#qaSave').disabled = !ok; m.querySelector('#qaStar').disabled = !ok;
         m.querySelector('#qaPrev').innerHTML = !q ? '<span class="qa-hint" style="margin:0">O que eu entender aparece aqui.</span>' : `
           <div class="l"><span>${q.kind === 'receita' ? 'Entrada' : 'Gasto'}</span><b class="big num" style="color:${q.kind === 'receita' ? 'var(--green)' : 'var(--ink)'}">${ok ? brl.format(q.amount / 100) : 'falta o valor'}</b></div>
+          ${q.parcelas && q.kind !== 'receita' ? `<div class="l"><span>Parcelado</span><b>${q.parcelas}x de ${brl.format(Math.floor(q.amount / q.parcelas) / 100)}</b></div>` : ''}
           <div class="l"><span>Descrição</span><b>${esc(q.desc || '—')}</b></div>
           <div class="l"><span>Categoria</span><b>${esc(cat(q.category)?.name || 'Sem categoria')}</b></div>
           <div class="l"><span>${q.kind === 'receita' ? 'Recebido em' : 'Pago com'}</span><b>${payLabel(q)}</b></div>
