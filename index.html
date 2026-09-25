@@ -4089,10 +4089,11 @@ button:focus-visible, a:focus-visible, [role="button"]:focus-visible, [tabindex]
       const kind = out ? 'variavel' : 'receita';
       const sub = out ? subFor(r.desc, monthOf(r.date)) : null;
       let fx;
-      const skipReason = card && !out ? 'pagamento ou estorno' : /pagamento.*fatura|fatura.*(cartao|card)|pgto.*fat|pag fat/.test(norm(r.desc)) ? 'pagamento de fatura' : isDup(r, kind === 'variavel' ? 'variavel' : 'receita') ? 'já lançado' : sub ? 'já está em Assinaturas' : out && (fx = fixaFor(r, usedFixas)) ? `já é a despesa fixa ${fx.desc}` : !out && (fx = recFor(r, usedFixas)) ? `já é a receita ${fx.desc || 'recorrente'}` : maybeDup(r, kind === 'variavel' ? 'variavel' : 'receita') ? 'parece já lançado (mesmo dia e valor)' : '';
+      const skipReason = card && !out ? 'pagamento ou estorno' : /pagamento.*fatura|fatura.*(cartao|card)|pgto.*fat|pag fat/.test(norm(r.desc)) ? 'pagamento de fatura' : isDup(r, kind === 'variavel' ? 'variavel' : 'receita') ? 'já lançado' : sub ? 'já está em Assinaturas' : out && (fx = fixaFor(r, usedFixas)) ? `já é a despesa fixa ${fx.desc}${!fx.paid && fixaState(fx) !== 'card' ? ': vai ser marcada como paga' : ''}` : !out && (fx = recFor(r, usedFixas)) ? `já é a receita ${fx.desc || 'recorrente'}` : maybeDup(r, kind === 'variavel' ? 'variavel' : 'receita') ? 'parece já lançado (mesmo dia e valor)' : '';
       const payFat = skipReason === 'pagamento de fatura' && !card && out && source ? faturaFor(r) : null;
+      const payFixa = out && fx && fx.start !== undefined && !fx.paid && fixaState(fx) !== 'card' && /despesa fixa/.test(skipReason) ? { id: fx.id, key: fx.key } : null;
       return { ...r, amount: Math.abs(amt), kind, on: !skipReason, skipReason: payFat ? `pagamento da fatura ${payFat.card.name} de ${monthName(payFat.key)}: vai ser marcada como paga` : skipReason,
-        payFat, sub: sub?.id, category: catFor(r.desc, kind === 'variavel' ? 'despesa' : 'receita') };
+        payFat, payFixa, sub: sub?.id, category: catFor(r.desc, kind === 'variavel' ? 'despesa' : 'receita') };
     }).sort((a, b) => b.date.localeCompare(a.date)); };
     let rows = build();
     openModal(`${modalHead('Importar extrato', `${esc(fileName)} · ${raw.length} lançamentos encontrados`)}
@@ -4123,7 +4124,7 @@ button:focus-visible, a:focus-visible, [role="button"]:focus-visible, [tabindex]
         const outs = on.filter(r => r.kind === 'variavel').reduce((s, r) => s + r.amount, 0), ins = on.filter(r => r.kind === 'receita').reduce((s, r) => s + r.amount, 0);
         m.querySelector('#impSum').innerHTML = `<span><b>${on.length}</b> selecionados</span><span>Saídas <b>${brl.format(outs / 100)}</b></span><span>Entradas <b>${brl.format(ins / 100)}</b></span><span>${rows.length - on.length} de fora</span>`;
         m.querySelector('#impGo').textContent = `Importar ${on.length}`;
-        m.querySelector('#impGo').disabled = !on.length && !rows.some(r => r.sub || r.payFat);
+        m.querySelector('#impGo').disabled = !on.length && !rows.some(r => r.sub || r.payFat || r.payFixa);
       };
       m.querySelector('#impSrc').addEventListener('click', e => {
         const b = e.target.closest('[data-src]'); if (!b) return;
@@ -4144,6 +4145,9 @@ button:focus-visible, a:focus-visible, [role="button"]:focus-visible, [tabindex]
         const snap = JSON.stringify({ v: state.variaveis, r: state.receitas, f: state.faturas });
         // faturas pagas que apareceram no extrato da conta: marca como pagas, na data e com a conta do extrato
         let paidFat = 0;
+        // contas fixas que apareceram no extrato: marca como pagas naquele mês
+        const paidSnap = JSON.stringify(state.paid);
+        rows.filter(r => r.payFixa).forEach(r => { const l = state.paid[r.payFixa.key] ||= []; if (!l.includes(r.payFixa.id)) { l.push(r.payFixa.id); paidFat++; } });
         rows.filter(r => r.payFat).forEach(r => { const f = state.faturas[r.payFat.card.id]?.[r.payFat.key];
           if (f && !f.paid) { Object.assign(f, { paid: true, paidAt: r.date, paidTs: Date.now(), payAccount: source.slice(4) }); paidFat++; } });
         on.forEach((r, n) => {
@@ -4161,11 +4165,11 @@ button:focus-visible, a:focus-visible, [role="button"]:focus-visible, [tabindex]
           else if (seen) delete state.subPrice[r.sub];
         });
         const latest = on.map(r => r.date).sort().pop();
-        if (!latest) { commit(); closeModal(); return toast(paidFat ? `${paidFat} fatura${paidFat > 1 ? 's marcadas' : ' marcada'} como paga${paidFat > 1 ? 's' : ''}` : changed ? 'Uma assinatura mudou de preço, veja no sininho' : 'Nada para importar'); }
+        if (!latest) { commit(); closeModal(); return toast(paidFat ? `${paidFat} conta${paidFat > 1 ? 's marcadas' : ' marcada'} como paga${paidFat > 1 ? 's' : ''}` : changed ? 'Uma assinatura mudou de preço, veja no sininho' : 'Nada para importar'); }
         view.month = monthOf(latest); ui.tab = on.some(r => r.kind === 'variavel') ? 'variavel' : 'receita'; saveUi();
         commit(); fillFilter();
         const nFound = detectSubs().length;
-        toast(`${on.length} lançamentos importados${paidFat ? ` · ${paidFat} fatura${paidFat > 1 ? 's pagas' : ' paga'}` : ''}${nFound ? ` · ${nFound} possíve${nFound > 1 ? 'is' : 'l'} assinatura${nFound > 1 ? 's' : ''} no sininho` : ''}`, 'Desfazer', () => { const o = JSON.parse(snap); state.variaveis = o.v; state.receitas = o.r; state.faturas = o.f; commit(); });
+        toast(`${on.length} lançamentos importados${paidFat ? ` · ${paidFat} conta${paidFat > 1 ? 's marcadas' : ' marcada'} como paga${paidFat > 1 ? 's' : ''}` : ''}${nFound ? ` · ${nFound} possíve${nFound > 1 ? 'is' : 'l'} assinatura${nFound > 1 ? 's' : ''} no sininho` : ''}`, 'Desfazer', () => { const o = JSON.parse(snap); state.variaveis = o.v; state.receitas = o.r; state.faturas = o.f; state.paid = JSON.parse(paidSnap); commit(); });
       });
       draw();
     });
