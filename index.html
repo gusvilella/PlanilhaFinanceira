@@ -1497,7 +1497,12 @@ button:focus-visible, a:focus-visible, [role="button"]:focus-visible, [tabindex]
       .map(f => ({ date: todayIso, amount: f.amount, dir: 'out', label: f.desc + ' (atrasada)', icon: '📌' }));
     const lateFat = [addMonths(curKey(), -1), curKey()].flatMap(k => cardsOf(k).filter(c => c.fatura && !c.fatura.paid && c.shownDate <= todayIso))
       .map(c => ({ date: todayIso, amount: c.fatura.amount, dir: 'out', label: `Fatura ${c.name} (vencida)`, logo: logoHtml({ brand: c.bank, name: c.name, icon: c.icon, color: c.color }) }));
-    const all = [...lateFixas, ...lateFat, ...evs];
+    // Faturas que vencem na janela e ainda não foram lançadas: entra a prévia (o que já está no cartão)
+    const prevFat = [curKey(), addMonths(curKey(), 1), addMonths(curKey(), 2)].flatMap(k => cardsOf(k).filter(c => !c.fatura)
+      .map(c => ({ c, k, due: faturaDates(c, k).due, amount: faturaPreview(c.id, k) })))
+      .filter(x => x.amount > 0 && x.due > todayIso && x.due <= end)
+      .map(({ c, due, amount }) => ({ date: due, amount, dir: 'out', label: `Fatura ${c.name} (prévia)`, logo: logoHtml({ brand: c.bank, name: c.name, icon: c.icon, color: c.color }) }));
+    const all = [...lateFixas, ...lateFat, ...prevFat, ...evs];
     const days = [];
     let bal = start;
     for (let d = new Date(todayIso + 'T12:00:00'), i = 0; i <= 30; i++, d.setDate(d.getDate() + 1)) {

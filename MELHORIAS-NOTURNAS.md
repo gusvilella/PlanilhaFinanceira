@@ -72,3 +72,7 @@ Testei com arquivos no formato de cada banco:
 
 ### 13. O botão + não cobre mais o fim da página no celular
 - Havia uma regra de espaço no fim da página para o botão verde "+" não ficar por cima do conteúdo, mas outra regra, mais abaixo no código, anulava ela. Resultado: rolando até o fim, o botão tampava o canto do último cartão (Evolução/metas). Agora sobra espaço e dá pra ler tudo.
+
+### 14. A previsão dos próximos 30 dias conta a fatura do cartão que ainda não foi lançada
+- **Antes:** a previsão de saldo só descontava as faturas que você já tinha digitado. Se a fatura do Nubank vence dia 10 e você ainda não lançou o valor, a previsão fingia que ela não existia, mesmo com as compras já registradas no cartão — o saldo previsto ficava otimista demais.
+- **Agora:** para faturas que vencem nos próximos 30 dias e ainda não foram lançadas, a previsão desconta a **prévia** (as compras e parcelas que já estão no cartão), no dia do vencimento, com o nome "Fatura Nubank (prévia)". Quando você lança o valor real, ele passa a valer no lugar da prévia.
