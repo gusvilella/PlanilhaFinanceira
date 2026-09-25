@@ -129,6 +129,26 @@ svg.i { width: 16px; height: 16px; flex: none; fill: none; stroke: currentColor;
   box-shadow: 0 4px 10px rgba(29, 95, 214, .25);
 }
 .adjust svg.i { width: 12px; height: 12px; }
+.adjust.dark { background: var(--ink); color: var(--card); box-shadow: 0 4px 10px rgba(20, 23, 28, .18); }
+
+/* Contas */
+.acc { display: grid; grid-template-columns: 34px minmax(0, 1fr) 150px 30px; gap: 8px; align-items: center; margin-top: 8px; }
+.acc-dot { width: 34px; height: 34px; border-radius: 10px; display: grid; place-items: center; color: #fff; font-weight: 800; font-size: .85rem; }
+.acc .input { padding: 9px 11px; }
+.acc .money { padding: 0 10px 0 4px; }
+.acc .money input { padding: 9px 0; text-align: right; }
+.sign { border: 0; background: transparent; color: var(--muted); font-size: .8rem; font-weight: 700; padding: 6px; border-radius: 8px; white-space: nowrap; }
+.sign:hover { background: var(--card); color: var(--ink); }
+.acc.neg .sign, .acc.neg .money input { color: var(--red); }
+.bank-chips { display: flex; flex-wrap: wrap; gap: 6px; }
+.bank-chips button { display: inline-flex; align-items: center; gap: 6px; border: 1.5px solid var(--field-line); background: var(--field); border-radius: 999px; padding: 6px 11px; font-size: .8rem; font-weight: 600; color: var(--ink-2); }
+.bank-chips button:hover { border-color: var(--muted); }
+.bank-chips i { width: 8px; height: 8px; border-radius: 50%; }
+.acc-total { display: flex; justify-content: space-between; align-items: baseline; margin-top: 18px; padding-top: 14px; border-top: 1px solid var(--line); }
+.acc-total span { color: var(--muted); font-size: .85rem; }
+.acc-total strong { font-size: 1.3rem; font-weight: 800; }
+.acc-empty { color: var(--muted); font-size: .85rem; padding: 6px 0 4px; }
+@media (max-width: 640px) { .acc { grid-template-columns: 30px minmax(0, 1fr) 120px 26px; gap: 6px; } .acc-dot { width: 30px; height: 30px; } }
 
 /* Abas */
 .tabs { display: inline-flex; gap: 4px; margin-bottom: 18px; }
@@ -444,7 +464,9 @@ svg.i { width: 16px; height: 16px; flex: none; fill: none; stroke: currentColor;
         <div class="kpi-sub" id="kDespesasSub"></div>
       </div>
       <div class="kpi saldo">
-        <div class="kpi-head"><span class="kpi-ico"><svg class="i"><use href="#i-scale"/></svg></span><span class="kpi-label">Saldo</span></div>
+        <div class="kpi-head"><span class="kpi-ico"><svg class="i"><use href="#i-scale"/></svg></span><span class="kpi-label">Saldo</span>
+          <button class="adjust dark" id="accountsBtn" title="Saldo das suas contas"><span class="t">Contas</span><svg class="i"><use href="#i-pencil"/></svg></button>
+        </div>
         <div class="kpi-value num" id="kSaldo"></div>
         <div class="kpi-sub" id="kSaldoSub"></div>
       </div>
@@ -531,7 +553,7 @@ svg.i { width: 16px; height: 16px; flex: none; fill: none; stroke: currentColor;
   const UI_KEY = 'orcamento:ui';
 
   function blank() {
-    return { categories: DEFAULT_CATEGORIES.map(c => ({ ...c })), receitas: [], variaveis: [], fixas: [], invest: {}, paid: {}, investments: [], cdi: { rate: 14.9, date: '', source: 'padrao' } };
+    return { categories: DEFAULT_CATEGORIES.map(c => ({ ...c })), receitas: [], variaveis: [], fixas: [], invest: {}, paid: {}, investments: [], accounts: [], cdi: { rate: 14.9, date: '', source: 'padrao' } };
   }
 
   function load() {
@@ -618,9 +640,20 @@ svg.i { width: 16px; height: 16px; flex: none; fill: none; stroke: currentColor;
     $('#kInvestirSub').textContent = t.pct ? `${fmtPct(t.pct)} da receita` : 'Quanto guardar este mês';
     $('#kDespesas').textContent = money(t.despesas);
     $('#kDespesasSub').textContent = t.despesas ? `Fixas ${money(t.fixas)} · Variáveis ${money(t.variaveis)}` : '';
-    $('#kSaldo').textContent = (t.saldo < 0 && !ui.hidden ? '–' : '') + money(Math.abs(t.saldo));
-    $('#kSaldo').classList.toggle('neg', t.saldo < 0);
-    $('#kSaldoSub').textContent = t.saldo < 0 ? 'Gastos acima da receita' : t.receita ? 'Livre para usar' : '';
+    const signed = c => (c < 0 && !ui.hidden ? '–' : '') + money(Math.abs(c));
+    if (state.accounts.length) {
+      // Com contas cadastradas, o saldo é o dinheiro real somado de todas elas
+      const total = state.accounts.reduce((s, a) => s + a.balance, 0);
+      $('#kSaldo').textContent = signed(total);
+      $('#kSaldo').classList.toggle('neg', total < 0);
+      $('#kSaldo').title = state.accounts.map(a => `${a.name}: ${brl.format(a.balance / 100)}`).join('\n');
+      $('#kSaldoSub').textContent = `${state.accounts.length} conta${state.accounts.length > 1 ? 's' : ''} · sobra do mês ${signed(t.saldo)}`;
+    } else {
+      $('#kSaldo').textContent = signed(t.saldo);
+      $('#kSaldo').classList.toggle('neg', t.saldo < 0);
+      $('#kSaldo').title = '';
+      $('#kSaldoSub').textContent = t.saldo < 0 ? 'Gastos acima da receita' : t.receita ? 'Livre para usar' : '';
+    }
 
     $('#eyeBtn').innerHTML = ico(ui.hidden ? 'eye-off' : 'eye');
     document.querySelectorAll('#tabs button').forEach(b => b.classList.toggle('active', b.dataset.tab === ui.tab));
@@ -871,6 +904,81 @@ svg.i { width: 16px; height: 16px; flex: none; fill: none; stroke: currentColor;
     });
   }
 
+  // ================= Contas bancárias =================
+  const BANKS = [['Itaú', '#ec7000'], ['Bradesco', '#cc092f'], ['Nubank', '#820ad1'], ['Mercado Pago', '#009ee3'], ['Inter', '#ff7a00'],
+    ['Caixa', '#005ca9'], ['Banco do Brasil', '#d9a800'], ['Santander', '#ec0000'], ['C6 Bank', '#3a3a3a'], ['PicPay', '#21c25e']];
+
+  function openAccounts() {
+    const draft = state.accounts.map(a => ({ ...a, neg: a.balance < 0, abs: Math.abs(a.balance) }));
+    openModal(`<form id="f">${modalHead('Minhas contas', 'Quanto tem em cada conta agora. A soma vira o seu saldo.')}
+      <div id="accList"></div>
+      <p class="fl" style="margin-top:16px">Adicionar conta</p>
+      <div class="bank-chips" id="bankChips"></div>
+      <div class="acc-total"><span>Saldo total</span><strong class="num" id="accTotal"></strong></div>
+      <div class="err" id="fErr"></div>
+      <div class="actions"><span class="grow"></span><button type="button" class="btn cancel" data-close>Cancelar</button><button type="submit" class="btn save" id="fSave">Salvar</button></div></form>`, m => {
+      const list = m.querySelector('#accList');
+      const total = () => {
+        const t = draft.reduce((s, a) => s + (a.neg ? -a.abs : a.abs), 0);
+        const el = m.querySelector('#accTotal');
+        el.textContent = (t < 0 ? '–' : '') + brl.format(Math.abs(t) / 100);
+        el.style.color = t < 0 ? 'var(--red)' : '';
+      };
+      const draw = focusIdx => {
+        list.innerHTML = draft.length ? draft.map((a, i) => `<div class="acc ${a.neg ? 'neg' : ''}" data-i="${i}">
+          <span class="acc-dot" style="background:${a.color}">${esc((a.name || '?').trim().charAt(0).toUpperCase() || '?')}</span>
+          <input class="input" data-name value="${esc(a.name)}" maxlength="30" placeholder="Nome da conta" aria-label="Nome da conta" />
+          <div class="money"><button type="button" class="sign" data-sign tabindex="-1" title="Tocar para marcar como negativo (cheque especial)">${a.neg ? '–R$' : 'R$'}</button>
+            <input inputmode="numeric" data-money value="${centsText(a.abs)}" data-cents="${a.abs}" aria-label="Saldo" /></div>
+          <button type="button" class="x" data-rm aria-label="Remover conta">${ico('x')}</button></div>`).join('')
+          : `<p class="acc-empty">Nenhuma conta ainda. Escolha um banco abaixo.</p>`;
+        list.querySelectorAll('[data-money]').forEach(inp => {
+          const i = +inp.closest('.acc').dataset.i;
+          bindMoney(inp, c => { draft[i].abs = c; total(); });
+        });
+        const used = new Set(draft.map(a => a.name.trim().toLowerCase()));
+        m.querySelector('#bankChips').innerHTML = BANKS.filter(([n]) => !used.has(n.toLowerCase()))
+          .map(([n, c]) => `<button type="button" data-bank="${esc(n)}" data-color="${c}"><i style="background:${c}"></i>${esc(n)}</button>`).join('')
+          + `<button type="button" data-bank="" data-color="${PALETTE[draft.length % PALETTE.length]}">${ico('plus', 'width:12px;height:12px')}Outra</button>`;
+        total();
+        if (focusIdx != null) {
+          const row = list.querySelector(`[data-i="${focusIdx}"]`);
+          const target = row && (draft[focusIdx].name ? row.querySelector('[data-money]') : row.querySelector('[data-name]'));
+          if (target) target.focus();
+        }
+      };
+      list.addEventListener('input', e => {
+        if (!e.target.matches('[data-name]')) return;
+        const row = e.target.closest('.acc'); const a = draft[+row.dataset.i];
+        a.name = e.target.value;
+        row.querySelector('.acc-dot').textContent = (a.name.trim().charAt(0) || '?').toUpperCase();
+      });
+      list.addEventListener('click', e => {
+        const row = e.target.closest('.acc'); if (!row) return;
+        const i = +row.dataset.i;
+        if (e.target.closest('[data-rm]')) { draft.splice(i, 1); draw(); }
+        if (e.target.closest('[data-sign]')) { draft[i].neg = !draft[i].neg; draw(); }
+      });
+      m.querySelector('#bankChips').addEventListener('click', e => {
+        const b = e.target.closest('[data-bank]'); if (!b) return;
+        draft.push({ id: uid(), name: b.dataset.bank, color: b.dataset.color, abs: 0, neg: false, balance: 0 });
+        draw(draft.length - 1);
+      });
+      draw();
+      m.querySelector('#f').addEventListener('submit', e => {
+        e.preventDefault();
+        if (draft.some(a => !a.name.trim())) return showErr('Dê um nome para todas as contas.');
+        state.accounts = draft.map(a => {
+          const balance = a.neg ? -a.abs : a.abs;
+          const old = state.accounts.find(x => x.id === a.id);
+          return { id: a.id, name: a.name.trim(), color: a.color, balance, updatedAt: old && old.balance === balance ? old.updatedAt : todayIso };
+        });
+        toast('Saldo das contas atualizado');
+        commit();
+      });
+    });
+  }
+
   // CDI: tenta buscar a taxa anual no Banco Central (série 4389 do SGS); se falhar, fica o valor salvo
   async function fetchCdi() {
     const ctrl = new AbortController(); const timer = setTimeout(() => ctrl.abort(), 8000);
@@ -964,6 +1072,25 @@ svg.i { width: 16px; height: 16px; flex: none; fill: none; stroke: currentColor;
   // Campo de valor no estilo app de banco: dígitos entram pelos centavos
   function bindMoney(input, onChange) {
     const set = c => { input.dataset.cents = c; input.value = centsText(c); onChange && onChange(c); };
+    // Trata cada tecla direto no valor, sem depender de onde o cursor está
+    input.addEventListener('beforeinput', e => {
+      const all = input.selectionStart === 0 && input.selectionEnd === input.value.length && input.value.length > 0;
+      const base = all ? 0 : cents(input);
+      if (e.inputType === 'insertText' && /^\d+$/.test(e.data || '')) {
+        e.preventDefault();
+        const next = Number(String(base) + e.data);
+        set(next > 99999999999 ? base : next);
+      } else if (e.inputType.startsWith('delete')) {
+        e.preventDefault();
+        set(all ? 0 : Math.floor(base / 10));
+      } else if (e.inputType === 'insertText') {
+        e.preventDefault();
+        // Texto com pontuação (ex.: "1.234,56" colado ou preenchido): usa os dígitos; só letras são ignoradas
+        const digits = (e.data || '').replace(/\D/g, '');
+        if (digits.length > 1) set(Number(digits.slice(0, 11)));
+      }
+    });
+    // Reserva (colar, teclados que não enviam beforeinput): lê só os dígitos
     input.addEventListener('input', () => set(Number(input.value.replace(/\D/g, '').slice(0, 11)) || 0));
     input.addEventListener('focus', () => setTimeout(() => input.setSelectionRange(input.value.length, input.value.length), 0));
     return set;
@@ -1286,6 +1413,7 @@ svg.i { width: 16px; height: 16px; flex: none; fill: none; stroke: currentColor;
     fixasOf(key).forEach(f => lines.push([d(f.shownDate), 'Despesa fixa', f.desc, f.paid ? 'Pago' : 'Pendente', val(-f.amount)]));
     variaveisOf(key).forEach(v => lines.push([d(v.shownDate), 'Despesa variável', v.desc + (v.installment ? ` (${v.installment.i}/${v.installment.n})` : ''), cat(v.category)?.name, val(-v.amount)]));
     const t = totals(key);
+    state.accounts.forEach(a => lines.push([d(a.updatedAt), 'Conta (saldo)', a.name, '', val(a.balance)]));
     state.investments.forEach(i => lines.push([d(todayIso), 'Investimento (saldo estimado)', i.name + (i.institution ? ` · ${i.institution}` : ''), rateText(i), val(estimate(i))]));
     lines.push([], ['', 'Receita', '', '', val(t.receita)], ['', 'Investir', '', fmtPct(t.pct), val(-t.investir)], ['', 'Despesas', '', '', val(-t.despesas)], ['', 'Saldo', '', '', val(t.saldo)]);
     download(`orcamento-${key}.csv`, '﻿' + lines.map(l => l.map(cell).join(';')).join('\r\n'), 'text/csv;charset=utf-8');
@@ -1316,6 +1444,7 @@ svg.i { width: 16px; height: 16px; flex: none; fill: none; stroke: currentColor;
   $('#monthLabel').addEventListener('click', () => { view.month = monthOf(todayIso); render(); });
   $('#eyeBtn').addEventListener('click', () => { ui.hidden = !ui.hidden; saveUi(); render(); });
   $('#investBtn').addEventListener('click', openInvest);
+  $('#accountsBtn').addEventListener('click', openAccounts);
   $('#manageBtn').addEventListener('click', () => ui.tab === 'invest' ? openCdi() : openCategories());
   $('#menuBtn').addEventListener('click', openMenu);
   $('#themeBtn').addEventListener('click', () => {

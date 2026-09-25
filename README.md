@@ -13,7 +13,7 @@ No topo ficam os 4 números do mês:
 - **Receita**: tudo o que entrou.
 - **Investir**: quanto da receita você separa para investir. Em **Ajustar**, escolha a porcentagem ou digite o valor.
 - **Despesas**: despesas fixas + variáveis.
-- **Saldo**: receita − investir − despesas.
+- **Saldo**: em **Contas**, informe quanto tem em cada banco (Itaú, Bradesco, Nubank, Mercado Pago…); o cartão mostra a soma de todas, e embaixo a sobra do mês (receita − investir − despesas). Toque em "R$" para marcar uma conta como negativa (cheque especial). Sem contas cadastradas, o cartão mostra só a sobra do mês.
 
 Os lançamentos ficam em três abas:
 
