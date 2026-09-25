@@ -3817,6 +3817,8 @@ button:focus-visible, a:focus-visible, [role="button"]:focus-visible, [tabindex]
   }
   applyFont(ui.font);
   applyTheme(ui.theme || (matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light'));
+  // sem tema escolhido na mão: acompanha o sistema quando ele muda (ex.: celular que escurece à noite)
+  matchMedia('(prefers-color-scheme: dark)').addEventListener?.('change', e => { if (!ui.theme) applyTheme(e.matches ? 'dark' : 'light'); });
 
   // Aviso com "Desfazer" que volta todos os dados para como estavam antes (snap = JSON.stringify(state) tirado antes da mudança)
   function undoToast(msg, snap) { toast(msg, 'Desfazer', () => { state = normalize(JSON.parse(snap)); fillFilter(); commit(); }); }

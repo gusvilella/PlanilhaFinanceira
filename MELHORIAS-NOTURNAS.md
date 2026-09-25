@@ -237,3 +237,6 @@ Testei com arquivos no formato de cada banco:
 
 ### 53. Atalho no ícone do app instalado
 - No Android (e no computador), segurando o ícone do app instalado aparecem os atalhos **"Lançamento rápido"** (abre direto na janela de lançar) e **"Visão geral"**. No iPhone o sistema não oferece isso para apps da web. Se a senha estiver ligada, a janela aparece depois de desbloquear.
+
+### 54. Tema automático acompanha o celular
+- Se você nunca escolheu o tema na mão (lua/sol), o app segue o tema do sistema. Antes ele só olhava isso ao abrir; agora, se o celular muda para o escuro à noite com o app aberto, o app muda junto. Se você escolheu um tema, ele continua valendo.
