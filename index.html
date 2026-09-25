@@ -60,9 +60,11 @@ html { -webkit-text-size-adjust: 100%; }
 body {
   margin: 0; min-height: 100vh;
   background: var(--bg); color: var(--ink);
-  font-family: "Inter", system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+  font-family: "DilleniaUPC", "Dillenia UPC", "Inter", system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
   font-size: 15px;
   -webkit-font-smoothing: antialiased;
+  /* Iguala a altura das letras entre fontes: a DilleniaUPC (fonte do Windows) é bem menor que a Inter no mesmo tamanho */
+  font-size-adjust: .545;
   font-feature-settings: "cv05", "cv08"; /* Inter: "l" com cauda e "1" mais limpo */
 }
 button, input, select { font: inherit; color: inherit; }
