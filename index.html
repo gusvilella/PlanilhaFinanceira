@@ -3545,16 +3545,17 @@ button:focus-visible, a:focus-visible, [role="button"]:focus-visible, [tabindex]
     const cell = v => `"${String(v ?? '').replace(/"/g, '""')}"`;
     const val = c => (c / 100).toFixed(2).replace('.', ',');
     const d = iso => `${iso.slice(8, 10)}/${iso.slice(5, 7)}/${iso.slice(0, 4)}`;
-    const lines = [['Data', 'Tipo', 'Descrição', 'Categoria / Status', 'Valor']];
-    receitasOf(key).forEach(r => lines.push([d(r.shownDate), 'Receita', r.desc, r.pending ? 'A receber' : cat(r.category)?.name, val(r.amount)]));
-    fixasOf(key).forEach(f => lines.push([d(f.shownDate), 'Despesa fixa', f.desc, f.paid ? 'Pago' : 'Pendente', val(-f.amount)]));
-    variaveisOf(key).forEach(v => lines.push([d(v.shownDate), 'Despesa variável', v.desc + (v.installment ? ` (${v.installment.i}/${v.installment.n})` : ''), cat(v.category)?.name, val(-v.amount)]));
+    const via = i => payCardOf(i)?.name || state.accounts.find(a => a.id === i.payAccount)?.name || '';
+    const lines = [['Data', 'Tipo', 'Descrição', 'Categoria / Status', 'Pago com / Recebido em', 'Valor']];
+    receitasOf(key).forEach(r => lines.push([d(r.shownDate), 'Receita', r.desc, r.pending ? 'A receber' : cat(r.category)?.name, via(r), val(r.amount)]));
+    fixasOf(key).forEach(f => lines.push([d(f.shownDate), 'Despesa fixa', f.desc, { card: 'No cartão', paid: 'Pago', late: 'Atrasada', due: 'Pendente' }[fixaState(f)], via(f), val(-f.amount)]));
+    variaveisOf(key).forEach(v => lines.push([d(v.shownDate), 'Despesa variável', v.desc + (v.installment ? ` (${v.installment.i}/${v.installment.n})` : ''), cat(v.category)?.name, via(v), val(-v.amount)]));
     const t = totals(key);
-    assinaturasOf(key).forEach(a => lines.push([d(a.shownDate), 'Assinatura', a.name, a.cycle === 'anual' ? 'Anual' : 'Mensal', val(-a.amount)]));
-    cardsOf(key).filter(c => c.fatura).forEach(c => lines.push([d(c.shownDate), 'Fatura do cartão', c.name + (c.flag ? ` (${FLAGS[c.flag].name})` : ''), c.fatura.paid ? 'Paga' : 'Em aberto', val(-c.fatura.amount)]));
-    state.accounts.forEach(a => lines.push([d(todayIso), 'Conta (saldo atual)', a.name, '', val(accBalance(a))]));
-    state.investments.forEach(i => lines.push([d(todayIso), 'Investimento (saldo estimado)', i.name + (i.institution ? ` · ${i.institution}` : ''), rateText(i), val(estimate(i))]));
-    lines.push([], ['', 'Receita', '', '', val(t.receita)], ['', 'Investir', '', fmtPct(t.pct), val(-t.investir)], ['', 'Despesas', '', '', val(-t.despesas)], ['', 'Saldo', '', '', val(t.saldo)]);
+    assinaturasOf(key).forEach(a => lines.push([d(a.shownDate), 'Assinatura', a.name, a.cycle === 'anual' ? 'Anual' : 'Mensal', via(a), val(-a.amount)]));
+    cardsOf(key).filter(c => c.fatura).forEach(c => lines.push([d(c.shownDate), 'Fatura do cartão', c.name + (FLAGS[c.flag] ? ` (${FLAGS[c.flag].name})` : ''), c.fatura.paid ? 'Paga' : 'Em aberto', '', val(-c.fatura.amount)]));
+    state.accounts.forEach(a => lines.push([d(todayIso), 'Conta (saldo atual)', a.name, '', '', val(accBalance(a))]));
+    state.investments.forEach(i => lines.push([d(todayIso), 'Investimento (saldo estimado)', i.name + (i.institution ? ` · ${i.institution}` : ''), rateText(i), '', val(estimate(i))]));
+    lines.push([], ['', 'Receita', '', '', '', val(t.receita)], ['', 'Investir', '', fmtPct(t.pct), '', val(-t.investir)], ['', 'Despesas', '', '', '', val(-t.despesas)], ['', 'Saldo', '', '', '', val(t.saldo)]);
     download(`orcamento-${key}.csv`, '﻿' + lines.map(l => l.map(cell).join(';')).join('\r\n'), 'text/csv;charset=utf-8');
   }
 

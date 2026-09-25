@@ -126,6 +126,7 @@ Testei com arquivos no formato de cada banco:
 
 ### 22. Exportar todos os meses para planilha
 - Na engrenagem, além de "Exportar mês", agora tem **"Exportar todos os meses (CSV)"**: um arquivo só com todos os lançamentos desde o primeiro, com colunas de Mês, Data, Tipo, Descrição, Categoria/Status, Pago com e Valor. Abre direto no Excel ou no Google Planilhas.
+- O "Exportar mês" também ganhou a coluna "Pago com / Recebido em" e o status real das fixas (Pago, Pendente, Atrasada, No cartão). E corrigi um erro que podia travar a exportação quando um cartão tinha uma bandeira desconhecida.
 
 ### 23. Sincronização não apaga mais o que você lançou no outro aparelho ⚠️
 - **O problema (grave):** ao abrir o app num dia novo, ele atualiza sozinho umas informações calculadas (o "retrato" do patrimônio do mês e a taxa do CDI) e salvava isso como se fosse uma mudança sua, com o horário de agora. Aí, ao sincronizar, este aparelho parecia ter os dados "mais novos" e **mandava os dados antigos dele para a nuvem, por cima do que você tinha lançado no outro aparelho**. Exemplo real que reproduzi: lancei um bônus no aparelho A; no dia seguinte abri o aparelho B; o bônus sumiu do B **e também do A** depois de recarregar.
