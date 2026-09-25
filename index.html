@@ -2933,17 +2933,27 @@ button:focus-visible, a:focus-visible, [role="button"]:focus-visible, [tabindex]
       <label class="fl" for="fDay">Vencimento (dia do mês)</label>
       <select class="select" id="fDay">${Array.from({ length: 31 }, (_, i) => `<option value="${i + 1}" ${i + 1 === f.day ? 'selected' : ''}>Todo dia ${pad(i + 1)}</option>`).join('')}</select>
       ${checkField('fDueNext', 'Vence no mês seguinte', 'Ex.: o plano de saúde de setembro que você paga dia 5 de outubro. Conta nas despesas de setembro e vence em outubro.', f.dueNext)}
+      ${editing ? '' : `<div id="paidNowBox" hidden>${checkField('fPaidNow', 'Já paguei a deste mês', 'O vencimento deste mês já passou. Desmarque se ainda não pagou.', true)}</div>`}
       ${payField(item ? f : null)}
       ${footer(editing)}</form>`, m => {
       bindMoney(m.querySelector('#fAmount'));
       bindPay(m);
+      // Conta nova com o vencimento deste mês já passado: pergunta se já foi paga, pra não nascer "Atrasada"
+      const paidNow = () => {
+        const box = m.querySelector('#paidNowBox'); if (!box) return;
+        const due = dateIn(m.querySelector('#fDueNext').checked ? addMonths(view.month, 1) : view.month, +m.querySelector('#fDay').value);
+        box.hidden = daysUntil(due) >= 0;
+      };
+      if (!editing) { m.querySelector('#fDay').addEventListener('change', paidNow); m.querySelector('#fDueNext').addEventListener('change', paidNow); paidNow(); }
       m.querySelector('#f').addEventListener('submit', e => {
         e.preventDefault();
         const data = { amount: cents(m.querySelector('#fAmount')), desc: m.querySelector('#fDesc').value.trim(), day: +m.querySelector('#fDay').value, dueNext: m.querySelector('#fDueNext').checked, ...readPay(m) };
         if (!data.amount) return showErr('Digite o valor.');
         if (!data.desc) return showErr('Dê um nome, ex.: Aluguel.');
         if (!editing) {
-          state.fixas.push({ ...data, id: uid(), created: Date.now(), start: view.month });
+          const id = uid();
+          state.fixas.push({ ...data, id, created: Date.now(), start: view.month });
+          if (!m.querySelector('#paidNowBox').hidden && m.querySelector('#fPaidNow').checked) (state.paid[view.month] ||= []).push(id);
         } else if (item.start < view.month && (item.amount !== data.amount || item.day !== data.day || item.desc !== data.desc || !!item.dueNext !== data.dueNext
           || (item.payCard || '') !== data.payCard || (item.payAccount || '') !== data.payAccount)) {
           // Mudou no meio do caminho: encerra a antiga no mês anterior e cria a nova a partir deste mês
