@@ -28,7 +28,7 @@
   --card: #ffffff;
   --ink: #14171c;
   --ink-2: #3b414b;
-  --muted: #8d949e;
+  --muted: #737a84;
   --line: #eef0f3;
   --field: #f7f8f9;
   --field-line: #e7e9ed;
@@ -50,7 +50,7 @@
   --card: #181b20;
   --ink: #eef0f3;
   --ink-2: #c5cad2;
-  --muted: #7d8591;
+  --muted: #868e9a;
   --line: #22262d;
   --field: #1f2329;
   --field-line: #2b3038;
@@ -791,6 +791,9 @@ html.locked .lock { display: grid; }
   .overlay { place-items: end center; padding: 0; }
   .modal { border-radius: 22px 22px 0 0; max-height: 92vh; padding-bottom: calc(20px + env(safe-area-inset-bottom)); }
 }
+/* Foco visível ao navegar pelo teclado (Tab) */
+button:focus-visible, a:focus-visible, [role="button"]:focus-visible, [tabindex]:focus-visible, summary:focus-visible { outline: 2px solid var(--green); outline-offset: 2px; }
+.evo-chart g.m:focus-visible, #fcHit:focus-visible { outline: none; }
 /* Telas de toque: botões pequenos ganham uma área de toque invisível de pelo menos 44px, sem mudar o visual */
 @media (pointer: coarse) {
   .ghost-ico, .month button, .adjust, .row .edit, .x, .ov-link, .row.head .sort, button.tag.status, .evo .pills button, .link { position: relative; }
@@ -1312,7 +1315,7 @@ html.locked .lock { display: grid; }
     }
 
     $('#eyeBtn').innerHTML = ico(ui.hidden ? 'eye-off' : 'eye');
-    document.querySelectorAll('#tabs button').forEach(b => b.classList.toggle('active', b.dataset.tab === ui.tab));
+    document.querySelectorAll('#tabs button').forEach(b => { b.classList.toggle('active', b.dataset.tab === ui.tab); b.setAttribute('aria-selected', b.dataset.tab === ui.tab); });
     $('#manageBtn').hidden = ['fixa', 'assin', 'cartoes', 'metas'].includes(ui.tab);
     $('#manageBtn').innerHTML = ui.tab === 'invest'
       ? `${ico('invest')}CDI ${fmtRate(state.cdi.rate)} ao ano${state.cdi.date ? ` · ${state.cdi.date}` : ''} ${ico('pencil', 'width:12px;height:12px')}`
@@ -2687,9 +2690,13 @@ html.locked .lock { display: grid; }
   }
 
   // ================= Modal genérico =================
-  let onModalClose = null;
+  let onModalClose = null, modalOpener = null;
   function openModal(html, setup) {
+    // guarda quem abriu a janela, pra devolver o foco a ele ao fechar (teclado e leitor de tela)
+    if ($('#overlay').hidden) modalOpener = document.activeElement;
     $('#modal').innerHTML = html;
+    const h = $('#modal').querySelector('h3');
+    if (h) { h.id = 'modalTitle'; $('#modal').setAttribute('aria-labelledby', 'modalTitle'); } else $('#modal').removeAttribute('aria-labelledby');
     $('#overlay').hidden = false;
     onModalClose = null;
     setup && setup($('#modal'));
@@ -2701,6 +2708,8 @@ html.locked .lock { display: grid; }
     if ($('#overlay').hidden) return;
     $('#overlay').hidden = true;
     onModalClose && onModalClose();
+    if (modalOpener && document.contains(modalOpener) && $('#overlay').hidden) modalOpener.focus({ preventScroll: true });
+    modalOpener = null;
   }
   $('#overlay').addEventListener('mousedown', e => { if (e.target === e.currentTarget) closeModal(); });
   $('#modal').addEventListener('click', e => { if (e.target.closest('[data-close]')) closeModal(); });
