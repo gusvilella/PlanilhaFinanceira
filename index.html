@@ -926,8 +926,11 @@ html.locked .lock { display: grid; }
   const ico = (id, style = '') => `<svg class="i" ${style ? `style="${style}"` : ''}><use href="#i-${id}"/></svg>`;
   const centsText = c => (c / 100).toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
 
-  const today = new Date();
-  const todayIso = `${today.getFullYear()}-${pad(today.getMonth() + 1)}-${pad(today.getDate())}`;
+  // Data local em ISO (aaaa-mm-dd), sem passar por UTC (toISOString pode cair no dia errado dependendo do fuso)
+  const isoOf = d => `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())}`;
+  // "Hoje" é atualizado quando o dia vira com o app aberto (ver refreshDay)
+  let today = new Date();
+  let todayIso = isoOf(today);
   const mkey = (y, m) => `${y}-${pad(m + 1)}`;               // m: 0-11
   const monthOf = iso => iso.slice(0, 7);
   const addMonths = (key, n) => { const [y, m] = key.split('-').map(Number); const d = new Date(y, m - 1 + n, 1); return mkey(d.getFullYear(), d.getMonth()); };
@@ -1377,7 +1380,7 @@ html.locked .lock { display: grid; }
   // Previsão: saldo das contas hoje + o que ainda vai entrar/sair nos próximos 30 dias
   function forecast() {
     const start = state.accounts.reduce((s, a) => s + accBalance(a), 0);
-    const end = (() => { const d = new Date(todayIso + 'T12:00:00'); d.setDate(d.getDate() + 30); return d.toISOString().slice(0, 10); })();
+    const end = (() => { const d = new Date(todayIso + 'T12:00:00'); d.setDate(d.getDate() + 30); return isoOf(d); })();
     const evs = [curKey(), addMonths(curKey(), 1), addMonths(curKey(), -1)].flatMap(monthEvents)
       .filter(e => e.date > todayIso && e.date <= end);
     // contas atrasadas e ainda não pagas saem "hoje" (as ligadas a uma conta já saíram do saldo na data delas)
@@ -1389,7 +1392,7 @@ html.locked .lock { display: grid; }
     const days = [];
     let bal = start;
     for (let d = new Date(todayIso + 'T12:00:00'), i = 0; i <= 30; i++, d.setDate(d.getDate() + 1)) {
-      const iso = d.toISOString().slice(0, 10);
+      const iso = isoOf(d);
       const todays = all.filter(e => e.date === iso);
       bal += todays.reduce((s, e) => s + (e.dir === 'in' ? e.amount : -e.amount), 0);
       days.push({ iso, bal, events: todays });
@@ -3689,8 +3692,8 @@ html.locked .lock { display: grid; }
     const out = { kind: 'variavel', amount: 0, date: todayIso, payCard: '', payAccount: '', desc: '' };
     // data (antes do valor, pra "12/09" não virar R$ 12)
     let d;
-    if (/\bontem\b/.test(t)) { const x = new Date(todayIso + 'T12:00:00'); x.setDate(x.getDate() - 1); out.date = x.toISOString().slice(0, 10); t = t.replace(/\bontem\b/, ' '); }
-    else if (/\banteontem\b/.test(t)) { const x = new Date(todayIso + 'T12:00:00'); x.setDate(x.getDate() - 2); out.date = x.toISOString().slice(0, 10); t = t.replace(/\banteontem\b/, ' '); }
+    if (/\bontem\b/.test(t)) { const x = new Date(todayIso + 'T12:00:00'); x.setDate(x.getDate() - 1); out.date = isoOf(x); t = t.replace(/\bontem\b/, ' '); }
+    else if (/\banteontem\b/.test(t)) { const x = new Date(todayIso + 'T12:00:00'); x.setDate(x.getDate() - 2); out.date = isoOf(x); t = t.replace(/\banteontem\b/, ' '); }
     else if ((d = t.match(/\b(\d{1,2})\/(\d{1,2})(?:\/(\d{2,4}))?\b/))) { out.date = parseDate(d[0].length <= 5 ? `${d[0]}/${todayIso.slice(0, 4)}` : d[0]) || todayIso; t = t.replace(d[0], ' '); }
     t = t.replace(/\bhoje\b/, ' ');
     // valor: "45,90", "23", "6,5", "1.500", "1.234,56", "12.5"
@@ -3934,6 +3937,19 @@ html.locked .lock { display: grid; }
   if ('serviceWorker' in navigator && location.protocol.startsWith('http')) {
     window.addEventListener('load', () => navigator.serviceWorker.register('sw.js').catch(() => {}));
   }
+
+  // O app pode ficar aberto por dias (PWA no celular): quando o dia vira, atualiza "hoje" e, se você estava
+  // olhando o mês atual, passa para o novo mês
+  function refreshDay() {
+    const d = new Date(), iso = isoOf(d);
+    if (iso === todayIso) return;
+    const wasCurrent = view.month === monthOf(todayIso);
+    today = d; todayIso = iso;
+    if (wasCurrent) view.month = monthOf(iso);
+    render();
+  }
+  document.addEventListener('visibilitychange', () => { if (document.visibilityState === 'visible') refreshDay(); });
+  setInterval(refreshDay, 60000);
 
   if (lockCfg) lockNow();
   fillFilter();
