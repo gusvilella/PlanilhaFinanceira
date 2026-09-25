@@ -1049,8 +1049,19 @@ svg.i { width: 16px; height: 16px; flex: none; fill: none; stroke: currentColor;
     for (const k of [addMonths(key, -1), key]) out.push(
       ...fixasOf(k).map(i => ({ ...i, kind: 'Despesa fixa', label: i.desc })),
       ...assinaturasOf(k).map(i => ({ ...i, kind: 'Assinatura', label: i.name })),
-      ...variaveisOf(k).map(i => ({ ...i, kind: 'Despesa variável', label: i.desc || cat(i.category)?.name || 'Despesa' })));
+      ...variaveisOf(k).map(i => ({ ...i, kind: i.installment ? `Parcela ${i.installment.i}/${i.installment.n}` : 'Despesa variável', label: (i.desc || cat(i.category)?.name || 'Despesa') + (i.installment ? ` (${i.installment.i}/${i.installment.n})` : '') })));
     return out.filter(i => i.payCard === cardId && card && faturaKeyFor(card, i.shownDate) === key);
+  }
+  // Prévia da fatura: soma do que já caiu nela (compras até hoje e parcelas)
+  const faturaPreview = (cardId, key) => itemsOnCard(cardId, key).filter(i => i.shownDate <= todayIso || i.installment).reduce((s, i) => s + i.amount, 0);
+  // Quanto do limite está comprometido: faturas lançadas e não pagas + compras/parcelas que ainda vão entrar em faturas não lançadas
+  function cardUsed(card) {
+    let used = 0;
+    for (let i = 0, k = focusKey(card, curKey()); i < 48; i++, k = addMonths(k, 1)) {
+      const f = (state.faturas[card.id] || {})[k];
+      used += f ? (f.paid ? 0 : f.amount) : faturaPreview(card.id, k);
+    }
+    return used;
   }
   const countable = key => i => !inFatura(i, key);
 
@@ -1395,14 +1406,15 @@ svg.i { width: 16px; height: 16px; flex: none; fill: none; stroke: currentColor;
   function renderOvCards() {
     const box = $('#ovCards');
     const cards = cardsOf(view.month);
-    box.innerHTML = `<h3>Cartões <button class="ov-link" data-go="cartoes">Ver todos →</button></h3><p class="ov-sub">Fatura da vez e quanto do limite ela usa</p>`
+    box.innerHTML = `<h3>Cartões <button class="ov-link" data-go="cartoes">Ver todos →</button></h3><p class="ov-sub">Fatura da vez e limite disponível</p>`
       + (cards.length ? cards.map(c => {
-        const k = focusKey(c, view.month), f = (state.faturas[c.id] || {})[k], amt = f ? f.amount : 0, pct = c.limit ? amt / c.limit : 0;
-        const st = f ? FSTATE[faturaState(c, k, f)][1] : 'Sem fatura';
+        const k = focusKey(c, view.month), f = (state.faturas[c.id] || {})[k], prev = f ? 0 : faturaPreview(c.id, k), amt = f ? f.amount : prev;
+        const used = c.limit ? cardUsed(c) : 0, pct = c.limit ? used / c.limit : 0;
+        const st = f ? FSTATE[faturaState(c, k, f)][1] : prev ? 'Prévia' : 'Sem fatura';
         return `<div class="ov-row">${logoHtml({ brand: c.bank, name: c.name, icon: c.icon, color: c.color })}
-          <div class="grow"><b>${esc(c.name)}${c.last4 ? ` •${esc(c.last4)}` : ''}</b><small>${st} · vence ${dm(faturaDates(c, k).due)}${c.limit ? ` · ${Math.round(pct * 100)}% do limite` : ''}</small>
+          <div class="grow"><b>${esc(c.name)}${c.last4 ? ` •${esc(c.last4)}` : ''}</b><small>${st} · vence ${dm(faturaDates(c, k).due)}${c.limit ? ` · disponível ${money(Math.max(c.limit - used, 0))}` : ''}</small>
             ${c.limit ? `<div class="meter ${pct > 0.9 ? 'over' : pct > 0.7 ? 'warn' : 'info'}"><i style="width:${Math.min(pct, 1) * 100}%"></i></div>` : ''}</div>
-          <span class="amt">${f ? money(amt) : '—'}</span></div>`;
+          <span class="amt">${amt ? (f ? '' : '≈ ') + money(amt) : '—'}</span></div>`;
       }).join('') : '<div class="ov-empty">Nenhum cartão cadastrado.</div>');
   }
 
@@ -1860,7 +1872,9 @@ svg.i { width: 16px; height: 16px; flex: none; fill: none; stroke: currentColor;
       const st = FSTATE[faturaState(c, c.fk, f)];
       const status = !f ? `<button class="tag status none" data-fatura="${c.id}" data-key="${c.fk}">Lançar fatura</button>`
         : `<button class="tag status ${st[0]}" data-fpay="${c.id}" data-key="${c.fk}" title="${f.paid ? 'Marcar como não paga' : 'Marcar como paga'}">${st[1]}</button>`;
-      const limit = c.limit && f ? ` · ${Math.round(f.amount / c.limit * 100)}% do limite` : '';
+      const avail = c.limit ? c.limit - cardUsed(c) : 0;
+      const limit = c.limit ? ` · disponível <b style="color:${avail < c.limit * 0.1 ? 'var(--red)' : 'inherit'}">${money(Math.max(avail, 0))}</b> de ${money(c.limit)}` : '';
+      const prev = !f ? faturaPreview(c.id, c.fk) : 0;
       return `<div class="row">
         <span class="date">${logoHtml({ brand: c.bank, name: c.name, icon: c.icon, color: c.color })}</span>
         <div class="name"><span>${esc(c.name)}${c.count === false ? `<small>fora das despesas</small>` : ''}</span>
@@ -1868,7 +1882,7 @@ svg.i { width: 16px; height: 16px; flex: none; fill: none; stroke: currentColor;
           ${(() => { const its = itemsOnCard(c.id, c.fk); return its.length ? `<div class="card-sub">inclui ${its.slice(0, 3).map(i => esc(i.label)).join(', ')}${its.length > 3 ? ` +${its.length - 3}` : ''}</div>` : ''; })()}
           <div class="tag-m">${status}</div></div>
         <span class="cat">${status}</span>
-        <span class="val num">${f ? money(f.amount) : '<span style="color:var(--muted)">—</span>'}</span>
+        <span class="val num">${f ? money(f.amount) : prev ? `<span style="color:var(--muted)">≈ ${money(prev)}<small style="display:block;font-size:.68rem">prévia</small></span>` : '<span style="color:var(--muted)">—</span>'}</span>
         <button class="edit" data-edit="${c.id}" data-key="${c.fk}" aria-label="Fatura">${ico('pencil', 'width:14px;height:14px')}</button>
       </div>`;
     }).join('');
