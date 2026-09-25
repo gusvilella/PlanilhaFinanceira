@@ -2,7 +2,7 @@
 
 Trabalho feito durante a noite, sem mudar o jeito como seus dados são guardados (tudo que já existe continua funcionando).
 
-Resumo: **69 itens** — uns 30 bugs corrigidos (incluindo 10 que eu mesmo tinha introduzido e achei em 3 revisões do código) (alguns graves: sincronização que apagava lançamentos do outro aparelho, receita recorrente que sumia do passado, sininho fora da tela no celular, saldo que não descontava gastos do mesmo dia, limite do cartão errado), importação de extrato de mais bancos (inclusive Excel), app ~3x mais rápido com muitos lançamentos, e várias facilidades novas (desfazer, buscar em todos os meses, duplicar, transferir entre contas, pular um mês, parcelado e transferência no lançamento rápido, importar planilha do Excel…).
+Resumo: **70 itens** — uns 30 bugs corrigidos (incluindo 10 que eu mesmo tinha introduzido e achei em 3 revisões do código) (alguns graves: sincronização que apagava lançamentos do outro aparelho, receita recorrente que sumia do passado, sininho fora da tela no celular, saldo que não descontava gastos do mesmo dia, limite do cartão errado), importação de extrato de mais bancos (inclusive Excel), app ~3x mais rápido com muitos lançamentos, e várias facilidades novas (desfazer, buscar em todos os meses, duplicar, transferir entre contas, pular um mês, parcelado e transferência no lançamento rápido, importar planilha do Excel…).
 
 Como testei: cada mudança foi verificada num navegador de verdade (Chromium), no tamanho de celular (320 e 390 px), tablet e computador, nos temas claro e escuro, com dados vazios, dados normais e 2.000+ lançamentos, além de milhares de toques aleatórios sem nenhum erro. Os campos novos nos dados são todos opcionais: `received`, `transfers`, `skip`, `balanceAt`, `paidTs`.
 
@@ -306,3 +306,6 @@ Revisei com mais cuidado a parte nova da importação que marca contas como paga
 
 ### 69. Saudação pela hora do dia
 - O topo dizia sempre "Olá, você". Agora diz **Bom dia**, **Boa tarde** ou **Boa noite** conforme a hora. (Também medi a abertura do app num celular lento com 3.000 lançamentos: ~1,5–2,5 s, quase tudo é o navegador lendo o arquivo com as fontes e logos embutidos; trocar de mês ficou ~30% mais rápido que antes desta noite.)
+
+### 70. Colar um valor no campo de dinheiro
+- Antes, colar "R$ 50" virava **R$ 0,50** e colar "1.234" virava **R$ 12,34** (o campo juntava só os números). Agora ele entende reais e centavos do texto colado: "R$ 50" → 50,00; "1.234" → 1.234,00; "1.234,56" → 1.234,56; "12.5" → 12,50. Digitar continua igual. (Também passei um pente-fino de acessibilidade em todas as abas, no computador e no celular: todo botão e campo tem nome para leitor de tela.)

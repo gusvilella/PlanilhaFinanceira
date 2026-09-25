@@ -3056,7 +3056,18 @@ button:focus-visible, a:focus-visible, [role="button"]:focus-visible, [tabindex]
         if (digits.length > 1) set(Number(digits.slice(0, 11)));
       }
     });
-    // Reserva (colar, teclados que não enviam beforeinput): lê só os dígitos
+    // Colar um valor ("R$ 50", "1.234", "1.234,56", "12.5") entende reais e centavos, em vez de juntar os dígitos
+    input.addEventListener('paste', e => {
+      const t = ((e.clipboardData && e.clipboardData.getData('text')) || '').replace(/[R$\s +-]/g, '');
+      if (!/^[\d.,]*\d[\d.,]*$/.test(t)) return;
+      const dec = t.match(/^(.*?)[.,](\d{1,2})$/);
+      const whole = (dec ? dec[1] : t).replace(/[.,]/g, '');
+      if (dec && /[.,]/.test(dec[1]) && dec[1].replace(/\d/g, '')[0] === t[t.length - dec[2].length - 1]) return; // "1.234.56": ambíguo, deixa como está
+      const c = Number(whole || 0) * 100 + (dec ? Number(dec[2].padEnd(2, '0')) : 0);
+      if (!Number.isFinite(c) || c > 99999999999) return;
+      e.preventDefault(); set(c);
+    });
+    // Reserva (teclados que não enviam beforeinput): lê só os dígitos
     input.addEventListener('input', () => set(Number(input.value.replace(/\D/g, '').slice(0, 11)) || 0));
     // Ao entrar no campo, seleciona tudo: o primeiro número digitado substitui o valor (bom pra corrigir saldos)
     input.addEventListener('focus', () => setTimeout(() => { if (document.activeElement === input) input.select(); }, 0));
