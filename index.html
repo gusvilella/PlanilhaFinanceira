@@ -3902,11 +3902,14 @@ button:focus-visible, a:focus-visible, [role="button"]:focus-visible, [tabindex]
     const iDesc = [/descri/, /title|titulo/, /hist/, /estabelecimento|memo|detalhe/, /nome/, /lancamento/, /transaction_type|tipo de transacao/]
       .map(re => cols.findIndex((c, i) => re.test(c) && skip(i))).find(i => i >= 0) ?? -1;
     // complemento: "Histórico"/"Título" junto da descrição (Inter: "Pix enviado - Fulano")
-    const iHist = cols.findIndex((c, i) => /^(hist|titulo|title)/.test(c) && skip(i) && i !== iDesc);
+    const iHist = cols.findIndex((c, i) => /^(hist|titulo|title|lancamento$)/.test(c) && skip(i) && i !== iDesc);
+    // coluna de tipo (BB: "Tipo Lançamento" = Saída/Entrada; outros: "D/C"): valores sem sinal viram saída quando é débito
+    const iType = cols.findIndex((c, i) => /^(tipo|natureza|d\/c|c\/d|dc|cd|debito\/credito|credito\/debito)/.test(c) && skip(i) && i !== iDesc && i !== iHist);
     const iParc = cols.findIndex(c => /^parcela/.test(c));
     if (iDate < 0 || (iAmt < 0 && (iIn < 0 || iOut < 0))) throw new Error('Não achei as colunas de data e valor no arquivo.');
     return lines.slice(hi + 1).map(l => splitCsvLine(l, sep)).map(c => {
-      const amount = iAmt >= 0 ? parseMoney(c[iAmt]) : (parseMoney(c[iIn]) || 0) - Math.abs(parseMoney(c[iOut]) || 0);
+      let amount = iAmt >= 0 ? parseMoney(c[iAmt]) : (parseMoney(c[iIn]) || 0) - Math.abs(parseMoney(c[iOut]) || 0);
+      if (iType >= 0 && amount > 0 && /^(d|deb|debito|saida|debit)\b/.test(norm(c[iType]))) amount = -amount;
       const main = iDesc >= 0 ? c[iDesc] || '' : '', hist = iHist >= 0 ? c[iHist] || '' : '';
       let desc = hist && main && norm(hist) !== norm(main) ? `${hist} - ${main}` : main || hist;
       const parc = iParc >= 0 && (c[iParc] || '').match(/^\s*(\d+)\s*(?:\/|de)\s*(\d+)/);

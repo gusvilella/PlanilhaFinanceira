@@ -59,6 +59,7 @@ Testei com arquivos no formato de cada banco:
 - **Itaú** (extrato que vem sem linha de títulos): antes dava erro. Agora o app reconhece data, descrição e valor sozinho e ignora as linhas de "SALDO".
 - **Mercado Pago** (datas como 01-09-2026 e coluna RELEASE_DATE): antes dava erro. Agora funciona.
 - **Inter e C6**: a descrição junta o tipo e o nome ("Pix enviado - Fulano"), em vez de só o nome.
+- **Banco do Brasil** e outros que trazem o valor sempre positivo e uma coluna "Tipo" (Entrada/Saída ou D/C): antes tudo vinha como entrada; agora as saídas vêm como gasto. No BB a descrição junta o tipo e o detalhe ("Pix - Enviado - Fulano").
 - Nubank (conta e cartão) continua funcionando igual.
 
 ### 8. Duas telas arrumadas no celular
