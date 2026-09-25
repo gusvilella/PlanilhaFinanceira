@@ -202,3 +202,6 @@ Testei com arquivos no formato de cada banco:
 
 ### 44. "Formulário completo" do lançamento rápido não perde o que você digitou
 - No lançamento rápido, tocar em "Formulário completo" abria um formulário em branco. Agora ele já vem preenchido com o que o app entendeu (valor, descrição, categoria, data, conta ou cartão) — útil para acertar um detalhe ou marcar como parcelado.
+
+### 45. Aviso de baixo (com "Desfazer") mais fácil de usar no celular
+- O aviso aparecia encostado no botão verde "+" e quebrava o texto em duas linhas; o "Desfazer" tinha só 16 pixels de altura (fácil de errar e tocar no "+"). Agora o aviso fica um pouco acima do "+", numa linha só, e o "Desfazer" tem uma área de toque bem maior.

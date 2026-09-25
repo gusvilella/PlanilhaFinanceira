@@ -784,6 +784,11 @@ html.locked .lock { place-items: normal; overflow-y: auto; }
 }
 .toast.show { opacity: 1; transform: translate(-50%, 0); pointer-events: auto; }
 .toast button { border: 0; background: none; color: #6fe0b1; font-weight: 800; padding: 0; }
+/* celular: o aviso fica acima do botão + (antes encostava nele) e o "Desfazer" é fácil de tocar */
+@media (max-width: 640px) {
+  .toast { bottom: calc(92px + env(safe-area-inset-bottom)); width: max-content; max-width: calc(100vw - 28px); }
+  .toast button { padding: 10px 6px; margin: -10px -6px -10px 0; }
+}
 
 @keyframes fade { from { opacity: 0; } }
 @keyframes pop { from { transform: scale(.96); opacity: 0; } }
