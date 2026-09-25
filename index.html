@@ -2774,11 +2774,12 @@ button:focus-visible, a:focus-visible, [role="button"]:focus-visible, [tabindex]
   }
 
   // ================= Modal genérico =================
-  let onModalClose = null, modalOpener = null;
+  let onModalClose = null, modalOpener = null, modalDirty = false;
   function openModal(html, setup) {
     // guarda quem abriu a janela, pra devolver o foco a ele ao fechar (teclado e leitor de tela)
     if ($('#overlay').hidden) modalOpener = document.activeElement;
     $('#modal').innerHTML = html;
+    modalDirty = false;
     const h = $('#modal').querySelector('h3');
     if (h) { h.id = 'modalTitle'; $('#modal').setAttribute('aria-labelledby', 'modalTitle'); } else $('#modal').removeAttribute('aria-labelledby');
     $('#overlay').hidden = false;
@@ -2795,7 +2796,10 @@ button:focus-visible, a:focus-visible, [role="button"]:focus-visible, [tabindex]
     if (modalOpener && document.contains(modalOpener) && $('#overlay').hidden) modalOpener.focus({ preventScroll: true });
     modalOpener = null;
   }
-  $('#overlay').addEventListener('mousedown', e => { if (e.target === e.currentTarget) closeModal(); });
+  // Formulário com algo digitado: toque fora da janela ou Esc pergunta antes de descartar (Cancelar/✕ fecham direto)
+  $('#modal').addEventListener('input', e => { if (e.target.closest('form')) modalDirty = true; });
+  const closeModalSafe = () => { if (modalDirty && $('#modal').querySelector('form') && !confirm('Descartar o que você preencheu?')) return; closeModal(); };
+  $('#overlay').addEventListener('mousedown', e => { if (e.target === e.currentTarget) closeModalSafe(); });
   // Tab fica dentro da janela aberta (não vai para a página por trás)
   $('#overlay').addEventListener('keydown', e => {
     if (e.key !== 'Tab') return;
@@ -2826,7 +2830,7 @@ button:focus-visible, a:focus-visible, [role="button"]:focus-visible, [tabindex]
 
   // Campo de valor no estilo app de banco: dígitos entram pelos centavos
   function bindMoney(input, onChange) {
-    const set = c => { input.dataset.cents = c; input.value = centsText(c); onChange && onChange(c); };
+    const set = c => { input.dataset.cents = c; input.value = centsText(c); if (input.closest('#modal form')) modalDirty = true; onChange && onChange(c); };
     // Trata cada tecla direto no valor, sem depender de onde o cursor está
     input.addEventListener('beforeinput', e => {
       const all = input.selectionStart === 0 && input.selectionEnd === input.value.length && input.value.length > 0;
@@ -3553,7 +3557,7 @@ button:focus-visible, a:focus-visible, [role="button"]:focus-visible, [tabindex]
   // Atalhos: N = novo, Q = rápido, / = buscar, H = mês atual, ← → = mês, Esc = fechar
   document.addEventListener('keydown', e => {
     if (document.documentElement.classList.contains('locked')) return;   // tela de senha: nada por trás dela
-    if (e.key === 'Escape') { closeModal(); togglePop($('#filterPop'), false); return; }
+    if (e.key === 'Escape') { if (!$('#overlay').hidden) closeModalSafe(); togglePop($('#filterPop'), false); return; }
     const typing = /INPUT|SELECT|TEXTAREA/.test(document.activeElement?.tagName);
     if (typing || !$('#overlay').hidden || e.ctrlKey || e.metaKey || e.altKey) return;
     if (e.key === '/' && ui.tab !== 'geral') { e.preventDefault(); togglePop($('#filterPop'), true); $('#fSearch').focus(); }

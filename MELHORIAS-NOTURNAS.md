@@ -143,3 +143,7 @@ Testei com arquivos no formato de cada banco:
 
 ### 30. Lançar fatura com um toque a partir das compras do cartão
 - Na janela de lançar fatura, além de "Mês passado: … Usar esse valor", agora aparece **"Compras já lançadas neste cartão: R$ X · Usar esse valor"**, que preenche o valor com a soma do que você já registrou no cartão para aquela fatura. Útil para quem lança cada compra no cartão e só quer fechar a fatura.
+
+### 31. Não perde mais o que você digitou ao tocar fora da janela
+- **Antes:** no celular, um toque sem querer na parte escura acima da janela (ou a tecla Esc no computador) fechava o formulário e **perdia tudo o que tinha sido digitado**.
+- **Agora:** se você já preencheu algo, o app pergunta "Descartar o que você preencheu?". Se a janela está intacta, fecha direto como antes. Os botões Cancelar e ✕ continuam fechando sem perguntar.
