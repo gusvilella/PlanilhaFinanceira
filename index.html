@@ -788,7 +788,8 @@ html.locked .lock { display: grid; }
   .row .cat { display: none; }
   .row .tag-m { display: flex; margin-top: 4px; }
   .row .name { white-space: normal; }
-  .row .name > span { display: block; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  /* até 2 linhas: nome + selo do cartão/conta e avisos ("não cobra este mês") sem cortar */
+  .row .name > span { display: -webkit-box; -webkit-box-orient: vertical; -webkit-line-clamp: 2; line-clamp: 2; overflow: hidden; white-space: normal; overflow-wrap: anywhere; }
   .head-actions .t { display: none; }
   .pop { width: min(280px, calc(100vw - 28px)); }
   .overlay { place-items: end center; padding: 0; }

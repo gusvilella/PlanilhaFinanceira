@@ -102,3 +102,7 @@ Testei com arquivos no formato de cada banco:
 ### 19. Lançamento rápido na virada do ano
 - **Antes:** em janeiro, escrever `presente 150 28/12` no lançamento rápido registrava o gasto em **dezembro do ano seguinte** (no futuro), porque a data sem ano sempre usava o ano atual.
 - **Agora:** uma data sem ano que cairia mais de 2 meses no futuro é entendida como do ano passado. E a prévia mostra o ano quando ele não é o atual ("28 de dez. de 2026"), pra você conferir antes de lançar.
+
+### 20. Nomes não somem cortados nas listas do celular
+- **Antes:** no celular, cada lançamento mostrava só uma linha: se o nome fosse um pouco maior, o selo do cartão/conta ("Nubank •1234") e avisos como "não cobra este mês" eram cortados com "…" e sumiam (ex.: aparecia só "Netflix…").
+- **Agora:** o nome pode usar até 2 linhas, então o selo do cartão/conta e os avisos aparecem.
