@@ -3095,12 +3095,19 @@ button:focus-visible, a:focus-visible, [role="button"]:focus-visible, [tabindex]
       });
       if (editing) m.querySelector('#fDelete').addEventListener('click', () => {
         const snapshot = JSON.stringify(state.variaveis);
+        const done = msg => { closeModal(); commit(); toast(msg, 'Desfazer', () => { state.variaveis = JSON.parse(snapshot); commit(); }); };
         if (item.installment) {
-          if (!confirm(`Excluir todas as ${item.installment.n} parcelas de "${item.desc || 'despesa'}"?`)) return;
-          state.variaveis = state.variaveis.filter(x => x.installment?.group !== item.installment.group);
-        } else state.variaveis = state.variaveis.filter(x => x.id !== item.id);
-        closeModal(); commit();
-        toast('Despesa excluída', 'Desfazer', () => { state.variaveis = JSON.parse(snapshot); commit(); });
+          // parcela: pergunta se é só esta ou a compra inteira
+          const box = m.querySelector('#fErr');
+          box.innerHTML = `<div class="movebox" style="color:var(--ink)">Excluir só esta parcela (${item.installment.i}/${item.installment.n}) ou a compra inteira?
+            <div style="display:flex;gap:8px;margin-top:8px;flex-wrap:wrap"><button type="button" class="btn-soft" id="delOne">Só esta parcela</button>
+            <button type="button" class="btn-soft" id="delAll" style="color:var(--red)">Todas as ${item.installment.n} parcelas</button></div></div>`;
+          box.querySelector('#delOne').onclick = () => { state.variaveis = state.variaveis.filter(x => x.id !== item.id); done('Parcela excluída'); };
+          box.querySelector('#delAll').onclick = () => { state.variaveis = state.variaveis.filter(x => x.installment?.group !== item.installment.group); done(`${item.installment.n} parcelas excluídas`); };
+          return;
+        }
+        state.variaveis = state.variaveis.filter(x => x.id !== item.id);
+        done('Despesa excluída');
       });
     });
   }

@@ -117,6 +117,7 @@ Testei com arquivos no formato de cada banco:
 
 ### 21. Editar compra parcelada de uma vez
 - **Antes:** para renomear, trocar a categoria ou o cartão de uma compra parcelada (ex.: "Geladeira" em 6x), era preciso abrir e editar parcela por parcela.
+- Ao **excluir** uma parcela, antes só dava para apagar a compra inteira. Agora o app pergunta: **"Só esta parcela"** ou **"Todas as N parcelas"** (com Desfazer nos dois casos).
 - **Agora:** ao editar uma parcela aparece **"Aplicar a todas as parcelas"** (já marcado): descrição, categoria e forma de pagamento mudam em todas. Data e valor continuam mudando só na parcela aberta.
 
 ### 22. Exportar todos os meses para planilha
