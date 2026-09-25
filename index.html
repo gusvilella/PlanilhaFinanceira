@@ -1069,7 +1069,9 @@ html.locked .lock { display: grid; }
   function receitasOf(key) {
     return state.receitas
       .filter(r => r.recurring ? activeIn({ start: monthOf(r.date), end: r.end }, key) : monthOf(r.date) === key)
-      .map(r => ({ ...r, shownDate: r.recurring ? dateIn(key, +r.date.slice(8)) : r.date }));
+      .map(r => ({ ...r, shownDate: r.recurring ? dateIn(key, +r.date.slice(8)) : r.date,
+        // recorrente "a receber": cada mês é marcado como recebido separadamente (state.received[mês])
+        pending: r.pending && !(r.recurring && ((state.received || {})[key] || []).includes(r.id)) }));
   }
   const variaveisOf = key => state.variaveis.filter(v => monthOf(v.date) === key).map(v => ({ ...v, shownDate: v.date }));
   // Despesa fixa pertence ao mês "key" (conta nas despesas dele); se "vence no mês seguinte", a data de pagamento é no próximo mês
@@ -3227,7 +3229,10 @@ html.locked .lock { display: grid; }
     const rec = e.target.closest('[data-receive]');
     if (rec) {
       const r = state.receitas.find(x => x.id === rec.dataset.receive);
-      r.pending = false; save(); render(); toast('Marcado como recebido');
+      const snap = JSON.stringify({ r: state.receitas, x: state.received || {} });
+      if (r.recurring) ((state.received ||= {})[view.month] ||= []).push(r.id);   // só este mês
+      else r.pending = false;
+      save(); render(); toast('Marcado como recebido', 'Desfazer', () => { const o = JSON.parse(snap); state.receitas = o.r; state.received = o.x; commit(); });
       return;
     }
     const ed = e.target.closest('[data-edit]');

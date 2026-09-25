@@ -7,6 +7,8 @@ Trabalho feito durante a noite, sem mudar o jeito como seus dados são guardados
 1. **Receita recorrente**: abra o Salário num mês depois do primeiro, desmarque "Receita recorrente" e salve. Os meses anteriores continuam com o salário.
 2. **App aberto na virada do dia**: se você deixa o app aberto no celular, ele agora percebe quando o dia muda (o "hoje" do calendário, as contas que vencem e a data padrão dos lançamentos acompanham).
 
+3. **Receita recorrente "a receber"**: marque como recebida em um mês e veja que os outros meses continuam "A receber". Agora tem "Desfazer" no aviso.
+
 ## O que mudou
 
 ### 1. Editar receita recorrente não apaga mais o passado
@@ -18,3 +20,7 @@ Trabalho feito durante a noite, sem mudar o jeito como seus dados são guardados
 - **Antes:** o app guardava a data de "hoje" só quando era aberto. Instalado no celular, ele pode ficar dias aberto em segundo plano, e aí o calendário, os avisos de vencimento, a previsão e a data padrão de novos lançamentos ficavam presos no dia antigo.
 - **Agora:** ao voltar para o app (e a cada minuto) ele confere a data. Se o dia mudou, atualiza tudo; se você estava olhando o mês atual e o mês virou, ele já mostra o mês novo.
 - Também troquei um cálculo de datas que passava pelo horário UTC (podia errar o dia em fusos muito diferentes do Brasil).
+
+### 3. Receita recorrente "a receber" é marcada mês a mês
+- **Antes:** numa receita que se repete todo mês e está como "Recebimento futuro" (ex.: um aluguel que você recebe quando o inquilino paga), tocar em "A receber" marcava como recebida **em todos os meses**, inclusive os que ainda não chegaram.
+- **Agora:** cada mês é marcado separadamente. O aviso de "Marcado como recebido" também ganhou o botão **Desfazer**, pra quando tocar sem querer.
