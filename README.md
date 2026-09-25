@@ -4,7 +4,7 @@ Web app simples para organizar o dinheiro do dia a dia. Sem cadastro, sem instal
 
 ## Como usar
 
-Abra o `index.html` no navegador (ou publique a pasta no GitHub Pages / Netlify / Vercel).
+O app inteiro está num arquivo só: `index.html`. Baixe e abra no navegador (se baixou o ZIP, extraia antes), ou publique no GitHub Pages / Netlify / Vercel.
 
 - **+** adiciona um gasto ou uma entrada. Digite o valor como no app do banco (`1234` → `R$ 12,34`), escolha a categoria e salve.
 - Toque numa movimentação para **editar** ou **excluir** (com opção de desfazer).
@@ -20,6 +20,4 @@ Tudo fica salvo no `localStorage` do navegador. Faça backup pelo menu de vez em
 
 ## Estrutura
 
-- `index.html`: estrutura da página
-- `styles.css`: visual (tema claro/escuro)
-- `app.js`: lógica (estado, cálculos, exportação)
+Tudo fica em `index.html`: o visual (CSS, com tema claro e escuro) está no `<style>` e a lógica (estado, cálculos, exportação) está no `<script>`.
