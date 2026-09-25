@@ -9,7 +9,7 @@
   <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' rx='24' fill='%2316956a'/><circle cx='50' cy='50' r='24' fill='none' stroke='white' stroke-width='12' stroke-dasharray='110 41'/></svg>" />
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
   <style>
 :root {
   --bg: #eef0f2;
@@ -60,9 +60,10 @@ html { -webkit-text-size-adjust: 100%; }
 body {
   margin: 0; min-height: 100vh;
   background: var(--bg); color: var(--ink);
-  font-family: "Plus Jakarta Sans", system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+  font-family: "Inter", system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
   font-size: 15px;
   -webkit-font-smoothing: antialiased;
+  font-feature-settings: "cv05", "cv08"; /* Inter: "l" com cauda e "1" mais limpo */
 }
 button, input, select { font: inherit; color: inherit; }
 button { cursor: pointer; }
@@ -110,7 +111,7 @@ svg.i { width: 16px; height: 16px; flex: none; fill: none; stroke: currentColor;
 .kpi-ico { width: 24px; height: 24px; border-radius: 7px; display: grid; place-items: center; }
 .kpi-ico svg.i { width: 14px; height: 14px; }
 .kpi-label { font-size: .68rem; font-weight: 700; letter-spacing: .08em; color: var(--muted); text-transform: uppercase; }
-.kpi-value { margin-top: 10px; font-size: 1.45rem; font-weight: 700; letter-spacing: -.02em; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.kpi-value { margin-top: 10px; font-size: 1.45rem; font-weight: 600; letter-spacing: -.025em; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 .kpi.receita .kpi-ico { background: var(--green-soft); color: var(--green); } .kpi.receita .kpi-value { color: var(--green); }
 .kpi.investir .kpi-ico { background: var(--blue-soft); color: var(--blue); } .kpi.investir .kpi-value { color: var(--blue); }
 .kpi.despesas .kpi-ico { background: var(--red-soft); color: var(--red); } .kpi.despesas .kpi-value { color: var(--red); }
