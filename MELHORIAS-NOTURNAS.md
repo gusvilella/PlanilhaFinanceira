@@ -130,3 +130,7 @@ Testei com arquivos no formato de cada banco:
 ### 26. Tela de senha cabe em qualquer tela
 - **Antes:** com o celular deitado (ou num celular pequeno), a tela de senha ficava cortada embaixo e **não rolava**: a última linha do teclado (o **0** e o apagar) e o "Esqueci a senha" ficavam inalcançáveis — quem tem 0 na senha não conseguia entrar sem virar o celular.
 - **Agora:** em telas baixas o teclado fica um pouco menor e a tela rola se precisar; com o celular deitado, as informações ficam à esquerda e o teclado à direita. Em celular em pé normal, nada mudou.
+
+### 27. App instalado abre mesmo com internet ruim
+- **Internet lenta** (aquele 4G de uma barrinha): o app instalado ficava esperando a rede para abrir. Agora, se a rede não responder em 4 segundos, ele abre a cópia guardada no aparelho (e termina de baixar a versão nova por trás, para a próxima vez).
+- **Erro no servidor**: se o GitHub Pages respondesse com uma página de erro, essa página de erro virava a "cópia offline" do app. Agora só uma resposta boa substitui a cópia guardada; em caso de erro, abre a cópia boa.

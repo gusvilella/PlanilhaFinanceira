@@ -17,9 +17,22 @@ self.addEventListener('fetch', e => {
   const req = e.request;
   if (req.method !== 'GET' || new URL(req.url).origin !== location.origin) return;
   if (req.mode === 'navigate') {
-    e.respondWith(fetch(req)
-      .then(res => { const copy = res.clone(); caches.open(CACHE).then(c => c.put('./index.html', copy)); return res; })
-      .catch(() => caches.match('./index.html')));
+    // Guarda só respostas boas (uma página de erro do servidor não pode virar a cópia offline)
+    const net = fetch(req).then(res => {
+      if (res.ok) { const copy = res.clone(); caches.open(CACHE).then(c => c.put('./index.html', copy)); }
+      return res;
+    });
+    e.waitUntil(net.catch(() => {}));   // mesmo se a cópia guardada abrir antes, termina de atualizar
+    e.respondWith(new Promise(resolve => {
+      let done = false;
+      const finish = r => { if (!done && r) { done = true; resolve(r); } };
+      const saved = () => caches.match('./index.html');
+      // Internet lenta: depois de 4 s abre a cópia guardada em vez de ficar esperando
+      const timer = setTimeout(() => saved().then(finish), 4000);
+      net.then(res => res.ok ? res : saved().then(hit => hit || res))
+        .catch(() => saved().then(hit => hit || Response.error()))
+        .then(r => { clearTimeout(timer); finish(r); });
+    }));
     return;
   }
   e.respondWith(caches.match(req).then(hit => hit || fetch(req)));
