@@ -791,6 +791,16 @@ html.locked .lock { display: grid; }
   .overlay { place-items: end center; padding: 0; }
   .modal { border-radius: 22px 22px 0 0; max-height: 92vh; padding-bottom: calc(20px + env(safe-area-inset-bottom)); }
 }
+/* Telas de toque: botões pequenos ganham uma área de toque invisível de pelo menos 44px, sem mudar o visual */
+@media (pointer: coarse) {
+  .ghost-ico, .month button, .adjust, .row .edit, .x, .ov-link, .row.head .sort, button.tag.status, .evo .pills button, .link { position: relative; }
+  .ghost-ico::after, .month button::after, .adjust::after, .row .edit::after, .x::after, .ov-link::after, .row.head .sort::after,
+  button.tag.status::after, .evo .pills button::after, .link::after {
+    content: ""; position: absolute; left: 50%; top: 50%; width: max(100%, 44px); height: max(100%, 44px); transform: translate(-50%, -50%);
+  }
+  .tabs button { min-height: 40px; }
+  .theme-btn { overflow: visible; }
+}
   </style>
 </head>
 <body>
@@ -1283,8 +1293,9 @@ html.locked .lock { display: grid; }
     $('#kInvestir').textContent = money(t.investir);
     $('#kInvestirSub').textContent = t.pct ? `${fmtPct(t.pct)} da receita` : 'Quanto guardar este mês';
     $('#kDespesas').textContent = money(t.despesas);
-    $('#kDespesasSub').textContent = [['Fixas', t.fixas], ['Variáveis', t.variaveis], ['Assinaturas', t.assinaturas], ['Faturas', t.faturas]]
-      .filter(([, v]) => v).map(([n, v]) => `${n} ${money(v)}`).join(' · ');
+    // cada "rótulo valor" fica junto na mesma linha
+    $('#kDespesasSub').innerHTML = [['Fixas', t.fixas], ['Variáveis', t.variaveis], ['Assinaturas', t.assinaturas], ['Faturas', t.faturas]]
+      .filter(([, v]) => v).map(([n, v]) => `<span style="white-space:nowrap">${n} ${esc(money(v))}</span>`).join(' · ');
     const signed = c => (c < 0 && !ui.hidden ? '–' : '') + money(Math.abs(c));
     if (state.accounts.length) {
       // Com contas cadastradas, o saldo é o dinheiro real somado de todas elas
@@ -1292,7 +1303,7 @@ html.locked .lock { display: grid; }
       $('#kSaldo').textContent = signed(total);
       $('#kSaldo').classList.toggle('neg', total < 0);
       $('#kSaldo').title = state.accounts.map(a => `${a.name}: ${brl.format(accBalance(a) / 100)}`).join('\n');
-      $('#kSaldoSub').innerHTML = `<span class="logo-stack">${state.accounts.slice(0, 5).map(a => logoHtml(a, 'sm')).join('')}</span>sobra do mês ${esc(signed(t.saldo))}`;
+      $('#kSaldoSub').innerHTML = `<span class="logo-stack">${state.accounts.slice(0, 5).map(a => logoHtml(a, 'sm')).join('')}</span><span style="white-space:nowrap">sobra do mês ${esc(signed(t.saldo))}</span>`;
     } else {
       $('#kSaldo').textContent = signed(t.saldo);
       $('#kSaldo').classList.toggle('neg', t.saldo < 0);

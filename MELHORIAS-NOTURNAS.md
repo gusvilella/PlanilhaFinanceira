@@ -50,3 +50,8 @@ Testei com arquivos no formato de cada banco:
 ### 8. Duas telas arrumadas no celular
 - **Importar extrato:** no celular o valor de cada lançamento quebrava em duas linhas ("-" numa linha e "R$ 55,90" na outra, espremido à esquerda). Agora cada item mostra descrição e valor na primeira linha, e data e categoria na segunda. A caixinha de marcar ficou maior, mais fácil de tocar.
 - **Gerenciar categorias:** no celular o ✕ de excluir caía sozinho numa linha embaixo, parecendo ser da categoria seguinte (risco de apagar a errada). Agora ele fica ao lado do nome da própria categoria, e cada categoria tem uma linha separando da próxima.
+
+### 9. Botões mais fáceis de acertar no celular
+- Vários botões eram pequenos para o dedo (entre 20 e 30 pixels): olho, sininho, tema, engrenagem, setas do mês, "Ajustar"/"Contas", o lápis de editar cada lançamento, os selos "Pendente/Pago", "A receber", "Lançar fatura", o ✕ das janelas e os links "Ver todos". Agora, em telas de toque, cada um tem uma área de toque invisível de pelo menos 44 pixels (o tamanho recomendado). **O visual continua exatamente igual**, só ficou mais fácil acertar.
+- As abas (Receita, Despesa fixa…) ficaram um pouco mais altas no celular pelo mesmo motivo.
+- Nos cartões de Despesas e Saldo do topo, o texto pequeno não separa mais o nome do valor em linhas diferentes (antes aparecia "Variáveis" numa linha e "R$ 712,30" na outra).
