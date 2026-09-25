@@ -301,6 +301,23 @@ svg.i { width: 16px; height: 16px; flex: none; fill: none; stroke: currentColor;
 .cat-edit .input { padding: 8px 11px; }
 .cat-edit .x { flex: none; }
 
+/* Investimentos */
+.tag.rate { background: var(--blue-soft); color: var(--blue); }
+.tag.rate::before { display: none; }
+.name small.inst { display: block; margin: 2px 0 0; font-size: .75rem; }
+.yield { display: flex; justify-content: space-between; align-items: baseline; gap: 10px; padding: 4px 6px 0; font-size: .8rem; color: var(--muted); }
+.yield strong { color: var(--green); font-weight: 700; }
+.rate-row { display: grid; grid-template-columns: minmax(0, 1fr) 110px; gap: 8px; }
+.suffix { position: relative; }
+.suffix .input { padding-right: 44px; }
+.suffix span { position: absolute; right: 12px; top: 50%; transform: translateY(-50%); color: var(--muted); font-size: .8rem; pointer-events: none; }
+.seg2 { display: grid; grid-template-columns: 1fr 1fr; gap: 6px; background: var(--field); border-radius: 12px; padding: 4px; margin-bottom: 8px; }
+.seg2 button { border: 0; background: transparent; border-radius: 9px; padding: 8px; font-weight: 700; font-size: .82rem; color: var(--muted); }
+.seg2 button.on[data-mv="in"] { background: var(--green); color: #fff; }
+.seg2 button.on[data-mv="out"] { background: var(--red); color: #fff; }
+.help { font-size: .76rem; color: var(--muted); margin: 6px 0 0; line-height: 1.45; }
+.divider { height: 1px; background: var(--line); margin: 18px 0 4px; }
+
 /* Menu */
 .font-pick { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 8px; }
 .font-pick button { display: flex; align-items: center; gap: 7px; min-width: 0; white-space: nowrap; overflow: hidden; border: 1.5px solid var(--field-line); background: var(--field); border-radius: 12px; padding: 10px; font-size: .82rem; font-weight: 600; color: var(--ink); text-align: left; transition: border-color .15s, background .15s; }
@@ -339,8 +356,9 @@ svg.i { width: 16px; height: 16px; flex: none; fill: none; stroke: currentColor;
   .kpi-value { font-size: 1.15rem; }
   .adjust { padding: 4px 8px; }
   .adjust .t { display: none; }
-  .tabs { display: flex; width: 100%; }
-  .tabs button { flex: 1; padding: 8px 4px; font-size: .76rem; white-space: nowrap; }
+  .tabs { display: flex; width: 100%; overflow-x: auto; scrollbar-width: none; margin-left: -2px; padding: 2px; }
+  .tabs::-webkit-scrollbar { display: none; }
+  .tabs button { flex: none; padding: 8px 11px; font-size: .8rem; white-space: nowrap; }
   .card-head h2 { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
   .table-card { padding: 14px 12px 12px; }
   .row { grid-template-columns: 44px minmax(0, 1fr) auto 28px; gap: 8px; }
@@ -436,6 +454,7 @@ svg.i { width: 16px; height: 16px; flex: none; fill: none; stroke: currentColor;
       <button role="tab" data-tab="receita">Receita</button>
       <button role="tab" data-tab="fixa">Despesa fixa</button>
       <button role="tab" data-tab="variavel">Despesa variável</button>
+      <button role="tab" data-tab="invest">Investimentos</button>
     </nav>
 
     <section class="grid">
@@ -512,7 +531,7 @@ svg.i { width: 16px; height: 16px; flex: none; fill: none; stroke: currentColor;
   const UI_KEY = 'orcamento:ui';
 
   function blank() {
-    return { categories: DEFAULT_CATEGORIES.map(c => ({ ...c })), receitas: [], variaveis: [], fixas: [], invest: {}, paid: {} };
+    return { categories: DEFAULT_CATEGORIES.map(c => ({ ...c })), receitas: [], variaveis: [], fixas: [], invest: {}, paid: {}, investments: [], cdi: { rate: 14.9, date: '', source: 'padrao' } };
   }
 
   function load() {
@@ -606,6 +625,9 @@ svg.i { width: 16px; height: 16px; flex: none; fill: none; stroke: currentColor;
     $('#eyeBtn').innerHTML = ico(ui.hidden ? 'eye-off' : 'eye');
     document.querySelectorAll('#tabs button').forEach(b => b.classList.toggle('active', b.dataset.tab === ui.tab));
     $('#manageBtn').hidden = ui.tab === 'fixa';
+    $('#manageBtn').innerHTML = ui.tab === 'invest'
+      ? `${ico('invest')}CDI ${fmtRate(state.cdi.rate)} ao ano${state.cdi.date ? ` · ${state.cdi.date}` : ''} ${ico('pencil', 'width:12px;height:12px')}`
+      : `${ico('tag')}Gerenciar categorias`;
     $('#filterBtn').classList.toggle('on', !!(view.query || view.cat));
 
     renderTable();
@@ -630,6 +652,7 @@ svg.i { width: 16px; height: 16px; flex: none; fill: none; stroke: currentColor;
   }
 
   function renderTable() {
+    if (ui.tab === 'invest') return renderInvestTable();
     const titles = { receita: 'Receita', fixa: 'Despesas fixas', variavel: 'Despesas variáveis' };
     $('#tableTitle').textContent = titles[ui.tab];
     const rows = rowsForTab();
@@ -676,6 +699,7 @@ svg.i { width: 16px; height: 16px; flex: none; fill: none; stroke: currentColor;
   }
 
   function renderChart() {
+    if (ui.tab === 'invest') return renderInvestChart();
     let groups = [];
     const key = view.month;
     if (ui.tab === 'fixa') {
@@ -695,6 +719,11 @@ svg.i { width: 16px; height: 16px; flex: none; fill: none; stroke: currentColor;
       return;
     }
 
+    const label = { receita: 'Receita', fixa: 'Fixas', variavel: 'Variáveis' }[ui.tab];
+    $('#chart').innerHTML = donutHtml(groups, total, label);
+  }
+
+  function donutHtml(groups, total, label) {
     const gap = groups.length > 1 ? 0.8 : 0;
     let offset = 0;
     const arcs = groups.map(g => {
@@ -705,8 +734,7 @@ svg.i { width: 16px; height: 16px; flex: none; fill: none; stroke: currentColor;
       return arc;
     }).join('');
 
-    const label = { receita: 'Receita', fixa: 'Fixas', variavel: 'Variáveis' }[ui.tab];
-    $('#chart').innerHTML = `
+    return `
       <div class="donut-wrap">
         <svg class="donut" viewBox="0 0 42 42">${arcs}</svg>
         <div class="donut-center"><small>${label}</small><strong class="num">${money(total)}</strong></div>
@@ -715,6 +743,172 @@ svg.i { width: 16px; height: 16px; flex: none; fill: none; stroke: currentColor;
         const pct = Math.round(g.value / total * 100);
         return `<li><span class="ldot" style="background:${g.color}"></span><span class="pct" style="background:${g.color}1f;color:${g.color}">${pct}%</span><span class="lname" title="${esc(g.name)}">${esc(g.name)}</span></li>`;
       }).join('')}</ul>`;
+  }
+
+  // ================= Investimentos =================
+  const fmtRate = r => r.toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 }) + '%';
+  const RATE_LABEL = { cdi: '% do CDI', pre: '% ao ano (prefixado)', none: 'Não rende' };
+
+  // Dias úteis (seg–sex) depois de "from" até "to", inclusive. Feriados não são descontados.
+  function businessDays(fromIso, toIso) {
+    const d = new Date(fromIso + 'T12:00:00'), end = new Date(toIso + 'T12:00:00');
+    let n = 0;
+    while (d < end) { d.setDate(d.getDate() + 1); const w = d.getDay(); if (w > 0 && w < 6) n++; }
+    return n;
+  }
+  // Taxa por dia útil (base 252 dias úteis por ano)
+  function dailyRate(inv) {
+    if (inv.type === 'cdi') return (Math.pow(1 + state.cdi.rate / 100, 1 / 252) - 1) * inv.rate / 100;
+    if (inv.type === 'pre') return Math.pow(1 + inv.rate / 100, 1 / 252) - 1;
+    return 0;
+  }
+  const estimate = inv => Math.round(inv.balance * Math.pow(1 + dailyRate(inv), businessDays(inv.updatedAt, todayIso)));
+  const monthlyYield = inv => Math.round(estimate(inv) * (Math.pow(1 + dailyRate(inv), 21) - 1));
+  const rateText = inv => inv.type === 'cdi' ? `${fmtRate(inv.rate).replace(',00', '')} CDI` : inv.type === 'pre' ? `${fmtRate(inv.rate).replace(',00', '')} a.a.` : 'Sem rendimento';
+
+  function renderInvestTable() {
+    $('#tableTitle').textContent = 'Investimentos';
+    const q = view.query.trim().toLowerCase();
+    const rows = state.investments.filter(i => !q || (i.name + ' ' + (i.institution || '')).toLowerCase().includes(q))
+      .map(i => ({ ...i, now: estimate(i) })).sort((a, b) => b.now - a.now);
+    if (!rows.length) {
+      $('#table').innerHTML = `<div class="empty">${q ? 'Nada encontrado com esse filtro.' : 'Nenhum investimento cadastrado.<br>Ex.: sua conta do Mercado Pago rendendo 120% do CDI.'}${q ? '' : `<br><button class="btn-soft" data-add>${ico('plus')}Adicionar</button>`}</div>`;
+      return;
+    }
+    const head = `<div class="row head"><span>Atualiz.</span><span>Nome</span><span class="cat">Rende</span><span class="val">Saldo hoje</span><span></span></div>`;
+    const body = rows.map(i => {
+      const tag = `<span class="tag rate">${rateText(i)}</span>`;
+      return `<div class="row">
+        <span class="date num" title="Última vez que você informou o saldo">${ddmm(i.updatedAt)}</span>
+        <div class="name"><span>${esc(i.name)}${i.institution ? `<small class="inst">${esc(i.institution)}</small>` : ''}</span><div class="tag-m">${tag}</div></div>
+        <span class="cat">${tag}</span>
+        <span class="val num">${money(i.now)}</span>
+        <button class="edit" data-edit="${i.id}" aria-label="Editar">${ico('pencil', 'width:14px;height:14px')}</button>
+      </div>`;
+    }).join('');
+    const total = rows.reduce((s, i) => s + i.now, 0);
+    const month = rows.reduce((s, i) => s + monthlyYield(i), 0);
+    $('#table').innerHTML = head + body + `
+      <div class="total"><span>Total investido</span><strong class="num pos">${money(total)}</strong></div>
+      <div class="yield"><span>Rendimento estimado (bruto, antes do IR)</span><span>≈ <strong class="num">${money(month)}</strong> / mês</span></div>`;
+  }
+
+  function renderInvestChart() {
+    const rows = state.investments.map((i, n) => ({ name: i.name, color: PALETTE[n % PALETTE.length], value: estimate(i) }))
+      .filter(g => g.value > 0).sort((a, b) => b.value - a.value);
+    const total = rows.reduce((s, g) => s + g.value, 0);
+    $('#chart').innerHTML = total ? donutHtml(rows, total, 'Patrimônio')
+      : `<div class="chart-empty">${ico('pie')}<span>Seus investimentos aparecem aqui</span></div>`;
+  }
+
+  function openInvestment(item) {
+    const editing = !!item;
+    const inv = item || { name: '', institution: '', type: 'cdi', rate: 100, balance: 0, updatedAt: todayIso };
+    const now = editing ? estimate(inv) : 0;
+    openModal(`<form id="f">${modalHead(editing ? 'Editar investimento' : 'Novo investimento', 'Onde seu dinheiro está guardado e quanto rende.')}
+      <label class="fl" for="fName">Nome</label><input class="input" id="fName" maxlength="40" placeholder="Ex.: Conta Mercado Pago, CDB, Tesouro Selic…" value="${esc(inv.name)}" />
+      <label class="fl" for="fInst">Instituição <span style="color:var(--muted);font-weight:500">(opcional)</span></label><input class="input" id="fInst" maxlength="40" placeholder="Ex.: Mercado Pago" value="${esc(inv.institution || '')}" />
+      <label class="fl" for="fType">Rendimento</label>
+      <div class="rate-row">
+        <select class="select" id="fType">${Object.entries(RATE_LABEL).map(([k, v]) => `<option value="${k}" ${k === inv.type ? 'selected' : ''}>${v}</option>`).join('')}</select>
+        <div class="suffix" id="rateBox"><input class="input num" id="fRate" type="number" inputmode="decimal" min="0" max="1000" step="0.01" value="${inv.rate}" aria-label="Taxa" /><span id="rateSuf"></span></div>
+      </div>
+      <p class="help" id="rateHelp"></p>
+      ${moneyField('fAmount', now || inv.balance, editing ? 'Saldo hoje' : 'Quanto tem guardado hoje')}
+      ${editing ? `<p class="help">Estimado pelo rendimento desde ${ddmm(inv.updatedAt)}. Se no app do banco estiver diferente, é só corrigir aqui.</p>
+      <div class="divider"></div>
+      <label class="fl">Aporte ou resgate <span style="color:var(--muted);font-weight:500">(opcional)</span></label>
+      <div class="seg2" id="fMv"><button type="button" data-mv="in" class="on">+ Aportar</button><button type="button" data-mv="out">− Resgatar</button></div>
+      <div class="money"><span>R$</span><input id="fMove" inputmode="numeric" value="0,00" data-cents="0" autocomplete="off" aria-label="Valor do aporte ou resgate" /></div>
+      <p class="help" id="mvHelp"></p>` : ''}
+      ${footer(editing)}</form>`, m => {
+      const type = m.querySelector('#fType'), rate = m.querySelector('#fRate'), amount = m.querySelector('#fAmount');
+      let mv = 'in';
+      const refresh = () => {
+        const t = type.value;
+        m.querySelector('#rateBox').hidden = t === 'none';
+        m.querySelector('#rateSuf').textContent = t === 'cdi' ? '% CDI' : '% a.a.';
+        const tmp = { type: t, rate: +rate.value || 0, balance: cents(amount), updatedAt: todayIso };
+        const y = monthlyYield(tmp);
+        m.querySelector('#rateHelp').textContent = t === 'none' ? 'Só guarda o valor, sem calcular rendimento.'
+          : `${t === 'cdi' ? `Com o CDI a ${fmtRate(state.cdi.rate)} ao ano, isso` : 'Isso'} dá ≈ ${fmtRate((Math.pow(1 + dailyRate(tmp), 252) - 1) * 100)} ao ano${y ? `, uns ${brl.format(y / 100)} por mês` : ''} (bruto).`;
+        if (editing) {
+          const mvC = cents(m.querySelector('#fMove'));
+          const final = cents(amount) + (mv === 'in' ? mvC : -mvC);
+          m.querySelector('#mvHelp').textContent = mvC ? `Saldo depois: ${brl.format(Math.max(final, 0) / 100)}` : '';
+        }
+      };
+      bindMoney(amount, refresh);
+      type.addEventListener('change', refresh); rate.addEventListener('input', refresh);
+      if (editing) {
+        bindMoney(m.querySelector('#fMove'), refresh);
+        m.querySelector('#fMv').addEventListener('click', e => {
+          const b = e.target.closest('button'); if (!b) return;
+          mv = b.dataset.mv; m.querySelectorAll('#fMv button').forEach(x => x.classList.toggle('on', x === b)); refresh();
+        });
+      }
+      refresh();
+      m.querySelector('#f').addEventListener('submit', e => {
+        e.preventDefault();
+        const name = m.querySelector('#fName').value.trim();
+        if (!name) return showErr('Dê um nome, ex.: Conta Mercado Pago.');
+        let balance = cents(amount);
+        if (editing) { const mvC = cents(m.querySelector('#fMove')); balance += mv === 'in' ? mvC : -mvC; }
+        if (balance < 0) return showErr('O resgate é maior que o saldo.');
+        const data = { name, institution: m.querySelector('#fInst').value.trim(), type: type.value,
+          rate: Math.max(0, +rate.value || 0), balance, updatedAt: todayIso };
+        if (editing) Object.assign(state.investments.find(x => x.id === item.id), data);
+        else state.investments.push({ ...data, id: uid(), created: Date.now() });
+        toast(editing ? 'Investimento atualizado' : 'Investimento adicionado');
+        commit();
+      });
+      if (editing) m.querySelector('#fDelete').addEventListener('click', () => {
+        const snapshot = JSON.stringify(state.investments);
+        state.investments = state.investments.filter(x => x.id !== item.id);
+        closeModal(); commit();
+        toast('Investimento excluído', 'Desfazer', () => { state.investments = JSON.parse(snapshot); commit(); });
+      });
+    });
+  }
+
+  // CDI: tenta buscar a taxa anual no Banco Central (série 4389 do SGS); se falhar, fica o valor salvo
+  async function fetchCdi() {
+    const ctrl = new AbortController(); const timer = setTimeout(() => ctrl.abort(), 8000);
+    try {
+      const res = await fetch('https://api.bcb.gov.br/dados/serie/bcdata.sgs.4389/dados/ultimos/1?formato=json', { signal: ctrl.signal });
+      const [last] = await res.json();
+      const rate = parseFloat(String(last.valor).replace(',', '.'));
+      if (!(rate > 0 && rate < 100)) throw new Error('valor');
+      state.cdi = { rate, date: last.data.slice(0, 5), source: 'bcb', checked: todayIso };
+      save(); render();
+      return true;
+    } catch (_) { return false; }
+    finally { clearTimeout(timer); }
+  }
+
+  function openCdi() {
+    const src = state.cdi.source === 'bcb' ? `Buscado no Banco Central em ${state.cdi.date}.` : state.cdi.source === 'manual' ? 'Valor informado por você.' : 'Valor aproximado. Confira e ajuste se precisar.';
+    openModal(`<form id="f">${modalHead('Taxa do CDI', 'Usada para estimar quanto seus investimentos rendem.')}
+      <label class="fl" for="fCdi">CDI ao ano</label>
+      <div class="suffix"><input class="input num" id="fCdi" type="number" inputmode="decimal" min="0" max="100" step="0.01" value="${state.cdi.rate}" /><span>% a.a.</span></div>
+      <p class="help" id="cdiHelp">${src}</p>
+      <button type="button" class="btn-soft" id="fFetch" style="margin-top:12px">${ico('invest')}Buscar no Banco Central</button>
+      ${footer(false).replace('>Adicionar<', '>Salvar<')}</form>`, m => {
+      m.querySelector('#fFetch').addEventListener('click', async e => {
+        const b = e.currentTarget; b.disabled = true; b.lastChild.textContent = 'Buscando…';
+        const ok = await fetchCdi();
+        b.disabled = false; b.lastChild.textContent = 'Buscar no Banco Central';
+        if (ok) { m.querySelector('#fCdi').value = state.cdi.rate; m.querySelector('#cdiHelp').textContent = `Buscado no Banco Central (${state.cdi.date}).`; }
+        else m.querySelector('#cdiHelp').textContent = 'Não consegui acessar o Banco Central agora. Digite a taxa manualmente.';
+      });
+      m.querySelector('#f').addEventListener('submit', e => {
+        e.preventDefault();
+        const rate = parseFloat(m.querySelector('#fCdi').value);
+        if (!(rate > 0 && rate < 100)) return showErr('Digite uma taxa válida, ex.: 14,90.');
+        if (rate !== state.cdi.rate) state.cdi = { rate, date: todayIso.slice(8) + '/' + todayIso.slice(5, 7), source: 'manual', checked: todayIso };
+        commit(); toast('CDI atualizado');
+      });
+    });
   }
 
   // Contas fixas vencendo nos próximos 3 dias (ou vencidas) no mês atual
@@ -742,7 +936,8 @@ svg.i { width: 16px; height: 16px; flex: none; fill: none; stroke: currentColor;
     onModalClose = null;
     setup && setup($('#modal'));
     const first = $('#modal').querySelector('[autofocus]') || $('#modal').querySelector('input:not([type=checkbox]):not([type=date]), select');
-    if (first && matchMedia('(pointer: fine)').matches) setTimeout(() => first.focus(), 30);
+    // Foca o primeiro campo, a menos que a pessoa já tenha clicado em outro
+    if (first && matchMedia('(pointer: fine)').matches) setTimeout(() => { if (!$('#modal').contains(document.activeElement)) first.focus(); }, 30);
   }
   function closeModal() {
     if ($('#overlay').hidden) return;
@@ -1091,6 +1286,7 @@ svg.i { width: 16px; height: 16px; flex: none; fill: none; stroke: currentColor;
     fixasOf(key).forEach(f => lines.push([d(f.shownDate), 'Despesa fixa', f.desc, f.paid ? 'Pago' : 'Pendente', val(-f.amount)]));
     variaveisOf(key).forEach(v => lines.push([d(v.shownDate), 'Despesa variável', v.desc + (v.installment ? ` (${v.installment.i}/${v.installment.n})` : ''), cat(v.category)?.name, val(-v.amount)]));
     const t = totals(key);
+    state.investments.forEach(i => lines.push([d(todayIso), 'Investimento (saldo estimado)', i.name + (i.institution ? ` · ${i.institution}` : ''), rateText(i), val(estimate(i))]));
     lines.push([], ['', 'Receita', '', '', val(t.receita)], ['', 'Investir', '', fmtPct(t.pct), val(-t.investir)], ['', 'Despesas', '', '', val(-t.despesas)], ['', 'Saldo', '', '', val(t.saldo)]);
     download(`orcamento-${key}.csv`, '﻿' + lines.map(l => l.map(cell).join(';')).join('\r\n'), 'text/csv;charset=utf-8');
   }
@@ -1120,7 +1316,7 @@ svg.i { width: 16px; height: 16px; flex: none; fill: none; stroke: currentColor;
   $('#monthLabel').addEventListener('click', () => { view.month = monthOf(todayIso); render(); });
   $('#eyeBtn').addEventListener('click', () => { ui.hidden = !ui.hidden; saveUi(); render(); });
   $('#investBtn').addEventListener('click', openInvest);
-  $('#manageBtn').addEventListener('click', openCategories);
+  $('#manageBtn').addEventListener('click', () => ui.tab === 'invest' ? openCdi() : openCategories());
   $('#menuBtn').addEventListener('click', openMenu);
   $('#themeBtn').addEventListener('click', () => {
     const next = document.documentElement.dataset.theme === 'dark' ? 'light' : 'dark';
@@ -1135,12 +1331,12 @@ svg.i { width: 16px; height: 16px; flex: none; fill: none; stroke: currentColor;
     themeTimer = setTimeout(() => root.classList.remove('theme-anim'), 900);
   });
 
-  const openAdd = () => ({ receita: openReceita, fixa: openFixa, variavel: openVariavel })[ui.tab]();
+  const openAdd = () => ({ receita: openReceita, fixa: openFixa, variavel: openVariavel, invest: openInvestment })[ui.tab]();
   $('#addBtn').addEventListener('click', () => openAdd());
 
   $('#table').addEventListener('click', e => {
     if (e.target.closest('[data-add]')) return openAdd();
-    if (e.target.closest('#sortBtn')) { ui.sortAsc = !ui.sortAsc; saveUi(); return renderTable(); }
+    if (e.target.closest('#sortBtn') && ui.tab !== 'invest') { ui.sortAsc = !ui.sortAsc; saveUi(); return renderTable(); }
     const pay = e.target.closest('[data-pay]');
     if (pay) return togglePaid(pay.dataset.pay, view.month);
     const rec = e.target.closest('[data-receive]');
@@ -1158,6 +1354,7 @@ svg.i { width: 16px; height: 16px; flex: none; fill: none; stroke: currentColor;
       openReceita(r.recurring ? { ...r, date: dateIn(view.month, +r.date.slice(8)) } : r);
     }
     else if (ui.tab === 'fixa') openFixa(state.fixas.find(x => x.id === id));
+    else if (ui.tab === 'invest') openInvestment(state.investments.find(x => x.id === id));
     else openVariavel(state.variaveis.find(x => x.id === id));
   });
 
@@ -1184,7 +1381,7 @@ svg.i { width: 16px; height: 16px; flex: none; fill: none; stroke: currentColor;
 
   function fillFilter() {
     const sel = $('#fCat');
-    sel.hidden = ui.tab === 'fixa';
+    sel.hidden = ui.tab === 'fixa' || ui.tab === 'invest';
     const kind = ui.tab === 'receita' ? 'receita' : 'despesa';
     sel.innerHTML = `<option value="">Todas as categorias</option>` + catsOf(kind).map(c => `<option value="${c.id}">${esc(c.name)}</option>`).join('');
     sel.value = view.cat;
@@ -1235,6 +1432,7 @@ svg.i { width: 16px; height: 16px; flex: none; fill: none; stroke: currentColor;
 
   fillFilter();
   render();
+  if (state.cdi.checked !== todayIso) fetchCdi();
 })();
   </script>
 </body>
