@@ -904,7 +904,7 @@ button:focus-visible, a:focus-visible, [role="button"]:focus-visible, [tabindex]
   <div class="app">
     <header class="top">
       <div>
-        <p class="hello">Olá, você</p>
+        <p class="hello" id="hello">Olá, você</p>
         <h1 class="title">Orçamento
           <button class="ghost-ico" id="eyeBtn" title="Esconder valores" aria-label="Esconder valores"><svg class="i"><use href="#i-eye"/></svg></button>
         </h1>
@@ -1397,6 +1397,8 @@ button:focus-visible, a:focus-visible, [role="button"]:focus-visible, [tabindex]
   // ================= Render =================
   const render = withMemo(renderNow);
   function renderNow() {
+    // saudação pela hora do dia
+    { const h = new Date().getHours(); $('#hello').textContent = h >= 5 && h < 12 ? 'Bom dia' : h >= 12 && h < 18 ? 'Boa tarde' : 'Boa noite'; }
     const [y, m] = view.month.split('-').map(Number);
     const lbl = new Date(y, m - 1, 1).toLocaleDateString('pt-BR', { month: 'long', year: 'numeric' });
     $('#monthLabel').textContent = lbl.charAt(0).toUpperCase() + lbl.slice(1);

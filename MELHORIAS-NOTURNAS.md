@@ -2,7 +2,7 @@
 
 Trabalho feito durante a noite, sem mudar o jeito como seus dados são guardados (tudo que já existe continua funcionando).
 
-Resumo: **68 itens** — uns 30 bugs corrigidos (incluindo 10 que eu mesmo tinha introduzido e achei em 3 revisões do código) (alguns graves: sincronização que apagava lançamentos do outro aparelho, receita recorrente que sumia do passado, sininho fora da tela no celular, saldo que não descontava gastos do mesmo dia, limite do cartão errado), importação de extrato de mais bancos (inclusive Excel), app ~3x mais rápido com muitos lançamentos, e várias facilidades novas (desfazer, buscar em todos os meses, duplicar, transferir entre contas, pular um mês, parcelado e transferência no lançamento rápido, importar planilha do Excel…).
+Resumo: **69 itens** — uns 30 bugs corrigidos (incluindo 10 que eu mesmo tinha introduzido e achei em 3 revisões do código) (alguns graves: sincronização que apagava lançamentos do outro aparelho, receita recorrente que sumia do passado, sininho fora da tela no celular, saldo que não descontava gastos do mesmo dia, limite do cartão errado), importação de extrato de mais bancos (inclusive Excel), app ~3x mais rápido com muitos lançamentos, e várias facilidades novas (desfazer, buscar em todos os meses, duplicar, transferir entre contas, pular um mês, parcelado e transferência no lançamento rápido, importar planilha do Excel…).
 
 Como testei: cada mudança foi verificada num navegador de verdade (Chromium), no tamanho de celular (320 e 390 px), tablet e computador, nos temas claro e escuro, com dados vazios, dados normais e 2.000+ lançamentos, além de milhares de toques aleatórios sem nenhum erro. Os campos novos nos dados são todos opcionais: `received`, `transfers`, `skip`, `balanceAt`, `paidTs`.
 
@@ -303,3 +303,6 @@ Revisei com mais cuidado a parte nova da importação que marca contas como paga
 - **Salário de dois meses no mesmo extrato:** se o extrato tinha o salário de agosto e de setembro, só um era reconhecido como "já é a receita Salário"; o outro entrava de novo (receita em dobro naquele mês). Agora cada mês é reconhecido.
 - **Duas abas + sincronização:** a outra aba ficava com a informação velha de "última sincronização" e podia mostrar à toa o aviso "Chegaram dados mais novos…" (e trocar a cópia de segurança por uma igual). Agora as abas compartilham também o estado da sincronização.
 - **Pagamento de fatura importado no mesmo dia em que você corrigiu o saldo:** podia descontar a fatura duas vezes do saldo. Agora segue a mesma regra dos outros lançamentos importados (o saldo que você digitou já inclui o que aconteceu naquele dia).
+
+### 69. Saudação pela hora do dia
+- O topo dizia sempre "Olá, você". Agora diz **Bom dia**, **Boa tarde** ou **Boa noite** conforme a hora. (Também medi a abertura do app num celular lento com 3.000 lançamentos: ~1,5–2,5 s, quase tudo é o navegador lendo o arquivo com as fontes e logos embutidos; trocar de mês ficou ~30% mais rápido que antes desta noite.)
