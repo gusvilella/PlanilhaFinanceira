@@ -1,0 +1,140 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+  <title>Grana — Planilha Financeira</title>
+  <meta name="description" content="Planilha financeira simples para organizar o dia a dia." />
+  <meta name="theme-color" content="#f5f1ea" />
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><circle cx='50' cy='50' r='46' fill='%235f8b6e'/><text x='50' y='66' font-size='48' text-anchor='middle' fill='white' font-family='sans-serif'>R$</text></svg>" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,600&family=Nunito+Sans:opsz,wght@6..12,400;6..12,600;6..12,700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <div class="app">
+    <header class="topbar">
+      <div class="brand">
+        <span class="brand-dot" aria-hidden="true"></span>
+        <span class="brand-name">Grana</span>
+      </div>
+      <div class="topbar-actions">
+        <button class="icon-btn" id="themeBtn" title="Alternar tema" aria-label="Alternar tema">◐</button>
+        <button class="icon-btn" id="menuBtn" title="Mais opções" aria-label="Mais opções">⋯</button>
+      </div>
+    </header>
+
+    <nav class="month-nav" aria-label="Mês">
+      <button class="icon-btn" id="prevMonth" aria-label="Mês anterior">‹</button>
+      <button class="month-label" id="monthLabel" title="Voltar para o mês atual"></button>
+      <button class="icon-btn" id="nextMonth" aria-label="Próximo mês">›</button>
+    </nav>
+
+    <main>
+      <section class="card hero" aria-live="polite">
+        <p class="hero-label">Saldo do mês</p>
+        <p class="hero-value" id="balance">R$ 0,00</p>
+        <div class="hero-split">
+          <div class="pill in">
+            <span class="pill-icon">↓</span>
+            <div><small>Entrou</small><strong id="totalIn">R$ 0,00</strong></div>
+          </div>
+          <div class="pill out">
+            <span class="pill-icon">↑</span>
+            <div><small>Saiu</small><strong id="totalOut">R$ 0,00</strong></div>
+          </div>
+        </div>
+        <div class="budget" id="budgetBox">
+          <div class="budget-head">
+            <span id="budgetText">Defina um limite de gastos</span>
+            <button class="link-btn" id="budgetBtn">Editar</button>
+          </div>
+          <div class="bar"><div class="bar-fill" id="budgetFill"></div></div>
+        </div>
+      </section>
+
+      <section class="card" id="catSection">
+        <div class="section-head">
+          <h2>Para onde foi o dinheiro</h2>
+        </div>
+        <ul class="cat-list" id="catList"></ul>
+        <p class="empty small" id="catEmpty">Nenhum gasto neste mês ainda.</p>
+      </section>
+
+      <section class="card">
+        <div class="section-head">
+          <h2>Movimentações</h2>
+          <div class="seg" role="tablist" id="filterSeg">
+            <button role="tab" class="active" data-filter="all">Tudo</button>
+            <button role="tab" data-filter="in">Entradas</button>
+            <button role="tab" data-filter="out">Saídas</button>
+          </div>
+        </div>
+        <input type="search" class="search" id="search" placeholder="Buscar…" autocomplete="off" />
+        <div id="txList"></div>
+        <div class="empty" id="txEmpty">
+          <div class="empty-art" aria-hidden="true">🌱</div>
+          <p>Nada por aqui ainda.<br />Toque no <strong>+</strong> para anotar seu primeiro gasto.</p>
+        </div>
+      </section>
+    </main>
+  </div>
+
+  <button class="fab" id="addBtn" aria-label="Adicionar movimentação">+</button>
+
+  <!-- Folha de adicionar / editar -->
+  <div class="sheet-backdrop" id="sheetBackdrop" hidden>
+    <form class="sheet" id="txForm" autocomplete="off">
+      <div class="sheet-grip" aria-hidden="true"></div>
+      <div class="type-toggle" id="typeToggle">
+        <button type="button" data-type="out" class="active">Gasto</button>
+        <button type="button" data-type="in">Entrada</button>
+      </div>
+
+      <label class="amount-wrap">
+        <span class="sr-only">Valor</span>
+        <span class="amount-prefix">R$</span>
+        <input id="amount" inputmode="numeric" class="amount" value="0,00" aria-label="Valor" />
+      </label>
+
+      <input id="desc" class="field" placeholder="Descrição (ex: mercado, almoço…)" maxlength="60" />
+
+      <div class="chips" id="catChips"></div>
+
+      <div class="row">
+        <label class="field-label">Data
+          <input type="date" id="date" class="field" required />
+        </label>
+      </div>
+
+      <div class="sheet-actions">
+        <button type="button" class="btn ghost danger" id="deleteBtn" hidden>Excluir</button>
+        <span class="spacer"></span>
+        <button type="button" class="btn ghost" id="cancelBtn">Cancelar</button>
+        <button type="submit" class="btn primary" id="saveBtn">Salvar</button>
+      </div>
+    </form>
+  </div>
+
+  <!-- Menu -->
+  <div class="sheet-backdrop" id="menuBackdrop" hidden>
+    <div class="sheet menu">
+      <div class="sheet-grip" aria-hidden="true"></div>
+      <h3>Seus dados</h3>
+      <p class="muted small">Tudo fica salvo só neste navegador. Faça backup de vez em quando.</p>
+      <button class="menu-item" id="exportCsv">📄 Exportar mês para planilha (CSV)</button>
+      <button class="menu-item" id="exportJson">💾 Fazer backup completo</button>
+      <label class="menu-item">📂 Restaurar backup
+        <input type="file" id="importJson" accept="application/json,.json" hidden />
+      </label>
+      <button class="menu-item danger" id="clearAll">🗑️ Apagar tudo</button>
+      <button class="btn ghost full" id="closeMenu">Fechar</button>
+    </div>
+  </div>
+
+  <div class="toast" id="toast" role="status" aria-live="polite"></div>
+
+  <script src="app.js"></script>
+</body>
+</html>
