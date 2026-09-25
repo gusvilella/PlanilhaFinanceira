@@ -826,6 +826,9 @@ html.locked .lock { place-items: normal; overflow-y: auto; }
 @media (max-width: 360px) {
   .top-right { gap: 4px; }
   .month .label { min-width: 0; font-size: .8rem; white-space: nowrap; }
+  /* botões do rodapé das janelas quebram linha em vez de sair da tela */
+  .actions { flex-wrap: wrap; row-gap: 8px; }
+  .modal { padding-left: 18px; padding-right: 18px; }
 }
 /* Foco visível ao navegar pelo teclado (Tab) */
 button:focus-visible, a:focus-visible, [role="button"]:focus-visible, [tabindex]:focus-visible, summary:focus-visible { outline: 2px solid var(--green); outline-offset: 2px; }

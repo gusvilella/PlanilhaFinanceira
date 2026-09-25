@@ -173,3 +173,4 @@ Testei com arquivos no formato de cada banco:
 
 ### 37. Celulares pequenos (tela de 320px) sem rolagem para o lado
 - Em celulares bem estreitos (iPhone SE antigo, alguns Android de entrada), o seletor de mês ficava 2 a 6 pixels mais largo que a tela, e a página toda "escorregava" para o lado ao rolar. Agora o nome do mês encolhe um pouco e tudo cabe.
+- Nas janelas de fatura e de importar extrato, o botão **Salvar/Importar** ficava parcialmente fora da tela nesses celulares. Agora os botões do rodapé descem para uma segunda linha quando não cabem.
