@@ -1201,6 +1201,10 @@ button:focus-visible, a:focus-visible, [role="button"]:focus-visible, [tabindex]
 
   let ui = { tab: 'geral', hidden: false, theme: null, sortAsc: false, font: 'Urbanist' };
   try { ui = { ...ui, ...JSON.parse(localStorage.getItem(UI_KEY) || '{}') }; } catch (_) {}
+  // preferências de uma versão antiga/estranha voltam ao padrão (aba que não existe, tema inválido…)
+  if (!['geral', 'receita', 'fixa', 'variavel', 'assin', 'cartoes', 'invest', 'metas'].includes(ui.tab)) ui.tab = 'geral';
+  if (!['light', 'dark'].includes(ui.theme)) ui.theme = null;
+  if (![6, 12].includes(ui.evoRange)) delete ui.evoRange;
   const saveUi = () => { try { localStorage.setItem(UI_KEY, JSON.stringify(ui)); } catch (_) {} };
 
   let view = { month: mkey(today.getFullYear(), today.getMonth()), query: '', cat: '', allMonths: false };

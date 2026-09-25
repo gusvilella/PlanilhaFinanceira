@@ -46,6 +46,7 @@ Trabalho feito durante a noite, sem mudar o jeito como seus dados são guardados
 ### 6. Dados antigos ou incompletos não travam mais o app
 - **Antes:** se algum dado salvo estivesse incompleto (ex.: um backup muito antigo, um lançamento sem data, uma lista vazia salva como "nada"), o app abria **em branco**, sem mostrar nada. E se o arquivo de dados estivesse corrompido, o app começava do zero e **apagava** o que estava lá na primeira alteração.
 - **Agora:** ao abrir (e ao restaurar backup ou baixar da sincronização), o app conserta o que estiver faltando sem jogar nada fora: listas voltam a ser listas, valores estranhos viram 0, lançamento sem data ganha a data em que foi criado. Dados que já estão certos não mudam em nada.
+- O mesmo vale para as preferências da tela (aba aberta, tema, período da Evolução): se vierem de uma versão antiga ou estranha, voltam ao padrão em vez de travar o atalho N e mostrar uma tabela vazia.
 - Se os dados estiverem ilegíveis, o app guarda uma cópia deles (`orcamento:v2:corrompido`) antes de começar do zero e avisa você.
 
 ### 7. Importação de extrato funciona com mais bancos
