@@ -3211,6 +3211,7 @@ button:focus-visible, a:focus-visible, [role="button"]:focus-visible, [tabindex]
       <button class="menu-item" id="mStmt">🏦 Importar extrato do banco (CSV/OFX)</button>
       <button class="menu-item" id="mPdf">🧾 Resumo do mês em PDF</button>
       <button class="menu-item" id="mCsv">📄 Exportar mês para planilha (CSV)</button>
+      <button class="menu-item" id="mCsvAll">🗂️ Exportar todos os meses (CSV)</button>
       <button class="menu-item" id="mBackup">💾 Fazer backup completo</button>
       <button class="menu-item" id="mRestore">📂 Restaurar backup</button>
       <button class="menu-item danger" id="mClear">🗑️ Apagar tudo</button>
@@ -3227,6 +3228,7 @@ button:focus-visible, a:focus-visible, [role="button"]:focus-visible, [tabindex]
       m.querySelector('#syncBadge').textContent = syncStatusText();
       m.querySelector('#mStmt').onclick = () => $('#stmtFile').click();
       m.querySelector('#mCsv').onclick = () => { exportCsv(); closeModal(); };
+      m.querySelector('#mCsvAll').onclick = () => { exportCsvAll(); closeModal(); };
       m.querySelector('#mPdf').onclick = () => printReport();
       m.querySelector('#mBackup').onclick = () => { download(`orcamento-backup-${todayIso}.json`, JSON.stringify(state, null, 2), 'application/json'); closeModal(); };
       m.querySelector('#mRestore').onclick = () => $('#importFile').click();
@@ -3343,6 +3345,28 @@ button:focus-visible, a:focus-visible, [role="button"]:focus-visible, [tabindex]
     state.investments.forEach(i => lines.push([d(todayIso), 'Investimento (saldo estimado)', i.name + (i.institution ? ` · ${i.institution}` : ''), rateText(i), val(estimate(i))]));
     lines.push([], ['', 'Receita', '', '', val(t.receita)], ['', 'Investir', '', fmtPct(t.pct), val(-t.investir)], ['', 'Despesas', '', '', val(-t.despesas)], ['', 'Saldo', '', '', val(t.saldo)]);
     download(`orcamento-${key}.csv`, '﻿' + lines.map(l => l.map(cell).join(';')).join('\r\n'), 'text/csv;charset=utf-8');
+  }
+
+  // Todos os meses, do primeiro lançamento até o mês atual (ou o último lançado), uma linha por lançamento com a coluna Mês
+  function exportCsvAll() {
+    const cell = v => `"${String(v ?? '').replace(/"/g, '""')}"`;
+    const val = c => (c / 100).toFixed(2).replace('.', ',');
+    const d = iso => `${iso.slice(8, 10)}/${iso.slice(5, 7)}/${iso.slice(0, 4)}`;
+    const keys = [...state.receitas.map(r => monthOf(r.date)), ...state.variaveis.map(v => monthOf(v.date)), ...state.fixas.map(f => f.start),
+      ...state.assinaturas.map(a => a.start), ...Object.values(state.faturas).flatMap(Object.keys)].filter(Boolean).sort();
+    if (!keys.length) return toast('Nada para exportar ainda');
+    const last = keys[keys.length - 1] > curKey() ? keys[keys.length - 1] : curKey();
+    const lines = [['Mês', 'Data', 'Tipo', 'Descrição', 'Categoria / Status', 'Pago com / Recebido em', 'Valor']];
+    const via = i => payCardOf(i)?.name || state.accounts.find(a => a.id === i.payAccount)?.name || '';
+    for (let k = keys[0], n = 0; k <= last && n < 600; k = addMonths(k, 1), n++) {
+      receitasOf(k).forEach(r => lines.push([k, d(r.shownDate), 'Receita', r.desc, r.pending ? 'A receber' : cat(r.category)?.name, via(r), val(r.amount)]));
+      fixasOf(k).forEach(f => lines.push([k, d(f.shownDate), 'Despesa fixa', f.desc, { card: 'No cartão', paid: 'Pago', late: 'Atrasada', due: 'Pendente' }[fixaState(f)], via(f), val(-f.amount)]));
+      variaveisOf(k).forEach(v => lines.push([k, d(v.shownDate), 'Despesa variável', v.desc + (v.installment ? ` (${v.installment.i}/${v.installment.n})` : ''), cat(v.category)?.name, via(v), val(-v.amount)]));
+      assinaturasOf(k).forEach(a => lines.push([k, d(a.shownDate), 'Assinatura', a.name, a.cycle === 'anual' ? 'Anual' : 'Mensal', via(a), val(-a.amount)]));
+      cardsOf(k).filter(c => c.fatura).forEach(c => lines.push([k, d(c.shownDate), 'Fatura do cartão', c.name, c.fatura.paid ? 'Paga' : 'Em aberto', '', val(-c.fatura.amount)]));
+    }
+    download(`orcamento-completo-${todayIso}.csv`, '\ufeff' + lines.map(l => l.map(cell).join(';')).join('\r\n'), 'text/csv;charset=utf-8');
+    toast(`${lines.length - 1} lançamentos exportados`);
   }
 
   $('#importFile').addEventListener('change', async e => {

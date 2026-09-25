@@ -110,3 +110,6 @@ Testei com arquivos no formato de cada banco:
 ### 21. Editar compra parcelada de uma vez
 - **Antes:** para renomear, trocar a categoria ou o cartão de uma compra parcelada (ex.: "Geladeira" em 6x), era preciso abrir e editar parcela por parcela.
 - **Agora:** ao editar uma parcela aparece **"Aplicar a todas as parcelas"** (já marcado): descrição, categoria e forma de pagamento mudam em todas. Data e valor continuam mudando só na parcela aberta.
+
+### 22. Exportar todos os meses para planilha
+- Na engrenagem, além de "Exportar mês", agora tem **"Exportar todos os meses (CSV)"**: um arquivo só com todos os lançamentos desde o primeiro, com colunas de Mês, Data, Tipo, Descrição, Categoria/Status, Pago com e Valor. Abre direto no Excel ou no Google Planilhas.
