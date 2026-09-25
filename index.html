@@ -3155,6 +3155,7 @@ button:focus-visible, a:focus-visible, [role="button"]:focus-visible, [tabindex]
           hint();
         });
         m.querySelector('#fN').addEventListener('input', hint);
+        if (prefill?.parcelas) { m.querySelector('#fInst').checked = true; m.querySelector('#fN').value = prefill.parcelas; m.querySelector('#fInst').dispatchEvent(new Event('change')); }
       }
       m.querySelector('#f').addEventListener('submit', e => {
         e.preventDefault();
@@ -4365,7 +4366,7 @@ button:focus-visible, a:focus-visible, [role="button"]:focus-visible, [tabindex]
       m.querySelector('#qaFull').onclick = () => {
         const p = input.value.trim() ? parseQuick(input.value) : null;
         if (!p) return (ui.tab === 'receita' ? openReceita : openVariavel)();
-        (p.kind === 'receita' ? openReceita : openVariavel)(null, { date: p.date, amount: p.amount, desc: p.desc, category: p.category, payCard: p.payCard, payAccount: p.payAccount });
+        (p.kind === 'receita' ? openReceita : openVariavel)(null, { date: p.date, amount: p.amount, desc: p.desc, category: p.category, payCard: p.payCard, payAccount: p.payAccount, ...(p.parcelas ? { parcelas: p.parcelas } : {}) });
       };
       drawFavs(); preview();
     });
