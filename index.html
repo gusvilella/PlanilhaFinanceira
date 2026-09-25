@@ -822,6 +822,11 @@ html.locked .lock { place-items: normal; overflow-y: auto; }
   /* dvh = altura visível de verdade (no iPhone, 100vh inclui a área atrás da barra do Safari e escondia os botões) */
   .modal { border-radius: 22px 22px 0 0; max-height: 92vh; max-height: 92dvh; padding-bottom: calc(20px + env(safe-area-inset-bottom)); }
 }
+/* celulares pequenos (320px): o seletor de mês cabe sem empurrar a página para o lado */
+@media (max-width: 360px) {
+  .top-right { gap: 4px; }
+  .month .label { min-width: 0; font-size: .8rem; white-space: nowrap; }
+}
 /* Foco visível ao navegar pelo teclado (Tab) */
 button:focus-visible, a:focus-visible, [role="button"]:focus-visible, [tabindex]:focus-visible, summary:focus-visible { outline: 2px solid var(--green); outline-offset: 2px; }
 .evo-chart g.m:focus-visible, #fcHit:focus-visible { outline: none; }

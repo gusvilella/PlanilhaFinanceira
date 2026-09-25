@@ -170,3 +170,6 @@ Testei com arquivos no formato de cada banco:
 ### 36. Sininho do celular abria fora da tela ⚠️
 - **Antes:** no celular, o sininho fica do lado esquerdo, mas a janelinha de avisos abria "para a esquerda" dele — ou seja, quase toda **fora da tela**. Só aparecia um pedacinho dos botões "Paguei"; dava para ver os avisos só no computador.
 - **Agora:** no celular ela abre para a direita, ocupa quase a largura da tela e rola se tiver muitos avisos. No computador continua igual.
+
+### 37. Celulares pequenos (tela de 320px) sem rolagem para o lado
+- Em celulares bem estreitos (iPhone SE antigo, alguns Android de entrada), o seletor de mês ficava 2 a 6 pixels mais largo que a tela, e a página toda "escorregava" para o lado ao rolar. Agora o nome do mês encolhe um pouco e tudo cabe.
