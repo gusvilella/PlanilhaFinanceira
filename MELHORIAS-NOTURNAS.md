@@ -150,3 +150,6 @@ Testei com arquivos no formato de cada banco:
 
 ### 32. Lembrete de backup no sininho
 - Os dados ficam só no navegador; se ele for limpo, tudo some. Agora, **se a sincronização estiver desligada** e passar **mais de 30 dias sem backup**, o sininho mostra "Faça um backup" com um botão que baixa o arquivo na hora. Fazer backup pela engrenagem também zera a contagem. Quem usa a sincronização não vê o lembrete. (Para você, a contagem começa hoje, então não vai aparecer de cara.)
+
+### 33. Despesa fixa mostra quanto falta pagar no mês
+- Embaixo do total da aba Despesa fixa agora aparece **"Já pago R$ X"** e **"Falta pagar R$ Y"** (ou "Tudo pago ✓"). As contas pagas no cartão contam como pagas, já que entram na fatura.

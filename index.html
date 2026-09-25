@@ -1458,7 +1458,12 @@ button:focus-visible, a:focus-visible, [role="button"]:focus-visible, [tabindex]
     const foot = (all && found.length > rows.length ? `<div class="yield"><span>Mostrando os ${rows.length} mais recentes de ${found.length} encontrados</span></div>` : '')
       + `<div class="total"><span>Total${filtered ? ' filtrado' : ''}${all ? ` (${found.length} em todos os meses)` : ''}</span>
       <strong class="num ${ui.tab === 'receita' ? 'pos' : 'negc'}">${ui.hidden ? '' : ui.tab === 'receita' ? '+ ' : '- '}${money(sum)}</strong></div>`
-      + (inside ? `<div class="yield"><span>Já dentro das faturas dos cartões (não soma de novo)</span><span class="num">${money(inside)}</span></div>` : '');
+      + (inside ? `<div class="yield"><span>Já dentro das faturas dos cartões (não soma de novo)</span><span class="num">${money(inside)}</span></div>` : '')
+      + (isFixa && !filtered ? (() => {
+        // quanto das contas fixas do mês já foi pago (ou está no cartão) e quanto falta
+        const left = rows.filter(r => ['due', 'late'].includes(fixaState(r))).reduce((s, r) => s + r.amount, 0);
+        return `<div class="yield"><span>Já pago ${money(sum - left)}</span><span>${left ? `Falta pagar <strong class="num" style="color:var(--amber)">${money(left)}</strong>` : 'Tudo pago ✓'}</span></div>`;
+      })() : '');
     $('#table').innerHTML = head + body + foot;
   }
 
