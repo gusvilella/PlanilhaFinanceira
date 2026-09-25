@@ -3481,7 +3481,7 @@ button:focus-visible, a:focus-visible, [role="button"]:focus-visible, [tabindex]
       m.querySelector('#mRestore').onclick = () => $('#importFile').click();
       m.querySelector('#mBeforeSync')?.addEventListener('click', () => { if (confirm('Trocar os dados atuais pela cópia guardada antes da última sincronização? A cópia vai para a nuvem também.')) restoreBeforeSync(); });
       m.querySelector('#mClear').onclick = () => {
-        if (!confirm('Apagar todos os lançamentos? Isso não pode ser desfeito.')) return;
+        if (!confirm(`Apagar todos os lançamentos deste aparelho?${sync ? '\n\nA sincronização está ligada: os dados da nuvem (e dos outros aparelhos) também serão apagados.' : ''}\n\nDepois só dá para desfazer por alguns segundos.`)) return;
         const undoSnap = JSON.stringify(state); state = blank(); commit(); undoToast('Tudo apagado', undoSnap);
       };
     });
