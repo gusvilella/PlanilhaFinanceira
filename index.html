@@ -545,6 +545,7 @@ html.locked .lock { place-items: normal; overflow-y: auto; }
 .legend .ldot { width: 8px; height: 8px; border-radius: 50%; flex: none; }
 .legend .pct { font-size: .7rem; font-weight: 700; padding: 2px 6px; border-radius: 6px; flex: none; }
 .legend .lname { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.legend .lval { display: block; font-size: .7rem; color: var(--muted); font-weight: 500; line-height: 1.2; }
 .chart-empty { display: grid; place-items: center; gap: 10px; color: var(--muted); font-size: .85rem; padding: 50px 0; text-align: center; }
 .chart-empty svg.i { width: 22px; height: 22px; }
 .manage { display: flex; align-items: center; justify-content: center; gap: 6px; margin: 16px auto 0; border: 0; background: transparent; color: var(--ink-2); font-size: .82rem; font-weight: 600; padding: 8px 12px; border-radius: 10px; }
@@ -1575,7 +1576,7 @@ button:focus-visible, a:focus-visible, [role="button"]:focus-visible, [tabindex]
         // com id de categoria: tocar filtra a lista por ela (tocar de novo tira o filtro)
         const pick = g.id !== undefined && g.id !== '' ? ` data-catpick="${esc(g.id)}" role="button" tabindex="0" title="Filtrar por ${esc(g.name)}" class="${view.cat === g.id ? 'on' : view.cat ? 'dim' : ''}"`
           : g.go ? ` data-go="${g.go}" data-catpick="" role="button" tabindex="0" title="Ver ${esc(g.name)}"` : '';
-        return `<li${pick}><span class="ldot" style="background:${g.color}"></span><span class="pct" style="background:${g.color}1f;color:${g.color}">${pct}%</span><span class="lname" title="${esc(g.name)}">${esc(g.name)}</span></li>`;
+        return `<li${pick}><span class="ldot" style="background:${g.color}"></span><span class="pct" style="background:${g.color}1f;color:${g.color}">${pct}%</span><span class="lname" title="${esc(g.name)}">${esc(g.name)}<small class="lval num">${money(g.value)}</small></span></li>`;
       }).join('')}</ul>`;
   }
 
