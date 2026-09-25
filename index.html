@@ -543,6 +543,72 @@ html.locked .lock { display: grid; }
 .imp-row { display: grid; grid-template-columns: 26px 52px minmax(0, 1fr) 150px 110px; gap: 8px; align-items: center; padding: 8px 10px; border-bottom: 1px solid var(--line); font-size: .82rem; }
 .imp-row:last-child { border-bottom: 0; }
 .imp-row.off { opacity: .45; }
+/* ===== Resumo do mês (impressão / PDF) ===== */
+#report { display: none; }
+@media print {
+  @page { size: A4; margin: 12mm; }
+  :root, :root[data-theme="dark"] { color-scheme: light !important; background: #fff !important; }
+  html, body { background: #fff !important; }
+  body > *:not(#report) { display: none !important; }
+  #report { display: block !important; visibility: visible !important; }
+}
+#report { color: #111827; font-size: 10pt; line-height: 1.35; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+#report * { box-sizing: border-box; }
+.r-head { display: flex; justify-content: space-between; align-items: flex-end; border-bottom: 2px solid #111827; padding-bottom: 8px; margin-bottom: 14px; }
+.r-head p { margin: 0; font-size: 9pt; color: #6b7280; letter-spacing: .08em; text-transform: uppercase; font-weight: 600; }
+.r-head h1 { margin: 2px 0 0; font-size: 20pt; font-weight: 700; letter-spacing: -.01em; }
+.r-head h1::first-letter { text-transform: uppercase; }
+.r-head small { color: #6b7280; font-size: 8.5pt; }
+.r-kpis { display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; margin-bottom: 12px; }
+.r-kpis-3 { grid-template-columns: repeat(3, 1fr); margin: 0 0 8px; }
+.r-kpi { border: 1px solid #e5e7eb; border-radius: 10px; padding: 9px 11px; break-inside: avoid; }
+.r-kpi span { display: block; font-size: 8pt; color: #6b7280; text-transform: uppercase; letter-spacing: .06em; font-weight: 600; }
+.r-kpi strong { display: block; font-size: 14pt; font-weight: 700; margin: 2px 0 1px; font-variant-numeric: tabular-nums; }
+.r-kpi small { display: block; font-size: 7.5pt; color: #6b7280; }
+.r-kpi small.up { color: #15803d; } .r-kpi small.down { color: #b91c1c; }
+.r-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+.r-grid.r-top { grid-template-columns: 1.12fr .88fr; }
+.r-sec { border: 1px solid #e5e7eb; border-radius: 10px; padding: 10px 12px; margin-bottom: 12px; break-inside: avoid; }
+.r-sec h2 { margin: 0 0 8px; font-size: 10.5pt; font-weight: 700; }
+.r-where { display: flex; gap: 12px; align-items: center; }
+.r-donut { width: 104px; height: 104px; flex: none; }
+.r-dl { font-size: 3px; fill: #6b7280; } .r-dv { font-size: 3.6px; font-weight: 700; fill: #111827; }
+.r-cats { flex: 1; min-width: 0; }
+.r-cat { display: grid; grid-template-columns: 8px minmax(0, 1fr) 28px 64px; gap: 6px; align-items: center; font-size: 8.5pt; padding: 2px 0; }
+.r-cat .dot { width: 8px; height: 8px; border-radius: 50%; }
+.r-cat .n { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.r-cat .p { color: #6b7280; text-align: right; }
+.r-cat b { text-align: right; font-weight: 600; font-variant-numeric: tabular-nums; }
+.bar { height: 6px; background: #f3f4f6; border-radius: 3px; overflow: hidden; display: block; }
+.bar i { display: block; height: 100%; border-radius: 3px; background: #15803d; }
+.r-evo { display: flex; gap: 10px; height: 110px; align-items: stretch; border-bottom: 1px solid #e5e7eb; }
+.r-evo .col { flex: 1; display: flex; flex-direction: column; align-items: center; }
+.r-evo .bars { flex: 1; width: 100%; display: flex; gap: 2px; align-items: flex-end; justify-content: center; }
+.r-evo .bars i { width: 12px; border-radius: 3px 3px 0 0; min-height: 1px; }
+.r-evo i.in, .r-leg i.in { background: #16a34a; } .r-evo i.out, .r-leg i.out { background: #dc2626; }
+.r-evo .col:not(.cur) i { opacity: .45; }
+.r-evo span { font-size: 7.5pt; color: #6b7280; padding-top: 3px; }
+.r-evo .cur span { color: #111827; font-weight: 700; }
+.r-leg { display: flex; gap: 10px; font-size: 7.5pt; color: #6b7280; margin-top: 6px; }
+.r-leg .grow { flex: 1; }
+.r-leg i { display: inline-block; width: 8px; height: 8px; border-radius: 2px; margin-right: 4px; vertical-align: -1px; }
+.r-tips { margin-top: 8px; }
+.r-tips .ins { font-size: 8.5pt; padding: 4px 0; margin: 0; border: 0; border-top: 1px solid #f3f4f6; border-radius: 0; background: none; color: #111827; display: block; }
+.r-tips .ins b { color: #111827; }
+.r-tips .ins small { display: block; color: #6b7280; font-size: 7.5pt; }
+#report table { width: 100%; border-collapse: collapse; font-size: 8.5pt; }
+#report td { padding: 4px 4px; border-top: 1px solid #f3f4f6; vertical-align: baseline; }
+#report tr:first-child td { border-top: 0; }
+#report td:first-child { color: #6b7280; white-space: nowrap; width: 1%; }
+#report td.v { text-align: right; font-weight: 600; white-space: nowrap; font-variant-numeric: tabular-nums; }
+#report td small { color: #6b7280; }
+#report small.st-late { color: #b91c1c; font-weight: 600; } #report small.st-paid { color: #15803d; }
+.r-foot { margin: 6px 0 0; text-align: right; font-size: 8.5pt; color: #6b7280; }
+.r-foot b { color: #111827; }
+.r-empty { margin: 0; color: #9ca3af; font-size: 8.5pt; }
+.r-goal { display: grid; grid-template-columns: minmax(0, 200px) 1fr 36px; gap: 8px; align-items: center; font-size: 8.5pt; padding: 3px 0; }
+.r-goal b { text-align: right; }
+.r-note { color: #9ca3af; font-size: 7.5pt; margin: 4px 0 0; }
 .det-banner { display: flex; align-items: center; gap: 12px; padding: 12px 14px; margin-bottom: 10px; border-radius: 14px; background: var(--field); border: 1px solid var(--line); font-size: .84rem; }
 .det-banner .grow { flex: 1; min-width: 0; }
 .det-banner strong { display: block; font-weight: 600; }
@@ -1341,6 +1407,7 @@ html.locked .lock { display: grid; }
       <div class="ov ov-goals" id="ovGoals"></div>`;
     renderForecast(); renderCalendar(); renderWhere(); renderOvCards(); renderOvGoals();
     el.querySelectorAll('[data-go]').forEach(b => b.addEventListener('click', () => { ui.tab = b.dataset.go; saveUi(); fillFilter(); render(); }));
+    el.querySelector('[data-pdf]')?.addEventListener('click', () => printReport());
   }
 
   function renderForecast() {
@@ -1447,7 +1514,7 @@ html.locked .lock { display: grid; }
     let list = [...groups.values()].sort((a, b) => b.value - a.value);
     if (list.length > 6) { const rest = list.slice(5); list = [...list.slice(0, 5), { name: 'Outros', color: '#94a3b8', value: rest.reduce((s, g) => s + g.value, 0) }]; }
     const total = list.reduce((s, g) => s + g.value, 0);
-    box.innerHTML = `<h3>Para onde vai o dinheiro</h3><p class="ov-sub">Todas as despesas de ${monthName(key)}</p>`
+    box.innerHTML = `<h3>Para onde vai o dinheiro <button class="ov-link" data-pdf>Resumo em PDF ↓</button></h3><p class="ov-sub">Todas as despesas de ${monthName(key)}</p>`
       + (total ? donutHtml(list, total, 'Despesas') : '<div class="ov-empty">Sem despesas neste mês ainda.</div>');
   }
 
@@ -2956,6 +3023,7 @@ html.locked .lock { display: grid; }
       <button class="menu-item" id="mSync">☁️ Sincronizar entre aparelhos <span id="syncBadge" style="margin-left:auto;font-weight:500;font-size:.78rem;color:var(--muted)"></span></button>
       <p class="fl">Dados</p>
       <button class="menu-item" id="mStmt">🏦 Importar extrato do banco (CSV/OFX)</button>
+      <button class="menu-item" id="mPdf">🧾 Resumo do mês em PDF</button>
       <button class="menu-item" id="mCsv">📄 Exportar mês para planilha (CSV)</button>
       <button class="menu-item" id="mBackup">💾 Fazer backup completo</button>
       <button class="menu-item" id="mRestore">📂 Restaurar backup</button>
@@ -2973,6 +3041,7 @@ html.locked .lock { display: grid; }
       m.querySelector('#syncBadge').textContent = syncStatusText();
       m.querySelector('#mStmt').onclick = () => $('#stmtFile').click();
       m.querySelector('#mCsv').onclick = () => { exportCsv(); closeModal(); };
+      m.querySelector('#mPdf').onclick = () => printReport();
       m.querySelector('#mBackup').onclick = () => { download(`orcamento-backup-${todayIso}.json`, JSON.stringify(state, null, 2), 'application/json'); closeModal(); };
       m.querySelector('#mRestore').onclick = () => $('#importFile').click();
       m.querySelector('#mClear').onclick = () => {
@@ -2980,6 +3049,89 @@ html.locked .lock { display: grid; }
         state = blank(); commit(); toast('Tudo apagado');
       };
     });
+  }
+
+  // ================= Resumo do mês (PDF) =================
+  // Monta uma página A4 só para impressão; o navegador salva como PDF em "Imprimir".
+  function reportHtml(key) {
+    const R = c => brl.format(c / 100);
+    const t = totals(key), tp = totals(addMonths(key, -1)), prevName = monthName(addMonths(key, -1));
+    const delta = (a, b, goodUp) => {
+      if (!b) return '';
+      const p = Math.round((a - b) / Math.abs(b) * 100);
+      if (!p) return `<small>igual a ${prevName}</small>`;
+      const good = goodUp ? p > 0 : p < 0;
+      return `<small class="${good ? 'up' : 'down'}">${p > 0 ? '▲' : '▼'} ${Math.abs(p)}% vs ${prevName}</small>`;
+    };
+    const kpi = (label, v, sub, color) => `<div class="r-kpi"><span>${label}</span><strong style="color:${color}">${v < 0 ? '–' : ''}${R(Math.abs(v))}</strong>${sub}</div>`;
+    // Para onde foi o dinheiro
+    const groups = new Map();
+    const add = (name, color, v) => { if (!v) return; const g = groups.get(name) || { name, color, value: 0 }; g.value += v; groups.set(name, g); };
+    variaveisOf(key).filter(countable(key)).forEach(v => { const c = cat(v.category); add(c?.name || 'Sem categoria', c?.color || '#94a3b8', v.amount); });
+    add('Contas fixas', '#475569', t.fixas);
+    add('Assinaturas', '#d97706', t.assinaturas);
+    add('Faturas do cartão', '#1d4ed8', t.faturas);
+    const cats = [...groups.values()].sort((a, b) => b.value - a.value), catTotal = cats.reduce((s, g) => s + g.value, 0);
+    let off = 0;
+    const donut = catTotal ? `<svg viewBox="0 0 42 42" class="r-donut"><g transform="rotate(-90 21 21)">${cats.map(g => {
+      const len = g.value / catTotal * 100, gap = cats.length > 1 ? 0.8 : 0;
+      const s = `<circle cx="21" cy="21" r="15.915" fill="none" stroke="${g.color}" stroke-width="5.2" stroke-dasharray="${Math.max(len - gap, 0.01)} ${100 - Math.max(len - gap, 0.01)}" stroke-dashoffset="${-off}"/>`;
+      off += len; return s;
+    }).join('')}</g><text x="21" y="20" text-anchor="middle" class="r-dl">Despesas</text><text x="21" y="24.5" text-anchor="middle" class="r-dv">${R(catTotal)}</text></svg>` : '';
+    const catRows = cats.map(g => `<div class="r-cat"><span class="dot" style="background:${g.color}"></span><span class="n">${esc(g.name)}</span><span class="p">${Math.round(g.value / catTotal * 100)}%</span><b>${R(g.value)}</b></div>`).join('');
+    // Últimos 6 meses
+    const months = Array.from({ length: 6 }, (_, i) => addMonths(key, i - 5)), series = months.map(k => ({ k, ...totals(k) }));
+    const top = niceScale(Math.max(...series.map(s => Math.max(s.receita, s.despesas)), 1)).max;
+    const evo = `<div class="r-evo">${series.map(s => `<div class="col${s.k === key ? ' cur' : ''}"><div class="bars">
+      <i class="in" style="height:${s.receita / top * 100}%"></i><i class="out" style="height:${s.despesas / top * 100}%"></i></div><span>${shortMonth(s.k)}</span></div>`).join('')}</div>
+      <div class="r-leg"><span><i class="in"></i>Receita</span><span><i class="out"></i>Despesas</span><span class="grow"></span><span>escala até ${R(top)}</span></div>`;
+    // Listas
+    const table = (title, rows, empty, foot) => `<section class="r-sec"><h2>${title}</h2>${rows.length ? `<table>${rows.join('')}</table>${foot || ''}` : `<p class="r-empty">${empty}</p>`}</section>`;
+    const tr = (...cells) => `<tr>${cells.map((c, i) => `<td${i === cells.length - 1 ? ' class="v"' : ''}>${c}</td>`).join('')}</tr>`;
+    const topGastos = variaveisOf(key).sort((a, b) => b.amount - a.amount).slice(0, 10)
+      .map(v => tr(ddmm(v.date), esc(v.desc || cat(v.category)?.name || 'Despesa') + (v.installment ? ` <small>(${v.installment.i}/${v.installment.n})</small>` : ''), `<small>${esc(cat(v.category)?.name || '')}</small>`, R(v.amount)));
+    const FST = { card: 'no cartão', paid: 'paga', late: 'vencida', due: 'a pagar' };
+    const fixas = fixasOf(key).sort((a, b) => a.shownDate.localeCompare(b.shownDate)).map(f => { const s = fixaState(f); return tr(ddmm(f.shownDate), esc(f.desc), `<small class="st st-${s}">${FST[s]}</small>`, R(f.amount)); });
+    const subs = assinaturasOf(key).sort((a, b) => b.amount - a.amount).map(a => tr(`dia ${pad(a.day)}`, esc(a.name), `<small>${a.cycle === 'anual' ? 'anual' : 'mensal'}${a.payCard && payCardOf(a) ? ' · ' + esc(payCardOf(a).name) : ''}</small>`, R(a.amount)));
+    const cards = cardsOf(key).map(c => { const f = c.fatura, prev = f ? 0 : faturaPreview(c.id, key);
+      return tr(`vence ${dm(faturaDates(c, key).due)}`, esc(c.name) + (c.last4 ? ` <small>•${esc(c.last4)}</small>` : ''), `<small>${f ? FSTATE[faturaState(c, key, f)][1] : prev ? 'prévia' : 'sem fatura'}</small>`, f ? R(f.amount) : prev ? '≈ ' + R(prev) : '—'); });
+    const recs = receitasOf(key).sort((a, b) => b.amount - a.amount).map(r => tr(ddmm(r.shownDate), esc(r.desc || cat(r.category)?.name || 'Receita'), `<small>${r.pending ? 'a receber' : esc(cat(r.category)?.name || '')}</small>`, R(r.amount)));
+    const acc = state.accounts.reduce((s, a) => s + accBalance(a), 0), inv = state.investments.reduce((s, i) => s + estimate(i), 0);
+    const goals = state.metas.map(g => { const i = goalInfo(g); return `<div class="r-goal"><span>${g.emoji || '🎯'} ${esc(g.name)}</span><span class="bar"><i style="width:${i.pct * 100}%"></i></span><b>${Math.round(i.pct * 100)}%</b></div>`; }).join('');
+    const tips = insights().replace(/<span class="ic"[^>]*>.*?<\/span>/g, '');
+    const lbl = new Date(+key.slice(0, 4), +key.slice(5) - 1, 1).toLocaleDateString('pt-BR', { month: 'long', year: 'numeric' });
+    return `<header class="r-head"><div><p>Orçamento</p><h1>Resumo de ${lbl}</h1></div><small>Gerado em ${new Date().toLocaleDateString('pt-BR')}</small></header>
+      <div class="r-kpis">${kpi('Receita', t.receita, delta(t.receita, tp.receita, true) + (t.aReceber ? `<small>+ ${R(t.aReceber)} a receber</small>` : ''), '#15803d')}
+        ${kpi('Despesas', t.despesas, delta(t.despesas, tp.despesas, false), '#b91c1c')}
+        ${kpi('Investir', t.investir, t.pct ? `<small>${fmtPct(t.pct)} da receita</small>` : '', '#1d4ed8')}
+        ${kpi('Saldo', t.saldo, t.receita ? `<small>${Math.round((t.receita - t.despesas) / t.receita * 100)}% da receita sobrou</small>` : '', t.saldo < 0 ? '#b91c1c' : '#111827')}</div>
+      <div class="r-grid r-top">
+        <section class="r-sec"><h2>Para onde foi o dinheiro</h2>${catTotal ? `<div class="r-where">${donut}<div class="r-cats">${catRows}</div></div>` : '<p class="r-empty">Sem despesas neste mês.</p>'}</section>
+        <section class="r-sec"><h2>Últimos 6 meses</h2>${evo}<div class="r-tips">${tips}</div></section>
+      </div>
+      ${table('Maiores gastos', topGastos, 'Nenhuma despesa variável.')}
+      <div class="r-grid">
+        ${table('Contas fixas', fixas, 'Nenhuma conta fixa.', `<p class="r-foot">Total <b>${R(fixasOf(key).reduce((s, f) => s + f.amount, 0))}</b></p>`)}
+        ${table('Assinaturas', subs, 'Nenhuma assinatura cobrada.', `<p class="r-foot">Total <b>${R(assinaturasOf(key).reduce((s, a) => s + a.amount, 0))}</b></p>`)}
+      </div>
+      <div class="r-grid">
+        ${table('Cartões', cards, 'Nenhum cartão cadastrado.')}
+        ${table('Receitas', recs, 'Nenhuma receita.')}
+      </div>
+      <section class="r-sec"><h2>Patrimônio e metas</h2><div class="r-kpis r-kpis-3">${kpi('Contas', acc, '', '#111827')}${kpi('Investimentos', inv, '', '#111827')}${kpi('Total', acc + inv, '', '#111827')}</div>${goals}</section>
+      <p class="r-note">Itens pagos no cartão entram pelo valor da fatura, sem contar duas vezes.</p>`;
+  }
+  function printReport() {
+    const wasHidden = ui.hidden; ui.hidden = false;
+    let el = $('#report');
+    if (!el) { el = document.createElement('div'); el.id = 'report'; document.body.appendChild(el); }
+    try { el.innerHTML = reportHtml(view.month); } finally { ui.hidden = wasHidden; }
+    closeModal();
+    const title = document.title;
+    document.title = `Resumo ${view.month}`;   // vira o nome sugerido do PDF
+    const done = () => { document.title = title; el.innerHTML = ''; window.removeEventListener('afterprint', done); };
+    window.addEventListener('afterprint', done);
+    setTimeout(() => window.print(), 50);
   }
 
   function download(name, content, type) {

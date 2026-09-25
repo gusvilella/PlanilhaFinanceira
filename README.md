@@ -81,6 +81,10 @@ Engrenagem → **Sincronizar entre aparelhos**. Usa um Gist secreto da sua conta
 
 Os dados vão **criptografados** (AES-GCM 256, chave derivada da senha com PBKDF2): o GitHub só guarda texto embaralhado. Sem a senha não dá para recuperar o conteúdo da nuvem. Cada mudança sobe sozinha em poucos segundos e os outros aparelhos baixam ao abrir o app. Se os dois aparelhos mudarem ao mesmo tempo sem internet, vale a versão salva por último.
 
+## Resumo do mês em PDF
+
+Em **⚙ → Resumo do mês em PDF** (ou em "Resumo em PDF" na Visão geral) o app monta um relatório do mês que está na tela: receita, despesas, saldo, para onde foi o dinheiro, os últimos 6 meses, maiores gastos, contas fixas, assinaturas, cartões, patrimônio e metas. Na janela de impressão, escolha **Salvar como PDF**. No celular, use "Imprimir" e depois compartilhe como PDF. O relatório sai sempre em fundo branco, mesmo no tema escuro.
+
 ## Detector de assinaturas
 
 O app olha seus gastos e acha o que parece assinatura: serviços conhecidos (Netflix, Spotify, ChatGPT…) e gastos que se repetem todo mês com valor parecido (academia, por exemplo). Aparece um aviso na aba **Assinaturas** e no sininho. É só revisar e tocar em **Adicionar**, ou em **Não é** para ele não perguntar de novo.
