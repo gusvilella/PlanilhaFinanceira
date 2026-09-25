@@ -45,6 +45,8 @@ Os lançamentos ficam em três abas:
 
 - **Metas**: objetivos com valor e prazo (viagem, carro, reserva de emergência…). O app mostra o progresso e quanto guardar por mês para chegar lá. O guardado pode ser digitado ou vir dos seus investimentos (soma o saldo estimado deles). O botão *Calcular reserva de emergência* usa 6 meses da sua média de despesas. O resumo avisa se as metas pedem mais do que você reserva em Investir.
 
+- **Limite por categoria**: em *Gerenciar categorias* (aba Despesa variável), dê um limite por mês a cada categoria. A aba mostra uma barra por categoria (⚠️ a partir de 80%, ⛔ quando passa), a janela de nova despesa diz quanto ainda cabe, e o sino avisa.
+
 Cada aba tem um gráfico de rosca mostrando para onde vai o dinheiro, filtro/busca e **Gerenciar categorias** (nome e cor).
 
 Outros detalhes:
