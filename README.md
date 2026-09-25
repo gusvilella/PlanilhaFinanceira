@@ -56,6 +56,8 @@ Os lançamentos ficam nas abas:
 
 Cada aba tem um gráfico de rosca mostrando para onde vai o dinheiro, filtro/busca e **Gerenciar categorias** (nome e cor).
 
+**Lançamento rápido** (botão **+** no canto, ou tecla `Q`): escreva do seu jeito, como `mercado 45,90 nubank`, `uber 23 crédito itaú`, `café 6,50 ontem` ou `recebi 300 freela pix nubank`. O app entende valor, data, categoria, e se foi na conta ou no cartão (também pelo final, ex.: `cartão 8890`), e mostra o que entendeu antes de lançar. Gastos frequentes viram ⭐ favoritos: um toque e está lançado.
+
 Outros detalhes:
 
 - O olho ao lado de "Orçamento" esconde os valores.
