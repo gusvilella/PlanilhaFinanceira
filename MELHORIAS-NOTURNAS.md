@@ -12,6 +12,7 @@ Trabalho feito durante a noite, sem mudar o jeito como seus dados são guardados
 5. **Nova despesa fixa com vencimento já passado** (ex.: hoje é dia 25 e ela vence dia 10): aparece a opção "Já paguei a deste mês", já marcada.
 6. **Desfazer em todo lugar**: edite um gasto, salve e toque em "Desfazer" no aviso de baixo. Funciona também ao marcar fatura como paga, excluir categoria, restaurar backup e até em "Apagar tudo".
 7. **Buscar em todos os meses**: na aba Despesa variável, toque em Filtro, digite "ifood" e marque "Buscar em todos os meses".
+8. **Arrastar para trocar o mês** (celular): arraste o dedo para a esquerda na tela (fora das abas) para ir ao próximo mês, e para a direita para voltar.
 
 ## O que mudou
 
@@ -93,3 +94,7 @@ Testei com arquivos no formato de cada banco:
 
 ### 17. Duplicar lançamento
 - Ao abrir uma receita ou despesa variável para editar, agora tem o botão **Duplicar** (ao lado de Excluir). Ele abre um lançamento novo já preenchido com o mesmo valor, descrição, categoria e forma de pagamento, com a **data de hoje**. Bom para gastos que se repetem mas não são fixos (feira, gasolina, diarista).
+
+### 18. Arrastar para os lados troca o mês (celular)
+- No celular, arrastar o dedo para a **esquerda** vai para o próximo mês e para a **direita** volta um mês, com uma animaçãozinha. Não atrapalha a rolagem da página (só vale um arrasto bem horizontal) nem a barra de abas, os gráficos e os campos de texto.
+- Também impedi que o navegador entenda um arrasto lateral como "voltar página" (no app instalado isso podia fechar a tela sem querer).

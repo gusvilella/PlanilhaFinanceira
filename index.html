@@ -69,6 +69,8 @@
 
 * { box-sizing: border-box; }
 html { -webkit-text-size-adjust: 100%; }
+/* arrastar para os lados troca o mês: não deixa o navegador entender como "voltar página" */
+html, body { overscroll-behavior-x: none; }
 body {
   margin: 0; min-height: 100vh;
   background: var(--bg); color: var(--ink);
@@ -3359,6 +3361,27 @@ button:focus-visible, a:focus-visible, [role="button"]:focus-visible, [tabindex]
     fillFilter(); render();
   });
   $('#prevMonth').addEventListener('click', () => { view.month = addMonths(view.month, -1); render(); });
+  // Celular: arrastar o dedo para os lados troca o mês (para a esquerda = próximo, para a direita = anterior)
+  let swipe = null;
+  document.addEventListener('touchstart', e => {
+    swipe = null;
+    if (e.touches.length !== 1 || !$('#overlay').hidden || document.documentElement.classList.contains('locked')) return;
+    if (e.target.closest('.tabs, .fc-chart, .evo-chart, input, select, textarea, .pop, .imp-list, .modal')) return;
+    const t = e.touches[0];
+    swipe = { x: t.clientX, y: t.clientY, at: Date.now() };
+  }, { passive: true });
+  document.addEventListener('touchend', e => {
+    if (!swipe) return;
+    const t = e.changedTouches[0], dx = t.clientX - swipe.x, dy = t.clientY - swipe.y, fast = Date.now() - swipe.at < 700;
+    swipe = null;
+    if (!fast || Math.abs(dx) < 70 || Math.abs(dy) > Math.abs(dx) * 0.6) return;
+    view.month = addMonths(view.month, dx < 0 ? 1 : -1);
+    render();
+    if (!matchMedia('(prefers-reduced-motion: reduce)').matches) {
+      const el = ui.tab === 'geral' ? $('#overview') : $('#mainGrid');
+      el.animate?.([{ transform: `translateX(${dx < 0 ? 24 : -24}px)`, opacity: .35 }, { transform: 'none', opacity: 1 }], { duration: 200, easing: 'ease-out' });
+    }
+  }, { passive: true });
   $('#nextMonth').addEventListener('click', () => { view.month = addMonths(view.month, 1); render(); });
   $('#monthLabel').addEventListener('click', () => { view.month = monthOf(todayIso); render(); });
   $('#eyeBtn').addEventListener('click', () => { ui.hidden = !ui.hidden; saveUi(); render(); });

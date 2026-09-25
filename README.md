@@ -65,7 +65,7 @@ Outros detalhes:
 - Alterar ou excluir algo recorrente num mês posterior vale daquele mês em diante, e o passado não muda.
 - O ícone de lua/sol ao lado da engrenagem alterna entre tema claro e escuro.
 - A engrenagem tem a escolha de fonte (Urbanist, Outfit, Sora, Parkinsans ou Syne, embutidas no arquivo, funcionam sem internet), exportação do mês para CSV (abre no Excel / Google Planilhas), backup e restauração.
-- Atalhos: `N` novo lançamento, `←` `→` troca o mês, `Esc` fecha.
+- Atalhos: `N` novo lançamento, `←` `→` troca o mês, `Esc` fecha. No celular, arraste o dedo para os lados para trocar o mês.
 
 ## Dados
 
