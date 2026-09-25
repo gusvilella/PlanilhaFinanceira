@@ -195,3 +195,7 @@ Testei com arquivos no formato de cada banco:
 
 ### 42. "Dá para gastar R$ X por dia"
 - Na Evolução (embaixo das abas), no mês atual, aparece quanto dá para gastar **por dia** até o fim do mês: a sobra do mês (receita − o que você separou pra investir − despesas já previstas, como fixas, assinaturas e faturas) dividida pelos dias que faltam, contando hoje. Se o mês já passou do limite, avisa quanto está no vermelho.
+
+### 43. Pular só um mês de uma conta fixa, assinatura ou receita recorrente
+- Ao **excluir** algo que se repete todo mês (despesa fixa, assinatura, receita recorrente), o app agora pergunta: **"Só em setembro"** (pula só aquele mês — ex.: academia trancada em dezembro, assinatura pausada) ou **"De setembro em diante"** (como era antes). Se a coisa começou naquele mês, a segunda opção vira "Excluir de vez".
+- Os meses pulados ficam guardados num campo novo e opcional (`skip`) do próprio item. Na aba Assinaturas, o item pulado mostra "pulada este mês".

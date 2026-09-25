@@ -1116,12 +1116,14 @@ button:focus-visible, a:focus-visible, [role="button"]:focus-visible, [tabindex]
     const withId = x => { if (x.id === undefined || x.id === null || x.id === '') x.id = uid(); else x.id = String(x.id); };
     [...s.receitas, ...s.variaveis].forEach(x => {
       withId(x); x.amount = num(x.amount);
+      if (x.skip !== undefined) x.skip = Array.isArray(x.skip) ? x.skip.filter(isKey) : [];
       x.date = fixIso(x.date) || (x.created && isFinite(new Date(x.created)) ? isoOf(new Date(x.created)) : todayIso);
     });
     [...s.fixas, ...s.assinaturas, ...s.cards].forEach(x => {
       withId(x);
       if (!isKey(x.start)) x.start = createdKey(x);
       if (x.end !== undefined && !isKey(x.end)) delete x.end;
+      if (x.skip !== undefined) x.skip = Array.isArray(x.skip) ? x.skip.filter(isKey) : [];
     });
     s.fixas.forEach(x => { x.amount = num(x.amount); x.day = day(x.day); x.desc = String(x.desc ?? ''); });
     s.assinaturas.forEach(x => { x.amount = num(x.amount); x.day = day(x.day); x.month = Math.min(12, Math.max(1, Math.round(+x.month) || 1)); x.name = String(x.name ?? ''); });
@@ -1218,7 +1220,7 @@ button:focus-visible, a:focus-visible, [role="button"]:focus-visible, [tabindex]
   function receitasOf(key) { return cached('r' + key, () => receitasOfRaw(key)); }
   function receitasOfRaw(key) {
     return state.receitas
-      .filter(r => r.recurring ? activeIn({ start: monthOf(r.date), end: r.end }, key) : monthOf(r.date) === key)
+      .filter(r => r.recurring ? activeIn({ start: monthOf(r.date), end: r.end }, key) && !(r.skip || []).includes(key) : monthOf(r.date) === key)
       .map(r => ({ ...r, shownDate: r.recurring ? dateIn(key, +r.date.slice(8)) : r.date,
         // recorrente "a receber": cada mês é marcado como recebido separadamente (state.received[mês])
         pending: r.pending && !(r.recurring && ((state.received || {})[key] || []).includes(r.id)) }));
@@ -1230,7 +1232,7 @@ button:focus-visible, a:focus-visible, [role="button"]:focus-visible, [tabindex]
     return list.map(v => ({ ...v, shownDate: v.date }));
   });
   // Despesa fixa pertence ao mês "key" (conta nas despesas dele); se "vence no mês seguinte", a data de pagamento é no próximo mês
-  const fixasOf = key => cached('f' + key, () => state.fixas.filter(f => activeIn(f, key))
+  const fixasOf = key => cached('f' + key, () => state.fixas.filter(f => activeIn(f, key) && !(f.skip || []).includes(key))
     .map(f => ({ ...f, key, shownDate: dateIn(f.dueNext ? addMonths(key, 1) : key, f.day), paid: !!(state.paid[key] || []).includes(f.id) })));
   const daysUntil = iso => Math.round((new Date(iso + 'T12:00:00') - new Date(todayIso + 'T12:00:00')) / 864e5);
   // Situação da despesa fixa: no cartão (já está na fatura), paga, a vencer ou atrasada
@@ -1238,7 +1240,7 @@ button:focus-visible, a:focus-visible, [role="button"]:focus-visible, [tabindex]
 
   const MESES = ['jan', 'fev', 'mar', 'abr', 'mai', 'jun', 'jul', 'ago', 'set', 'out', 'nov', 'dez'];
   // Assinaturas ativas no mês; as anuais só são cobradas no mês de renovação
-  const assinaturasOf = key => cached('a' + key, () => state.assinaturas.filter(a => activeIn(a, key) && (a.cycle !== 'anual' || a.month === +key.slice(5)))
+  const assinaturasOf = key => cached('a' + key, () => state.assinaturas.filter(a => activeIn(a, key) && !(a.skip || []).includes(key) && (a.cycle !== 'anual' || a.month === +key.slice(5)))
     .map(a => ({ ...a, shownDate: dateIn(key, a.day) })));
   const perMonth = a => a.cycle === 'anual' ? Math.round(a.amount / 12) : a.amount;
 
@@ -2063,7 +2065,7 @@ button:focus-visible, a:focus-visible, [role="button"]:focus-visible, [tabindex]
       const suffix = a.cycle === 'anual' ? '/ano' : '/mês';
       return `<div class="row">
         <span class="date">${logoHtml(a)}</span>
-        <div class="name"><span>${esc(a.name)}${a.cycle === 'anual' && !charged.has(a.id) ? `<small>não cobra este mês</small>` : ''}${viaHtml(a)}</span><div class="tag-m">${tag}</div></div>
+        <div class="name"><span>${esc(a.name)}${!charged.has(a.id) ? `<small>${(a.skip || []).includes(view.month) ? 'pulada este mês' : 'não cobra este mês'}</small>` : ''}${viaHtml(a)}</span><div class="tag-m">${tag}</div></div>
         <span class="cat">${tag}</span>
         ${charged.has(a.id) && inFatura({ ...a, shownDate: dateIn(view.month, a.day) }, view.month)
           ? `<span class="val num absorbed" title="Já está dentro da fatura do ${esc(payCardOf(a).name)}">${money(a.amount)}${suffix}<small>na fatura</small></span>`
@@ -3254,12 +3256,25 @@ button:focus-visible, a:focus-visible, [role="button"]:focus-visible, [tabindex]
   }
 
   // Exclusão de algo recorrente: se já existia antes, para de repetir a partir deste mês
-  function removeRecurringAware(listName, item, recurring) {
+  function removeRecurringAware(listName, item, recurring, choice) {
     const snapshot = JSON.stringify(state[listName]);
     const list = state[listName];
     const obj = list.find(x => x.id === item.id);
     const startKey = obj.start ?? monthOf(obj.date);
-    if (recurring && startKey < view.month) {
+    // recorrente (menos cartão): pergunta se é só este mês (pula o mês, guardado em skip) ou daqui em diante
+    if (recurring && listName !== 'cards' && !choice) {
+      const box = $('#modal #fErr'), mn = monthName(view.month);
+      box.innerHTML = `<div class="movebox" style="color:var(--ink)">Remover só em ${mn} ou ${startKey < view.month ? `de ${mn} em diante` : 'de vez'}?
+        <div style="display:flex;gap:8px;margin-top:8px;flex-wrap:wrap"><button type="button" class="btn-soft" id="rmOne">Só em ${mn}</button>
+        <button type="button" class="btn-soft" id="rmFwd" style="color:var(--red)">${startKey < view.month ? `De ${mn} em diante` : 'Excluir de vez'}</button></div></div>`;
+      box.querySelector('#rmOne').onclick = () => removeRecurringAware(listName, item, recurring, 'one');
+      box.querySelector('#rmFwd').onclick = () => removeRecurringAware(listName, item, recurring, 'fwd');
+      return;
+    }
+    if (choice === 'one') {
+      obj.skip = [...new Set([...(obj.skip || []), view.month])];
+      toast(`Pulada em ${monthName(view.month)}`, 'Desfazer', undo);
+    } else if (recurring && startKey < view.month) {
       obj.end = addMonths(view.month, -1);
       toast('Removida deste mês em diante', 'Desfazer', undo);
     } else {
