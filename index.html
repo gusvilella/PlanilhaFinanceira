@@ -251,6 +251,47 @@ svg.i { width: 16px; height: 16px; flex: none; fill: none; stroke: currentColor;
 .cat-edit .money input { padding: 8px 0; }
 @media (max-width: 640px) { .cat-edit { flex-wrap: wrap; } .cat-edit .input { flex: 1; min-width: 0; } .cat-edit .money { width: calc(100% - 42px); margin-left: 42px; } }
 
+/* Evolução */
+.evo { margin-top: 22px; padding: 18px 20px 20px; position: relative; }
+.evo-head { display: flex; align-items: center; justify-content: space-between; gap: 10px; flex-wrap: wrap; margin-bottom: 12px; }
+.evo-head h2 { margin: 0; font-size: .95rem; font-weight: 700; }
+.evo-ctl { display: flex; gap: 8px; align-items: center; }
+.pills { display: inline-flex; background: var(--field); border-radius: 10px; padding: 3px; }
+.pills button { border: 0; background: transparent; border-radius: 8px; padding: 5px 10px; font-size: .78rem; font-weight: 600; color: var(--muted); }
+.pills button.on { background: var(--card); color: var(--ink); box-shadow: var(--shadow); }
+.evo-body { display: grid; grid-template-columns: minmax(0, 1.65fr) minmax(0, 1fr); gap: 22px; align-items: start; }
+.evo-legend { display: flex; gap: 16px; font-size: .78rem; color: var(--ink-2); margin-bottom: 6px; }
+.evo-legend span { display: inline-flex; align-items: center; gap: 6px; }
+.evo-legend i { width: 10px; height: 10px; border-radius: 3px; }
+.evo-chart { position: relative; }
+.evo-chart svg { display: block; width: 100%; overflow: visible; }
+.evo-chart .grid-line { stroke: var(--line); stroke-width: 1; }
+.evo-chart .tick { fill: var(--muted); font-size: 10.5px; font-variant-numeric: tabular-nums; }
+.evo-chart .xl { fill: var(--muted); font-size: 11px; }
+.evo-chart .xl.cur { fill: var(--ink); font-weight: 700; }
+.evo-chart .hit { fill: transparent; cursor: pointer; }
+.evo-chart .band { fill: var(--ink); opacity: 0; transition: opacity .12s; }
+.evo-chart g.m:hover .band, .evo-chart g.m:focus .band { opacity: .04; }
+.evo-chart g.m:focus { outline: none; }
+.evo-tip { position: absolute; pointer-events: none; background: var(--card); border: 1px solid var(--line); box-shadow: var(--shadow-lg); border-radius: 10px; padding: 8px 10px; font-size: .78rem; min-width: 150px; opacity: 0; z-index: 5; }
+.evo-tip.on { opacity: 1; }
+.evo-tip .tt { font-weight: 700; margin-bottom: 4px; }
+.evo-tip div.r { display: flex; justify-content: space-between; gap: 12px; align-items: center; }
+.evo-tip div.r span { display: inline-flex; align-items: center; gap: 6px; color: var(--muted); }
+.evo-tip div.r span i { width: 12px; height: 2px; border-radius: 2px; }
+.evo-tip b { font-variant-numeric: tabular-nums; }
+.insights { display: grid; gap: 10px; }
+.ins { display: flex; gap: 10px; align-items: flex-start; font-size: .84rem; line-height: 1.4; background: var(--field); border-radius: 12px; padding: 10px 12px; }
+.ins .ic { font-size: 1rem; line-height: 1.3; }
+.ins b { font-weight: 700; }
+.ins small { display: block; color: var(--muted); font-size: .75rem; }
+.evo-table { width: 100%; border-collapse: collapse; font-size: .8rem; }
+.evo-table th, .evo-table td { text-align: right; padding: 6px 8px; border-bottom: 1px solid var(--line); font-variant-numeric: tabular-nums; }
+.evo-table th:first-child, .evo-table td:first-child { text-align: left; }
+.evo-table th { color: var(--muted); font-weight: 600; }
+@media (max-width: 980px) { .evo-body { grid-template-columns: 1fr; } }
+@media (max-width: 640px) { .evo { padding: 14px 12px 16px; } }
+
 /* Contas */
 .acc { display: grid; grid-template-columns: 34px minmax(0, 1fr) 150px 30px; gap: 8px; align-items: center; margin-top: 8px; }
 .acc .logo { width: 34px; height: 34px; }
@@ -644,6 +685,8 @@ svg.i { width: 16px; height: 16px; flex: none; fill: none; stroke: currentColor;
         <button class="manage" id="manageBtn"><svg class="i"><use href="#i-tag"/></svg>Gerenciar categorias</button>
       </div>
     </section>
+
+    <section class="card evo" id="evo" aria-label="Evolução mês a mês"></section>
   </div>
 
   <div class="overlay" id="overlay" hidden><div class="modal" id="modal" role="dialog" aria-modal="true"></div></div>
@@ -954,6 +997,7 @@ svg.i { width: 16px; height: 16px; flex: none; fill: none; stroke: currentColor;
     renderTable();
     renderChart();
     renderBell();
+    renderEvo();
   }
 
   const fmtPct = p => (Math.round(p * 10) / 10).toLocaleString('pt-BR') + '%';
@@ -1077,6 +1121,134 @@ svg.i { width: 16px; height: 16px; flex: none; fill: none; stroke: currentColor;
         return `<li><span class="ldot" style="background:${g.color}"></span><span class="pct" style="background:${g.color}1f;color:${g.color}">${pct}%</span><span class="lname" title="${esc(g.name)}">${esc(g.name)}</span></li>`;
       }).join('')}</ul>`;
   }
+
+  // ================= Evolução mês a mês =================
+  // Patrimônio (contas + investimentos): guarda um retrato por mês quando o app é aberto
+  function snapshot() {
+    if (!state.accounts.length && !state.investments.length) return;
+    const val = state.accounts.reduce((s, a) => s + accBalance(a), 0) + state.investments.reduce((s, i) => s + estimate(i), 0);
+    state.snapshots ||= {};
+    if (state.snapshots[curKey()] !== val) { state.snapshots[curKey()] = val; save(); }
+  }
+  const shortMonth = key => new Date(+key.slice(0, 4), +key.slice(5) - 1, 1).toLocaleDateString('pt-BR', { month: 'short' }).replace('.', '');
+  // Valores redondos para o eixo (0 / 1.000 / 2.000…)
+  // passo "redondo" (1, 2, 2,5 ou 5 × 10ⁿ) para ~4 linhas, e o topo no primeiro múltiplo acima do maior valor
+  function niceScale(v) {
+    if (v <= 0) return { max: 100000, step: 25000 };
+    const raw = v / 4, p = Math.pow(10, Math.floor(Math.log10(raw))), n = raw / p;
+    const step = (n <= 1 ? 1 : n <= 2 ? 2 : n <= 2.5 ? 2.5 : n <= 5 ? 5 : 10) * p;
+    return { max: Math.ceil(v / step) * step, step };
+  }
+  const compact = c => { const v = c / 100; return v >= 1e6 ? (v / 1e6).toLocaleString('pt-BR', { maximumFractionDigits: 1 }) + ' mi' : v >= 1e3 ? (v / 1e3).toLocaleString('pt-BR', { maximumFractionDigits: 1 }) + ' mil' : v.toLocaleString('pt-BR', { maximumFractionDigits: 0 }); };
+
+  function renderEvo() {
+    snapshot();
+    const n = ui.evoRange || 6;
+    const end = view.month > curKey() ? view.month : curKey();
+    const months = Array.from({ length: n }, (_, i) => addMonths(end, i - n + 1));
+    const data = months.map(k => { const t = totals(k); return { k, receita: t.receita, despesas: t.despesas, saldo: t.receita - t.despesas }; });
+    const box = $('#evo');
+    if (!data.some(d => d.receita || d.despesas)) { box.hidden = true; return; }
+    box.hidden = false;
+    const table = ui.evoTable;
+    box.innerHTML = `<div class="evo-head"><h2>Evolução</h2>
+      <div class="evo-ctl"><div class="pills" id="evoRange">${[6, 12].map(x => `<button type="button" data-n="${x}" class="${x === n ? 'on' : ''}">${x} meses</button>`).join('')}</div>
+        <button class="btn-soft" id="evoTableBtn" type="button">${table ? 'Ver gráfico' : 'Ver tabela'}</button></div></div>
+      <div class="evo-body"><div>${table ? evoTable(data) : `<div class="evo-legend"><span><i style="background:var(--green)"></i>Receita</span><span><i style="background:var(--red)"></i>Despesas</span></div><div class="evo-chart" id="evoChart"></div>`}</div>
+        <div class="insights">${insights()}</div></div>`;
+    if (!table) drawEvoChart(data);
+    box.querySelector('#evoRange').onclick = e => { const b = e.target.closest('[data-n]'); if (b) { ui.evoRange = +b.dataset.n; saveUi(); renderEvo(); } };
+    box.querySelector('#evoTableBtn').onclick = () => { ui.evoTable = !ui.evoTable; saveUi(); renderEvo(); };
+  }
+
+  function evoTable(data) {
+    return `<table class="evo-table"><thead><tr><th>Mês</th><th>Receita</th><th>Despesas</th><th>Sobra</th></tr></thead><tbody>${data.map(d =>
+      `<tr><td>${monthLabel(d.k)}</td><td>${money(d.receita)}</td><td>${money(d.despesas)}</td><td style="color:${d.saldo < 0 ? 'var(--red)' : 'inherit'}">${d.saldo < 0 && !ui.hidden ? '–' : ''}${money(Math.abs(d.saldo))}</td></tr>`).join('')}</tbody></table>`;
+  }
+
+  function drawEvoChart(data) {
+    const wrap = $('#evoChart');
+    const W = Math.max(wrap.clientWidth, 280), H = 220, padL = 44, padB = 26, padT = 8;
+    const plotW = W - padL, plotH = H - padB - padT;
+    const { max, step } = niceScale(Math.max(...data.map(d => Math.max(d.receita, d.despesas))));
+    const y = v => padT + plotH - v / max * plotH;
+    const slot = plotW / data.length;
+    const bw = Math.min(24, Math.max(6, (slot - 14) / 2));       // colunas finas, no máximo 24px
+    const ticks = Array.from({ length: Math.round(max / step) + 1 }, (_, i) => i * step);
+    const bar = (x, v, color) => {
+      if (!v) return '';
+      const top = y(v), h = padT + plotH - top, r = Math.min(4, h, bw / 2);
+      // topo arredondado 4px, base reta
+      return `<path d="M${x},${padT + plotH} V${top + r} Q${x},${top} ${x + r},${top} H${x + bw - r} Q${x + bw},${top} ${x + bw},${top + r} V${padT + plotH} Z" fill="${color}"/>`;
+    };
+    const svg = `<svg viewBox="0 0 ${W} ${H}" height="${H}" role="img" aria-label="Receita e despesas por mês">
+      ${ticks.map(t => `<line class="grid-line" x1="${padL}" x2="${W}" y1="${y(t)}" y2="${y(t)}"/><text class="tick" x="${padL - 8}" y="${y(t) + 3.5}" text-anchor="end">${ui.hidden ? '•' : compact(t)}</text>`).join('')}
+      ${data.map((d, i) => {
+        const cx = padL + slot * i + slot / 2, x1 = cx - bw - 1, x2 = cx + 1;   // 2px entre as colunas
+        return `<g class="m" tabindex="0" data-i="${i}" aria-label="${monthLabel(d.k)}: receita ${brl.format(d.receita / 100)}, despesas ${brl.format(d.despesas / 100)}">
+          <rect class="band" x="${padL + slot * i + 2}" y="${padT}" width="${slot - 4}" height="${plotH}" rx="6"/>
+          ${bar(x1, d.receita, 'var(--green)')}${bar(x2, d.despesas, 'var(--red)')}
+          <text class="xl ${d.k === view.month ? 'cur' : ''}" x="${cx}" y="${H - 8}" text-anchor="middle">${shortMonth(d.k)}</text>
+          <rect class="hit" x="${padL + slot * i}" y="0" width="${slot}" height="${H}"/></g>`;
+      }).join('')}</svg><div class="evo-tip" id="evoTip"></div>`;
+    wrap.innerHTML = svg;
+    const tip = wrap.querySelector('#evoTip');
+    const show = g => {
+      const d = data[+g.dataset.i];
+      tip.innerHTML = `<div class="tt">${monthLabel(d.k)}</div>
+        <div class="r"><span><i style="background:var(--green)"></i>Receita</span><b>${money(d.receita)}</b></div>
+        <div class="r"><span><i style="background:var(--red)"></i>Despesas</span><b>${money(d.despesas)}</b></div>
+        <div class="r"><span>Sobra</span><b style="color:${d.saldo < 0 ? 'var(--red)' : 'inherit'}">${d.saldo < 0 && !ui.hidden ? '–' : ''}${money(Math.abs(d.saldo))}</b></div>`;
+      // abre ao lado da coluna (à esquerda se couber, senão à direita), sem cobrir o mês que você está olhando
+      const i = +g.dataset.i, k = wrap.clientWidth / W, slotL = (padL + slot * i) * k, slotR = slotL + slot * k;
+      tip.classList.add('on');
+      const tw = tip.offsetWidth;
+      tip.style.left = (slotL - tw - 6 >= 0 ? slotL - tw - 6 : Math.min(slotR + 6, wrap.clientWidth - tw)) + 'px';
+      tip.style.top = '4px';
+    };
+    wrap.querySelectorAll('g.m').forEach(g => {
+      g.addEventListener('pointerenter', () => show(g));
+      g.addEventListener('focus', () => show(g));
+      g.addEventListener('pointerleave', () => tip.classList.remove('on'));
+      g.addEventListener('blur', () => tip.classList.remove('on'));
+      g.addEventListener('click', () => { view.month = data[+g.dataset.i].k; render(); });
+      g.addEventListener('keydown', e => { if (e.key === 'Enter') { view.month = data[+g.dataset.i].k; render(); } });
+    });
+  }
+
+  // Comparações automáticas do mês visto com o anterior
+  function insights() {
+    const k = view.month, prev = addMonths(k, -1);
+    const t = totals(k), tp = totals(prev);
+    const out = [];
+    const pctTxt = (a, b) => b ? Math.round((a - b) / b * 100) : null;
+    const dp = pctTxt(t.despesas, tp.despesas);
+    if (t.despesas && dp !== null) out.push(['📊', dp > 0 ? `Você gastou <b>${dp}% a mais</b> que em ${shortMonth(prev)}` : dp < 0 ? `Você gastou <b>${-dp}% a menos</b> que em ${shortMonth(prev)}` : `Gastos iguais a ${shortMonth(prev)}`, `${money(t.despesas)} contra ${money(tp.despesas)}`]);
+    // categorias que mais mudaram
+    const byCat = key => { const m = new Map(); variaveisOf(key).forEach(v => m.set(v.category, (m.get(v.category) || 0) + v.amount)); return m; };
+    const a = byCat(k), b = byCat(prev);
+    const changes = [...new Set([...a.keys(), ...b.keys()])].map(id => ({ id, now: a.get(id) || 0, before: b.get(id) || 0 }))
+      .map(c => ({ ...c, diff: c.now - c.before })).filter(c => c.before && Math.abs(c.diff) >= 1000).sort((x, y) => Math.abs(y.diff) - Math.abs(x.diff)).slice(0, 2);
+    changes.forEach(c => {
+      const name = cat(c.id)?.name || 'Sem categoria', p = Math.round(c.diff / c.before * 100);
+      out.push([c.diff > 0 ? '↑' : '↓', `<b>${esc(name)}</b> ${c.diff > 0 ? 'subiu' : 'caiu'} ${Math.abs(p)}%`, `${money(c.now)} contra ${money(c.before)} em ${shortMonth(prev)}`]);
+    });
+    const avg = avgExpenses();
+    if (avg) out.push(['🧮', `Média de despesas: <b>${money(avg)}</b>/mês`, 'Últimos 3 meses com lançamentos']);
+    if (t.receita) {
+      const rate = Math.round((t.receita - t.despesas) / t.receita * 100);
+      out.push([rate >= 20 ? '🌱' : rate >= 0 ? '🙂' : '⚠️', rate >= 0 ? `Sobrou <b>${rate}%</b> da receita neste mês` : `Gastou <b>${-rate}%</b> além da receita`, rate >= 20 ? 'Ótimo ritmo pra investir' : rate >= 0 ? 'Tente chegar em 20%' : 'Vale rever as maiores categorias']);
+    }
+    const snaps = Object.entries(state.snapshots || {}).sort(([x], [y]) => x.localeCompare(y));
+    if (snaps.length) {
+      const [firstK, firstV] = snaps[0], [, lastV] = snaps[snaps.length - 1], d = lastV - firstV;
+      out.push(['🏦', `Patrimônio: <b>${money(lastV)}</b>`, snaps.length > 1 ? `${d >= 0 ? '+' : '–'}${money(Math.abs(d))} desde ${monthLabel(firstK)} (contas + investimentos)` : 'Contas + investimentos. A evolução aparece nos próximos meses.']);
+    }
+    return out.length ? out.map(([ic, h, sub]) => `<div class="ins"><span class="ic" aria-hidden="true">${ic}</span><div>${h}<small>${sub}</small></div></div>`).join('')
+      : `<div class="ins"><span class="ic">💡</span><div>Lance receitas e despesas por alguns meses pra ver as comparações aqui.</div></div>`;
+  }
+  let evoResize;
+  window.addEventListener('resize', () => { clearTimeout(evoResize); evoResize = setTimeout(renderEvo, 150); });
 
   // ================= Limite por categoria =================
   const spentIn = (catId, key) => variaveisOf(key).filter(v => v.category === catId).reduce((s, v) => s + v.amount, 0);

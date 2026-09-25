@@ -47,6 +47,8 @@ Os lançamentos ficam em três abas:
 
 - **Limite por categoria**: em *Gerenciar categorias* (aba Despesa variável), dê um limite por mês a cada categoria. A aba mostra uma barra por categoria (⚠️ a partir de 80%, ⛔ quando passa), a janela de nova despesa diz quanto ainda cabe, e o sino avisa.
 
+**Evolução** (cartão embaixo das abas): colunas de receita × despesas dos últimos 6 ou 12 meses (passe o mouse para ver os valores, clique para ir ao mês, ou *Ver tabela*), e comparações automáticas: quanto você gastou a mais/menos que no mês anterior, as categorias que mais mudaram, a média de despesas, quanto sobrou da receita e o patrimônio (contas + investimentos, registrado mês a mês).
+
 Cada aba tem um gráfico de rosca mostrando para onde vai o dinheiro, filtro/busca e **Gerenciar categorias** (nome e cor).
 
 Outros detalhes:
