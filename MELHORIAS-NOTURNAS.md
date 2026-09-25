@@ -13,6 +13,11 @@ Trabalho feito durante a noite, sem mudar o jeito como seus dados são guardados
 7. **Cartão que fecha depois do vencimento** (ex.: fecha 26, vence 5): confira o "disponível" do cartão; agora conta as compras feitas depois do fechamento.
 8. **Previsão de 30 dias** (Visão geral): agora desconta a prévia da fatura do cartão que ainda não foi lançada.
 
+## Pontos para você decidir (não mexi)
+
+- **Despesa fixa paga "com a conta"**: quando o vencimento passa, o saldo da conta já desconta o valor automaticamente (como débito automático), mas a conta continua aparecendo como **Atrasada** no sininho até você tocar em "Paguei". Não mudei porque as duas leituras fazem sentido (lembrete × saldo) e mudar alteraria saldos que você já usa. Se preferir, dá para: (a) marcar como paga sozinha quando vence, ou (b) só descontar do saldo quando você marcar como paga.
+- **Sincronização com os dois aparelhos mexendo ao mesmo tempo sem internet**: continua valendo a versão salva por último (como já estava no README). Juntar as mudanças dos dois lados seria uma mudança grande.
+
 ## O que mudou
 
 ### 1. Editar receita recorrente não apaga mais o passado
