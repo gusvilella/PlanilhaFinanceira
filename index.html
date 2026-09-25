@@ -4125,7 +4125,7 @@ button:focus-visible, a:focus-visible, [role="button"]:focus-visible, [tabindex]
         m.querySelector('#impList').innerHTML = rows.map((r, i) => `<div class="imp-row ${r.on ? '' : 'off'}" data-i="${i}">
           <input type="checkbox" ${r.on ? 'checked' : ''} aria-label="Importar este lançamento" />
           <span class="d">${ddmm(r.date)}</span>
-          <span class="t" title="${esc(r.desc)}">${esc(r.desc)}${r.skipReason ? `<small>${r.skipReason}</small>` : ''}</span>
+          <span class="t" title="${esc(r.desc)}">${esc(r.desc)}${r.skipReason ? `<small>${esc(r.skipReason)}</small>` : ''}</span>
           <select class="select">${opt(r.kind === 'variavel' ? 'despesa' : 'receita')}</select>
           <span class="v ${r.kind === 'receita' ? 'in' : ''}">${r.kind === 'receita' ? '+ ' : '- '}${brl.format(r.amount / 100)}</span></div>`).join('');
         m.querySelectorAll('.imp-row select').forEach((sel, i) => { sel.value = rows[i].category; });
