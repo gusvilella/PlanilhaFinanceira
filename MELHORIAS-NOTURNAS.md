@@ -213,3 +213,6 @@ Testei com arquivos no formato de cada banco:
 
 ### 46. "+ Guardar" nas metas
 - Cada meta com valor digitado (não ligada a investimentos) ganhou o botão **"+ Guardar"**: informe quanto guardou (ou retirou) sem abrir a edição completa. Dá para dizer de qual conta o dinheiro saiu, e o saldo dela acompanha. Quando a meta é alcançada, o aviso comemora 🎉 (e tem Desfazer).
+
+### 47. Categoria sugerida enquanto você digita
+- Em "Nova despesa variável" e "Nova receita", ao digitar a descrição o app já escolhe a categoria: primeiro pelo que você já lançou com o mesmo nome (ex.: "Padaria" → Comida), depois por palavras conhecidas ("Posto Ipiranga" → Carro, "farmácia" → Saúde). Se você escolher a categoria na mão, ele para de mexer. Quando não tem certeza, deixa em branco pra você escolher.

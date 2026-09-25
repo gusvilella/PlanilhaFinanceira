@@ -3013,6 +3013,20 @@ button:focus-visible, a:focus-visible, [role="button"]:focus-visible, [tabindex]
     });
   }
 
+  // Sugere a categoria enquanto você digita a descrição (pelo que você já lançou antes e por palavras como iFood,
+  // posto, farmácia), só enquanto você não escolheu uma categoria na mão
+  function bindCatSuggest(m, kind) {
+    const sel = m.querySelector('#fCategory'), desc = m.querySelector('#fDesc');
+    let auto = !sel.value;
+    sel.addEventListener('change', () => { auto = false; });
+    desc.addEventListener('input', () => {
+      if (!auto) return;
+      const id = desc.value.trim().length >= 3 ? suggestCategory(desc.value, kind) : '';
+      const outros = catsOf(kind).find(c => norm(c.name) === 'outros')?.id;
+      sel.value = id && id !== outros ? id : '';   // "Outros" é o chute padrão: melhor deixar você escolher
+    });
+  }
+
   function defaultDate() {
     return view.month === monthOf(todayIso) ? todayIso : `${view.month}-01`;
   }
@@ -3034,6 +3048,7 @@ button:focus-visible, a:focus-visible, [role="button"]:focus-visible, [tabindex]
       m.querySelector('#fDup')?.addEventListener('click', () => openReceita(null, { amount: item.amount, desc: item.desc, category: item.category, payAccount: item.payAccount || '', payCard: '' }));
       bindMoney(m.querySelector('#fAmount'));
       bindNewCategory(m, 'receita');
+      if (!editing) bindCatSuggest(m, 'receita');
       bindPay(m);
       m.querySelector('#f').addEventListener('submit', e => {
         e.preventDefault();
@@ -3089,6 +3104,7 @@ button:focus-visible, a:focus-visible, [role="button"]:focus-visible, [tabindex]
       };
       bindMoney(amount, () => { hint(); limitHint(); });
       bindNewCategory(m, 'despesa');
+      if (!editing) { bindCatSuggest(m, 'despesa'); m.querySelector('#fDesc').addEventListener('input', limitHint); }
       m.querySelector('#fCategory').addEventListener('change', limitHint);
       m.querySelector('#fDate').addEventListener('change', limitHint);
       limitHint();
