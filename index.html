@@ -3511,11 +3511,14 @@ button:focus-visible, a:focus-visible, [role="button"]:focus-visible, [tabindex]
   $('#fAll').addEventListener('change', e => { view.allMonths = e.target.checked; render(); });
   $('#fClear').addEventListener('click', () => { view.query = ''; view.cat = ''; view.allMonths = false; $('#fAll').checked = false; $('#fSearch').value = ''; $('#fCat').value = ''; render(); togglePop($('#filterPop'), false); });
 
-  // Atalhos: N = novo, ← → = mês, Esc = fechar
+  // Atalhos: N = novo, Q = rápido, / = buscar, H = mês atual, ← → = mês, Esc = fechar
   document.addEventListener('keydown', e => {
+    if (document.documentElement.classList.contains('locked')) return;   // tela de senha: nada por trás dela
     if (e.key === 'Escape') { closeModal(); togglePop($('#filterPop'), false); return; }
     const typing = /INPUT|SELECT|TEXTAREA/.test(document.activeElement?.tagName);
     if (typing || !$('#overlay').hidden || e.ctrlKey || e.metaKey || e.altKey) return;
+    if (e.key === '/' && ui.tab !== 'geral') { e.preventDefault(); togglePop($('#filterPop'), true); $('#fSearch').focus(); }
+    if (e.key === 'h' || e.key === 'H') { view.month = curKey(); render(); }
     if (e.key === 'n' || e.key === 'N') { e.preventDefault(); openAdd(); }
     if (e.key === 'q' || e.key === 'Q') { e.preventDefault(); openQuick(); }
     if (e.key === 'ArrowLeft') { view.month = addMonths(view.month, -1); render(); }

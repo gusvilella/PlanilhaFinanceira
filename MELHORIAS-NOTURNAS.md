@@ -122,3 +122,7 @@ Testei com arquivos no formato de cada banco:
 ### 24. Compras depois do fechamento em cartão que fecha no fim do mês
 - **O problema:** em cartões que **fecham depois do dia do vencimento** (ex.: fecha dia 26 e vence dia 5, bem comum), uma compra feita depois do fechamento — digamos 28/12 — vai para a fatura que vence em **fevereiro** (dois meses depois). O app colocava ela na fatura certa para as contas do mês, mas **não enxergava** essa compra na prévia da fatura, na lista "Já dentro desta fatura" e no **limite disponível** do cartão (o limite aparecia maior do que é).
 - **Agora:** essas compras aparecem na prévia e descontam do limite. Testei na virada de dezembro para janeiro: com uma compra de R$ 300 em 28/12, o limite disponível passou de R$ 3.000 (errado) para R$ 2.700.
+
+### 25. Atalhos de teclado (computador)
+- Novos: **`/`** abre a busca da aba e **`H`** volta para o mês atual (os antigos continuam: `N` novo, `Q` rápido, `←` `→` mês, `Esc` fecha).
+- Correção: com a senha ligada, apertar `N` ou `Q` na tela de senha abria uma janela escondida atrás dela, que aparecia depois de desbloquear. Agora os atalhos não fazem nada enquanto o app está trancado.
