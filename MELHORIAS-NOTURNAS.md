@@ -265,3 +265,6 @@ Testei com arquivos no formato de cada banco:
 ### 60. App aberto em duas abas não perde lançamentos
 - **Antes:** com o app aberto em duas abas do navegador (acontece bastante no computador), cada aba guardava sua própria cópia; lançar algo na aba 1 e depois na aba 2 fazia a aba 2 salvar **por cima**, e o lançamento da aba 1 sumia. Reproduzi: só o da aba 2 sobrava.
 - **Agora:** quando uma aba salva, a outra atualiza na hora com os dados novos. No mesmo teste, os dois lançamentos ficam.
+
+### 61. Total e média na tabela da Evolução
+- Em Evolução → "Ver tabela", agora tem as linhas **Total** (soma do período: 6 ou 12 meses) e **Média/mês** (considerando os meses com lançamento) para receita, despesas e sobra. Com "12 meses", vira um resumo do ano.
