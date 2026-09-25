@@ -2412,6 +2412,7 @@ button:focus-visible, a:focus-visible, [role="button"]:focus-visible, [tabindex]
       ${ccPreview(card)}
       ${moneyField('fAmount', f ? f.amount : 0, 'Valor da fatura')}
       ${last && !f ? `<div class="last-hint"><span>Mês passado: ${brl.format(last.amount / 100)}</span><button type="button" class="link" id="fLast">Usar esse valor</button></div>` : ''}
+      ${!f && faturaPreview(card.id, key) ? `<div class="last-hint"><span>Compras já lançadas neste cartão: ${brl.format(faturaPreview(card.id, key) / 100)}</span><button type="button" class="link" id="fPrevUse">Usar esse valor</button></div>` : ''}
       <div id="insideBox"></div>
       ${st === 'late' && f && !nextF ? `<div class="movebox">Essa fatura venceu em ${dm(due)} e está sem pagar. Se esse valor é da fatura que ainda está aberta (fecha ${dm(faturaDates(card, next).close)}), mova pra de ${monthName(next)}.
         <br><button type="button" class="btn-soft" id="fMove">${ico('right', 'width:13px;height:13px')}Mover para a fatura de ${monthName(next)}</button></div>` : ''}
@@ -2434,6 +2435,7 @@ button:focus-visible, a:focus-visible, [role="button"]:focus-visible, [tabindex]
       const set = bindMoney(amount, drawInside);
       drawInside();
       m.querySelector('#fLast')?.addEventListener('click', () => set(last.amount));
+      m.querySelector('#fPrevUse')?.addEventListener('click', () => set(faturaPreview(card.id, key)));
       m.querySelector('#fEditCard').addEventListener('click', () => openCartao(state.cards.find(x => x.id === card.id)));
       m.querySelector('#fPrev').addEventListener('click', () => openFatura(card, addMonths(key, -1)));
       m.querySelector('#fNext').addEventListener('click', () => openFatura(card, next));

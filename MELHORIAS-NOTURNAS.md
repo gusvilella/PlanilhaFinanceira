@@ -140,3 +140,6 @@ Testei com arquivos no formato de cada banco:
 
 ### 29. A aba ativa sempre aparece na barra de abas (celular)
 - No celular a barra de abas rola para o lado. Indo para Metas ou Cartões pelos links "Ver metas →"/"Ver todos →" da Visão geral (ou abrindo o app numa dessas abas), a aba marcada ficava **fora da tela**, e parecia que nenhuma estava selecionada. Agora a barra rola sozinha até a aba ativa.
+
+### 30. Lançar fatura com um toque a partir das compras do cartão
+- Na janela de lançar fatura, além de "Mês passado: … Usar esse valor", agora aparece **"Compras já lançadas neste cartão: R$ X · Usar esse valor"**, que preenche o valor com a soma do que você já registrou no cartão para aquela fatura. Útil para quem lança cada compra no cartão e só quer fechar a fatura.
