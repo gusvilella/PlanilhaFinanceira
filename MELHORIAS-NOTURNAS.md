@@ -133,3 +133,7 @@ Testei com arquivos no formato de cada banco:
 ### 27. App instalado abre mesmo com internet ruim
 - **Internet lenta** (aquele 4G de uma barrinha): o app instalado ficava esperando a rede para abrir. Agora, se a rede não responder em 4 segundos, ele abre a cópia guardada no aparelho (e termina de baixar a versão nova por trás, para a próxima vez).
 - **Erro no servidor**: se o GitHub Pages respondesse com uma página de erro, essa página de erro virava a "cópia offline" do app. Agora só uma resposta boa substitui a cópia guardada; em caso de erro, abre a cópia boa.
+
+### 28. Janelas no iPhone e rolagem dentro delas
+- A altura máxima das janelas usava uma medida que, no Safari do iPhone, inclui a área atrás da barra de endereço — o fim da janela (com o botão **Salvar**) podia ficar escondido atrás da barra. Agora usa a altura visível de verdade.
+- Rolar até o fim de uma janela não arrasta mais a página de trás junto.
