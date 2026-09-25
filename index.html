@@ -91,6 +91,7 @@ svg.i { width: 16px; height: 16px; flex: none; fill: none; stroke: currentColor;
 .theme-btn:hover .moon { transform: rotate(-15deg) scale(1.05); }
 :root[data-theme="dark"] .theme-btn:hover .sun { transform: rotate(45deg) scale(1.05); }
 :root[data-theme="dark"] .theme-btn:hover .moon { transform: rotate(90deg) scale(.4); }
+::view-transition-old(root), ::view-transition-new(root) { animation-duration: .45s; animation-timing-function: ease; }
 .theme-anim, .theme-anim *, .theme-anim *::before { transition: background-color .45s ease, color .45s ease, border-color .45s ease, box-shadow .45s ease, fill .45s ease, stroke .45s ease !important; }
 .theme-anim .theme-btn svg.i { transition: transform .5s cubic-bezier(.34, 1.4, .5, 1), opacity .35s ease !important; }
 .bell .dot { position: absolute; top: 5px; right: 5px; width: 8px; height: 8px; border-radius: 50%; background: var(--red); border: 2px solid var(--bg); }
@@ -1104,12 +1105,15 @@ svg.i { width: 16px; height: 16px; flex: none; fill: none; stroke: currentColor;
   $('#menuBtn').addEventListener('click', openMenu);
   $('#themeBtn').addEventListener('click', () => {
     const next = document.documentElement.dataset.theme === 'dark' ? 'light' : 'dark';
-    // Transição suave das cores só durante a troca
     const root = document.documentElement;
+    if (matchMedia('(prefers-reduced-motion: reduce)').matches) return applyTheme(next, true);
+    // Navegadores modernos: o próprio navegador faz um fade entre o tema antigo e o novo
+    if (document.startViewTransition) return document.startViewTransition(() => applyTheme(next, true));
+    // Reserva: transição de cores só durante a troca, removida depois que tudo terminou
     root.classList.add('theme-anim');
-    clearTimeout(themeTimer);
-    themeTimer = setTimeout(() => root.classList.remove('theme-anim'), 500);
     applyTheme(next, true);
+    clearTimeout(themeTimer);
+    themeTimer = setTimeout(() => root.classList.remove('theme-anim'), 900);
   });
 
   const openAdd = () => ({ receita: openReceita, fixa: openFixa, variavel: openVariavel })[ui.tab]();
