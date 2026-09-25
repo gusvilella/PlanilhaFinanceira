@@ -3410,7 +3410,7 @@ html.locked .lock { display: grid; }
     const t = String(raw || '').trim();
     let m;
     if ((m = t.match(/^(\d{4})-(\d{2})-(\d{2})/))) return `${m[1]}-${m[2]}-${m[3]}`;
-    if ((m = t.match(/^(\d{1,2})\/(\d{1,2})\/(\d{2,4})/))) return `${m[3].length === 2 ? '20' + m[3] : m[3]}-${pad(+m[2])}-${pad(+m[1])}`;
+    if ((m = t.match(/^(\d{1,2})[/.-](\d{1,2})[/.-](\d{2,4})/))) return `${m[3].length === 2 ? '20' + m[3] : m[3]}-${pad(+m[2])}-${pad(+m[1])}`;
     if ((m = t.match(/^(\d{4})(\d{2})(\d{2})/))) return `${m[1]}-${m[2]}-${m[3]}`;
     return null;
   }
@@ -3426,22 +3426,55 @@ html.locked .lock { display: grid; }
     return out.map(x => x.trim());
   }
   function parseCsv(text) {
-    const lines = text.replace(/^\ufeff/, '').split(/\r?\n/).filter(l => l.trim());
+    const lines = text.replace(/^﻿/, '').split(/\r?\n/).filter(l => l.trim());
     // acha a linha de cabeçalho (alguns bancos põem umas linhas de título antes)
-    const hi = lines.findIndex(l => /data|date/i.test(l) && /valor|amount|quantia/i.test(l));
-    if (hi < 0) throw new Error('Não achei as colunas de data e valor no arquivo.');
+    const hi = lines.findIndex(l => { const n = norm(l); return /data|date/.test(n) && /valor|amount|quantia|entrada|saida|credito|debito/.test(n); });
+    if (hi < 0) return parseCsvNoHeader(lines);
     const header = lines[hi];
-    const sep = (header.match(/;/g) || []).length > (header.match(/,/g) || []).length ? ';' : (header.includes('\t') ? '\t' : ',');
+    const sep = csvSep(header);
     const cols = splitCsvLine(header, sep).map(norm);
-    const find = re => cols.findIndex(c => re.test(c) && !/saldo/.test(c));
-    const iDate = find(/^(data|date|dt)/), iAmt = find(/(valor|amount|quantia)/);
+    const find = (re, not) => cols.findIndex(c => re.test(c) && !/saldo|balance/.test(c) && !(not && not.test(c)));
+    const first = (...ix) => ix.find(i => i >= 0) ?? -1;
+    // data: "Data", "Data Lançamento", "date"; senão qualquer coluna com data ("RELEASE_DATE" do Mercado Pago)
+    const iDate = first(find(/^(data|date|dt)/), find(/date|data/));
+    // valor em reais primeiro (o C6 tem "Valor (em US$)" e "Valor (em R$)"); nunca a cotação do dólar
+    const iAmt = first(find(/(valor|amount|quantia).*(r\$|brl|reais)/), find(/(valor|amount|quantia)/, /us\$|usd|dolar|cotacao/));
+    // extratos com colunas separadas de entrada e saída (C6, alguns bancos)
+    const iIn = find(/^(entrada|credito|credit)/), iOut = find(/^(saida|debito|debit)/);
+    const skip = i => i !== iDate && i !== iAmt && i !== iIn && i !== iOut;
     // descrição: procura por ordem de preferência, sem pegar as colunas de data e valor ("Data Lançamento")
-    const iDesc = [/descri/, /title|titulo/, /hist/, /estabelecimento|memo|detalhe/, /nome/, /lancamento/]
-      .map(re => cols.findIndex((c, i) => re.test(c) && i !== iDate && i !== iAmt)).find(i => i >= 0) ?? -1;
-    if (iDate < 0 || iAmt < 0) throw new Error('Não achei as colunas de data e valor no arquivo.');
-    return lines.slice(hi + 1).map(l => splitCsvLine(l, sep)).map(c => ({
-      date: parseDate(c[iDate]), amount: parseMoney(c[iAmt]), desc: (iDesc >= 0 ? c[iDesc] : '') || 'Lançamento',
-    })).filter(r => r.date && r.amount);
+    const iDesc = [/descri/, /title|titulo/, /hist/, /estabelecimento|memo|detalhe/, /nome/, /lancamento/, /transaction_type|tipo de transacao/]
+      .map(re => cols.findIndex((c, i) => re.test(c) && skip(i))).find(i => i >= 0) ?? -1;
+    // complemento: "Histórico"/"Título" junto da descrição (Inter: "Pix enviado - Fulano")
+    const iHist = cols.findIndex((c, i) => /^(hist|titulo|title)/.test(c) && skip(i) && i !== iDesc);
+    const iParc = cols.findIndex(c => /^parcela/.test(c));
+    if (iDate < 0 || (iAmt < 0 && (iIn < 0 || iOut < 0))) throw new Error('Não achei as colunas de data e valor no arquivo.');
+    return lines.slice(hi + 1).map(l => splitCsvLine(l, sep)).map(c => {
+      const amount = iAmt >= 0 ? parseMoney(c[iAmt]) : (parseMoney(c[iIn]) || 0) - Math.abs(parseMoney(c[iOut]) || 0);
+      const main = iDesc >= 0 ? c[iDesc] || '' : '', hist = iHist >= 0 ? c[iHist] || '' : '';
+      let desc = hist && main && norm(hist) !== norm(main) ? `${hist} - ${main}` : main || hist;
+      const parc = iParc >= 0 && (c[iParc] || '').match(/^\s*(\d+)\s*(?:\/|de)\s*(\d+)/);
+      if (parc && !/\d+\/\d+/.test(desc)) desc += ` (${parc[1]}/${parc[2]})`;
+      return { date: parseDate(c[iDate]), amount, desc: desc.trim() || 'Lançamento' };
+    }).filter(r => r.date && r.amount && !/^saldo\b|^s a l d o/.test(norm(r.desc)));
+  }
+  const csvSep = line => { const n = ch => line.split(ch).length - 1; return n(';') > n(',') ? ';' : n('\t') > n(',') ? '\t' : ','; };
+  // Extrato sem cabeçalho (ex.: Itaú: "01/09/2026;PIX TRANSF FULANO;-50,00"): data, descrição e valor em cada linha
+  function parseCsvNoHeader(lines) {
+    const sep = csvSep(lines.find(l => /\d{1,2}\/\d{1,2}\/\d{2,4}/.test(l)) || lines[0] || '');
+    const isMoney = v => /^\(?-?\s*(r\$)?\s*-?[\d.]+,\d{2}\)?[cd]?$|^-?\d+\.\d{2}$/i.test(String(v).replace(/\s/g, ''));
+    const rows = lines.map(l => splitCsvLine(l, sep)).map(c => {
+      const di = c.findIndex(v => parseDate(v));
+      if (di < 0) return null;
+      const mi = c.map((v, i) => i).filter(i => i !== di && isMoney(c[i]));
+      if (!mi.length) return null;
+      // valor: o primeiro número em dinheiro depois da data (o último costuma ser o saldo, quando há dois)
+      const ai = mi.length > 1 ? mi[0] : mi[mi.length - 1];
+      const desc = c.filter((v, i) => i !== di && !mi.includes(i) && !parseDate(v) && /[a-z]/i.test(v)).sort((a, b) => b.length - a.length)[0] || 'Lançamento';
+      return { date: parseDate(c[di]), amount: parseMoney(c[ai]), desc };
+    }).filter(r => r && r.amount && !/^saldo\b|^s a l d o/.test(norm(r.desc)));
+    if (!rows.length) throw new Error('Não achei as colunas de data e valor no arquivo.');
+    return rows;
   }
   function parseOfx(text) {
     const tag = (blk, name) => { const m = blk.match(new RegExp('<' + name + '>([^<\\r\\n]*)', 'i')); return m ? m[1].trim() : ''; };

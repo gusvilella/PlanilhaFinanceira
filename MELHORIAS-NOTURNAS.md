@@ -8,6 +8,7 @@ Trabalho feito durante a noite, sem mudar o jeito como seus dados são guardados
 2. **App aberto na virada do dia**: se você deixa o app aberto no celular, ele agora percebe quando o dia muda (o "hoje" do calendário, as contas que vencem e a data padrão dos lançamentos acompanham).
 
 3. **Receita recorrente "a receber"**: marque como recebida em um mês e veja que os outros meses continuam "A receber". Agora tem "Desfazer" no aviso.
+4. **Importar extrato**: se tiver um CSV do C6, Itaú ou Mercado Pago, tente importar (⚙ → Importar extrato). Antes esses davam erro ou vinham com valor errado.
 
 ## O que mudou
 
@@ -36,3 +37,12 @@ Trabalho feito durante a noite, sem mudar o jeito como seus dados são guardados
 - **Antes:** se algum dado salvo estivesse incompleto (ex.: um backup muito antigo, um lançamento sem data, uma lista vazia salva como "nada"), o app abria **em branco**, sem mostrar nada. E se o arquivo de dados estivesse corrompido, o app começava do zero e **apagava** o que estava lá na primeira alteração.
 - **Agora:** ao abrir (e ao restaurar backup ou baixar da sincronização), o app conserta o que estiver faltando sem jogar nada fora: listas voltam a ser listas, valores estranhos viram 0, lançamento sem data ganha a data em que foi criado. Dados que já estão certos não mudam em nada.
 - Se os dados estiverem ilegíveis, o app guarda uma cópia deles (`orcamento:v2:corrompido`) antes de começar do zero e avisa você.
+
+### 7. Importação de extrato funciona com mais bancos
+Testei com arquivos no formato de cada banco:
+- **C6 cartão**: antes pegava a coluna de valor em **dólar** (compras em reais vinham zeradas e sumiam). Agora usa o valor em reais e põe a parcela no nome (ex.: "MAGALU (2/10)").
+- **C6 conta** (colunas separadas de Entrada e Saída): antes dava erro "Não achei as colunas". Agora funciona.
+- **Itaú** (extrato que vem sem linha de títulos): antes dava erro. Agora o app reconhece data, descrição e valor sozinho e ignora as linhas de "SALDO".
+- **Mercado Pago** (datas como 01-09-2026 e coluna RELEASE_DATE): antes dava erro. Agora funciona.
+- **Inter e C6**: a descrição junta o tipo e o nome ("Pix enviado - Fulano"), em vez de só o nome.
+- Nubank (conta e cartão) continua funcionando igual.
