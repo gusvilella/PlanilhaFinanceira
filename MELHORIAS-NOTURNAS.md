@@ -69,3 +69,6 @@ Testei com arquivos no formato de cada banco:
 ### 12. Despesa fixa nova não nasce "Atrasada"
 - **Antes:** cadastrar hoje (dia 25) uma conta que vence todo dia 10 fazia ela aparecer na hora como **Atrasada** e o sininho reclamar, mesmo que você já tivesse pago.
 - **Agora:** quando o vencimento deste mês já passou, a janela de nova despesa fixa mostra **"Já paguei a deste mês"** (marcado). Se ainda não pagou, é só desmarcar. Quando o vencimento ainda não chegou, a opção nem aparece.
+
+### 13. O botão + não cobre mais o fim da página no celular
+- Havia uma regra de espaço no fim da página para o botão verde "+" não ficar por cima do conteúdo, mas outra regra, mais abaixo no código, anulava ela. Resultado: rolando até o fim, o botão tampava o canto do último cartão (Evolução/metas). Agora sobra espaço e dá pra ler tudo.
