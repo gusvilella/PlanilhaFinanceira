@@ -342,6 +342,22 @@ svg.i { width: 16px; height: 16px; flex: none; fill: none; stroke: currentColor;
   background: var(--card); border-radius: 20px; box-shadow: var(--shadow-lg);
   padding: 22px 24px 20px; animation: pop .18s cubic-bezier(.2, .9, .3, 1.2);
 }
+.modal.wide { max-width: 760px; }
+.imp-top { display: grid; gap: 8px; margin-bottom: 10px; }
+.imp-sum { display: flex; flex-wrap: wrap; gap: 6px 14px; font-size: .8rem; color: var(--muted); margin: 8px 0; }
+.imp-sum b { color: var(--ink); }
+.imp-list { max-height: 46vh; overflow-y: auto; border: 1px solid var(--line); border-radius: 12px; }
+.imp-row { display: grid; grid-template-columns: 26px 52px minmax(0, 1fr) 150px 110px; gap: 8px; align-items: center; padding: 8px 10px; border-bottom: 1px solid var(--line); font-size: .82rem; }
+.imp-row:last-child { border-bottom: 0; }
+.imp-row.off { opacity: .45; }
+.imp-row .d { color: var(--muted); font-size: .76rem; }
+.imp-row .t { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.imp-row .t small { display: block; color: var(--amber); font-size: .7rem; font-weight: 600; }
+.imp-row .v { text-align: right; font-weight: 600; font-variant-numeric: tabular-nums; }
+.imp-row .v.in { color: var(--green); }
+.imp-row select { padding: 6px 26px 6px 8px; font-size: .78rem; border-radius: 8px; background-position: right 8px center; }
+.imp-row input[type=checkbox] { width: 16px; height: 16px; accent-color: var(--green); }
+@media (max-width: 640px) { .imp-row { grid-template-columns: 22px minmax(0, 1fr) 90px; } .imp-row .d { display: none; } .imp-row select { grid-column: 2 / -1; } }
 .modal-head { display: flex; justify-content: space-between; align-items: flex-start; gap: 10px; }
 .modal h3 { margin: 0; font-size: 1.05rem; font-weight: 700; }
 .modal .sub { margin: 3px 0 14px; color: var(--muted); font-size: .8rem; }
@@ -596,6 +612,7 @@ svg.i { width: 16px; height: 16px; flex: none; fill: none; stroke: currentColor;
 
   <div class="overlay" id="overlay" hidden><div class="modal" id="modal" role="dialog" aria-modal="true"></div></div>
   <input type="file" id="importFile" accept="application/json,.json" hidden />
+  <input type="file" id="stmtFile" accept=".csv,.ofx,.txt,text/csv" hidden />
   <input type="file" id="iconFile" accept="image/*" hidden />
   <div class="toast" id="toast" role="status" aria-live="polite"></div>
 
@@ -2051,6 +2068,7 @@ svg.i { width: 16px; height: 16px; flex: none; fill: none; stroke: currentColor;
       <p class="fl">App</p>
       <button class="menu-item" id="mInstall">📲 Instalar como app</button>
       <p class="fl">Dados</p>
+      <button class="menu-item" id="mStmt">🏦 Importar extrato do banco (CSV/OFX)</button>
       <button class="menu-item" id="mCsv">📄 Exportar mês para planilha (CSV)</button>
       <button class="menu-item" id="mBackup">💾 Fazer backup completo</button>
       <button class="menu-item" id="mRestore">📂 Restaurar backup</button>
@@ -2062,6 +2080,7 @@ svg.i { width: 16px; height: 16px; flex: none; fill: none; stroke: currentColor;
         m.querySelectorAll('#mFonts button').forEach(x => x.classList.toggle('on', x === b));
       };
       m.querySelector('#mInstall').onclick = () => installApp();
+      m.querySelector('#mStmt').onclick = () => $('#stmtFile').click();
       m.querySelector('#mCsv').onclick = () => { exportCsv(); closeModal(); };
       m.querySelector('#mBackup').onclick = () => { download(`orcamento-backup-${todayIso}.json`, JSON.stringify(state, null, 2), 'application/json'); closeModal(); };
       m.querySelector('#mRestore').onclick = () => $('#importFile').click();
@@ -2245,6 +2264,181 @@ svg.i { width: 16px; height: 16px; flex: none; fill: none; stroke: currentColor;
     el.classList.add('show');
     clearTimeout(toastTimer);
     toastTimer = setTimeout(() => el.classList.remove('show'), actionLabel ? 5000 : 2200);
+  }
+
+  // ================= Importar extrato (CSV / OFX) =================
+  const norm = t => String(t || '').toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '').replace(/\s+/g, ' ').trim();
+
+  // "1.234,56", "-R$ 12,00", "1234.56", "(45,00)" -> centavos com sinal
+  function parseMoney(raw) {
+    let t = String(raw || '').trim();
+    const negParen = /^\(.*\)$/.test(t);
+    t = t.replace(/[R$\s()]/g, '');
+    const neg = negParen || t.startsWith('-') || /d$/i.test(t);
+    t = t.replace(/^[-+]/, '').replace(/[a-z]$/i, '');
+    const lastComma = t.lastIndexOf(','), lastDot = t.lastIndexOf('.');
+    if (lastComma > lastDot) t = t.replace(/\./g, '').replace(',', '.');
+    else t = t.replace(/,/g, '');
+    const v = Math.round(parseFloat(t) * 100);
+    return isNaN(v) ? null : neg ? -v : v;
+  }
+  // "2026-09-15", "15/09/2026", "15/09/26", "20260915..." -> ISO
+  function parseDate(raw) {
+    const t = String(raw || '').trim();
+    let m;
+    if ((m = t.match(/^(\d{4})-(\d{2})-(\d{2})/))) return `${m[1]}-${m[2]}-${m[3]}`;
+    if ((m = t.match(/^(\d{1,2})\/(\d{1,2})\/(\d{2,4})/))) return `${m[3].length === 2 ? '20' + m[3] : m[3]}-${pad(+m[2])}-${pad(+m[1])}`;
+    if ((m = t.match(/^(\d{4})(\d{2})(\d{2})/))) return `${m[1]}-${m[2]}-${m[3]}`;
+    return null;
+  }
+  function splitCsvLine(line, sep) {
+    const out = []; let cur = '', q = false;
+    for (let i = 0; i < line.length; i++) {
+      const ch = line[i];
+      if (ch === '"') { if (q && line[i + 1] === '"') { cur += '"'; i++; } else q = !q; }
+      else if (ch === sep && !q) { out.push(cur); cur = ''; }
+      else cur += ch;
+    }
+    out.push(cur);
+    return out.map(x => x.trim());
+  }
+  function parseCsv(text) {
+    const lines = text.replace(/^\ufeff/, '').split(/\r?\n/).filter(l => l.trim());
+    // acha a linha de cabeçalho (alguns bancos põem umas linhas de título antes)
+    const hi = lines.findIndex(l => /data|date/i.test(l) && /valor|amount|quantia/i.test(l));
+    if (hi < 0) throw new Error('Não achei as colunas de data e valor no arquivo.');
+    const header = lines[hi];
+    const sep = (header.match(/;/g) || []).length > (header.match(/,/g) || []).length ? ';' : (header.includes('\t') ? '\t' : ',');
+    const cols = splitCsvLine(header, sep).map(norm);
+    const find = re => cols.findIndex(c => re.test(c) && !/saldo/.test(c));
+    const iDate = find(/^(data|date|dt)/), iAmt = find(/(valor|amount|quantia)/);
+    // descrição: procura por ordem de preferência, sem pegar as colunas de data e valor ("Data Lançamento")
+    const iDesc = [/descri/, /title|titulo/, /hist/, /estabelecimento|memo|detalhe/, /nome/, /lancamento/]
+      .map(re => cols.findIndex((c, i) => re.test(c) && i !== iDate && i !== iAmt)).find(i => i >= 0) ?? -1;
+    if (iDate < 0 || iAmt < 0) throw new Error('Não achei as colunas de data e valor no arquivo.');
+    return lines.slice(hi + 1).map(l => splitCsvLine(l, sep)).map(c => ({
+      date: parseDate(c[iDate]), amount: parseMoney(c[iAmt]), desc: (iDesc >= 0 ? c[iDesc] : '') || 'Lançamento',
+    })).filter(r => r.date && r.amount);
+  }
+  function parseOfx(text) {
+    const tag = (blk, name) => { const m = blk.match(new RegExp('<' + name + '>([^<\\r\\n]*)', 'i')); return m ? m[1].trim() : ''; };
+    return (text.match(/<STMTTRN>[\s\S]*?(?=<\/STMTTRN>|<STMTTRN>|<\/BANKTRANLIST>)/gi) || []).map(b => ({
+      date: parseDate(tag(b, 'DTPOSTED')), amount: parseMoney(tag(b, 'TRNAMT').replace(',', '.')),
+      desc: tag(b, 'MEMO') || tag(b, 'NAME') || 'Lançamento',
+    })).filter(r => r.date && r.amount);
+  }
+
+  // Sugestão de categoria: primeiro pelo que você já categorizou com a mesma descrição, depois por palavras-chave
+  const CAT_RULES = [
+    ['Mercado', /supermerc|mercado|carrefour|assai|atacad|pao de acucar|hortifruti|sams club|\bdia\b|extra |zaffari|savegnago|guanabara/],
+    ['Comida', /ifood|rappi|restaur|lanch|padaria|pizz|burger|mcdonald|\bbk\b|subway|cafe|starbucks|outback|sushi|acai|delivery|bar |cantina/],
+    ['Carro', /posto|combust|shell|ipiranga|petrobras|\bbr\b|estacion|sem parar|conectcar|veloe|uber|\b99\b|99app|pedagio|ipva|detran|oficina|auto pecas/],
+    ['Saúde', /farmac|drogar|droga raia|drogasil|pague menos|panvel|hospital|clinic|laborat|unimed|odonto|dentist|medic|amil|hapvida/],
+    ['Contas', /enel|cemig|\blight\b|copel|celesc|sabesp|sanepar|copasa|energia|agua|\bgas\b|comgas|vivo|claro|\btim\b|\boi\b|internet|condomin|aluguel/],
+    ['Lazer', /cinema|ingresso|steam|playstation|xbox|show|teatro|netflix|spotify|disney|hbo|prime video|crunchyroll|viagem|hotel|airbnb/],
+    ['Casa', /leroy|telhanorte|magazine|casas bahia|mobly|tok ?stok|amazon|mercado livre|shopee|americanas|kabum/],
+  ];
+  function suggestCategory(desc, kind) {
+    const n = norm(desc);
+    const past = [...(kind === 'receita' ? state.receitas : state.variaveis)].reverse().find(x => x.category && norm(x.desc) === n);
+    if (past) return past.category;
+    const byName = name => catsOf(kind).find(c => norm(c.name) === norm(name))?.id;
+    if (kind === 'receita') return byName(/salar|folha|provento|pagto salar/.test(n) ? 'Salário' : /rendimento|juros|dividend/.test(n) ? 'Rendimentos' : 'Outros') || '';
+    for (const [name, re] of CAT_RULES) if (re.test(n)) return byName(name) || '';
+    return byName('Outros') || '';
+  }
+
+  $('#stmtFile').addEventListener('change', async e => {
+    const file = e.target.files[0]; e.target.value = '';
+    if (!file) return;
+    let text = await file.text();
+    // extratos antigos em Latin-1 aparecem com "�": relê na codificação certa
+    if (text.includes('\ufffd')) text = new TextDecoder('windows-1252').decode(await file.arrayBuffer());
+    let rows;
+    try { rows = /<OFX>|OFXHEADER/i.test(text) ? parseOfx(text) : parseCsv(text); }
+    catch (err) { return toast(err.message || 'Não consegui ler esse arquivo'); }
+    if (!rows.length) return toast('Não encontrei lançamentos nesse arquivo');
+    openImport(rows, file.name);
+  });
+
+  function openImport(raw, fileName) {
+    // Fonte do extrato: conta (negativo = saída) ou cartão (positivo = compra)
+    const nameHint = norm(fileName);
+    const guessCard = /fatura|cartao|card|credit/.test(nameHint) || raw.filter(r => r.amount > 0).length > raw.length * 0.7;
+    let source = guessCard && state.cards.length ? 'card:' + state.cards[0].id : state.accounts.length ? 'acc:' + state.accounts[0].id : '';
+    let invert = false;
+    const isDup = (r, kind) => (kind === 'receita' ? state.receitas : state.variaveis).some(x => x.date === r.date && x.amount === Math.abs(r.amount) && (norm(x.desc) === norm(r.desc) || x.imported));
+    const build = () => raw.map(r => {
+      const amt = invert ? -r.amount : r.amount;
+      const card = source.startsWith('card:');
+      const out = card ? amt > 0 : amt < 0;          // é gasto?
+      const kind = out ? 'variavel' : 'receita';
+      const skipReason = card && !out ? 'pagamento ou estorno' : /pagamento.*fatura|fatura.*(cartao|card)|pgto.*fat|pag fat/.test(norm(r.desc)) ? 'pagamento de fatura' : isDup(r, kind === 'variavel' ? 'variavel' : 'receita') ? 'já lançado' : '';
+      return { ...r, amount: Math.abs(amt), kind, on: !skipReason, skipReason, category: suggestCategory(r.desc, kind === 'variavel' ? 'despesa' : 'receita') };
+    }).sort((a, b) => b.date.localeCompare(a.date));
+    let rows = build();
+    const srcOpts = [...state.accounts.map(a => ['acc:' + a.id, logoHtml(a, 'sm') + esc(a.name)]),
+      ...state.cards.map(c => ['card:' + c.id, logoHtml({ brand: c.bank, name: c.name, icon: c.icon, color: c.color }, 'sm') + esc(c.name) + ' ' + flagHtml(c.flag)])];
+    openModal(`${modalHead('Importar extrato', `${esc(fileName)} · ${raw.length} lançamentos encontrados`)}
+      <div class="imp-top">
+        <label class="fl" style="margin:0">De onde é esse extrato?</label>
+        <div class="bank-chips" id="impSrc">${srcOpts.map(([v, h]) => `<button type="button" data-src="${v}" class="${v === source ? 'on' : ''}">${h}</button>`).join('')}
+          <button type="button" data-src="" class="${source ? '' : 'on'}">${ico('wallet')}Nenhuma conta</button></div>
+        <label class="check" style="margin:0"><input type="checkbox" id="impInv" /><span class="box">${ico('check')}</span><span><strong>Inverter entradas e saídas</strong><small>Use se os gastos aparecerem como entradas.</small></span></label>
+      </div>
+      <div class="imp-sum" id="impSum"></div>
+      <div class="imp-list" id="impList"></div>
+      <div class="actions"><button type="button" class="link" id="impAll">Marcar/desmarcar tudo</button><span class="grow"></span>
+        <button type="button" class="btn cancel" data-close>Cancelar</button><button type="button" class="btn save" id="impGo">Importar</button></div>`, m => {
+      m.classList.add('wide');
+      onModalClose = () => m.classList.remove('wide');
+      const draw = () => {
+        const opt = kind => `<option value="">Sem categoria</option>` + catsOf(kind).map(c => `<option value="${c.id}">${esc(c.name)}</option>`).join('');
+        m.querySelector('#impList').innerHTML = rows.map((r, i) => `<div class="imp-row ${r.on ? '' : 'off'}" data-i="${i}">
+          <input type="checkbox" ${r.on ? 'checked' : ''} aria-label="Importar este lançamento" />
+          <span class="d">${ddmm(r.date)}</span>
+          <span class="t" title="${esc(r.desc)}">${esc(r.desc)}${r.skipReason ? `<small>${r.skipReason}</small>` : ''}</span>
+          <select class="select">${opt(r.kind === 'variavel' ? 'despesa' : 'receita')}</select>
+          <span class="v ${r.kind === 'receita' ? 'in' : ''}">${r.kind === 'receita' ? '+ ' : '- '}${brl.format(r.amount / 100)}</span></div>`).join('');
+        m.querySelectorAll('.imp-row select').forEach((sel, i) => { sel.value = rows[i].category; });
+        sum();
+      };
+      const sum = () => {
+        const on = rows.filter(r => r.on);
+        const outs = on.filter(r => r.kind === 'variavel').reduce((s, r) => s + r.amount, 0), ins = on.filter(r => r.kind === 'receita').reduce((s, r) => s + r.amount, 0);
+        m.querySelector('#impSum').innerHTML = `<span><b>${on.length}</b> selecionados</span><span>Saídas <b>${brl.format(outs / 100)}</b></span><span>Entradas <b>${brl.format(ins / 100)}</b></span><span>${rows.length - on.length} de fora</span>`;
+        m.querySelector('#impGo').textContent = `Importar ${on.length}`;
+        m.querySelector('#impGo').disabled = !on.length;
+      };
+      m.querySelector('#impSrc').addEventListener('click', e => {
+        const b = e.target.closest('[data-src]'); if (!b) return;
+        source = b.dataset.src; m.querySelectorAll('#impSrc button').forEach(x => x.classList.toggle('on', x === b));
+        rows = build(); draw();
+      });
+      m.querySelector('#impInv').addEventListener('change', e => { invert = e.target.checked; rows = build(); draw(); });
+      m.querySelector('#impList').addEventListener('change', e => {
+        const row = e.target.closest('.imp-row'); if (!row) return;
+        const r = rows[+row.dataset.i];
+        if (e.target.type === 'checkbox') { r.on = e.target.checked; row.classList.toggle('off', !r.on); sum(); }
+        else r.category = e.target.value;
+      });
+      m.querySelector('#impAll').addEventListener('click', () => { const all = rows.every(r => r.on); rows.forEach(r => { r.on = !all; }); draw(); });
+      m.querySelector('#impGo').addEventListener('click', () => {
+        const on = rows.filter(r => r.on);
+        const pay = source.startsWith('card:') ? { payCard: source.slice(5), payAccount: '' } : { payCard: '', payAccount: source.slice(4) };
+        const snap = JSON.stringify({ v: state.variaveis, r: state.receitas });
+        on.forEach((r, n) => {
+          const base = { id: uid(), created: Date.now() + n, date: r.date, amount: r.amount, desc: r.desc.slice(0, 60), category: r.category, imported: true };
+          if (r.kind === 'variavel') state.variaveis.push({ ...base, ...pay });
+          else state.receitas.push({ ...base, payAccount: pay.payAccount, pending: false, recurring: false });
+        });
+        const latest = on.map(r => r.date).sort().pop();
+        view.month = monthOf(latest); ui.tab = on.some(r => r.kind === 'variavel') ? 'variavel' : 'receita'; saveUi();
+        commit(); fillFilter();
+        toast(`${on.length} lançamentos importados`, 'Desfazer', () => { const o = JSON.parse(snap); state.variaveis = o.v; state.receitas = o.r; commit(); });
+      });
+      draw();
+    });
   }
 
   // ================= Instalar como app (PWA) =================
