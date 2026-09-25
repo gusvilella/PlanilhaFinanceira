@@ -2,7 +2,7 @@
 
 Trabalho feito durante a noite, sem mudar o jeito como seus dados são guardados (tudo que já existe continua funcionando).
 
-Resumo: **66 itens** — 20 e poucos bugs corrigidos (alguns graves: sincronização que apagava lançamentos do outro aparelho, receita recorrente que sumia do passado, sininho fora da tela no celular, saldo que não descontava gastos do mesmo dia, limite do cartão errado), importação de extrato de mais bancos (inclusive Excel), app ~3x mais rápido com muitos lançamentos, e várias facilidades novas (desfazer, buscar em todos os meses, duplicar, transferir entre contas, pular um mês, parcelado e transferência no lançamento rápido, importar planilha do Excel…).
+Resumo: **67 itens** — 20 e poucos bugs corrigidos (alguns graves: sincronização que apagava lançamentos do outro aparelho, receita recorrente que sumia do passado, sininho fora da tela no celular, saldo que não descontava gastos do mesmo dia, limite do cartão errado), importação de extrato de mais bancos (inclusive Excel), app ~3x mais rápido com muitos lançamentos, e várias facilidades novas (desfazer, buscar em todos os meses, duplicar, transferir entre contas, pular um mês, parcelado e transferência no lançamento rápido, importar planilha do Excel…).
 
 Como testei: cada mudança foi verificada num navegador de verdade (Chromium), no tamanho de celular (320 e 390 px), tablet e computador, nos temas claro e escuro, com dados vazios, dados normais e 2.000+ lançamentos, além de milhares de toques aleatórios sem nenhum erro. Os campos novos nos dados são todos opcionais: `received`, `transfers`, `skip`, `balanceAt`, `paidTs`.
 
@@ -291,3 +291,10 @@ Fiz uma revisão cuidadosa de todo o código que mudei durante a noite e achei 4
 - **Receita recorrente recebida + edição:** se você marcava a receita como recebida em setembro e depois mudava o valor em setembro, ela voltava a aparecer "A receber". Agora a marcação continua.
 - **"A receber" na busca de todos os meses:** para receitas recorrentes, o botão marcava o mês errado (o da tela). Nessa visão ele não aparece mais para recorrentes (marque dentro do mês).
 - **Limite de 300 na busca com ordem crescente:** mostrava os 300 mais antigos, escondendo os recentes. Agora são sempre os 300 mais recentes, na ordem que você escolheu.
+
+### 67. Segunda revisão: importação que marca pago/recebido (3 correções)
+Revisei com mais cuidado a parte nova da importação que marca contas como pagas/recebidas:
+- **Não conta duas vezes se você marcar a linha:** antes, se você marcasse de volta uma linha reconhecida (ex.: o Pix do aluguel), o app importava o gasto **e** marcava a despesa fixa como paga — contando duas vezes. Agora: linha desmarcada = só marca como pago/recebido; linha marcada = importa como lançamento novo, sem mexer na fixa.
+- **Desfazer sempre:** quando a importação só marcava coisas como pagas (sem importar nada), o aviso não tinha Desfazer. Agora tem.
+- **Fatura certa:** dois pagamentos de fatura com o mesmo valor iam para a mesma fatura, e com dois cartões com fatura de mesmo valor o app podia escolher o errado. Agora cada fatura recebe um pagamento só, o app prefere o cartão que é pago por aquela conta e, se ainda houver dúvida, não marca nada.
+- Também passei a "escapar" o texto dos avisos da prévia de importação (proteção para nomes com caracteres especiais).
