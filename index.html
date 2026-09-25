@@ -2784,6 +2784,18 @@ button:focus-visible, a:focus-visible, [role="button"]:focus-visible, [tabindex]
     modalOpener = null;
   }
   $('#overlay').addEventListener('mousedown', e => { if (e.target === e.currentTarget) closeModal(); });
+  // Tab fica dentro da janela aberta (não vai para a página por trás)
+  $('#overlay').addEventListener('keydown', e => {
+    if (e.key !== 'Tab') return;
+    const items = [...$('#modal').querySelectorAll('button, [href], input:not([type=hidden]), select, textarea, [tabindex]:not([tabindex="-1"])')]
+      .filter(el => !el.disabled && el.offsetParent !== null && getComputedStyle(el).visibility !== 'hidden');
+    const cbs = [...$('#modal').querySelectorAll('.check input')];   // caixinhas escondidas visualmente, mas focáveis
+    const list = [...new Set([...items, ...cbs])].sort((a, b) => a.compareDocumentPosition(b) & Node.DOCUMENT_POSITION_FOLLOWING ? -1 : 1);
+    if (!list.length) return;
+    const first = list[0], last = list[list.length - 1];
+    if (e.shiftKey && document.activeElement === first) { e.preventDefault(); last.focus(); }
+    else if (!e.shiftKey && document.activeElement === last) { e.preventDefault(); first.focus(); }
+  });
   $('#modal').addEventListener('click', e => { if (e.target.closest('[data-close]')) closeModal(); });
 
   const modalHead = (title, sub) => `<div class="modal-head"><div><h3>${title}</h3><p class="sub">${sub}</p></div>
