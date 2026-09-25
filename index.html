@@ -185,8 +185,30 @@ svg.i { width: 16px; height: 16px; flex: none; fill: none; stroke: currentColor;
 .flag-pick button.on, .bank-chips button.on { border-color: var(--green); background: var(--green-soft); color: var(--ink); }
 .three { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 10px; }
 .status.none { background: var(--field); color: var(--muted); }
+.status.open { background: var(--blue-soft); color: var(--blue); }
+.status.late { background: var(--red-soft); color: var(--red); }
+.fnav { display: flex; align-items: center; justify-content: space-between; gap: 8px; background: var(--field); border-radius: 12px; padding: 6px; margin-bottom: 10px; }
+.fnav button { border: 0; background: var(--card); border-radius: 8px; width: 32px; height: 32px; display: grid; place-items: center; color: var(--ink-2); }
+.fnav div { text-align: center; font-size: .8rem; }
+.fnav strong { display: block; font-size: .9rem; }
+.fnav small { color: var(--muted); }
+.movebox { margin-top: 12px; border: 1.5px solid var(--amber-soft); background: color-mix(in srgb, var(--amber-soft) 50%, transparent); border-radius: 12px; padding: 10px 12px; font-size: .8rem; line-height: 1.45; }
+.movebox .btn-soft { margin-top: 8px; }
 .last-hint { display: flex; justify-content: space-between; align-items: center; margin-top: 6px; font-size: .76rem; color: var(--muted); }
 @media (max-width: 640px) { .three { grid-template-columns: 1fr 1fr; } .three > :first-child { grid-column: 1 / -1; } }
+
+/* Pago com cartão */
+.via { display: inline-flex; align-items: center; gap: 4px; margin-left: 6px; font-size: .72rem; font-weight: 600; color: var(--muted); vertical-align: middle; white-space: nowrap; }
+.via .logo { width: 16px; height: 16px; border-radius: 4px; }
+.val.absorbed { color: var(--muted); font-weight: 500; }
+.val.absorbed small { display: block; font-size: .68rem; font-weight: 500; }
+.pay-pick button .i { width: 14px; height: 14px; }
+.inside { margin-top: 12px; background: var(--field); border-radius: 12px; padding: 10px 12px; font-size: .8rem; }
+.inside .it { display: flex; align-items: center; gap: 8px; padding: 4px 0; }
+.inside .it span:nth-child(2) { flex: 1; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.inside .it .logo { width: 20px; height: 20px; border-radius: 6px; font-size: .55rem; }
+.inside .sum { display: flex; justify-content: space-between; border-top: 1px solid var(--field-line); margin-top: 6px; padding-top: 8px; font-weight: 700; }
+.inside .warn { color: var(--amber); font-weight: 600; margin-top: 6px; }
 
 /* Contas */
 .acc { display: grid; grid-template-columns: 34px minmax(0, 1fr) 150px 30px; gap: 8px; align-items: center; margin-top: 8px; }
@@ -470,6 +492,7 @@ svg.i { width: 16px; height: 16px; flex: none; fill: none; stroke: currentColor;
     <symbol id="i-pie" viewBox="0 0 24 24"><path d="M21.2 15.9A10 10 0 1 1 8 2.8"/><path d="M22 12A10 10 0 0 0 12 2v10z"/></symbol>
     <symbol id="i-tag" viewBox="0 0 24 24"><path d="M12.6 2.6A2 2 0 0 0 11.2 2H4a2 2 0 0 0-2 2v7.2a2 2 0 0 0 .6 1.4l8.7 8.7a2.4 2.4 0 0 0 3.4 0l6.6-6.6a2.4 2.4 0 0 0 0-3.4Z"/><circle cx="7.5" cy="7.5" r=".5" fill="currentColor"/></symbol>
     <symbol id="i-gear" viewBox="0 0 24 24"><path d="M12.2 2h-.4a2 2 0 0 0-2 2v.2a2 2 0 0 1-1 1.7l-.4.3a2 2 0 0 1-2 0l-.2-.1a2 2 0 0 0-2.7.7l-.2.4a2 2 0 0 0 .7 2.7l.2.1a2 2 0 0 1 1 1.7v.5a2 2 0 0 1-1 1.8l-.2.1a2 2 0 0 0-.7 2.7l.2.4a2 2 0 0 0 2.7.7l.2-.1a2 2 0 0 1 2 0l.4.3a2 2 0 0 1 1 1.7v.2a2 2 0 0 0 2 2h.4a2 2 0 0 0 2-2v-.2a2 2 0 0 1 1-1.7l.4-.3a2 2 0 0 1 2 0l.2.1a2 2 0 0 0 2.7-.7l.2-.4a2 2 0 0 0-.7-2.7l-.2-.1a2 2 0 0 1-1-1.8v-.4a2 2 0 0 1 1-1.8l.2-.1a2 2 0 0 0 .7-2.7l-.2-.4a2 2 0 0 0-2.7-.7l-.2.1a2 2 0 0 1-2 0l-.4-.3a2 2 0 0 1-1-1.7V4a2 2 0 0 0-2-2Z"/><circle cx="12" cy="12" r="3"/></symbol>
+    <symbol id="i-wallet" viewBox="0 0 24 24"><path d="M19 7V4a1 1 0 0 0-1-1H5a2 2 0 0 0 0 4h15a1 1 0 0 1 1 1v4h-3a2 2 0 0 0 0 4h3a1 1 0 0 0 1-1v-2a1 1 0 0 0-1-1"/><path d="M3 5v14a2 2 0 0 0 2 2h15a1 1 0 0 0 1-1v-4"/></symbol>
     <symbol id="i-check" viewBox="0 0 24 24"><path d="M20 6 9 17l-5-5"/></symbol>
     <symbol id="i-sort" viewBox="0 0 24 24"><path d="m7 15 5 5 5-5M7 9l5-5 5 5"/></symbol>
   </svg>
@@ -740,13 +763,70 @@ svg.i { width: 16px; height: 16px; flex: none; fill: none; stroke: currentColor;
     return keys.length ? state.invest[keys[keys.length - 1]] : 0;
   }
 
+  // ----- Datas da fatura -----
+  // Cada fatura é guardada pelo mês em que VENCE. Se o fechamento é antes do vencimento no mês, fecha no mesmo mês;
+  // senão (ex.: fecha 26, vence 5) fecha no mês anterior.
+  function faturaDates(card, key) {
+    const due = dateIn(key, card.dueDay);
+    const close = card.closeDay < card.dueDay ? dateIn(key, card.closeDay) : dateIn(addMonths(key, -1), card.closeDay);
+    return { close, due };
+  }
+  // Em qual fatura (mês de vencimento) cai uma compra feita em "iso": compra até o dia do fechamento entra na fatura
+  // que fecha naquele mês; depois do fechamento, na do mês seguinte
+  function faturaKeyFor(card, iso) {
+    let closeMonth = monthOf(iso);
+    if (+iso.slice(8) > Math.min(card.closeDay, daysIn(closeMonth))) closeMonth = addMonths(closeMonth, 1);
+    return card.closeDay < card.dueDay ? closeMonth : addMonths(closeMonth, 1);
+  }
+  // Situação pelas datas: aberta (ainda juntando compras), fechada (a pagar), vencida ou paga
+  function faturaState(card, key, f) {
+    if (f && f.paid) return 'paid';
+    const { close, due } = faturaDates(card, key);
+    if (todayIso <= close) return 'open';
+    if (todayIso <= due) return 'closed';
+    return 'late';
+  }
+  const FSTATE = { paid: ['paid', 'Paga'], open: ['open', 'Aberta'], closed: ['pending', 'A pagar'], late: ['late', 'Vencida'] };
+  const dm = iso => `${iso.slice(8, 10)}/${iso.slice(5, 7)}`;
+  const curKey = () => monthOf(todayIso);
+  // Qual fatura mostrar no mês visto. No mês atual, mostra a fatura "da vez": a deste mês se ainda não venceu
+  // ou está vencida sem pagar; se já foi paga (ou nem foi lançada e já venceu), a próxima.
+  function focusKey(card, key) {
+    if (key !== curKey()) return key;
+    const f = (state.faturas[card.id] || {})[key];
+    if (todayIso <= faturaDates(card, key).due) return key;
+    if (f && !f.paid) return key;
+    return addMonths(key, 1);
+  }
+
+  // Item pago com cartão (assinatura, despesa fixa ou variável): entra na fatura em que a data cai. Se essa fatura
+  // já foi lançada (e o cartão conta nas despesas), o valor já está dentro dela e não soma de novo.
+  const payCardOf = item => item.payCard ? state.cards.find(c => c.id === item.payCard) : null;
+  function inFatura(item, key) {
+    const c = payCardOf(item);
+    if (!c || !activeIn(c, key) || c.count === false) return false;
+    const f = (state.faturas[c.id] || {})[faturaKeyFor(c, item.shownDate)];
+    return !!(f && f.amount > 0);
+  }
+  // Itens pagos no cartão que caem na fatura que vence em "key" (podem ter sido cobrados neste mês ou no anterior)
+  function itemsOnCard(cardId, key) {
+    const card = state.cards.find(c => c.id === cardId);
+    const out = [];
+    for (const k of [addMonths(key, -1), key]) out.push(
+      ...fixasOf(k).map(i => ({ ...i, kind: 'Despesa fixa', label: i.desc })),
+      ...assinaturasOf(k).map(i => ({ ...i, kind: 'Assinatura', label: i.name })),
+      ...variaveisOf(k).map(i => ({ ...i, kind: 'Despesa variável', label: i.desc || cat(i.category)?.name || 'Despesa' })));
+    return out.filter(i => i.payCard === cardId && card && faturaKeyFor(card, i.shownDate) === key);
+  }
+  const countable = key => i => !inFatura(i, key);
+
   function totals(key) {
     const rec = receitasOf(key);
     const receita = rec.filter(r => !r.pending).reduce((s, r) => s + r.amount, 0);
     const aReceber = rec.filter(r => r.pending).reduce((s, r) => s + r.amount, 0);
-    const fixas = fixasOf(key).reduce((s, f) => s + f.amount, 0);
-    const variaveis = variaveisOf(key).reduce((s, v) => s + v.amount, 0);
-    const assinaturas = assinaturasOf(key).reduce((s, a) => s + a.amount, 0);
+    const fixas = fixasOf(key).filter(countable(key)).reduce((s, f) => s + f.amount, 0);
+    const variaveis = variaveisOf(key).filter(countable(key)).reduce((s, v) => s + v.amount, 0);
+    const assinaturas = assinaturasOf(key).filter(countable(key)).reduce((s, a) => s + a.amount, 0);
     const faturas = cardsOf(key).filter(c => c.count !== false).reduce((s, c) => s + (c.fatura ? c.fatura.amount : 0), 0);
     const pct = investPct(key);
     const investir = Math.round(receita * pct / 100);
@@ -835,7 +915,9 @@ svg.i { width: 16px; height: 16px; flex: none; fill: none; stroke: currentColor;
 
     const body = rows.map(r => {
       let label, extra = '';
-      if (isFixa) {
+      if (isFixa && r.payCard && payCardOf(r)) {
+        label = `<span class="tag status paid" title="Paga automaticamente no cartão">No cartão</span>`;
+      } else if (isFixa) {
         label = `<button class="tag status ${r.paid ? 'paid' : 'pending'}" data-pay="${r.id}" title="Marcar como ${r.paid ? 'pendente' : 'pago'}">${r.paid ? 'Pago' : 'Pendente'}</button>`;
       } else if (ui.tab === 'receita' && r.pending) {
         label = `<button class="tag status pending" data-receive="${r.id}" title="Marcar como recebido">A receber</button>`;
@@ -844,20 +926,23 @@ svg.i { width: 16px; height: 16px; flex: none; fill: none; stroke: currentColor;
       }
       if (r.installment) extra = `<small>${r.installment.i}/${r.installment.n}</small>`;
       if (r.recurring) extra = `<small>↻ mensal</small>`;
+      extra += viaHtml(r);
       const sign = ui.tab === 'receita' ? '+ ' : '- ';
       const cls = ui.tab === 'receita' ? (r.pending ? '' : 'pos') : '';
       return `<div class="row">
         <span class="date num">${isFixa ? 'Dia ' + pad(r.day) : ddmm(r.shownDate)}</span>
         <div class="name"><span>${esc(r.desc || cat(r.category)?.name || '—')}${extra}</span><div class="tag-m">${label}</div></div>
         <span class="cat">${label}</span>
-        <span class="val num ${cls}">${ui.hidden ? '' : sign}${money(r.amount)}</span>
+        ${ui.tab === 'receita' ? `<span class="val num ${cls}">${ui.hidden ? '' : sign}${money(r.amount)}</span>` : valHtml(r, view.month, (ui.hidden ? '' : sign) + money(r.amount))}
         <button class="edit" data-edit="${r.id}" aria-label="Editar">${ico('pencil', 'width:14px;height:14px')}</button>
       </div>`;
     }).join('');
 
     const sum = rows.filter(r => !r.pending).reduce((s, r) => s + r.amount, 0);
+    const inside = ui.tab === 'receita' ? 0 : rows.filter(r => inFatura(r, view.month)).reduce((s, r) => s + r.amount, 0);
     const foot = `<div class="total"><span>Total${filtered ? ' filtrado' : ''}</span>
-      <strong class="num ${ui.tab === 'receita' ? 'pos' : 'negc'}">${ui.hidden ? '' : ui.tab === 'receita' ? '+ ' : '- '}${money(sum)}</strong></div>`;
+      <strong class="num ${ui.tab === 'receita' ? 'pos' : 'negc'}">${ui.hidden ? '' : ui.tab === 'receita' ? '+ ' : '- '}${money(sum)}</strong></div>`
+      + (inside ? `<div class="yield"><span>Já dentro das faturas dos cartões (não soma de novo)</span><span class="num">${money(inside)}</span></div>` : '');
     $('#table').innerHTML = head + body + foot;
   }
 
@@ -929,17 +1014,20 @@ svg.i { width: 16px; height: 16px; flex: none; fill: none; stroke: currentColor;
       const suffix = a.cycle === 'anual' ? '/ano' : '/mês';
       return `<div class="row">
         <span class="date">${logoHtml(a)}</span>
-        <div class="name"><span>${esc(a.name)}${a.cycle === 'anual' && !charged.has(a.id) ? `<small>não cobra este mês</small>` : ''}</span><div class="tag-m">${tag}</div></div>
+        <div class="name"><span>${esc(a.name)}${a.cycle === 'anual' && !charged.has(a.id) ? `<small>não cobra este mês</small>` : ''}${viaHtml(a)}</span><div class="tag-m">${tag}</div></div>
         <span class="cat">${tag}</span>
-        <span class="val num">${money(a.amount)}<small style="color:var(--muted);font-weight:500">${suffix}</small></span>
+        ${charged.has(a.id) && inFatura({ ...a, shownDate: dateIn(view.month, a.day) }, view.month)
+          ? `<span class="val num absorbed" title="Já está dentro da fatura do ${esc(payCardOf(a).name)}">${money(a.amount)}${suffix}<small>na fatura</small></span>`
+          : `<span class="val num">${money(a.amount)}<small style="color:var(--muted);font-weight:500">${suffix}</small></span>`}
         <button class="edit" data-edit="${a.id}" aria-label="Editar">${ico('pencil', 'width:14px;height:14px')}</button>
       </div>`;
     }).join('');
     const month = rows.reduce((s, a) => s + perMonth(a), 0);
     const now = assinaturasOf(view.month).reduce((s, a) => s + a.amount, 0);
+    const inside = assinaturasOf(view.month).filter(a => inFatura(a, view.month)).reduce((s, a) => s + a.amount, 0);
     $('#table').innerHTML = head + body + `
       <div class="total"><span>Custo por mês</span><strong class="num negc">${money(month)}</strong></div>
-      <div class="yield"><span>Cobrado neste mês ${money(now)}</span><span>Por ano <strong class="num" style="color:var(--red)">${money(month * 12)}</strong></span></div>`;
+      <div class="yield"><span>Cobrado neste mês ${money(now)}${inside ? ` · ${money(inside)} já nas faturas` : ''}</span><span>Por ano <strong class="num" style="color:var(--red)">${money(month * 12)}</strong></span></div>`;
   }
 
   function renderAssinChart() {
@@ -969,6 +1057,7 @@ svg.i { width: 16px; height: 16px; flex: none; fill: none; stroke: currentColor;
           <select class="select" id="fMonth">${MESES.map((mm, i) => `<option value="${i + 1}" ${i + 1 === a.month ? 'selected' : ''}>${mm}</option>`).join('')}</select></div>
       </div>
       <p class="help" id="cyHelp"></p>
+      ${payField(a.payCard)}
       ${footer(editing)}</form>`, m => {
       const amount = m.querySelector('#fAmount');
       let chosen = !!(a.brand || a.name);
@@ -1013,13 +1102,13 @@ svg.i { width: 16px; height: 16px; flex: none; fill: none; stroke: currentColor;
       };
       bindMoney(amount, drawCycle);
       m.querySelector('#fCycle').addEventListener('click', e => { const b = e.target.closest('[data-cy]'); if (b) { a.cycle = b.dataset.cy; drawCycle(); } });
-      drawPick(); drawCycle();
+      drawPick(); drawCycle(); bindPay(m);
       m.querySelector('#f').addEventListener('submit', e => {
         e.preventDefault();
         const name = (m.querySelector('#fName')?.value || '').trim();
         if (!name) return showErr('Escolha o serviço ou dê um nome.');
         const data = { brand: a.brand || '', name, icon: a.icon || '', color: a.color || '', amount: cents(amount), cycle: a.cycle,
-          day: +m.querySelector('#fDay').value, month: +m.querySelector('#fMonth').value };
+          day: +m.querySelector('#fDay').value, month: +m.querySelector('#fMonth').value, payCard: readPay(m) };
         if (!data.amount) return showErr('Digite o valor.');
         if (!editing) {
           state.assinaturas.push({ ...data, id: uid(), created: Date.now(), start: view.month });
@@ -1048,7 +1137,10 @@ svg.i { width: 16px; height: 16px; flex: none; fill: none; stroke: currentColor;
   function renderCardsTable() {
     $('#tableTitle').textContent = 'Cartões de crédito';
     const q = view.query.trim().toLowerCase();
-    const rows = cardsOf(view.month).filter(c => !q || c.name.toLowerCase().includes(q));
+    const rows = cardsOf(view.month).filter(c => !q || c.name.toLowerCase().includes(q)).map(c => {
+      const k = focusKey(c, view.month);
+      return { ...c, fk: k, fatura: (state.faturas[c.id] || {})[k] || null, dates: faturaDates(c, k) };
+    });
     if (!rows.length) {
       $('#table').innerHTML = `<div class="empty">${q ? 'Nada encontrado com esse filtro.' : 'Nenhum cartão ainda.<br>Cadastre seus cartões e lance a fatura de cada mês.'}${q ? '' : `<br><button class="btn-soft" data-add>${ico('plus')}Adicionar cartão</button>`}</div>`;
       return;
@@ -1056,28 +1148,31 @@ svg.i { width: 16px; height: 16px; flex: none; fill: none; stroke: currentColor;
     const head = `<div class="row head"><span></span><span>Cartão</span><span class="cat">Fatura</span><span class="val">Valor</span><span></span></div>`;
     const body = rows.map(c => {
       const f = c.fatura;
-      const status = !f ? `<button class="tag status none" data-fatura="${c.id}">Lançar fatura</button>`
-        : `<button class="tag status ${f.paid ? 'paid' : 'pending'}" data-fpay="${c.id}" title="Marcar como ${f.paid ? 'em aberto' : 'paga'}">${f.paid ? 'Paga' : 'Em aberto'}</button>`;
+      const st = FSTATE[faturaState(c, c.fk, f)];
+      const status = !f ? `<button class="tag status none" data-fatura="${c.id}" data-key="${c.fk}">Lançar fatura</button>`
+        : `<button class="tag status ${st[0]}" data-fpay="${c.id}" data-key="${c.fk}" title="${f.paid ? 'Marcar como não paga' : 'Marcar como paga'}">${st[1]}</button>`;
       const limit = c.limit && f ? ` · ${Math.round(f.amount / c.limit * 100)}% do limite` : '';
       return `<div class="row">
         <span class="date">${logoHtml({ brand: c.bank, name: c.name, icon: c.icon, color: c.color })}</span>
         <div class="name"><span>${esc(c.name)}${c.count === false ? `<small>fora das despesas</small>` : ''}</span>
-          <div class="card-sub">${flagHtml(c.flag)}${c.last4 ? `•••• ${esc(c.last4)} · ` : ''}vence dia ${pad(c.dueDay)}${limit}</div>
+          <div class="card-sub">${flagHtml(c.flag)}${c.last4 ? `•••• ${esc(c.last4)} · ` : ''}${c.fk !== view.month ? `fatura de ${monthName(c.fk)} · ` : ''}fecha ${dm(c.dates.close)} · vence ${dm(c.dates.due)}${limit}</div>
+          ${(() => { const its = itemsOnCard(c.id, c.fk); return its.length ? `<div class="card-sub">inclui ${its.slice(0, 3).map(i => esc(i.label)).join(', ')}${its.length > 3 ? ` +${its.length - 3}` : ''}</div>` : ''; })()}
           <div class="tag-m">${status}</div></div>
         <span class="cat">${status}</span>
         <span class="val num">${f ? money(f.amount) : '<span style="color:var(--muted)">—</span>'}</span>
-        <button class="edit" data-edit="${c.id}" aria-label="Fatura">${ico('pencil', 'width:14px;height:14px')}</button>
+        <button class="edit" data-edit="${c.id}" data-key="${c.fk}" aria-label="Fatura">${ico('pencil', 'width:14px;height:14px')}</button>
       </div>`;
     }).join('');
     const total = rows.reduce((s, c) => s + (c.fatura ? c.fatura.amount : 0), 0);
     const open = rows.reduce((s, c) => s + (c.fatura && !c.fatura.paid ? c.fatura.amount : 0), 0);
     $('#table').innerHTML = head + body + `
-      <div class="total"><span>Total das faturas de ${monthName(view.month)}</span><strong class="num negc">${money(total)}</strong></div>
+      <div class="total"><span>${view.month === curKey() ? 'Total das faturas atuais' : `Total das faturas que vencem em ${monthName(view.month)}`}</span><strong class="num negc">${money(total)}</strong></div>
       <div class="yield"><span>${open ? 'Em aberto' : total ? 'Tudo pago ✓' : ''}</span><span>${open ? `<strong class="num" style="color:var(--amber)">${money(open)}</strong>` : ''}</span></div>`;
   }
 
   function renderCardsChart() {
-    const rows = cardsOf(view.month).filter(c => c.fatura && c.fatura.amount > 0).map(c => {
+    const rows = cardsOf(view.month).map(c => ({ ...c, fatura: (state.faturas[c.id] || {})[focusKey(c, view.month)] }))
+      .filter(c => c.fatura && c.fatura.amount > 0).map(c => {
       const b = BRANDS[c.bank];
       return { name: c.name, color: b ? b.color : (c.color || '#64748b'), value: c.fatura.amount };
     }).sort((a, b) => b.value - a.value);
@@ -1092,7 +1187,7 @@ svg.i { width: 16px; height: 16px; flex: none; fill: none; stroke: currentColor;
     return `<div class="cc-preview" style="background:linear-gradient(135deg, ${color}, color-mix(in srgb, ${color} 55%, #000))">
       <div class="cc-top"><span class="cc-name">${esc(c.name || 'Meu cartão')}</span>${logoHtml({ brand: c.bank, name: c.name, icon: c.icon, color: c.color })}</div>
       <div class="cc-chip"></div>
-      <div class="cc-bottom"><span class="cc-num">•••• ${esc(c.last4 || '0000')}</span>${flagHtml(c.flag) || '<span></span>'}</div></div>`;
+      <div class="cc-bottom"><span class="cc-num">${c.last4 ? `•••• ${esc(c.last4)}` : ''}</span>${flagHtml(c.flag) || '<span></span>'}</div></div>`;
   }
 
   function openCartao(item) {
@@ -1115,7 +1210,7 @@ svg.i { width: 16px; height: 16px; flex: none; fill: none; stroke: currentColor;
         <div><label class="fl" for="fClose">Fecha dia</label><select class="select" id="fClose">${Array.from({ length: 31 }, (_, i) => `<option value="${i + 1}" ${i + 1 === c.closeDay ? 'selected' : ''}>${pad(i + 1)}</option>`).join('')}</select></div>
         <div><label class="fl" for="fDue">Vence dia</label><select class="select" id="fDue">${Array.from({ length: 31 }, (_, i) => `<option value="${i + 1}" ${i + 1 === c.dueDay ? 'selected' : ''}>${pad(i + 1)}</option>`).join('')}</select></div>
       </div>
-      ${editing ? '' : moneyField('fAmount', 0, `Fatura de ${monthName(view.month)} (opcional)`)}
+      ${editing ? '' : moneyField('fAmount', 0, 'Valor da fatura atual (opcional)')}
       ${checkField('fCount', 'Somar a fatura nas despesas', 'Desmarque se você já lança as compras deste cartão em Despesa variável, pra não contar duas vezes.', c.count !== false)}
       ${footer(editing)}</form>`, m => {
       const prev = () => { m.querySelector('#ccPrev').innerHTML = ccPreview(c); };
@@ -1155,7 +1250,7 @@ svg.i { width: 16px; height: 16px; flex: none; fill: none; stroke: currentColor;
           const id = uid();
           state.cards.push({ ...data, id, created: Date.now(), start: view.month });
           const amount = cents(m.querySelector('#fAmount'));
-          if (amount) (state.faturas[id] ||= {})[view.month] = { amount, paid: false };
+          if (amount) (state.faturas[id] ||= {})[focusKey({ ...data, id }, view.month)] = { amount, paid: false };
         }
         toast(editing ? 'Cartão atualizado' : 'Cartão adicionado');
         commit();
@@ -1164,24 +1259,52 @@ svg.i { width: 16px; height: 16px; flex: none; fill: none; stroke: currentColor;
     });
   }
 
-  function openFatura(card) {
-    const key = view.month;
+  function openFatura(card, key = focusKey(card, view.month)) {
     const f = (state.faturas[card.id] || {})[key];
     const last = (state.faturas[card.id] || {})[addMonths(key, -1)];
     const mn = monthName(key);
-    openModal(`<form id="f">${modalHead(`Fatura de ${mn}`, `${esc(card.name)}${card.last4 ? ` •••• ${esc(card.last4)}` : ''} · vence dia ${pad(card.dueDay)}`)}
+    const { close, due } = faturaDates(card, key);
+    const st = faturaState(card, key, f);
+    const next = addMonths(key, 1), nextF = (state.faturas[card.id] || {})[next];
+    const stTxt = { open: 'aberta, ainda recebendo compras', closed: 'fechada, esperando pagamento', late: 'vencida', paid: 'paga' }[st];
+    openModal(`<form id="f">${modalHead(`Fatura de ${mn}`, `${esc(card.name)}${card.last4 ? ` •••• ${esc(card.last4)}` : ''}`)}
+      <div class="fnav"><button type="button" id="fPrev" aria-label="Fatura anterior">${ico('left')}</button>
+        <div><strong>Fecha ${dm(close)} · vence ${dm(due)}</strong><small>${f || st !== 'late' ? `Fatura ${stTxt}` : 'Já venceu'}</small></div>
+        <button type="button" id="fNext" aria-label="Próxima fatura">${ico('right')}</button></div>
       ${ccPreview(card)}
       ${moneyField('fAmount', f ? f.amount : 0, 'Valor da fatura')}
       ${last && !f ? `<div class="last-hint"><span>Mês passado: ${brl.format(last.amount / 100)}</span><button type="button" class="link" id="fLast">Usar esse valor</button></div>` : ''}
+      <div id="insideBox"></div>
+      ${st === 'late' && f && !nextF ? `<div class="movebox">Essa fatura venceu em ${dm(due)} e está sem pagar. Se esse valor é da fatura que ainda está aberta (fecha ${dm(faturaDates(card, next).close)}), mova pra de ${monthName(next)}.
+        <br><button type="button" class="btn-soft" id="fMove">${ico('right', 'width:13px;height:13px')}Mover para a fatura de ${monthName(next)}</button></div>` : ''}
       ${checkField('fPaid', 'Fatura paga', '', f ? f.paid : false)}
       <div class="err" id="fErr"></div>
       <div class="actions">${f ? `<button type="button" class="btn del" id="fClear">Apagar fatura</button>` : ''}
         <button type="button" class="link" id="fEditCard" style="margin-left:${f ? '6px' : '0'}">Editar cartão</button><span class="grow"></span>
         <button type="button" class="btn cancel" data-close>Cancelar</button><button type="submit" class="btn save" id="fSave">Salvar</button></div></form>`, m => {
       const amount = m.querySelector('#fAmount');
-      const set = bindMoney(amount);
+      const its = itemsOnCard(card.id, key);
+      const itSum = its.reduce((s, i) => s + i.amount, 0);
+      const drawInside = () => {
+        if (!its.length) return;
+        const a = cents(amount), rest = a - itSum;
+        m.querySelector('#insideBox').innerHTML = `<div class="inside"><div style="font-weight:700;margin-bottom:4px">Já dentro desta fatura</div>
+          ${its.map(i => `<div class="it">${logoHtml(i.name ? i : { name: i.label, color: '#94a3b8' })}<span>${esc(i.label)} <span style="color:var(--muted)">· ${i.kind}</span></span><span class="num">${brl.format(i.amount / 100)}</span></div>`).join('')}
+          <div class="sum"><span>${a ? 'Outras compras' : 'Soma dos itens'}</span><span class="num">${brl.format((a ? rest : itSum) / 100)}</span></div>
+          ${a && rest < 0 ? `<div class="warn">A fatura está menor que a soma dos itens. Confira o valor.</div>` : ''}</div>`;
+      };
+      const set = bindMoney(amount, drawInside);
+      drawInside();
       m.querySelector('#fLast')?.addEventListener('click', () => set(last.amount));
       m.querySelector('#fEditCard').addEventListener('click', () => openCartao(state.cards.find(x => x.id === card.id)));
+      m.querySelector('#fPrev').addEventListener('click', () => openFatura(card, addMonths(key, -1)));
+      m.querySelector('#fNext').addEventListener('click', () => openFatura(card, next));
+      m.querySelector('#fMove')?.addEventListener('click', () => {
+        state.faturas[card.id][next] = { ...state.faturas[card.id][key], paid: false };
+        delete state.faturas[card.id][key];
+        commit();
+        toast(`Movida para a fatura de ${monthName(next)} (vence ${dm(faturaDates(card, next).due)})`);
+      });
       m.querySelector('#fClear')?.addEventListener('click', () => {
         const snap = JSON.stringify(state.faturas);
         delete state.faturas[card.id][key];
@@ -1193,7 +1316,7 @@ svg.i { width: 16px; height: 16px; flex: none; fill: none; stroke: currentColor;
         const a = cents(amount);
         if (!a) return showErr('Digite o valor da fatura.');
         (state.faturas[card.id] ||= {})[key] = { amount: a, paid: m.querySelector('#fPaid').checked };
-        toast('Fatura salva');
+        toast(`Fatura de ${mn} salva (vence ${dm(due)})`);
         commit();
       });
     });
@@ -1466,15 +1589,21 @@ svg.i { width: 16px; height: 16px; flex: none; fill: none; stroke: currentColor;
     const list = dueSoon();
     const renew = renewSoon();
     const faturasDue = (() => {
-      const key = mkey(today.getFullYear(), today.getMonth());
-      return cardsOf(key).filter(c => c.fatura && !c.fatura.paid && Math.min(c.dueDay, daysIn(key)) - today.getDate() <= 3)
-        .map(c => ({ ...c, diff: Math.min(c.dueDay, daysIn(key)) - today.getDate() })).sort((a, b) => a.diff - b.diff);
+      // Faturas lançadas, fechadas e não pagas: vencidas ou vencendo em até 3 dias (olha este mês e o próximo)
+      const out = [];
+      const dayDiff = iso => Math.round((new Date(iso + 'T12:00:00') - new Date(todayIso + 'T12:00:00')) / 864e5);
+      for (const k of [addMonths(curKey(), -1), curKey(), addMonths(curKey(), 1)]) for (const c of cardsOf(k)) {
+        if (!c.fatura || c.fatura.paid) continue;
+        const st = faturaState(c, k, c.fatura), diff = dayDiff(faturaDates(c, k).due);
+        if (st === 'late' || (st === 'closed' && diff <= 3)) out.push({ ...c, fk: k, diff });
+      }
+      return out.sort((a, b) => a.diff - b.diff);
     })();
     $('#bellDot').hidden = !list.length && !renew.length && !faturasDue.length;
     const key = mkey(today.getFullYear(), today.getMonth());
     const whenTxt = diff => diff < 0 ? `Venceu há ${-diff} dia${diff === -1 ? '' : 's'}` : diff === 0 ? 'Vence hoje' : `Vence em ${diff} dia${diff === 1 ? '' : 's'}`;
     const faturasHtml = faturasDue.length ? `<h4 style="margin-top:12px">Faturas do cartão</h4>` + faturasDue.map(c =>
-      `<div class="note">${logoHtml({ brand: c.bank, name: c.name, icon: c.icon, color: c.color }, 'sm')}<div><strong>${esc(c.name)}</strong><small style="color:${c.diff < 0 ? 'var(--red)' : ''}">${whenTxt(c.diff)} · ${money(c.fatura.amount)}</small></div><button class="mini" data-bellfat="${c.id}">Paguei</button></div>`).join('') : '';
+      `<div class="note" data-bellopen="${c.id}" data-key="${c.fk}" style="cursor:pointer" title="Abrir fatura">${logoHtml({ brand: c.bank, name: c.name, icon: c.icon, color: c.color }, 'sm')}<div><strong>${esc(c.name)} · ${monthName(c.fk)}</strong><small style="color:${c.diff < 0 ? 'var(--red)' : ''}">${whenTxt(c.diff)} · ${money(c.fatura.amount)}</small></div><button class="mini" data-bellfat="${c.id}" data-key="${c.fk}">Paguei</button></div>`).join('') : '';
     const renewHtml = renew.length ? `<h4 style="margin-top:12px">Assinaturas renovando</h4>` + renew.map(a =>
       `<div class="note">${logoHtml(a, 'sm')}<div><strong>${esc(a.name)}</strong><small>${a.diff === 0 ? 'Cobra hoje' : `Cobra em ${a.diff} dia${a.diff === 1 ? '' : 's'}`} · ${money(a.amount)}</small></div></div>`).join('') : '';
     $('#bellPop').innerHTML = `<h4>Contas a vencer</h4>` + (list.length ? list.map(f => {
@@ -1607,6 +1736,7 @@ svg.i { width: 16px; height: 16px; flex: none; fill: none; stroke: currentColor;
         `<div class="inline" id="instBox" hidden><input type="number" class="input" id="fN" min="2" max="48" value="2" /><span id="instHint"></span></div>`}
       <label class="fl" for="fDesc">Descrição</label><input class="input" id="fDesc" maxlength="60" placeholder="Ex.: Mercado, Gasolina…" value="${esc(v.desc)}" />
       ${catSelect('despesa', v.category, 'Categoria')}
+      ${payField(v.payCard)}
       ${footer(editing)}</form>`, m => {
       const amount = m.querySelector('#fAmount');
       const hint = () => {
@@ -1616,6 +1746,7 @@ svg.i { width: 16px; height: 16px; flex: none; fill: none; stroke: currentColor;
       };
       bindMoney(amount, hint);
       bindNewCategory(m, 'despesa');
+      bindPay(m);
       if (!editing) {
         m.querySelector('#fInst').addEventListener('change', e => {
           m.querySelector('#instBox').hidden = !e.target.checked;
@@ -1628,7 +1759,7 @@ svg.i { width: 16px; height: 16px; flex: none; fill: none; stroke: currentColor;
         e.preventDefault();
         const data = {
           date: m.querySelector('#fDate').value, amount: cents(amount),
-          desc: m.querySelector('#fDesc').value.trim(), category: m.querySelector('#fCategory').value,
+          desc: m.querySelector('#fDesc').value.trim(), category: m.querySelector('#fCategory').value, payCard: readPay(m),
         };
         if (!data.date) return showErr('Escolha a data.');
         if (!data.amount) return showErr('Digite o valor.');
@@ -1673,11 +1804,13 @@ svg.i { width: 16px; height: 16px; flex: none; fill: none; stroke: currentColor;
       <label class="fl" for="fDesc">Descrição</label><input class="input" id="fDesc" maxlength="60" placeholder="Ex.: Aluguel, Internet…" value="${esc(f.desc)}" />
       <label class="fl" for="fDay">Vencimento (dia do mês)</label>
       <select class="select" id="fDay">${Array.from({ length: 31 }, (_, i) => `<option value="${i + 1}" ${i + 1 === f.day ? 'selected' : ''}>Todo dia ${pad(i + 1)}</option>`).join('')}</select>
+      ${payField(f.payCard)}
       ${footer(editing)}</form>`, m => {
       bindMoney(m.querySelector('#fAmount'));
+      bindPay(m);
       m.querySelector('#f').addEventListener('submit', e => {
         e.preventDefault();
-        const data = { amount: cents(m.querySelector('#fAmount')), desc: m.querySelector('#fDesc').value.trim(), day: +m.querySelector('#fDay').value };
+        const data = { amount: cents(m.querySelector('#fAmount')), desc: m.querySelector('#fDesc').value.trim(), day: +m.querySelector('#fDay').value, payCard: readPay(m) };
         if (!data.amount) return showErr('Digite o valor.');
         if (!data.desc) return showErr('Dê um nome, ex.: Aluguel.');
         if (!editing) {
@@ -1698,6 +1831,37 @@ svg.i { width: 16px; height: 16px; flex: none; fill: none; stroke: currentColor;
       });
       if (editing) m.querySelector('#fDelete').addEventListener('click', () => removeRecurringAware('fixas', item, true));
     });
+  }
+
+  function payField(selected) {
+    const cards = state.cards.filter(c => activeIn(c, view.month));
+    if (!cards.length) return '';
+    return `<label class="fl">Pago com</label>
+      <div class="bank-chips pay-pick" id="fPay"><button type="button" data-card="" class="${selected ? '' : 'on'}">${ico('wallet')}Conta / Pix / boleto</button>
+      ${cards.map(c => `<button type="button" data-card="${c.id}" class="${c.id === selected ? 'on' : ''}">${logoHtml({ brand: c.bank, name: c.name, icon: c.icon, color: c.color }, 'sm')}${esc(c.name)}${c.last4 ? ` •${esc(c.last4)}` : ''}</button>`).join('')}</div>
+      <p class="help" id="payHelp"></p>`;
+  }
+  function bindPay(m) {
+    const box = m.querySelector('#fPay'); if (!box) return;
+    const help = () => {
+      const id = box.querySelector('.on')?.dataset.card;
+      m.querySelector('#payHelp').textContent = id ? 'Quando a fatura deste cartão for lançada, este valor passa a contar só dentro dela (não soma duas vezes).' : '';
+    };
+    box.addEventListener('click', e => {
+      const b = e.target.closest('[data-card]'); if (!b) return;
+      box.querySelectorAll('button').forEach(x => x.classList.toggle('on', x === b)); help();
+    });
+    help();
+  }
+  const readPay = m => m.querySelector('#fPay .on')?.dataset.card || '';
+  // Selo "no cartão" ao lado do nome
+  function viaHtml(item) {
+    const c = payCardOf(item);
+    return c ? `<span class="via" title="Pago com ${esc(c.name)}">${logoHtml({ brand: c.bank, name: c.name, icon: c.icon, color: c.color })}${esc(c.name)}</span>` : '';
+  }
+  function valHtml(item, key, text) {
+    if (!inFatura(item, key)) return `<span class="val num">${text}</span>`;
+    return `<span class="val num absorbed" title="Já está dentro da fatura do ${esc(payCardOf(item).name)}">${text}<small>na fatura</small></span>`;
   }
 
   function showErr(msg) { $('#fErr').textContent = msg; }
@@ -1917,9 +2081,9 @@ svg.i { width: 16px; height: 16px; flex: none; fill: none; stroke: currentColor;
     if (e.target.closest('[data-add]')) return openAdd();
     if (e.target.closest('#sortBtn') && !['invest', 'assin', 'cartoes'].includes(ui.tab)) { ui.sortAsc = !ui.sortAsc; saveUi(); return renderTable(); }
     const fpay = e.target.closest('[data-fpay]');
-    if (fpay) return toggleFaturaPaid(fpay.dataset.fpay, view.month);
+    if (fpay) return toggleFaturaPaid(fpay.dataset.fpay, fpay.dataset.key);
     const fat = e.target.closest('[data-fatura]');
-    if (fat) return openFatura(state.cards.find(x => x.id === fat.dataset.fatura));
+    if (fat) return openFatura(state.cards.find(x => x.id === fat.dataset.fatura), fat.dataset.key);
     const pay = e.target.closest('[data-pay]');
     if (pay) return togglePaid(pay.dataset.pay, view.month);
     const rec = e.target.closest('[data-receive]');
@@ -1939,7 +2103,7 @@ svg.i { width: 16px; height: 16px; flex: none; fill: none; stroke: currentColor;
     else if (ui.tab === 'fixa') openFixa(state.fixas.find(x => x.id === id));
     else if (ui.tab === 'invest') openInvestment(state.investments.find(x => x.id === id));
     else if (ui.tab === 'assin') openAssinatura(state.assinaturas.find(x => x.id === id));
-    else if (ui.tab === 'cartoes') openFatura(state.cards.find(x => x.id === id));
+    else if (ui.tab === 'cartoes') openFatura(state.cards.find(x => x.id === id), ed.dataset.key);
     else openVariavel(state.variaveis.find(x => x.id === id));
   });
 
@@ -1963,7 +2127,9 @@ svg.i { width: 16px; height: 16px; flex: none; fill: none; stroke: currentColor;
     const b = e.target.closest('[data-bellpay]');
     if (b) { togglePaid(b.dataset.bellpay, monthOf(todayIso)); toast('Conta marcada como paga'); }
     const bf = e.target.closest('[data-bellfat]');
-    if (bf) toggleFaturaPaid(bf.dataset.bellfat, monthOf(todayIso));
+    if (bf) return toggleFaturaPaid(bf.dataset.bellfat, bf.dataset.key);
+    const bo = e.target.closest('[data-bellopen]');
+    if (bo) { togglePop($('#bellPop'), false); openFatura(state.cards.find(x => x.id === bo.dataset.bellopen), bo.dataset.key); }
   });
 
   function fillFilter() {
