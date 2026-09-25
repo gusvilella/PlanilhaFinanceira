@@ -11,9 +11,11 @@ Trabalho feito durante a noite, sem mudar o jeito como seus dados são guardados
 5. **Buscar em todos os meses**: aba Despesa variável → Filtro → digite "ifood" → marque "Buscar em todos os meses".
 6. **Celular**: arraste o dedo para os lados para trocar o mês; os botões pequenos ficaram mais fáceis de acertar.
 7. **Cartão que fecha depois do vencimento** (ex.: fecha 26, vence 5): confira o "disponível" do cartão; agora conta as compras feitas depois do fechamento.
-8. **Sininho no celular**: toque no sininho; a lista de avisos agora aparece inteira na tela (antes abria quase toda fora da tela).
-9. **Saldo da conta no mesmo dia**: corrija o saldo de uma conta em Contas e, logo depois, lance um gasto pago com ela. O saldo agora desconta na hora.
-10. **Previsão de 30 dias** (Visão geral): agora desconta a prévia da fatura do cartão que ainda não foi lançada.
+8. **Saldo da conta no mesmo dia**: corrija o saldo de uma conta em Contas e, logo depois, lance um gasto pago com ela. O saldo agora desconta na hora.
+9. **Previsão de 30 dias** (Visão geral): agora desconta a prévia da fatura do cartão que ainda não foi lançada.
+10. **Transferir entre contas**: Saldo → Contas → "⇄ Transferir entre contas". Muda o saldo das duas sem mexer em receita/despesa.
+11. **Pular um mês**: abra uma despesa fixa, toque em Excluir e escolha "Só em setembro".
+12. **Sininho no celular** e **tela de senha deitada**: agora aparecem inteiros na tela.
 
 ## Pontos para você decidir (não mexi)
 
