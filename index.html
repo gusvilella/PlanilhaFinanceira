@@ -1481,7 +1481,10 @@ button:focus-visible, a:focus-visible, [role="button"]:focus-visible, [tabindex]
     const titles = { receita: 'Receita', fixa: 'Despesas fixas', variavel: 'Despesas variáveis' };
     $('#tableTitle').textContent = titles[ui.tab];
     const all = searchAll();
-    const found = rowsForTab(), rows = all ? found.slice(0, 300) : found;
+    const found = rowsForTab();
+    // todos os meses: mostra os 300 mais recentes (e só então aplica a ordem escolhida)
+    let rows = found;
+    if (all && found.length > 300) { rows = found.slice().sort((a, b) => b.shownDate.localeCompare(a.shownDate)).slice(0, 300); if (ui.sortAsc) rows.reverse(); }
     const filtered = !!(view.query || view.cat);
     if (all) $('#tableTitle').textContent += ' · todos os meses';
 
@@ -1504,7 +1507,7 @@ button:focus-visible, a:focus-visible, [role="button"]:focus-visible, [tabindex]
       } else if (isFixa) {
         const st = { paid: ['paid', 'Paga'], due: ['open', 'A vencer'], late: ['late', 'Atrasada'] }[fixaState(r)];
         label = `<button class="tag status ${st[0]}" data-pay="${r.id}" title="${r.paid ? 'Marcar como não paga' : 'Marcar como paga'}">${st[1]}</button>`;
-      } else if (ui.tab === 'receita' && r.pending) {
+      } else if (ui.tab === 'receita' && r.pending && !(all && r.recurring)) {
         label = `<button class="tag status pending" data-receive="${r.id}" title="Marcar como recebido">A receber</button>`;
       } else {
         label = tagHtml(cat(r.category));
@@ -3356,7 +3359,10 @@ button:focus-visible, a:focus-visible, [role="button"]:focus-visible, [tabindex]
       if (changed) {
         const end = old.end;
         old.end = addMonths(view.month, -1);
-        list.push({ ...data, id: uid(), created: old.created, date: dateIn(view.month, +data.date.slice(8)), end, ...skipFrom(old, view.month) });
+        const nid = uid();
+        list.push({ ...data, id: nid, created: old.created, date: dateIn(view.month, +data.date.slice(8)), end, ...skipFrom(old, view.month) });
+        // meses já marcados como recebidos continuam recebidos na parte nova
+        for (const [k, ids] of Object.entries(state.received || {})) if (k >= view.month && ids.includes(old.id)) ids.push(nid);
         return;
       }
       return;
@@ -3742,7 +3748,7 @@ button:focus-visible, a:focus-visible, [role="button"]:focus-visible, [tabindex]
     if (rec) {
       const r = state.receitas.find(x => x.id === rec.dataset.receive);
       const snap = JSON.stringify({ r: state.receitas, x: state.received || {} });
-      if (r.recurring) ((state.received ||= {})[view.month] ||= []).push(r.id);   // só este mês
+      if (r.recurring) { const l = (state.received ||= {})[view.month] ||= []; if (!l.includes(r.id)) l.push(r.id); }   // só este mês
       else r.pending = false;
       save(); render(); toast('Marcado como recebido', 'Desfazer', () => { const o = JSON.parse(snap); state.receitas = o.r; state.received = o.x; commit(); });
       return;
@@ -3755,6 +3761,11 @@ button:focus-visible, a:focus-visible, [role="button"]:focus-visible, [tabindex]
     if (ui.tab === 'receita') {
       // Receita recorrente abre com a data deste mês
       const r = state.receitas.find(x => x.id === id);
+      if (r.recurring && searchAll()) {
+        // na busca de todos os meses, a receita pode não existir no mês da tela: vai para um mês em que ela vale
+        const start = monthOf(r.date), key = view.month < start ? start : r.end && view.month > r.end ? r.end : view.month;
+        if (key !== view.month) { view.month = key; render(); }
+      }
       openReceita(r.recurring ? { ...r, date: dateIn(view.month, +r.date.slice(8)) } : r);
     }
     else if (ui.tab === 'fixa') openFixa(state.fixas.find(x => x.id === id));

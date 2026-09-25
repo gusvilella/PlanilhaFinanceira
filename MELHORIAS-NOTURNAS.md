@@ -2,7 +2,7 @@
 
 Trabalho feito durante a noite, sem mudar o jeito como seus dados são guardados (tudo que já existe continua funcionando).
 
-Resumo: **65 itens** — 20 e poucos bugs corrigidos (alguns graves: sincronização que apagava lançamentos do outro aparelho, receita recorrente que sumia do passado, sininho fora da tela no celular, saldo que não descontava gastos do mesmo dia, limite do cartão errado), importação de extrato de mais bancos (inclusive Excel), app ~3x mais rápido com muitos lançamentos, e várias facilidades novas (desfazer, buscar em todos os meses, duplicar, transferir entre contas, pular um mês, parcelado e transferência no lançamento rápido, importar planilha do Excel…).
+Resumo: **66 itens** — 20 e poucos bugs corrigidos (alguns graves: sincronização que apagava lançamentos do outro aparelho, receita recorrente que sumia do passado, sininho fora da tela no celular, saldo que não descontava gastos do mesmo dia, limite do cartão errado), importação de extrato de mais bancos (inclusive Excel), app ~3x mais rápido com muitos lançamentos, e várias facilidades novas (desfazer, buscar em todos os meses, duplicar, transferir entre contas, pular um mês, parcelado e transferência no lançamento rápido, importar planilha do Excel…).
 
 Como testei: cada mudança foi verificada num navegador de verdade (Chromium), no tamanho de celular (320 e 390 px), tablet e computador, nos temas claro e escuro, com dados vazios, dados normais e 2.000+ lançamentos, além de milhares de toques aleatórios sem nenhum erro. Os campos novos nos dados são todos opcionais: `received`, `transfers`, `skip`, `balanceAt`, `paidTs`.
 
@@ -284,3 +284,10 @@ Testei com arquivos no formato de cada banco:
 - Quando o extrato da conta tem o pagamento da fatura do cartão ("Pagamento de fatura") e existe uma fatura lançada e ainda não paga **com o mesmo valor**, a prévia avisa "pagamento da fatura Nubank de setembro: vai ser marcada como paga". Ao importar, a fatura fica paga na data do pagamento e sai do saldo daquela conta. Tem Desfazer.
 - Do mesmo jeito, uma **despesa fixa** reconhecida no extrato (ex.: o Pix do aluguel) é marcada como **Paga** naquele mês — some o "Atrasada" e o aviso do sininho.
 - E uma **receita "a receber"** (ex.: um freela de R$ 1.200 esperado para o dia 20) que aparece no extrato com o mesmo valor, até 7 dias de diferença, é marcada como **recebida**, sem lançar de novo.
+
+### 66. Revisão do meu próprio trabalho (4 correções)
+Fiz uma revisão cuidadosa de todo o código que mudei durante a noite e achei 4 problemas que eu mesmo tinha introduzido; todos corrigidos e testados:
+- **Busca em todos os meses + receita recorrente encerrada:** editar uma receita que já tinha acabado (ex.: terminou em março) estando em setembro fazia ela "voltar" de abril a agosto. Agora o app vai para um mês em que ela ainda valia antes de editar.
+- **Receita recorrente recebida + edição:** se você marcava a receita como recebida em setembro e depois mudava o valor em setembro, ela voltava a aparecer "A receber". Agora a marcação continua.
+- **"A receber" na busca de todos os meses:** para receitas recorrentes, o botão marcava o mês errado (o da tela). Nessa visão ele não aparece mais para recorrentes (marque dentro do mês).
+- **Limite de 300 na busca com ordem crescente:** mostrava os 300 mais antigos, escondendo os recentes. Agora são sempre os 300 mais recentes, na ordem que você escolheu.
