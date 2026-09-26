@@ -47,6 +47,7 @@
   --amber: #b97f10;
   --amber-soft: #f9f0dc;
   --grain: .035;
+  --out: #a8a49b;
   --shadow: 0 0 0 1px var(--edge), 0 1px 2px rgba(17, 17, 17, .03), 0 8px 24px -12px rgba(17, 17, 17, .08);
   --shadow-lg: 0 0 0 1px var(--edge), 0 24px 60px -12px rgba(17, 17, 17, .22);
   --r: 16px;
@@ -75,6 +76,7 @@
   --amber: #e2ad48;
   --amber-soft: #2d2412;
   --grain: .06;
+  --out: #5d5d5d;
   --shadow: 0 0 0 1px var(--edge), inset 0 1px 0 rgba(255, 255, 255, .035), 0 10px 30px -14px rgba(0, 0, 0, .7);
   --shadow-lg: 0 0 0 1px rgba(255, 255, 255, .09), 0 30px 80px -10px rgba(0, 0, 0, .8);
   color-scheme: dark;
@@ -604,6 +606,42 @@ html.locked .lock { place-items: normal; overflow-y: auto; }
 .imp-row { content-visibility: auto; contain-intrinsic-size: auto 49px; }
 @media (max-width: 640px) { .imp-row { contain-intrinsic-size: auto 84px; } }
 .imp-row.off { opacity: .45; }
+/* Simetria: ícone/logo alinhado à primeira linha do texto quando o bloco tem várias linhas */
+.ov-row { align-items: flex-start; }
+.ov-row > .logo, .ov-row > .goal-emoji, .ov-row > .tx-ic { margin-top: 1px; }
+.ov-row .grow b { line-height: 1.35; }
+.ov-row .amt { line-height: 1.35; padding-top: 1px; }
+.row.top { align-items: start; }
+.row.top > .date { padding-top: 2px; }
+.row.top > .cat { padding-top: 0; }
+.row.top > .val { padding-top: 2px; }
+.row.top > .edit { margin-top: -4px; }
+.kpi-head { min-height: 28px; }
+.kpi-label { line-height: 1; }
+.top-right { align-self: flex-start; margin-top: 6px; }
+
+/* Topo: saudação + frase do mês */
+.hello { font-size: 1.95rem; }
+.title { max-width: 21ch; }
+.hero-sub { margin: 8px 0 0; color: var(--muted); font-size: .92rem; }
+.kpis { grid-template-columns: minmax(0, 1.25fr) repeat(3, minmax(0, 1fr)); }
+.kpi.contas .kpi-ico { background: var(--accent-soft); color: var(--accent); }
+.kpi.contas .kpi-value { font-size: 1.85rem; }
+.kpi.sobra .kpi-ico { background: var(--field); color: var(--ink-2); }
+.kpi.sobra .kpi-value.short { color: var(--amber); }
+.kpi.saldo .kpi-value.neg, .kpi.contas .kpi-value.neg { color: var(--amber); }
+.fc-stats .short { color: var(--amber); font-weight: 600; }
+.fc-alert.warn { background: var(--amber-soft); align-items: center; }
+.fc-alert.warn span { flex: 1; }
+.fc-alert .mini { border: 0; background: var(--card); color: var(--ink); font-weight: 600; font-size: .76rem; padding: 7px 11px; border-radius: 9px; white-space: nowrap; box-shadow: var(--shadow); }
+.ideas { display: grid; gap: 8px; margin: 4px 0 6px; }
+.idea { display: flex; gap: 12px; align-items: flex-start; padding: 12px; border-radius: 12px; background: var(--field); font-size: .86rem; }
+.idea-ic { font-size: 1.1rem; line-height: 1.3; }
+.idea b { display: block; font-weight: 600; }
+.idea small { display: block; color: var(--muted); margin-top: 2px; font-size: .78rem; }
+@media (max-width: 900px) { .kpis { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+@media (max-width: 640px) { .hello, .title { font-size: 1.5rem; } .hero-sub { font-size: .85rem; } .kpi.contas .kpi-value { font-size: 1.45rem; } }
+
 /* Ícone de cada lançamento */
 .row .name.has-ic { display: flex; align-items: center; gap: 12px; overflow: visible; }
 .row .name .nm { min-width: 0; flex: 1; overflow: hidden; text-overflow: ellipsis; }
@@ -1007,13 +1045,12 @@ button:focus-visible, a:focus-visible, [role="button"]:focus-visible, [tabindex]
   <div class="app">
     <header class="top">
       <div>
-        <p class="hello" id="hello">Olá, você</p>
-        <h1 class="title">Orçamento
-          <button class="ghost-ico" id="eyeBtn" title="Esconder valores" aria-label="Esconder valores"><svg class="i"><use href="#i-eye"/></svg></button>
-        </h1>
+        <p class="hello" id="hello">Olá</p>
+        <h1 class="title" id="headline">Orçamento</h1>
       </div>
       <div class="top-right">
         <div style="display:flex;gap:4px">
+          <button class="ghost-ico" id="eyeBtn" title="Esconder valores" aria-label="Esconder valores"><svg class="i"><use href="#i-eye"/></svg></button>
           <div class="bell" style="position:relative">
             <button class="ghost-ico" id="bellBtn" title="Contas a vencer" aria-label="Contas a vencer"><svg class="i" style="width:18px;height:18px"><use href="#i-bell"/></svg></button>
             <span class="dot" id="bellDot" hidden></span>
@@ -1034,29 +1071,29 @@ button:focus-visible, a:focus-visible, [role="button"]:focus-visible, [tabindex]
     </header>
 
     <section class="kpis">
-      <div class="kpi receita">
-        <div class="kpi-head"><span class="kpi-ico"><svg class="i"><use href="#i-dollar"/></svg></span><span class="kpi-label">Receita</span></div>
-        <div class="kpi-value num" id="kReceita"></div>
-        <div class="kpi-sub" id="kReceitaSub"></div>
-      </div>
-      <div class="kpi investir">
-        <div class="kpi-head"><span class="kpi-ico"><svg class="i"><use href="#i-invest"/></svg></span><span class="kpi-label">Investir</span>
-          <button class="adjust" id="investBtn"><span class="t">Ajustar</span><svg class="i"><use href="#i-pencil"/></svg></button>
-        </div>
-        <div class="kpi-value num" id="kInvestir"></div>
-        <div class="kpi-sub" id="kInvestirSub"></div>
-      </div>
-      <div class="kpi despesas">
-        <div class="kpi-head"><span class="kpi-ico"><svg class="i"><use href="#i-cal"/></svg></span><span class="kpi-label">Despesas</span></div>
-        <div class="kpi-value num" id="kDespesas"></div>
-        <div class="kpi-sub" id="kDespesasSub"></div>
-      </div>
-      <div class="kpi saldo">
-        <div class="kpi-head"><span class="kpi-ico"><svg class="i"><use href="#i-scale"/></svg></span><span class="kpi-label">Saldo</span>
+      <div class="kpi contas">
+        <div class="kpi-head"><span class="kpi-ico"><svg class="i"><use href="#i-wallet"/></svg></span><span class="kpi-label">Nas suas contas</span>
           <button class="adjust dark" id="accountsBtn" title="Saldo das suas contas"><span class="t">Contas</span><svg class="i"><use href="#i-pencil"/></svg></button>
         </div>
         <div class="kpi-value num" id="kSaldo"></div>
         <div class="kpi-sub" id="kSaldoSub"></div>
+      </div>
+      <div class="kpi receita">
+        <div class="kpi-head"><span class="kpi-ico"><svg class="i"><use href="#i-dollar"/></svg></span><span class="kpi-label">Entrou</span></div>
+        <div class="kpi-value num" id="kReceita"></div>
+        <div class="kpi-sub" id="kReceitaSub"></div>
+      </div>
+      <div class="kpi despesas">
+        <div class="kpi-head"><span class="kpi-ico"><svg class="i"><use href="#i-cal"/></svg></span><span class="kpi-label">Saiu</span></div>
+        <div class="kpi-value num" id="kDespesas"></div>
+        <div class="kpi-sub" id="kDespesasSub"></div>
+      </div>
+      <div class="kpi sobra">
+        <div class="kpi-head"><span class="kpi-ico"><svg class="i"><use href="#i-scale"/></svg></span><span class="kpi-label" id="kSobraLabel">Sobra do mês</span>
+          <button class="adjust" id="investBtn" title="Quanto guardar por mês"><span class="t">Guardar</span><svg class="i"><use href="#i-pencil"/></svg></button>
+        </div>
+        <div class="kpi-value num" id="kSobra"></div>
+        <div class="kpi-sub" id="kSobraSub"></div>
       </div>
     </section>
 
@@ -1304,6 +1341,7 @@ button:focus-visible, a:focus-visible, [role="button"]:focus-visible, [tabindex]
   if (!['geral', 'receita', 'fixa', 'variavel', 'assin', 'cartoes', 'invest', 'metas'].includes(ui.tab)) ui.tab = 'geral';
   if (!['light', 'dark'].includes(ui.theme)) ui.theme = null;
   if (![6, 12].includes(ui.evoRange)) delete ui.evoRange;
+  if (typeof ui.name !== 'string') delete ui.name;
   // visual novo: quem estava na fonte padrão antiga passa para a nova (uma vez só)
   if (!ui.look2) { if (ui.font === 'Urbanist') ui.font = 'Instrument Sans'; ui.look2 = 1; }
   const saveUi = () => { try { localStorage.setItem(UI_KEY, JSON.stringify(ui)); } catch (_) {} };
@@ -1509,11 +1547,47 @@ button:focus-visible, a:focus-visible, [role="button"]:focus-visible, [tabindex]
     return { receita, aReceber, fixas, variaveis, assinaturas, faturas, despesas, pct, investir, saldo: receita - investir - despesas };
   }
 
+
+  // ================= Frase do topo =================
+  // Uma frase curta e animadora sobre o mês: o próximo passo, nunca um alarme.
+  const reais = c => ui.hidden ? '' : 'R$ ' + Math.round(Math.abs(c) / 100).toLocaleString('pt-BR');
+  function headlineText(t) {
+    const key = view.month, cur = curKey(), mes = monthName(key);
+    const any = state.receitas.length || state.variaveis.length || state.fixas.length || state.accounts.length || state.cards.length;
+    if (!any) return ['Vamos colocar suas contas em ordem?', 'Comece pelo botão + ou importe um extrato.'];
+    if (key < cur) {
+      if (!t.receita && !t.despesas) return [`Nada lançado em ${mes}.`, ''];
+      return t.saldo >= 0 ? [`Você fechou ${mes} com ${reais(t.saldo) || 'saldo'} de sobra.`, 'Guardar um pouco disso já é meio caminho.']
+        : [`${mes.charAt(0).toUpperCase() + mes.slice(1)} ficou ${reais(t.saldo) || 'um pouco'} acima do que entrou.`, 'Todo mês é uma nova chance de virar o jogo.'];
+    }
+    if (key > cur) return [`Planejando ${mes}.`, t.receita || t.despesas ? (t.saldo >= 0 ? `Por enquanto sobram ${reais(t.saldo) || 'alguns reais'}.` : `Por enquanto faltam ${reais(t.saldo) || 'alguns reais'}.`) : 'Lance o que já sabe que vai entrar e sair.'];
+    const late = dueSoon().filter(f => daysUntil(f.shownDate) < 0);
+    if (late.length === 1) return [`Falta só ${late[0].desc} pra ficar em dia.`, 'Resolvendo essa, o resto está sob controle.'];
+    if (late.length > 1) return [`Faltam ${late.length} contas pra ficar em dia.`, 'Uma de cada vez. Toque no sininho pra ver quais.'];
+    if (state.accounts.length) {
+      const { days } = forecast(), min = days.reduce((m, d) => d.bal < m.bal ? d : m, days[0]);
+      if (min.bal < 0) return [`Faltam ${reais(min.bal) || 'alguns reais'} pra fechar o mês no azul.`, 'Dá pra resolver: veja as ideias na Visão geral.'];
+    }
+    const today = dueSoon().filter(f => daysUntil(f.shownDate) === 0);
+    if (today.length) return [`Hoje vence ${today[0].desc}.`, today.length > 1 ? `E mais ${today.length - 1}. O resto está em dia.` : 'O resto está em dia.'];
+    if (t.receita && t.saldo >= 0) return [`Sobram ${reais(t.saldo) || 'alguns reais'} em ${mes}.`, t.pct ? 'E você ainda está guardando. Bom trabalho.' : 'Que tal guardar uma parte?'];
+    if (t.receita && t.saldo < 0) return [`Faltam ${reais(t.saldo) || 'alguns reais'} pra fechar ${mes} no azul.`, 'Pequenos ajustes já fazem diferença.'];
+    return ['Tudo em dia por aqui.', 'Lance o que entrar e sair pra acompanhar o mês.'];
+  }
+  function renderHeadline(t) {
+    const [h, sub] = headlineText(t);
+    $('#headline').textContent = h;
+    let el = $('#heroSub');
+    if (!el) { el = document.createElement('p'); el.id = 'heroSub'; el.className = 'hero-sub'; $('#headline').after(el); }
+    el.textContent = sub;
+    el.hidden = !sub;
+  }
+
   // ================= Render =================
   const render = withMemo(renderNow);
   function renderNow() {
     // saudação pela hora do dia
-    { const h = new Date().getHours(); $('#hello').textContent = h >= 5 && h < 12 ? 'Bom dia' : h >= 12 && h < 18 ? 'Boa tarde' : 'Boa noite'; }
+    { const h = new Date().getHours(); $('#hello').textContent = (h >= 5 && h < 12 ? 'Bom dia' : h >= 12 && h < 18 ? 'Boa tarde' : 'Boa noite') + (ui.name ? ', ' + ui.name : ''); }
     const [y, m] = view.month.split('-').map(Number);
     const lbl = new Date(y, m - 1, 1).toLocaleDateString('pt-BR', { month: 'long', year: 'numeric' });
     $('#monthLabel').textContent = lbl.charAt(0).toUpperCase() + lbl.slice(1);
@@ -1525,27 +1599,31 @@ button:focus-visible, a:focus-visible, [role="button"]:focus-visible, [tabindex]
 
     const t = totals(view.month);
     $('#kReceita').textContent = money(t.receita);
-    $('#kReceitaSub').textContent = t.aReceber ? `+ ${money(t.aReceber)} a receber` : '';
-    $('#kInvestir').textContent = money(t.investir);
-    $('#kInvestirSub').textContent = t.pct ? `${fmtPct(t.pct)} da receita` : 'Quanto guardar este mês';
+    $('#kReceitaSub').textContent = t.aReceber ? `+ ${money(t.aReceber)} a receber` : t.receita ? '' : 'Nada lançado ainda';
     $('#kDespesas').textContent = money(t.despesas);
     // cada "rótulo valor" fica junto na mesma linha
     $('#kDespesasSub').innerHTML = [['Fixas', t.fixas], ['Variáveis', t.variaveis], ['Assinaturas', t.assinaturas], ['Faturas', t.faturas]]
       .filter(([, v]) => v).map(([n, v]) => `<span style="display:inline-block">${n} <span style="white-space:nowrap">${esc(money(v))}</span></span>`).join(' · ');
     const signed = c => (c < 0 && !ui.hidden ? '–' : '') + money(Math.abs(c));
+    // Nas suas contas: o dinheiro real somado dos bancos
     if (state.accounts.length) {
-      // Com contas cadastradas, o saldo é o dinheiro real somado de todas elas
       const total = state.accounts.reduce((s, a) => s + accBalance(a), 0);
       $('#kSaldo').textContent = signed(total);
       $('#kSaldo').classList.toggle('neg', total < 0);
       $('#kSaldo').title = state.accounts.map(a => `${a.name}: ${brl.format(accBalance(a) / 100)}`).join('\n');
-      $('#kSaldoSub').innerHTML = `<span class="logo-stack">${state.accounts.slice(0, 5).map(a => logoHtml(a, 'sm')).join('')}</span>sobra do mês <span style="white-space:nowrap">${esc(signed(t.saldo))}</span>`;
+      $('#kSaldoSub').innerHTML = `<span class="logo-stack">${state.accounts.slice(0, 5).map(a => logoHtml(a, 'sm')).join('')}</span>${state.accounts.length === 1 ? esc(state.accounts[0].name) : `${state.accounts.length} contas`}`;
     } else {
-      $('#kSaldo').textContent = signed(t.saldo);
-      $('#kSaldo').classList.toggle('neg', t.saldo < 0);
+      $('#kSaldo').textContent = '—';
+      $('#kSaldo').classList.remove('neg');
       $('#kSaldo').title = '';
-      $('#kSaldoSub').textContent = t.saldo < 0 ? 'Gastos acima da receita' : t.receita ? 'Livre para usar' : 'Toque em Contas para somar seus bancos';
+      $('#kSaldoSub').textContent = 'Toque em Contas para somar seus bancos';
     }
+    // Sobra do mês: entrou − saiu − o que você guarda. Quando falta, mostra "Falta no mês" sem alarme
+    $('#kSobraLabel').textContent = t.saldo < 0 ? 'Falta no mês' : 'Sobra do mês';
+    $('#kSobra').textContent = money(Math.abs(t.saldo));
+    $('#kSobra').classList.toggle('short', t.saldo < 0);
+    $('#kSobraSub').textContent = t.pct ? `Guardando ${money(t.investir)} (${fmtPct(t.pct)})` : t.saldo < 0 ? 'Veja ideias na Visão geral' : 'Toque em Guardar para reservar uma parte';
+    renderHeadline(t);
 
     $('#eyeBtn').innerHTML = ico(ui.hidden ? 'eye-off' : 'eye');
     document.querySelectorAll('#tabs button').forEach(b => { b.classList.toggle('active', b.dataset.tab === ui.tab); b.setAttribute('aria-selected', b.dataset.tab === ui.tab); });
@@ -1781,14 +1859,39 @@ button:focus-visible, a:focus-visible, [role="button"]:focus-visible, [tabindex]
     const endBal = days[days.length - 1].bal;
     const min = days.reduce((m, d) => d.bal < m.bal ? d : m, days[0]);
     const firstNeg = days.find(d => d.bal < 0);
-    const sgn = c => (c < 0 && !ui.hidden ? '–' : '') + money(Math.abs(c));
+    // valores abaixo de zero aparecem como "faltam R$ X", sem vermelho
+    const show = c => c < 0 ? `<span class="short">faltam ${money(-c)}</span>` : money(c);
     box.innerHTML = `<h3>Próximos 30 dias</h3><p class="ov-sub">Saldo das contas com o que ainda vai entrar e sair</p>
-      <div class="fc-stats"><div><small>Hoje</small><b class="num">${sgn(start)}</b></div><div><small>Em ${dm(days[days.length - 1].iso)}</small><b class="num" style="color:${endBal < 0 ? 'var(--red)' : 'inherit'}">${sgn(endBal)}</b></div>
-        <div><small>Menor saldo</small><b class="num" style="color:${min.bal < 0 ? 'var(--red)' : 'inherit'}">${sgn(min.bal)}</b> <small style="display:inline">em ${dm(min.iso)}</small></div></div>
-      ${firstNeg ? `<div class="fc-alert">⚠️ <span>Em <b>${dm(firstNeg.iso)}</b> o saldo fica negativo${firstNeg.events.length ? ` (${esc(firstNeg.events.filter(e => e.dir === 'out').map(e => e.label).slice(0, 2).join(', '))})` : ''}. Vale adiantar uma entrada ou adiar um gasto.</span></div>`
+      <div class="fc-stats"><div><small>Hoje</small><b class="num">${show(start)}</b></div><div><small>Em ${dm(days[days.length - 1].iso)}</small><b class="num">${show(endBal)}</b></div>
+        <div><small>Mais apertado</small><b class="num">${show(min.bal)}</b> <small style="display:inline">em ${dm(min.iso)}</small></div></div>
+      ${firstNeg ? `<div class="fc-alert warn"><span>Pra passar por <b>${dm(min.iso)}</b> sem ficar no negativo, faltam <b>${money(-min.bal)}</b>. Dá pra resolver com alguns ajustes.</span><button type="button" class="mini" id="fcIdeas">Ver ideias</button></div>`
         : `<div class="fc-alert ok">✓ <span>Seu saldo não fica negativo nos próximos 30 dias.</span></div>`}
       <div class="fc-chart" id="fcChart"></div>`;
     drawForecast(days);
+    box.querySelector('#fcIdeas')?.addEventListener('click', () => openIdeas(days, min));
+  }
+
+
+  // Ideias concretas para não ficar no negativo: adiar contas que ainda não foram pagas, gastar menos
+  // nas categorias maiores, guardar menos só neste mês.
+  function openIdeas(days, min) {
+    const need = -min.bal;
+    const outs = days.filter(d => d.iso <= min.iso).flatMap(d => d.events.map(e => ({ ...e, date: d.iso })))
+      .filter(e => e.dir === 'out' && e.ref && /^[fa]:/.test(e.ref)).sort((a, b) => b.amount - a.amount).slice(0, 3);
+    const t = totals(curKey());
+    const byCat = new Map();
+    variaveisOf(curKey()).filter(countable(curKey())).forEach(v => byCat.set(v.category, (byCat.get(v.category) || 0) + v.amount));
+    const cats = [...byCat.entries()].map(([id, v]) => ({ c: cat(id), v })).filter(x => x.c).sort((a, b) => b.v - a.v).slice(0, 3);
+    const item = (ic, title, sub) => `<div class="idea"><span class="idea-ic">${ic}</span><div><b>${title}</b><small>${sub}</small></div></div>`;
+    const list = [
+      ...outs.map(e => item('📅', `Combinar outra data para ${esc(e.label)}`, `${money(e.amount)} em ${dm(e.date)}. Passar para depois de ${dm(min.iso)} já ajuda.`)),
+      ...cats.map(x => item('✂️', `Gastar 20% menos em ${esc(x.c.name)}`, `Você gastou ${money(x.v)} este mês; 20% são ${money(Math.round(x.v * .2))}.`)),
+      ...(t.investir ? [item('🐷', 'Guardar menos só neste mês', `Você reservou ${money(t.investir)}. Pode voltar ao normal no mês que vem.`)] : []),
+      item('💬', 'Antecipar uma entrada', 'Algum valor a receber, uma venda ou um bico antes dessa data.'),
+    ];
+    openModal(`${modalHead('Ideias para fechar no azul', `Faltam ${money(need)} até ${dm(min.iso)}. Não precisa fazer tudo: escolha o que for mais fácil.`)}
+      <div class="ideas">${list.join('')}</div>
+      <div class="actions"><span class="grow"></span><button class="btn save" data-close>Entendi</button></div>`);
   }
 
   function drawForecast(days) {
@@ -1803,13 +1906,14 @@ button:focus-visible, a:focus-visible, [role="button"]:focus-visible, [tabindex]
     const pts = days.map((d, i) => `${x(i).toFixed(1)},${y(d.bal).toFixed(1)}`);
     const ticks = []; for (let t = lo; t <= hi + 1; t += step) ticks.push(t);
     const neg = vals.some(v => v < 0);
-    const color = neg ? 'var(--red)' : 'var(--green)';
+    const color = 'var(--accent)';
     const xl = [0, 10, 20, 30].map(i => `<text class="xl" x="${x(i)}" y="${H - 5}" text-anchor="${i === 0 ? 'start' : i === 30 ? 'end' : 'middle'}">${i === 0 ? 'hoje' : dm(days[i].iso)}</text>`).join('');
     // pontos dos dias com movimento (≥ 8px, anel na cor do fundo)
-    const marks = days.map((d, i) => d.events.length ? `<circle cx="${x(i)}" cy="${y(d.bal)}" r="3.5" fill="${d.bal < 0 ? 'var(--red)' : color}" stroke="var(--card)" stroke-width="2"/>` : '').join('');
+    const marks = days.map((d, i) => d.events.length ? `<circle cx="${x(i)}" cy="${y(d.bal)}" r="3.5" fill="${d.bal < 0 ? 'var(--amber)' : color}" stroke="var(--card)" stroke-width="2"/>` : '').join('');
     wrap.innerHTML = `<svg viewBox="0 0 ${W} ${H}" height="${H}" role="img" aria-label="Previsão do saldo nos próximos 30 dias">
       ${ticks.map(t => `<line class="${t === 0 ? 'zero' : 'grid-line'}" x1="${padL}" x2="${W}" y1="${y(t)}" y2="${y(t)}"/><text class="tick" x="${padL - 8}" y="${y(t) + 3.5}" text-anchor="end">${ui.hidden ? '•' : (t < 0 ? '–' : '') + compact(Math.abs(t))}</text>`).join('')}
-      <path d="M${pts[0]} L${pts.join(' L')} L${x(days.length - 1)},${y(Math.max(lo, 0))} L${x(0)},${y(Math.max(lo, 0))} Z" fill="${color}" opacity=".1"/>
+      ${neg ? `<rect x="${padL}" y="${y(0)}" width="${plotW}" height="${Math.max(y(lo) - y(0), 0)}" fill="var(--amber)" opacity=".07"/>` : ''}
+      <path d="M${pts[0]} L${pts.join(' L')} L${x(days.length - 1)},${y(Math.max(lo, 0))} L${x(0)},${y(Math.max(lo, 0))} Z" fill="${color}" opacity=".08"/>
       <polyline points="${pts.join(' ')}" fill="none" stroke="${color}" stroke-width="2" stroke-linejoin="round" stroke-linecap="round"/>
       ${marks}${xl}
       <line class="cross" id="fcCross" x1="0" x2="0" y1="${padT}" y2="${padT + plotH}"/>
@@ -1821,7 +1925,7 @@ button:focus-visible, a:focus-visible, [role="button"]:focus-visible, [tabindex]
       const d = days[i], k = wrap.clientWidth / W;
       cross.setAttribute('x1', x(i)); cross.setAttribute('x2', x(i)); cross.style.opacity = .6;
       dot.setAttribute('cx', x(i)); dot.setAttribute('cy', y(d.bal)); dot.style.opacity = 1;
-      tip.innerHTML = `<div class="tt">${new Date(d.iso + 'T12:00:00').toLocaleDateString('pt-BR', { weekday: 'short', day: '2-digit', month: '2-digit' })} · <span class="num" style="color:${d.bal < 0 ? 'var(--red)' : 'inherit'}">${(d.bal < 0 && !ui.hidden ? '–' : '') + money(Math.abs(d.bal))}</span></div>`
+      tip.innerHTML = `<div class="tt">${new Date(d.iso + 'T12:00:00').toLocaleDateString('pt-BR', { weekday: 'short', day: '2-digit', month: '2-digit' })} · <span class="num" style="color:${d.bal < 0 ? 'var(--amber)' : 'inherit'}">${(d.bal < 0 && !ui.hidden ? '–' : '') + money(Math.abs(d.bal))}</span></div>`
         + (d.events.length ? d.events.map(e => `<div class="ev"><span>${esc(e.label)}</span><b style="color:${e.dir === 'in' ? 'var(--green)' : 'inherit'}">${e.dir === 'in' ? '+' : '–'}${money(e.amount)}</b></div>`).join('') : '<div class="ev"><span>Sem movimentos</span></div>');
       tip.style.display = 'block';
       const px = x(i) * k, tw = tip.offsetWidth;
@@ -1853,12 +1957,12 @@ button:focus-visible, a:focus-visible, [role="button"]:focus-visible, [tabindex]
       const iso = `${key}-${pad(d)}`, list = byDay[iso] || [];
       const hasIn = list.some(e => e.dir === 'in'), hasOut = list.some(e => e.dir === 'out');
       cells.push(`<button type="button" data-day="${iso}" class="${iso === todayIso ? 'today' : ''} ${iso === calSel ? 'sel' : ''}" aria-label="${d}: ${list.length} movimentos">${d}
-        <span class="dots">${hasIn ? '<i style="background:var(--green)"></i>' : ''}${hasOut ? '<i style="background:var(--red)"></i>' : ''}</span></button>`);
+        <span class="dots">${hasIn ? '<i style="background:var(--green)"></i>' : ''}${hasOut ? '<i style="background:var(--out)"></i>' : ''}</span></button>`);
     }
     const sel = (byDay[calSel] || []).sort((a, b) => (a.dir === 'in' ? -1 : 1) - (b.dir === 'in' ? -1 : 1));
     box.innerHTML = `<h3>Calendário</h3><p class="ov-sub">O que entra e sai em ${monthName(key)}</p>
       <div class="cal">${['D', 'S', 'T', 'Q', 'Q', 'S', 'S'].map(w => `<span class="wd">${w}</span>`).join('')}${cells.join('')}</div>
-      <div class="cal-legend"><span><i style="background:var(--green)"></i>Entrada</span><span><i style="background:var(--red)"></i>Saída</span></div>
+      <div class="cal-legend"><span><i style="background:var(--green)"></i>Entrada</span><span><i style="background:var(--out)"></i>Saída</span></div>
       <div class="cal-list"><div style="font-size:.78rem;font-weight:700">${new Date(calSel + 'T12:00:00').toLocaleDateString('pt-BR', { weekday: 'long', day: '2-digit', month: 'long' })}</div>
         ${sel.length ? sel.map(e => `<div class="ev" ${e.ref ? `data-open="${esc(e.ref)}" role="button" tabindex="0" title="Abrir"` : ''}>${e.logo || `<span class="ic">${e.icon}</span>`}<span>${esc(e.label)}${e.done ? ' <small style="color:var(--muted)">✓</small>' : ''}</span><span class="v ${e.dir === 'in' ? 'in' : ''}">${e.dir === 'in' ? '+' : '–'}${money(e.amount)}</span></div>`).join('')
           : '<div class="ov-empty" style="padding:6px 0;text-align:left">Nada neste dia.</div>'}</div>`;
@@ -1958,7 +2062,7 @@ button:focus-visible, a:focus-visible, [role="button"]:focus-visible, [tabindex]
     box.innerHTML = `<div class="evo-head"><h2>Evolução</h2>
       <div class="evo-ctl"><div class="pills" id="evoRange">${[6, 12].map(x => `<button type="button" data-n="${x}" class="${x === n ? 'on' : ''}">${x} meses</button>`).join('')}</div>
         <button class="btn-soft" id="evoTableBtn" type="button">${table ? 'Ver gráfico' : 'Ver tabela'}</button></div></div>
-      <div class="evo-body"><div>${table ? evoTable(data) : `<div class="evo-legend"><span><i style="background:var(--green)"></i>Receita</span><span><i style="background:var(--red)"></i>Despesas</span></div><div class="evo-chart" id="evoChart"></div>`}</div>
+      <div class="evo-body"><div>${table ? evoTable(data) : `<div class="evo-legend"><span><i style="background:var(--green)"></i>Receita</span><span><i style="background:var(--out)"></i>Despesas</span></div><div class="evo-chart" id="evoChart"></div>`}</div>
         <div class="insights">${insights()}</div></div>`;
     if (!table) drawEvoChart(data);
     box.querySelector('#evoRange').onclick = e => { const b = e.target.closest('[data-n]'); if (b) { ui.evoRange = +b.dataset.n; saveUi(); renderEvo(); } };
@@ -1998,7 +2102,7 @@ button:focus-visible, a:focus-visible, [role="button"]:focus-visible, [tabindex]
         const cx = padL + slot * i + slot / 2, x1 = cx - bw - 1, x2 = cx + 1;   // 2px entre as colunas
         return `<g class="m" tabindex="0" data-i="${i}" aria-label="${monthLabel(d.k)}: receita ${brl.format(d.receita / 100)}, despesas ${brl.format(d.despesas / 100)}">
           <rect class="band" x="${padL + slot * i + 2}" y="${padT}" width="${slot - 4}" height="${plotH}" rx="6"/>
-          ${bar(x1, d.receita, 'var(--green)')}${bar(x2, d.despesas, 'var(--red)')}
+          ${bar(x1, d.receita, 'var(--green)')}${bar(x2, d.despesas, 'var(--out)')}
           <text class="xl ${d.k === view.month ? 'cur' : ''}" x="${cx}" y="${H - 8}" text-anchor="middle">${shortMonth(d.k)}</text>
           <rect class="hit" x="${padL + slot * i}" y="0" width="${slot}" height="${H}"/></g>`;
       }).join('')}</svg><div class="evo-tip" id="evoTip"></div>`;
@@ -2008,7 +2112,7 @@ button:focus-visible, a:focus-visible, [role="button"]:focus-visible, [tabindex]
       const d = data[+g.dataset.i];
       tip.innerHTML = `<div class="tt">${monthLabel(d.k)}</div>
         <div class="r"><span><i style="background:var(--green)"></i>Receita</span><b>${money(d.receita)}</b></div>
-        <div class="r"><span><i style="background:var(--red)"></i>Despesas</span><b>${money(d.despesas)}</b></div>
+        <div class="r"><span><i style="background:var(--out)"></i>Despesas</span><b>${money(d.despesas)}</b></div>
         <div class="r"><span>Sobra</span><b style="color:${d.saldo < 0 ? 'var(--red)' : 'inherit'}">${d.saldo < 0 && !ui.hidden ? '–' : ''}${money(Math.abs(d.saldo))}</b></div>`;
       // abre ao lado da coluna (à esquerda se couber, senão à direita), sem cobrir o mês que você está olhando
       const i = +g.dataset.i, k = wrap.clientWidth / W, slotL = (padL + slot * i) * k, slotR = slotL + slot * k;
@@ -2549,7 +2653,7 @@ button:focus-visible, a:focus-visible, [role="button"]:focus-visible, [tabindex]
       const avail = c.limit ? c.limit - cardUsed(c) : 0;
       const limit = c.limit ? ` · disponível <b style="color:${avail < c.limit * 0.1 ? 'var(--red)' : 'inherit'}">${money(Math.max(avail, 0))}</b> de ${money(c.limit)}` : '';
       const prev = !f ? faturaPreview(c.id, c.fk) : 0;
-      return `<div class="row">
+      return `<div class="row top">
         <span class="date">${logoHtml({ brand: c.bank, name: c.name, color: c.color })}</span>
         <div class="name"><span>${esc(c.name)}${c.count === false ? `<small>fora das despesas</small>` : ''}</span>
           <div class="card-sub">${flagHtml(c.flag)}${c.last4 ? `•••• ${esc(c.last4)} · ` : ''}${c.fk !== view.month ? `fatura de ${monthName(c.fk)} · ` : ''}fecha ${dm(c.dates.close)} · vence ${dm(c.dates.due)}${limit}</div>
@@ -3630,7 +3734,9 @@ button:focus-visible, a:focus-visible, [role="button"]:focus-visible, [tabindex]
   // ---------- Menu ----------
   function openMenu() {
     openModal(`${modalHead('Configurações', 'Seus dados ficam salvos só neste navegador.')}
-      <p class="fl" style="margin-top:4px">Fonte</p>
+      <label class="fl" for="mName" style="margin-top:4px">Como podemos te chamar?</label>
+      <input class="input" id="mName" maxlength="20" placeholder="Seu primeiro nome" value="${esc(ui.name || '')}" autocomplete="given-name" />
+      <p class="fl">Fonte</p>
       <div class="font-pick" id="mFonts">${FONTS.map(f => `<button type="button" data-font="${f}" style="font-family:'${f}'" class="${f === ui.font ? 'on' : ''}"><span>Aa</span>${f}</button>`).join('')}</div>
       <p class="fl">App</p>
       <button class="menu-item" id="mInstall">📲 Instalar como app</button>
@@ -3651,6 +3757,7 @@ button:focus-visible, a:focus-visible, [role="button"]:focus-visible, [tabindex]
         applyFont(b.dataset.font, true);
         m.querySelectorAll('#mFonts button').forEach(x => x.classList.toggle('on', x === b));
       };
+      m.querySelector('#mName').addEventListener('input', e => { ui.name = e.target.value.trim().slice(0, 20); saveUi(); render(); });
       m.querySelector('#mInstall').onclick = () => installApp();
       m.querySelector('#mSync').onclick = () => openSync();
       m.querySelector('#mLock').onclick = () => openLockSettings();
