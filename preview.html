@@ -604,6 +604,25 @@ html.locked .lock { place-items: normal; overflow-y: auto; }
 .imp-row { content-visibility: auto; contain-intrinsic-size: auto 49px; }
 @media (max-width: 640px) { .imp-row { contain-intrinsic-size: auto 84px; } }
 .imp-row.off { opacity: .45; }
+/* Ícone de cada lançamento */
+.row .name.has-ic { display: flex; align-items: center; gap: 12px; overflow: visible; }
+.row .name .nm { min-width: 0; flex: 1; overflow: hidden; text-overflow: ellipsis; }
+.row .name .nm > span { display: -webkit-box; -webkit-box-orient: vertical; -webkit-line-clamp: 2; line-clamp: 2; overflow: hidden; white-space: normal; overflow-wrap: anywhere; }
+.tx-ic { width: 34px; height: 34px; border-radius: 11px; flex: none; display: grid; place-items: center; color: var(--tc); background: color-mix(in srgb, var(--tc) 13%, transparent); }
+:root[data-theme="dark"] .tx-ic { background: color-mix(in srgb, var(--tc) 18%, transparent); color: color-mix(in srgb, var(--tc) 80%, #fff); }
+.tx-ic svg.i { width: 17px; height: 17px; stroke-width: 1.8; }
+.row .name > .tx-ic, .row .name > .tx-logo { display: grid; place-items: center; overflow: visible; -webkit-line-clamp: none; }
+.tx-logo .logo { width: 34px; height: 34px; border-radius: 11px; }
+@media (max-width: 640px) { .row .name .via .flag { display: none; } }
+@media (max-width: 640px) { .tx-ic, .tx-logo .logo { width: 30px; height: 30px; border-radius: 10px; } .tx-ic svg.i { width: 15px; height: 15px; } .row .name.has-ic { gap: 10px; } }
+.ic-btn { width: 36px; height: 36px; border: 0; padding: 0; background: none; border-radius: 11px; flex: none; display: grid; place-items: center; }
+.ic-btn .tx-ic { width: 36px; height: 36px; }
+.ic-grid { grid-column: 1 / -1; display: grid; grid-template-columns: repeat(auto-fill, minmax(38px, 1fr)); gap: 6px; padding: 8px; margin-top: 2px; background: var(--field); border-radius: 12px; }
+.ic-grid button { height: 38px; border: 0; border-radius: 10px; background: none; color: var(--ink-2); display: grid; place-items: center; }
+.ic-grid button:hover { background: var(--card); }
+.ic-grid button.on { background: var(--card); color: var(--accent); box-shadow: inset 0 0 0 1.5px var(--accent); }
+.ic-grid svg.i { width: 18px; height: 18px; stroke-width: 1.8; }
+
 /* ===== Estética: sóbria, com textura leve e títulos em dois tons ===== */
 body::before { content: ""; position: fixed; inset: 0; z-index: 0; pointer-events: none; opacity: var(--grain);
   background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='180' height='180'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 .5 0 0 0 0 .5 0 0 0 0 .5 0 0 0 1 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E"); }
@@ -790,7 +809,9 @@ body::before { content: ""; position: fixed; inset: 0; z-index: 0; pointer-event
 .hint { text-align: center; font-size: .74rem; color: var(--muted); margin-top: 4px; }
 
 /* Categorias */
-.cat-edit { display: flex; align-items: center; gap: 8px; margin-top: 8px; }
+.cat-edit { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; margin-top: 8px; }
+.cat-edit .input { flex: 1; min-width: 0; }
+.cat-edit .ic-grid { flex-basis: 100%; }
 .cat-edit .swatch { width: 34px; height: 34px; border-radius: 10px; border: 0; padding: 0; overflow: hidden; flex: none; cursor: pointer; }
 .cat-edit .swatch input { width: 60px; height: 60px; margin: -12px; border: 0; cursor: pointer; }
 .cat-edit .input { padding: 8px 11px; }
@@ -936,6 +957,50 @@ button:focus-visible, a:focus-visible, [role="button"]:focus-visible, [tabindex]
     <symbol id="i-back" viewBox="0 0 24 24"><path d="M21 4H8l-7 8 7 8h13a2 2 0 0 0 2-2V6a2 2 0 0 0-2-2Z"/><path d="m18 9-6 6M12 9l6 6"/></symbol>
     <symbol id="i-check" viewBox="0 0 24 24"><path d="M20 6 9 17l-5-5"/></symbol>
     <symbol id="i-spark" viewBox="0 0 24 24"><path d="M12 3l1.8 5.2L19 10l-5.2 1.8L12 17l-1.8-5.2L5 10l5.2-1.8z"/><path d="M19 15l.8 2.2L22 18l-2.2.8L19 21l-.8-2.2L16 18l2.2-.8z"/></symbol>
+    <symbol id="c-shopping-cart" viewBox="0 0 24 24"><path d="m2.05 2.05 1.099-.028a1 1 0 0 1 1.008.815l2.69 14.347A1 1 0 0 0 7.83 18H18"/><path d="M4.563 5h16.435a1 1 0 0 1 .981 1.204l-1.026 6.226A2 2 0 0 1 18.962 14H6.25"/><circle cx="18" cy="20" r="2"/><circle cx="8" cy="20" r="2"/></symbol>
+    <symbol id="c-utensils" viewBox="0 0 24 24"><path d="M3 2v7c0 1.1.9 2 2 2h4a2 2 0 0 0 2-2V2"/><path d="M7 2v20"/><path d="M21 15V2a5 5 0 0 0-5 5v6c0 1.1.9 2 2 2h3Zm0 0v7"/></symbol>
+    <symbol id="c-coffee" viewBox="0 0 24 24"><path d="M10 2v2"/><path d="M14 2v2"/><path d="M16 8a1 1 0 0 1 1 1v8a4 4 0 0 1-4 4H7a4 4 0 0 1-4-4V9a1 1 0 0 1 1-1h14a4 4 0 1 1 0 8h-1"/><path d="M6 2v2"/></symbol>
+    <symbol id="c-car" viewBox="0 0 24 24"><path d="M19 17h2c.6 0 1-.4 1-1v-3c0-.9-.7-1.7-1.5-1.9C18.7 10.6 16 10 16 10s-1.3-1.4-2.2-2.3c-.5-.4-1.1-.7-1.8-.7H5c-.6 0-1.1.4-1.4.9l-1.4 2.9A3.7 3.7 0 0 0 2 12v4c0 .6.4 1 1 1h2"/><circle cx="7" cy="17" r="2"/><path d="M9 17h6"/><circle cx="17" cy="17" r="2"/></symbol>
+    <symbol id="c-fuel" viewBox="0 0 24 24"><path d="M14 13h2a2 2 0 0 1 2 2v2a2 2 0 0 0 4 0v-6.998a2 2 0 0 0-.59-1.42L18 5"/><path d="M14 21V5a2 2 0 0 0-2-2H5a2 2 0 0 0-2 2v16"/><path d="M2 21h13"/><path d="M3 9h11"/></symbol>
+    <symbol id="c-bus" viewBox="0 0 24 24"><path d="M8 6v6"/><path d="M15 6v6"/><path d="M2 12h19.6"/><path d="M18 18h3s.5-1.7.8-2.8c.1-.4.2-.8.2-1.2 0-.4-.1-.8-.2-1.2l-1.4-5C20.1 6.8 19.1 6 18 6H4a2 2 0 0 0-2 2v10h3"/><circle cx="7" cy="18" r="2"/><path d="M9 18h5"/><circle cx="16" cy="18" r="2"/></symbol>
+    <symbol id="c-train-front" viewBox="0 0 24 24"><path d="M8 3.1V7a4 4 0 0 0 8 0V3.1"/><path d="m9 15-1-1"/><path d="m15 15 1-1"/><path d="M9 19c-2.8 0-5-2.2-5-5v-4a8 8 0 0 1 16 0v4c0 2.8-2.2 5-5 5Z"/><path d="m8 19-2 3"/><path d="m16 19 2 3"/></symbol>
+    <symbol id="c-bike" viewBox="0 0 24 24"><circle cx="18.5" cy="17.5" r="3.5"/><circle cx="5.5" cy="17.5" r="3.5"/><circle cx="15" cy="5" r="1"/><path d="M12 17.5V14l-3-3 4-3 2 3h2"/></symbol>
+    <symbol id="c-plane" viewBox="0 0 24 24"><path d="M17.8 19.2 16 11l3.5-3.5C21 6 21.5 4 21 3c-1-.5-3 0-4.5 1.5L13 8 4.8 6.2c-.5-.1-.9.1-1.1.5l-.3.5c-.2.5-.1 1 .3 1.3L9 12l-2 3H4l-1 1 3 2 2 3 1-1v-3l3-2 3.5 5.3c.3.4.8.5 1.3.3l.5-.2c.4-.3.6-.7.5-1.2z"/></symbol>
+    <symbol id="c-heart-pulse" viewBox="0 0 24 24"><path d="M2 9.5a5.5 5.5 0 0 1 9.591-3.676.56.56 0 0 0 .818 0A5.49 5.49 0 0 1 22 9.5c0 2.29-1.5 4-3 5.5l-5.492 5.313a2 2 0 0 1-3 .019L5 15c-1.5-1.5-3-3.2-3-5.5"/><path d="M3.22 13H9.5l.5-1 2 4.5 2-7 1.5 3.5h5.27"/></symbol>
+    <symbol id="c-pill" viewBox="0 0 24 24"><path d="m10.5 20.5 10-10a4.95 4.95 0 1 0-7-7l-10 10a4.95 4.95 0 1 0 7 7Z"/><path d="m8.5 8.5 7 7"/></symbol>
+    <symbol id="c-receipt" viewBox="0 0 24 24"><path d="M12 17V7"/><path d="M16 8h-6a2 2 0 0 0 0 4h4a2 2 0 0 1 0 4H8"/><path d="M4 3a1 1 0 0 1 1-1 1.3 1.3 0 0 1 .7.2l.933.6a1.3 1.3 0 0 0 1.4 0l.934-.6a1.3 1.3 0 0 1 1.4 0l.933.6a1.3 1.3 0 0 0 1.4 0l.933-.6a1.3 1.3 0 0 1 1.4 0l.934.6a1.3 1.3 0 0 0 1.4 0l.933-.6A1.3 1.3 0 0 1 19 2a1 1 0 0 1 1 1v18a1 1 0 0 1-1 1 1.3 1.3 0 0 1-.7-.2l-.933-.6a1.3 1.3 0 0 0-1.4 0l-.934.6a1.3 1.3 0 0 1-1.4 0l-.933-.6a1.3 1.3 0 0 0-1.4 0l-.933.6a1.3 1.3 0 0 1-1.4 0l-.934-.6a1.3 1.3 0 0 0-1.4 0l-.933.6a1.3 1.3 0 0 1-.7.2 1 1 0 0 1-1-1z"/></symbol>
+    <symbol id="c-zap" viewBox="0 0 24 24"><path d="M15.914 4a1.5 1.5 0 00-2.474-1.561l-9 9A1.5 1.5 0 005.5 14h4.002a.5.5 0 01.471.666L8.086 20a1.5 1.5 0 002.475 1.56l9-9A1.5 1.5 0 0018.5 10h-3.997a.5.5 0 01-.472-.667z"/></symbol>
+    <symbol id="c-droplets" viewBox="0 0 24 24"><path d="M7 16.3c2.2 0 4-1.83 4-4.05 0-1.16-.57-2.26-1.71-3.19S7.29 6.75 7 5.3c-.29 1.45-1.14 2.84-2.29 3.76S3 11.1 3 12.25c0 2.22 1.8 4.05 4 4.05z"/><path d="M12.56 6.6A10.97 10.97 0 0 0 14 3.02c.5 2.5 2 4.9 4 6.5s3 3.5 3 5.5a6.98 6.98 0 0 1-11.91 4.97"/></symbol>
+    <symbol id="c-flame" viewBox="0 0 24 24"><path d="M12 3q1 4 4 6.5t3 5.5a1 1 0 0 1-14 0 5 5 0 0 1 1-3 1 1 0 0 0 5 0c0-2-1.5-3-1.5-5q0-2 2.5-4"/></symbol>
+    <symbol id="c-wifi" viewBox="0 0 24 24"><path d="M12 20h.01"/><path d="M2 8.82a15 15 0 0 1 20 0"/><path d="M5 12.859a10 10 0 0 1 14 0"/><path d="M8.5 16.429a5 5 0 0 1 7 0"/></symbol>
+    <symbol id="c-smartphone" viewBox="0 0 24 24"><rect width="14" height="20" x="5" y="2" rx="2" ry="2"/><path d="M12 18h.01"/></symbol>
+    <symbol id="c-house" viewBox="0 0 24 24"><path d="M15 21v-8a1 1 0 0 0-1-1h-4a1 1 0 0 0-1 1v8"/><path d="M3 10a2 2 0 0 1 .709-1.528l7-6a2 2 0 0 1 2.582 0l7 6A2 2 0 0 1 21 10v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/></symbol>
+    <symbol id="c-landmark" viewBox="0 0 24 24"><path d="M10 18v-7"/><path d="M11.119 2.205a2 2 0 0 1 1.762 0l7.84 3.846A.5.5 0 0 1 20.5 7h-17a.5.5 0 0 1-.22-.949z"/><path d="M14 18v-7"/><path d="M18 18v-7"/><path d="M3 22h18"/><path d="M6 18v-7"/></symbol>
+    <symbol id="c-hammer" viewBox="0 0 24 24"><path d="m15 12-9.373 9.373a1 1 0 0 1-3.001-3L12 9"/><path d="m18 15 4-4"/><path d="m21.5 11.5-1.914-1.914A2 2 0 0 1 19 8.172v-.344a2 2 0 0 0-.586-1.414l-1.657-1.657A6 6 0 0 0 12.516 3H9l1.243 1.243A6 6 0 0 1 12 8.485V10l2 2h1.172a2 2 0 0 1 1.414.586L18.5 14.5"/></symbol>
+    <symbol id="c-wrench" viewBox="0 0 24 24"><path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.106-3.105c.32-.322.863-.22.983.218a6 6 0 0 1-8.259 7.057l-7.91 7.91a1 1 0 0 1-2.999-3l7.91-7.91a6 6 0 0 1 7.057-8.259c.438.12.54.662.219.984z"/></symbol>
+    <symbol id="c-popcorn" viewBox="0 0 24 24"><path d="M18 8a2 2 0 0 0 0-4 2 2 0 0 0-4 0 2 2 0 0 0-4 0 2 2 0 0 0-4 0 2 2 0 0 0 0 4"/><path d="M10 22 9 8"/><path d="m14 22 1-14"/><path d="M20 8c.5 0 .9.4.8 1l-2.6 12c-.1.5-.7 1-1.2 1H7c-.6 0-1.1-.4-1.2-1L3.2 9c-.1-.6.3-1 .8-1Z"/></symbol>
+    <symbol id="c-film" viewBox="0 0 24 24"><rect width="18" height="18" x="3" y="3" rx="2"/><path d="M7 3v18"/><path d="M3 7.5h4"/><path d="M3 12h18"/><path d="M3 16.5h4"/><path d="M17 3v18"/><path d="M17 7.5h4"/><path d="M17 16.5h4"/></symbol>
+    <symbol id="c-ticket" viewBox="0 0 24 24"><path d="M2 9a3 3 0 0 1 0 6v2a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2v-2a3 3 0 0 1 0-6V7a2 2 0 0 0-2-2H4a2 2 0 0 0-2 2Z"/><path d="M13 5v2"/><path d="M13 17v2"/><path d="M13 11v2"/></symbol>
+    <symbol id="c-music" viewBox="0 0 24 24"><path d="M9 18V5l12-2v13"/><circle cx="6" cy="18" r="3"/><circle cx="18" cy="16" r="3"/></symbol>
+    <symbol id="c-tv" viewBox="0 0 24 24"><path d="m17 2-5 5-5-5"/><rect width="20" height="15" x="2" y="7" rx="2"/></symbol>
+    <symbol id="c-gamepad-2" viewBox="0 0 24 24"><line x1="6" x2="10" y1="11" y2="11"/><line x1="8" x2="8" y1="9" y2="13"/><line x1="15" x2="15.01" y1="12" y2="12"/><line x1="18" x2="18.01" y1="10" y2="10"/><path d="M17.32 5H6.68a4 4 0 0 0-3.978 3.59c-.006.052-.01.101-.017.152C2.604 9.416 2 14.456 2 16a3 3 0 0 0 3 3c1 0 1.5-.5 2-1l1.414-1.414A2 2 0 0 1 9.828 16h4.344a2 2 0 0 1 1.414.586L17 18c.5.5 1 1 2 1a3 3 0 0 0 3-3c0-1.545-.604-6.584-.685-7.258-.007-.05-.011-.1-.017-.151A4 4 0 0 0 17.32 5z"/></symbol>
+    <symbol id="c-shopping-bag" viewBox="0 0 24 24"><path d="M16 10a4 4 0 0 1-8 0"/><path d="M3.103 6.034h17.794"/><path d="M3.4 5.467a2 2 0 0 0-.4 1.2V20a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6.667a2 2 0 0 0-.4-1.2l-2-2.667A2 2 0 0 0 17 2H7a2 2 0 0 0-1.6.8z"/></symbol>
+    <symbol id="c-shirt" viewBox="0 0 24 24"><path d="M20.38 3.46 16 2a4 4 0 0 1-8 0L3.62 3.46a2 2 0 0 0-1.34 2.23l.58 3.47a1 1 0 0 0 .99.84H6v10c0 1.1.9 2 2 2h8a2 2 0 0 0 2-2V10h2.15a1 1 0 0 0 .99-.84l.58-3.47a2 2 0 0 0-1.34-2.23z"/></symbol>
+    <symbol id="c-scissors" viewBox="0 0 24 24"><circle cx="6" cy="6" r="3"/><path d="M8.12 8.12 12 12"/><path d="M20 4 8.12 15.88"/><circle cx="6" cy="18" r="3"/><path d="M14.8 14.8 20 20"/></symbol>
+    <symbol id="c-gift" viewBox="0 0 24 24"><path d="M12 7v14"/><path d="M20 11v8a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2v-8"/><path d="M7.5 7a1 1 0 0 1 0-5A4.8 8 0 0 1 12 7a4.8 8 0 0 1 4.5-5 1 1 0 0 1 0 5"/><rect x="3" y="7" width="18" height="4" rx="1"/></symbol>
+    <symbol id="c-dumbbell" viewBox="0 0 24 24"><path d="M17.596 12.768a2 2 0 1 0 2.829-2.829l-1.768-1.767a2 2 0 0 0 2.828-2.829l-2.828-2.828a2 2 0 0 0-2.829 2.828l-1.767-1.768a2 2 0 1 0-2.829 2.829z"/><path d="m2.5 21.5 1.4-1.4"/><path d="m20.1 3.9 1.4-1.4"/><path d="M5.343 21.485a2 2 0 1 0 2.829-2.828l1.767 1.768a2 2 0 1 0 2.829-2.829l-6.364-6.364a2 2 0 1 0-2.829 2.829l1.768 1.767a2 2 0 0 0-2.828 2.829z"/><path d="m9.6 14.4 4.8-4.8"/></symbol>
+    <symbol id="c-paw-print" viewBox="0 0 24 24"><circle cx="11" cy="4" r="2"/><circle cx="18" cy="8" r="2"/><circle cx="20" cy="16" r="2"/><path d="M9 10a5 5 0 0 1 5 5v3.5a3.5 3.5 0 0 1-6.84 1.045Q6.52 17.48 4.46 16.84A3.5 3.5 0 0 1 5.5 10Z"/></symbol>
+    <symbol id="c-baby" viewBox="0 0 24 24"><path d="M10 16c.5.3 1.2.5 2 .5s1.5-.2 2-.5"/><path d="M15 12h.01"/><path d="M19.38 6.813A9 9 0 0 1 20.8 10.2a2 2 0 0 1 0 3.6 9 9 0 0 1-17.6 0 2 2 0 0 1 0-3.6A9 9 0 0 1 12 3c2 0 3.5 1.1 3.5 2.5s-.9 2.5-2 2.5c-.8 0-1.5-.4-1.5-1"/><path d="M9 12h.01"/></symbol>
+    <symbol id="c-graduation-cap" viewBox="0 0 24 24"><path d="M21.42 10.922a1 1 0 0 0-.019-1.838L12.83 5.18a2 2 0 0 0-1.66 0L2.6 9.08a1 1 0 0 0 0 1.832l8.57 3.908a2 2 0 0 0 1.66 0z"/><path d="M22 10v6"/><path d="M6 12.5V16a6 3 0 0 0 12 0v-3.5"/></symbol>
+    <symbol id="c-book-open" viewBox="0 0 24 24"><path d="M12 5v16"/><path d="M20.001 19A2 2 0 0022 17V5a2 2 0 00-1.999-2L16 3.002A5 5 0 0012 5a5 5 0 00-4-2H4a2 2 0 00-2 2v12a2 2 0 001.999 2H8a5 5 0 014 2 5 5 0 014-2z"/></symbol>
+    <symbol id="c-briefcase" viewBox="0 0 24 24"><path d="M16 20V4a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"/><rect width="20" height="14" x="2" y="6" rx="2"/></symbol>
+    <symbol id="c-sparkles" viewBox="0 0 24 24"><path d="M11.017 2.814a1 1 0 0 1 1.966 0l1.051 5.558a2 2 0 0 0 1.594 1.594l5.558 1.051a1 1 0 0 1 0 1.966l-5.558 1.051a2 2 0 0 0-1.594 1.594l-1.051 5.558a1 1 0 0 1-1.966 0l-1.051-5.558a2 2 0 0 0-1.594-1.594l-5.558-1.051a1 1 0 0 1 0-1.966l5.558-1.051a2 2 0 0 0 1.594-1.594z"/><path d="M20 2v4"/><path d="M22 4h-4"/><circle cx="4" cy="20" r="2"/></symbol>
+    <symbol id="c-trending-up" viewBox="0 0 24 24"><path d="M16 7h6v6"/><path d="m22 7-8.5 8.5-5-5L2 17"/></symbol>
+    <symbol id="c-piggy-bank" viewBox="0 0 24 24"><path d="M11 17h3v2a1 1 0 0 0 1 1h2a1 1 0 0 0 1-1v-3a3.16 3.16 0 0 0 2-2h1a1 1 0 0 0 1-1v-2a1 1 0 0 0-1-1h-1a5 5 0 0 0-2-4V3a4 4 0 0 0-3.2 1.6l-.3.4H11a6 6 0 0 0-6 6v1a5 5 0 0 0 2 4v3a1 1 0 0 0 1 1h2a1 1 0 0 0 1-1z"/><path d="M16 10h.01"/><path d="M2 8v1a2 2 0 0 0 2 2h1"/></symbol>
+    <symbol id="c-hand-coins" viewBox="0 0 24 24"><path d="M11 15h2a2 2 0 1 0 0-4h-3c-.6 0-1.1.2-1.4.6L3 17"/><path d="m7 21 1.6-1.4c.3-.4.8-.6 1.4-.6h4c1.1 0 2.1-.4 2.8-1.2l4.6-4.4a2 2 0 0 0-2.75-2.91l-4.2 3.9"/><path d="m2 16 6 6"/><circle cx="16" cy="9" r="2.9"/><circle cx="6" cy="5" r="3"/></symbol>
+    <symbol id="c-circle-dollar-sign" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M16 8h-6a2 2 0 1 0 0 4h4a2 2 0 1 1 0 4H8"/><path d="M12 18V6"/></symbol>
+    <symbol id="c-badge-percent" viewBox="0 0 24 24"><path d="M3.85 8.62a4 4 0 0 1 4.78-4.77 4 4 0 0 1 6.74 0 4 4 0 0 1 4.78 4.78 4 4 0 0 1 0 6.74 4 4 0 0 1-4.77 4.78 4 4 0 0 1-6.75 0 4 4 0 0 1-4.78-4.77 4 4 0 0 1 0-6.76Z"/><path d="m15 9-6 6"/><path d="M9 9h.01"/><path d="M15 15h.01"/></symbol>
+    <symbol id="c-tag" viewBox="0 0 24 24"><path d="M12.586 2.586A2 2 0 0 0 11.172 2H4a2 2 0 0 0-2 2v7.172a2 2 0 0 0 .586 1.414l8.704 8.704a2.426 2.426 0 0 0 3.42 0l6.58-6.58a2.426 2.426 0 0 0 0-3.42z"/><circle cx="7.5" cy="7.5" r=".5" fill="currentColor"/></symbol>
     <symbol id="i-sort" viewBox="0 0 24 24"><path d="m7 15 5 5 5-5M7 9l5-5 5 5"/></symbol>
   </svg>
 
@@ -1247,6 +1312,38 @@ button:focus-visible, a:focus-visible, [role="button"]:focus-visible, [tabindex]
 
   const cat = id => state.categories.find(c => c.id === id);
   const catsOf = kind => state.categories.filter(c => c.kind === kind);
+
+  // ================= Ícones das transações =================
+  // Desenhos do Lucide (ISC). Cada categoria tem um ícone (escolhido ou deduzido pelo nome);
+  // contas fixas deduzem pelo nome; marcas conhecidas (iFood, Netflix…) mostram o logo.
+  const CAT_ICONS = ['shopping-cart', 'utensils', 'coffee', 'car', 'fuel', 'bus', 'train-front', 'bike', 'plane', 'heart-pulse', 'pill', 'receipt', 'zap', 'droplets',
+    'flame', 'wifi', 'smartphone', 'house', 'landmark', 'hammer', 'wrench', 'popcorn', 'film', 'ticket', 'music', 'tv', 'gamepad-2', 'shopping-bag', 'shirt', 'scissors',
+    'gift', 'dumbbell', 'paw-print', 'baby', 'graduation-cap', 'book-open', 'briefcase', 'sparkles', 'trending-up', 'piggy-bank', 'hand-coins', 'circle-dollar-sign', 'badge-percent', 'tag'];
+  const ICON_RULES = [
+    ['shopping-cart', /mercado|supermerc|feira|hortifruti|atacad/], ['utensils', /comida|restaur|aliment|lanche|ifood|delivery|refei/], ['coffee', /cafe|padaria/],
+    ['fuel', /combust|gasolina|posto/], ['car', /carro|transporte|uber|\b99\b|estacion|pedagio|ipva|seguro auto/], ['bus', /onibus|metro|passagem|bilhete/],
+    ['plane', /viage|passage aerea|hotel/], ['pill', /farmac|remedio|drogaria/], ['heart-pulse', /saude|medic|plano de saude|unimed|hospital|dentist|odonto|terapia|psic/],
+    ['zap', /\bluz\b|energia|enel|cemig|light|copel/], ['droplets', /agua|sabesp|saneamento/], ['flame', /\bgas\b|comgas/], ['wifi', /internet|wi-?fi|fibra/],
+    ['smartphone', /celular|\btim\b|\bvivo\b|\bclaro\b|\boi\b|telefon|pre-?pago/], ['house', /casa|aluguel|moradia|condomin|iptu|financiamento/],
+    ['popcorn', /lazer|cinema|diver/], ['ticket', /show|ingresso|evento/], ['music', /musica|spotify|deezer/], ['tv', /streaming|netflix|tv\b|assinatura/],
+    ['gamepad-2', /jogo|game|playstation|xbox|steam/], ['shopping-bag', /compra|shopping|loja|presentes?/], ['shirt', /roupa|vestu|calcad/], ['scissors', /cabel|barbe|salao|beleza|estetica/],
+    ['gift', /presente|doacao|dizimo/], ['dumbbell', /academia|esporte|smart ?fit|treino/], ['paw-print', /\bpet|veterin|racao|cachorro|gato/], ['baby', /bebe|crianca|fralda|cadeirinha/],
+    ['graduation-cap', /escola|faculdade|curso|educa|mensalidade escolar/], ['book-open', /livro|leitura/], ['briefcase', /salario|trabalho|folha|pro-?labore/],
+    ['sparkles', /extra|freela|bico|bonus/], ['trending-up', /rendimento|invest|dividend|juros/], ['hand-coins', /empresti|divida|parcela/], ['receipt', /conta|boleto|imposto|taxa|tarifa/],
+  ];
+  const iconForText = t => { const n = norm(t); for (const [ic, re] of ICON_RULES) if (re.test(n)) return ic; return ''; };
+  const catIcon = c => c ? (CAT_ICONS.includes(c.icon) ? c.icon : iconForText(c.name) || 'tag') : 'tag';
+  const icoTile = (icon, color) => `<span class="tx-ic" style="--tc:${color || '#94a3b8'}"><svg class="i" aria-hidden="true"><use href="#c-${icon}"/></svg></span>`;
+  // Ícone de um lançamento: logo da marca, se reconhecida; senão o da categoria (ou pelo nome, nas contas fixas)
+  function txIcon(r, kind) {
+    const n = norm(r.desc || '');
+    const brand = n && (brandOfDesc(r.desc) || (/ifood/.test(n) ? 'ifood' : /\buber\b/.test(n) ? 'uber' : '') || brandByName(r.desc));
+    if (brand && BRANDS[brand]) return `<span class="tx-logo">${logoHtml({ brand })}</span>`;
+    if (kind === 'fixa') return icoTile(iconForText(r.desc) || 'receipt', '#64748b');
+    const c = cat(r.category);
+    if (c) return icoTile(catIcon(c), c.color);
+    return icoTile(iconForText(r.desc) || 'tag', '#94a3b8');
+  }
   const money = c => ui.hidden ? 'R$ •••••' : brl.format(c / 100);
 
   // ================= Itens do mês =================
@@ -1539,7 +1636,7 @@ button:focus-visible, a:focus-visible, [role="button"]:focus-visible, [tabindex]
       const cls = ui.tab === 'receita' ? (r.pending ? '' : 'pos') : '';
       return `<div class="row">
         <span class="date num">${isFixa ? (r.dueNext ? `${ddmm(r.shownDate)}<small style="display:block;font-size:.66rem">mês seguinte</small>` : 'Dia ' + pad(r.day)) : ddmm(r.shownDate)}${all ? `<small style="display:block;font-size:.66rem">${r.shownDate.slice(0, 4)}</small>` : ''}</span>
-        <div class="name"><span>${esc(r.desc || cat(r.category)?.name || '—')}${extra}</span><div class="tag-m">${label}</div></div>
+        <div class="name has-ic">${txIcon(r, ui.tab)}<div class="nm"><span>${esc(r.desc || cat(r.category)?.name || '—')}${extra}</span><div class="tag-m">${label}</div></div></div>
         <span class="cat">${label}</span>
         ${ui.tab === 'receita' ? `<span class="val num ${cls}">${ui.hidden ? '' : sign}${money(r.amount)}</span>` : valHtml(r, view.month, (ui.hidden ? '' : sign) + money(r.amount))}
         <button class="edit" data-edit="${r.id}" aria-label="Editar">${ico('pencil', 'width:14px;height:14px')}</button>
@@ -3483,6 +3580,7 @@ button:focus-visible, a:focus-visible, [role="button"]:focus-visible, [tabindex]
     const kind = ui.tab === 'receita' ? 'receita' : 'despesa';
     const draw = m => {
       m.querySelector('#catList').innerHTML = catsOf(kind).map(c => `<div class="cat-edit" data-id="${c.id}">
+        <button type="button" class="ic-btn" data-icpick title="Trocar ícone">${icoTile(catIcon(c), c.color)}</button>
         <label class="swatch" style="background:${c.color}" title="Mudar cor"><input type="color" value="${c.color}" data-color /></label>
         <input class="input" value="${esc(c.name)}" maxlength="30" data-name aria-label="Nome da categoria" />
         ${kind === 'despesa' ? `<div class="money" title="Limite por mês (deixe 0,00 pra não ter limite)"><span>Limite</span><input inputmode="numeric" data-limit value="${centsText(c.limit || 0)}" data-cents="${c.limit || 0}" aria-label="Limite por mês" /></div>` : ''}
@@ -3498,10 +3596,19 @@ button:focus-visible, a:focus-visible, [role="button"]:focus-visible, [tabindex]
       m.querySelector('#catList').addEventListener('input', e => {
         const row = e.target.closest('.cat-edit'); const c = cat(row.dataset.id);
         if (e.target.matches('[data-name]')) c.name = e.target.value.trim() || c.name;
-        if (e.target.matches('[data-color]')) { c.color = e.target.value; row.querySelector('.swatch').style.background = c.color; }
+        if (e.target.matches('[data-color]')) { c.color = e.target.value; row.querySelector('.swatch').style.background = c.color; row.querySelector('.tx-ic').style.setProperty('--tc', c.color); }
         save();
       });
       m.querySelector('#catList').addEventListener('click', e => {
+        const pickBtn = e.target.closest('[data-icpick]'), chosen = e.target.closest('[data-ic]');
+        if (pickBtn || chosen) {
+          const row = e.target.closest('.cat-edit'), c = cat(row.dataset.id);
+          if (chosen) { c.icon = chosen.dataset.ic; save(); row.querySelector('.ic-btn').innerHTML = icoTile(c.icon, c.color); }
+          const open = row.querySelector('.ic-grid');
+          m.querySelectorAll('.ic-grid').forEach(g => g.remove());
+          if (pickBtn && !open) row.insertAdjacentHTML('beforeend', `<div class="ic-grid">${CAT_ICONS.map(ic => `<button type="button" data-ic="${ic}" class="${ic === catIcon(c) ? 'on' : ''}" aria-label="${ic}"><svg class="i"><use href="#c-${ic}"/></svg></button>`).join('')}</div>`);
+          return;
+        }
         if (!e.target.closest('[data-remove]')) return;
         const id = e.target.closest('.cat-edit').dataset.id;
         const used = [...state.receitas, ...state.variaveis].filter(x => x.category === id).length;
