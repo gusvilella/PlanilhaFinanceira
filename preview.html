@@ -12,7 +12,7 @@
   <meta name="mobile-web-app-capable" content="yes" />
   <meta name="apple-mobile-web-app-status-bar-style" content="default" />
   <meta name="apple-mobile-web-app-title" content="Orçamento" />
-  <script>/* esconde tudo desde o primeiro instante se o app tiver senha */ try { if (localStorage.getItem('orcamento:lock')) document.documentElement.classList.add('locked'); } catch (e) {}</script>
+  <script>/* esconde tudo desde o primeiro instante se o app tiver senha ou se for preciso entrar na conta */ try { if (localStorage.getItem('orcamento:lock')) document.documentElement.classList.add('locked'); if (!localStorage.getItem('orcamento:conta') || !(localStorage.getItem('orcamento:sessao') || sessionStorage.getItem('orcamento:sessao'))) document.documentElement.classList.add('auth'); } catch (e) {}</script>
   <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns=%27http://www.w3.org/2000/svg%27 viewBox=%270 0 100 100%27%3E%3Crect width=%27100%27 height=%27100%27 rx=%2724%27 fill=%27%2316956a%27/%3E%3Ccircle cx=%2750%27 cy=%2750%27 r=%2724%27 fill=%27none%27 stroke=%27white%27 stroke-width=%2712%27 stroke-dasharray=%27110 41%27/%3E%3C/svg%3E" />
   <style>
 /* Fontes embutidas no próprio arquivo (funcionam sem internet). Licença SIL Open Font License. */
@@ -730,6 +730,23 @@ body::before { content: ""; position: fixed; inset: 0; z-index: 0; pointer-event
 .total strong { font-weight: 600; }
 .total strong.negc { color: var(--ink); }
 
+/* ===== Conta: entrar / criar conta ===== */
+html.auth .app, html.auth .fab, html.auth #overlay, html.auth .toast, html.auth .lock { visibility: hidden; }
+.auth-screen { position: fixed; inset: 0; z-index: 110; background: var(--bg); display: none; overflow-y: auto; padding: 24px; }
+html.auth .auth-screen { display: grid; place-items: center; }
+.auth-box { width: 100%; max-width: 380px; margin: auto; }
+.auth-box .hello, .auth-box .title { font-size: 2.1rem; }
+.auth-box .hero-sub { margin-bottom: 26px; }
+.auth-box .fl { margin-top: 14px; }
+.auth-box .btn.save { width: 100%; margin-top: 22px; padding: 13px 18px; font-size: .95rem; box-shadow: none; }
+.auth-box .check { background: none; border: 0; padding: 0; margin-top: 14px; }
+.auth-box .err { margin-top: 12px; }
+.auth-foot { display: flex; justify-content: space-between; align-items: center; margin-top: 18px; }
+.auth-foot button { border: 0; background: none; padding: 4px 0; color: var(--muted); font-size: .82rem; text-decoration: underline; text-decoration-color: var(--field-line); text-underline-offset: 4px; }
+.auth-foot button:hover { color: var(--ink); }
+.auth-note { margin-top: 26px; color: var(--muted); font-size: .78rem; line-height: 1.5; }
+@media (max-width: 640px) { .auth-box .hello, .auth-box .title { font-size: 1.8rem; } }
+
 /* ===== Resumo do mês (impressão / PDF) ===== */
 #report { display: none; }
 @media print {
@@ -1186,6 +1203,7 @@ button:focus-visible, a:focus-visible, [role="button"]:focus-visible, [tabindex]
     <section class="card evo" id="evo" aria-label="Evolução mês a mês"></section>
   </div>
 
+  <div class="auth-screen" id="authScreen" role="dialog" aria-modal="true" aria-label="Entrar"></div>
   <div class="lock" id="lockScreen" role="dialog" aria-modal="true" aria-label="App bloqueado">
     <div class="lock-box"><img src="icon-192.png" alt="" onerror="this.style.display='none'" />
       <h2>Orçamento</h2><p id="lockMsg">Digite sua senha</p>
@@ -1636,7 +1654,7 @@ button:focus-visible, a:focus-visible, [role="button"]:focus-visible, [tabindex]
   const render = withMemo(renderNow);
   function renderNow() {
     // saudação pela hora do dia
-    { const h = new Date().getHours(); $('#hello').textContent = (h >= 5 && h < 12 ? 'Bom dia' : h >= 12 && h < 18 ? 'Boa tarde' : 'Boa noite') + (ui.name ? ', ' + ui.name : ''); }
+    $('#hello').textContent = greet() + (account ? ', ' + userName() : '');
     const [y, m] = view.month.split('-').map(Number);
     const lbl = new Date(y, m - 1, 1).toLocaleDateString('pt-BR', { month: 'long', year: 'numeric' });
     $('#monthLabel').textContent = lbl.charAt(0).toUpperCase() + lbl.slice(1);
@@ -3786,8 +3804,7 @@ button:focus-visible, a:focus-visible, [role="button"]:focus-visible, [tabindex]
   // ---------- Menu ----------
   function openMenu() {
     openModal(`${modalHead('Configurações', 'Seus dados ficam salvos só neste navegador.')}
-      <label class="fl" for="mName" style="margin-top:4px">Como podemos te chamar?</label>
-      <input class="input" id="mName" maxlength="20" placeholder="Seu primeiro nome" value="${esc(ui.name || '')}" autocomplete="given-name" />
+      <button class="menu-item" id="mAccount" style="border-top:0">Sua conta <span style="margin-left:auto;font-weight:500;font-size:.78rem;color:var(--muted)">${esc(account ? account.user : '')}</span></button>
       <p class="fl">Fonte</p>
       <div class="font-pick" id="mFonts">${FONTS.map(f => `<button type="button" data-font="${f}" style="font-family:'${f}'" class="${f === ui.font ? 'on' : ''}"><span>Aa</span>${f}</button>`).join('')}</div>
       <p class="fl">App</p>
@@ -3809,7 +3826,7 @@ button:focus-visible, a:focus-visible, [role="button"]:focus-visible, [tabindex]
         applyFont(b.dataset.font, true);
         m.querySelectorAll('#mFonts button').forEach(x => x.classList.toggle('on', x === b));
       };
-      m.querySelector('#mName').addEventListener('input', e => { ui.name = e.target.value.trim().slice(0, 20); saveUi(); render(); });
+      m.querySelector('#mAccount').onclick = () => openAccountSettings();
       m.querySelector('#mInstall').onclick = () => installApp();
       m.querySelector('#mSync').onclick = () => openSync();
       m.querySelector('#mLock').onclick = () => openLockSettings();
@@ -4850,11 +4867,126 @@ button:focus-visible, a:focus-visible, [role="button"]:focus-visible, [tabindex]
       authenticatorSelection: { authenticatorAttachment: 'platform', userVerification: 'required', residentKey: 'discouraged' }, timeout: 60000 } });
     return b64(cred.rawId);
   }
-  async function bioCheck() {
+  async function bioCheck(credId = lockCfg.credId) {
     await navigator.credentials.get({ publicKey: { challenge: crypto.getRandomValues(new Uint8Array(32)),
-      allowCredentials: [{ type: 'public-key', id: unb64(lockCfg.credId) }], userVerification: 'required', timeout: 60000 } });
+      allowCredentials: [{ type: 'public-key', id: unb64(credId) }], userVerification: 'required', timeout: 60000 } });
     return true;
   }
+
+  // ================= Conta neste aparelho =================
+  // Nome de usuário + senha para abrir o app. A senha fica só como hash (PBKDF2 com sal), nunca em texto.
+  // Os dados continuam neste aparelho; para outro aparelho, use a sincronização.
+  const ACC_KEY = 'orcamento:conta', SESS_KEY = 'orcamento:sessao';
+  let account = null;
+  try { account = JSON.parse(localStorage.getItem(ACC_KEY) || 'null'); } catch (_) {}
+  if (account && (typeof account.user !== 'string' || typeof account.hash !== 'string' || typeof account.salt !== 'string')) account = null;
+  const saveAccount = () => { try { account ? localStorage.setItem(ACC_KEY, JSON.stringify(account)) : localStorage.removeItem(ACC_KEY); } catch (_) {} };
+  const hasSession = () => { try { return !!(localStorage.getItem(SESS_KEY) || sessionStorage.getItem(SESS_KEY)); } catch (_) { return false; } };
+  const startSession = keep => { try { (keep ? localStorage : sessionStorage).setItem(SESS_KEY, '1'); } catch (_) {} };
+  const endSession = () => { try { localStorage.removeItem(SESS_KEY); sessionStorage.removeItem(SESS_KEY); } catch (_) {} };
+  const userName = () => account ? account.user.charAt(0).toUpperCase() + account.user.slice(1) : '';
+  const greet = () => { const h = new Date().getHours(); return h >= 5 && h < 12 ? 'Bom dia' : h >= 12 && h < 18 ? 'Boa tarde' : 'Boa noite'; };
+
+  function showAuth() {
+    document.documentElement.classList.add('auth');
+    closeModal();
+    const creating = !account;
+    const hasData = state.receitas.length || state.variaveis.length || state.fixas.length || state.accounts.length;
+    $('#authScreen').innerHTML = `<form class="auth-box" id="authForm" novalidate>
+      <p class="hello">${creating ? 'Bem-vindo.' : `${greet()}, ${esc(userName())}.`}</p>
+      <h1 class="title">${creating ? 'Crie sua conta pra começar.' : 'Entre na sua conta.'}</h1>
+      <p class="hero-sub">${creating ? (hasData ? 'Seus lançamentos continuam aqui. A conta só protege o acesso.' : 'Leva menos de um minuto.') : 'Digite sua senha pra continuar.'}</p>
+      <label class="fl" for="auUser">Nome de usuário</label>
+      <input class="input" id="auUser" maxlength="20" autocomplete="username" autocapitalize="words" value="${creating ? '' : esc(account.user)}" ${creating ? 'autofocus' : ''} />
+      <label class="fl" for="auPass">Senha</label>
+      <input class="input" id="auPass" type="password" autocomplete="${creating ? 'new-password' : 'current-password'}" ${creating ? '' : 'autofocus'} />
+      ${creating ? `<label class="fl" for="auPass2">Repita a senha</label><input class="input" id="auPass2" type="password" autocomplete="new-password" />` : ''}
+      <label class="check"><input type="checkbox" id="auKeep" checked /><span class="box">${ico('check')}</span><span><strong>Manter conectado neste aparelho</strong></span></label>
+      <div class="err" id="auErr"></div>
+      <button class="btn save" type="submit" id="auGo">${creating ? 'Criar conta' : 'Entrar'}</button>
+      ${creating ? '' : `<div class="auth-foot"><button type="button" id="auBio" hidden>Entrar com a digital</button><span></span><button type="button" id="auForgot">Esqueci a senha</button></div>`}
+      <p class="auth-note">${creating ? 'A senha fica guardada só neste aparelho, embaralhada: ninguém consegue ler. Seus lançamentos também ficam só aqui.' : ''}</p>
+    </form>`;
+    const f = $('#authForm'), err = t => { $('#auErr').textContent = t; };
+    setTimeout(() => (creating ? $('#auUser') : $('#auPass')).focus(), 50);
+    f.addEventListener('submit', async e => {
+      e.preventDefault();
+      const user = $('#auUser').value.trim().replace(/\s+/g, ' '), pass = $('#auPass').value;
+      if (creating) {
+        if (user.length < 2) return err('Escolha um nome de usuário com pelo menos 2 letras.');
+        if (pass.length < 6) return err('A senha precisa de pelo menos 6 caracteres.');
+        if (pass !== $('#auPass2').value) return err('As senhas não são iguais.');
+        $('#auGo').disabled = true;
+        const salt = b64(crypto.getRandomValues(new Uint8Array(16)));
+        account = { user, salt, hash: await hashPin(pass, salt), created: Date.now() };
+        saveAccount();
+      } else {
+        $('#auGo').disabled = true;
+        const ok = user.toLowerCase() === account.user.toLowerCase() && await hashPin(pass, account.salt) === account.hash;
+        $('#auGo').disabled = false;
+        if (!ok) { $('#auPass').value = ''; $('#auPass').focus(); return err('Usuário ou senha incorretos.'); }
+      }
+      startSession($('#auKeep').checked);
+      enterApp(creating);
+    });
+    if (!creating) {
+      $('#auForgot').addEventListener('click', () => {
+        if (!confirm('Sem a senha, o único jeito é apagar a conta e os dados deste aparelho. Depois dá pra recuperar pelo backup ou pela sincronização. Apagar?')) return;
+        if (!confirm('Tem certeza? Isso apaga tudo que está salvo neste navegador.')) return;
+        try { [KEY, SYNC_KEY, ACC_KEY, SESS_KEY, LOCK_KEY].forEach(k => localStorage.removeItem(k)); sessionStorage.removeItem(SESS_KEY); } catch (_) {}
+        location.reload();
+      });
+      if (account.credId) bioAvailable().then(ok => {
+        if (!ok) return;
+        const b = $('#auBio'); if (!b) return;
+        b.hidden = false;
+        const tryBio = () => bioCheck(account.credId).then(() => { startSession($('#auKeep').checked); enterApp(false); }).catch(() => {});
+        b.addEventListener('click', tryBio);
+        setTimeout(tryBio, 300);
+      });
+    }
+  }
+  function enterApp(created) {
+    document.documentElement.classList.remove('auth');
+    $('#authScreen').innerHTML = '';
+    render();
+    if (created) toast(`Conta criada. Bem-vindo, ${userName()}!`);
+  }
+  function logout() {
+    endSession(); closeModal(); showAuth();
+  }
+  // Configurações da conta: nome de usuário, senha, digital e sair
+  async function openAccountSettings() {
+    const bioOk = await bioAvailable();
+    openModal(`<form id="f" novalidate>${modalHead('Sua conta', `Conectado como ${esc(account.user)} neste aparelho.`)}
+      <label class="fl" for="acUser">Nome de usuário</label>
+      <input class="input" id="acUser" maxlength="20" value="${esc(account.user)}" autocomplete="username" />
+      <label class="fl" for="acOld">Senha atual</label><input class="input" id="acOld" type="password" autocomplete="current-password" placeholder="Só pra trocar a senha" />
+      <label class="fl" for="acNew">Nova senha</label><input class="input" id="acNew" type="password" autocomplete="new-password" placeholder="Deixe em branco pra manter" />
+      ${bioOk ? checkField('acBio', 'Entrar com a digital ou o rosto', 'Usa o leitor do aparelho na tela de entrar.', !!account.credId) : ''}
+      <div class="err" id="fErr"></div>
+      <div class="actions"><button type="button" class="btn del" id="acOut">Sair da conta</button><span class="grow"></span>
+        <button type="button" class="btn cancel" data-close>Cancelar</button><button type="submit" class="btn save">Salvar</button></div></form>`, m => {
+      m.querySelector('#acOut').addEventListener('click', () => logout());
+      m.querySelector('#f').addEventListener('submit', async e => {
+        e.preventDefault();
+        const user = m.querySelector('#acUser').value.trim().replace(/\s+/g, ' '), oldP = m.querySelector('#acOld').value, newP = m.querySelector('#acNew').value;
+        if (user.length < 2) return showErr('O nome de usuário precisa de pelo menos 2 letras.');
+        if (newP) {
+          if (newP.length < 6) return showErr('A nova senha precisa de pelo menos 6 caracteres.');
+          if (await hashPin(oldP, account.salt) !== account.hash) return showErr('A senha atual não confere.');
+          account.salt = b64(crypto.getRandomValues(new Uint8Array(16)));
+          account.hash = await hashPin(newP, account.salt);
+        }
+        const bio = m.querySelector('#acBio');
+        if (bio && bio.checked && !account.credId) { try { account.credId = await bioRegister(); } catch (_) { return showErr('Não deu pra ligar a digital agora.'); } }
+        if (bio && !bio.checked) delete account.credId;
+        account.user = user;
+        saveAccount(); closeModal(); render(); toast('Conta atualizada');
+      });
+    });
+  }
+
   let pinBuf = '';
   function unlock() { document.documentElement.classList.remove('locked'); pinBuf = ''; }
   function drawLock(msg, err) {
@@ -5009,7 +5141,8 @@ button:focus-visible, a:focus-visible, [role="button"]:focus-visible, [tabindex]
   });
   setInterval(refreshDay, 60000);
 
-  if (lockCfg) lockNow();
+  if (!account || !hasSession()) showAuth();
+  else { document.documentElement.classList.remove('auth'); if (lockCfg) lockNow(); }
   fillFilter();
   render();
   // Atalhos do ícone do app instalado (segurar o ícone): ?acao=rapido abre o lançamento rápido, ?aba=… abre uma aba
