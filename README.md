@@ -99,6 +99,12 @@ O app olha seus gastos e acha o que parece assinatura: serviços conhecidos (Net
 
 Quando você importa um extrato e uma assinatura veio com valor diferente, o app avisa ("Spotify subiu de R$ 21,90 para R$ 23,90") e atualiza o preço com um toque, guardando o valor antigo no histórico.
 
+## Conta
+
+Na primeira vez, o app pede pra criar uma conta com **nome de usuário e senha**. O topo passa a te chamar pelo nome ("Boa noite, Gustavo"). A senha fica guardada só neste aparelho, embaralhada, e os lançamentos continuam só aqui. Pra usar em outro aparelho, ligue a sincronização.
+
+"Manter conectado neste aparelho" evita digitar a senha toda vez. Em **⚙ → Sua conta** dá pra trocar o nome ou a senha, ligar a entrada com digital e **sair**. Esqueceu a senha? Em "Esqueci a senha" o app apaga a conta e os dados deste aparelho, e você recupera tudo pela sincronização ou pelo backup.
+
 ## Senha e digital
 
 Em **⚙ → Senha e digital** você cria um PIN de 4 dígitos para abrir o app. No celular (e no computador com Windows Hello / Touch ID) dá para ativar a **digital ou o rosto**. O app também se tranca sozinho quando fica mais de 1 minuto em segundo plano. O PIN não fica salvo em texto: só um hash dele fica no aparelho.
