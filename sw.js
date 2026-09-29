@@ -1,6 +1,6 @@
 // Service worker: guarda o app no aparelho para abrir sem internet.
 // Página: tenta a rede primeiro (pega atualizações) e cai no que está guardado se estiver offline.
-const CACHE = 'orcamento-v1';
+const CACHE = 'orcamento-v2';
 const FILES = ['./', './index.html', './manifest.webmanifest', './icon-192.png', './icon-512.png', './icon-maskable-512.png', './apple-touch-icon.png'];
 
 self.addEventListener('install', e => {
@@ -18,15 +18,17 @@ self.addEventListener('fetch', e => {
   if (req.method !== 'GET' || new URL(req.url).origin !== location.origin) return;
   if (req.mode === 'navigate') {
     // Guarda só respostas boas (uma página de erro do servidor não pode virar a cópia offline)
+    // Cada página guarda a própria cópia (o app e a prévia não se misturam); "/" e "/index.html" são a mesma
+    const path = new URL(req.url).pathname, key = /\/(index\.html)?$/.test(path) ? './index.html' : path;
     const net = fetch(req).then(res => {
-      if (res.ok) { const copy = res.clone(); caches.open(CACHE).then(c => c.put('./index.html', copy)); }
+      if (res.ok) { const copy = res.clone(); caches.open(CACHE).then(c => c.put(key, copy)); }
       return res;
     });
     e.waitUntil(net.catch(() => {}));   // mesmo se a cópia guardada abrir antes, termina de atualizar
     e.respondWith(new Promise(resolve => {
       let done = false;
       const finish = r => { if (!done && r) { done = true; resolve(r); } };
-      const saved = () => caches.match('./index.html');
+      const saved = () => caches.match(key);
       // Internet lenta: depois de 4 s abre a cópia guardada em vez de ficar esperando
       const timer = setTimeout(() => saved().then(finish), 4000);
       net.then(res => res.ok ? res : saved().then(hit => hit || res))
