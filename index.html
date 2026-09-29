@@ -988,12 +988,25 @@ html.auth .auth-screen { display: grid; place-items: center; }
 
 @keyframes fade { from { opacity: 0; } }
 @keyframes pop { from { transform: scale(.96); opacity: 0; } }
-@keyframes rise { from { opacity: 0; transform: translateY(8px); } }
-@keyframes dn-in { from { opacity: 0; transform: rotate(-30deg) scale(.94); } }
-.enter .ov, .enter #table .row:not(.head), .enter #table .total, .enter #table .yield, .enter #table .det-banner, .enter .legend li, .enter #chart .limit, .enter .evo { animation: rise .34s cubic-bezier(.2, .75, .25, 1) both; }
-.enter .donut-box { animation: dn-in .55s cubic-bezier(.2, .75, .25, 1) both; }
+@keyframes rise { from { opacity: 0; transform: translateY(12px); } }
+@keyframes panel-in { from { opacity: 0; transform: translateY(14px) scale(.995); } }
+@keyframes dn-in { from { opacity: 0; transform: rotate(-70deg) scale(.9); } }
+.enter .ov, .enter #table .row, .enter #table .total, .enter #table .yield, .enter #table .det-banner, .enter #table .empty, .enter .legend li, .enter #chart .limit, .enter #chart .chart-empty, .enter .evo { animation: rise .45s cubic-bezier(.2, .75, .25, 1) both; }
+#mainGrid.enter > .card, #mainGrid.enter > div > .card { animation: panel-in .4s cubic-bezier(.2, .75, .25, 1) both; }
+@keyframes dn-roll { from { opacity: 0; transform: rotate(-360deg) scale(.82); } }
+@keyframes arc-draw { from { stroke-dasharray: 0 100; } }
+@keyframes ic-pop { 0% { opacity: 0; transform: scale(0); } 70% { opacity: 1; transform: scale(1.18); } 100% { transform: scale(1); } }
+.donut-wrap.draw .donut { animation: dn-roll .9s cubic-bezier(.22, .8, .26, 1) both; }
+.donut-wrap.draw .donut circle { animation: arc-draw var(--du) cubic-bezier(.4, .1, .4, 1) var(--dl) both; }
+.donut-wrap.draw .dn-ic, .donut-wrap.draw .dn-out { animation: ic-pop .42s ease-out var(--dl) both; }
+.donut-wrap.draw .donut-center { animation: fade .5s .15s ease both; }
+.tabs { position: relative; }
+.tabs button { position: relative; z-index: 1; }
+.tabs button.active { background: none !important; box-shadow: none !important; }
+.tab-ind { position: absolute; left: 0; top: 0; border-radius: 10px; background: var(--card); box-shadow: var(--shadow); pointer-events: none; }
+.tab-ind.ready { transition: transform .38s cubic-bezier(.3, .8, .25, 1), width .38s cubic-bezier(.3, .8, .25, 1); }
 .enter .donut-center { animation: fade .4s .1s ease both; }
-@media (prefers-reduced-motion: reduce) { .enter *, .enter { animation: none !important; } }
+@media (prefers-reduced-motion: reduce) { .enter *, .enter, .donut-wrap.draw * { animation: none !important; } .tab-ind.ready { transition: none; } }
 
 @media (prefers-reduced-motion: reduce) { * { animation: none !important; transition: none !important; } }
 
@@ -1196,7 +1209,7 @@ button:focus-visible, a:focus-visible, [role="button"]:focus-visible, [tabindex]
       </div>
     </section>
 
-    <nav class="tabs" id="tabs" role="tablist">
+    <nav class="tabs" id="tabs" role="tablist"><span class="tab-ind" id="tabInd" aria-hidden="true"></span>
       <button role="tab" data-tab="geral">Visão geral</button>
       <button role="tab" data-tab="receita">Receita</button>
       <button role="tab" data-tab="fixa">Despesa fixa</button>
@@ -1689,19 +1702,47 @@ button:focus-visible, a:focus-visible, [role="button"]:focus-visible, [tabindex]
   const render = withMemo(renderNow);
   // Entrada suave ao trocar de aba ou de mês: linhas e cards sobem e aparecem em sequência, o gráfico gira de leve
   let lastView = '';
+  let donutAnim = true;
+  // valor do meio do gráfico conta de 0 até o total enquanto as fatias são desenhadas
+  function countUpDonuts() {
+    document.querySelectorAll('.donut-wrap.draw [data-total]').forEach(el => {
+      const total = +el.dataset.total, t0 = performance.now(), dur = 950;
+      if (ui.hidden || !total) return;
+      const step = now => {
+        const k = Math.min((now - t0) / dur, 1), e = 1 - Math.pow(1 - k, 3);
+        el.textContent = brl.format(Math.round(total * e) / 100);
+        if (k < 1 && el.isConnected) requestAnimationFrame(step);
+      };
+      requestAnimationFrame(step);
+    });
+  }
+  function moveTabInd() {
+    const ind = $('#tabInd'), act = document.querySelector('#tabs button.active');
+    if (!ind || !act) return;
+    ind.style.width = act.offsetWidth + 'px'; ind.style.height = act.offsetHeight + 'px';
+    ind.style.transform = `translate(${act.offsetLeft}px, ${act.offsetTop}px)`;
+    if (!ind.classList.contains('ready')) requestAnimationFrame(() => ind.classList.add('ready'));   // sem deslizar na primeira vez
+  }
+  addEventListener('resize', () => requestAnimationFrame(moveTabInd));
+  document.fonts?.ready.then(() => moveTabInd());
   function animateEnter() {
     if (matchMedia('(prefers-reduced-motion: reduce)').matches) return;
     const el = ui.tab === 'geral' ? $('#overview') : $('#mainGrid');
     if (!el) return;
     el.classList.remove('enter'); void el.offsetWidth;
-    const items = el.querySelectorAll('.ov, #table .row:not(.head), #table .total, #table .yield, #table .det-banner, .legend li, #chart .limit, .evo');
-    items.forEach((it, i) => { it.style.animationDelay = Math.min(i, 14) * 22 + 'ms'; });
+    const items = el.querySelectorAll('.ov, #table .row, #table .total, #table .yield, #table .det-banner, #table .empty, .legend li, #chart .limit, #chart .chart-empty, .evo');
+    items.forEach((it, i) => { it.style.animationDelay = 60 + Math.min(i, 14) * 35 + 'ms'; });
     el.classList.add('enter');
     clearTimeout(animateEnter.t);
     animateEnter.t = setTimeout(() => { el.classList.remove('enter'); items.forEach(it => { it.style.animationDelay = ''; }); }, 900);
   }
   function renderNow() {
-    { const v = ui.tab + '|' + view.month; if (v !== lastView) { if (lastView) requestAnimationFrame(animateEnter); lastView = v; } }
+    { const v = ui.tab + '|' + view.month;
+      if (v !== lastView) {
+        if (lastView) requestAnimationFrame(animateEnter);
+        lastView = v;
+        if (!matchMedia('(prefers-reduced-motion: reduce)').matches) { donutAnim = true; requestAnimationFrame(() => { countUpDonuts(); donutAnim = false; }); }
+      } }
     // saudação pela hora do dia
     $('#hello').textContent = greet() + (account ? ', ' + userName() : '');
     const [y, m] = view.month.split('-').map(Number);
@@ -1742,6 +1783,7 @@ button:focus-visible, a:focus-visible, [role="button"]:focus-visible, [tabindex]
     renderHeadline(t);
 
     $('#eyeBtn').innerHTML = ico(ui.hidden ? 'eye-off' : 'eye');
+    requestAnimationFrame(moveTabInd);
     document.querySelectorAll('#tabs button').forEach(b => { b.classList.toggle('active', b.dataset.tab === ui.tab); b.setAttribute('aria-selected', b.dataset.tab === ui.tab); });
     // celular: a barra de abas rola até a aba ativa (ex.: ao ir para Metas pelo link da Visão geral)
     { const strip = $('#tabs'), act = strip.querySelector('.active');
@@ -1913,7 +1955,8 @@ button:focus-visible, a:focus-visible, [role="button"]:focus-visible, [tabindex]
     let lastOut = -99;   // ângulo do último selo de fora, pra não encostar um no outro
     const arcs = groups.map(g => {
       const len = g.value / total * 100;
-      const arc = `<circle cx="21" cy="21" r="15.915" fill="none" stroke="${g.color}" stroke-width="5.2"
+      const t0 = 250 + offset * 7, dur = Math.max(len * 7, 120);   // ms: começa depois do giro e segue a volta
+      const arc = `<circle cx="21" cy="21" r="15.915" fill="none" stroke="${g.color}" stroke-width="5.2" style="--dl:${t0}ms;--du:${dur}ms"
         stroke-dasharray="${Math.max(len - gap, 0.01)} ${100 - Math.max(len - gap, 0.01)}" stroke-dashoffset="${-offset}"><title>${esc(g.name)}: ${brl.format(g.value / 100)}</title></circle>`;
       // ícone no meio da fatia (só nas que têm espaço)
       if (g.icon && len >= 6) {
@@ -1921,7 +1964,7 @@ button:focus-visible, a:focus-visible, [role="button"]:focus-visible, [tabindex]
         const mid = offset < 50 - 3 && offset + len > 50 + 3 ? 50 : offset + len / 2;
         const a = mid / 100 * 2 * Math.PI, r = 15.915 / 42 * 100;
         const x = 50 + r * Math.sin(a), y = 50 - r * Math.cos(a);
-        marks.push(`<span class="dn-ic" style="left:${x.toFixed(2)}%;top:${y.toFixed(2)}%;color:${lightColor(g.color) ? 'rgba(20,20,18,.72)' : '#fff'}"><svg class="i"><use href="#c-${g.icon}"/></svg></span>`);
+        marks.push(`<span class="dn-ic" style="--dl:${Math.round(250 + (offset + len) * 7)}ms;left:${x.toFixed(2)}%;top:${y.toFixed(2)}%;color:${lightColor(g.color) ? 'rgba(20,20,18,.72)' : '#fff'}"><svg class="i"><use href="#c-${g.icon}"/></svg></span>`);
       } else if (g.icon) {
         // fatia fina: o ícone vai num selo do lado de fora do anel, na cor da fatia
         let deg = (offset + len / 2) * 3.6;
@@ -1929,16 +1972,16 @@ button:focus-visible, a:focus-visible, [role="button"]:focus-visible, [tabindex]
         lastOut = deg;
         const a = deg * Math.PI / 180, r = 54;
         const x = 50 + r * Math.sin(a), y = 50 - r * Math.cos(a);
-        marks.push(`<span class="dn-out" title="${esc(g.name)}" style="left:${x.toFixed(2)}%;top:${y.toFixed(2)}%;background:${g.color};color:${lightColor(g.color) ? 'rgba(20,20,18,.75)' : '#fff'}"><svg class="i"><use href="#c-${g.icon}"/></svg></span>`);
+        marks.push(`<span class="dn-out" title="${esc(g.name)}" style="--dl:${Math.round(250 + (offset + len) * 7)}ms;left:${x.toFixed(2)}%;top:${y.toFixed(2)}%;background:${g.color};color:${lightColor(g.color) ? 'rgba(20,20,18,.75)' : '#fff'}"><svg class="i"><use href="#c-${g.icon}"/></svg></span>`);
       }
       offset += len;
       return arc;
     }).join('');
 
     return `
-      <div class="donut-wrap">
+      <div class="donut-wrap${donutAnim ? ' draw' : ''}">
         <div class="donut-box"><svg class="donut" viewBox="0 0 42 42">${arcs}</svg>${marks.join('')}</div>
-        <div class="donut-center"><small>${label}</small><strong class="num">${money(total)}</strong></div>
+        <div class="donut-center"><small>${label}</small><strong class="num" data-total="${total}">${money(total)}</strong></div>
       </div>
       <ul class="legend">${groups.map(g => {
         const pct = Math.round(g.value / total * 100);
