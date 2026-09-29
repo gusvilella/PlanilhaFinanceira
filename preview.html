@@ -744,6 +744,11 @@ html.auth .auth-screen { display: grid; place-items: center; }
 .auth-foot { display: flex; justify-content: space-between; align-items: center; margin-top: 18px; }
 .auth-foot button { border: 0; background: none; padding: 4px 0; color: var(--muted); font-size: .82rem; text-decoration: underline; text-decoration-color: var(--field-line); text-underline-offset: 4px; }
 .auth-foot button:hover { color: var(--ink); }
+.nick-chips { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 8px; }
+.nick-chips:empty { display: none; }
+.nick-chips button { border: 1px solid var(--field-line); background: none; color: var(--ink-2); border-radius: 99px; padding: 5px 12px; font-size: .8rem; font-weight: 500; }
+.nick-chips button:hover { color: var(--ink); border-color: var(--ink-2); }
+.nick-chips button.on { background: var(--ink); border-color: var(--ink); color: var(--bg); }
 .auth-note { margin-top: 26px; color: var(--muted); font-size: .78rem; line-height: 1.5; }
 @media (max-width: 640px) { .auth-box .hello, .auth-box .title { font-size: 1.8rem; } }
 
@@ -4884,7 +4889,55 @@ button:focus-visible, a:focus-visible, [role="button"]:focus-visible, [tabindex]
   const hasSession = () => { try { return !!(localStorage.getItem(SESS_KEY) || sessionStorage.getItem(SESS_KEY)); } catch (_) { return false; } };
   const startSession = keep => { try { (keep ? localStorage : sessionStorage).setItem(SESS_KEY, '1'); } catch (_) {} };
   const endSession = () => { try { localStorage.removeItem(SESS_KEY); sessionStorage.removeItem(SESS_KEY); } catch (_) {} };
-  const userName = () => account ? account.user.charAt(0).toUpperCase() + account.user.slice(1) : '';
+  // Apelidos comuns no Brasil a partir do primeiro nome (ou dos dois primeiros, como João Pedro → JP)
+  const NICKS = {
+    gustavo: ['Gu', 'Guga', 'Guto'], rafael: ['Rafa'], rafaela: ['Rafa'], raphael: ['Rafa'], gabriel: ['Gabi', 'Biel'], gabriela: ['Gabi'], gabriele: ['Gabi'],
+    fernando: ['Fer', 'Nando'], fernanda: ['Fer', 'Nanda'], eduardo: ['Edu', 'Dudu', 'Du'], eduarda: ['Duda'], matheus: ['Teteu', 'Math'], mateus: ['Teteu'],
+    lucas: ['Luca', 'Lu'], guilherme: ['Gui'], felipe: ['Lipe', 'Fe'], filipe: ['Lipe'], henrique: ['Rique', 'Henri'], rodrigo: ['Digo', 'Rod'],
+    ricardo: ['Rica', 'Cadu'], carlos: ['Carlinhos', 'Cacá'], carolina: ['Carol'], caroline: ['Carol'], ana: ['Aninha'], juliana: ['Ju', 'Juju'], julia: ['Ju', 'Juju'],
+    beatriz: ['Bia'], isabela: ['Isa', 'Bela'], isabella: ['Isa', 'Bela'], isabel: ['Isa', 'Bel'], mariana: ['Mari'], marina: ['Mari'], maria: ['Mari', 'Mah'],
+    leticia: ['Lê', 'Leti'], amanda: ['Mandy'], vitoria: ['Vivi', 'Vic'], victoria: ['Vic', 'Vivi'], vitor: ['Vitinho'], victor: ['Vitinho', 'Vic'],
+    bruno: ['Bru', 'Bruninho'], bruna: ['Bru'], camila: ['Cami', 'Mila'], daniel: ['Dani'], daniela: ['Dani'], alexandre: ['Alê', 'Xande'], alessandra: ['Alê'],
+    antonio: ['Toninho', 'Tonho'], francisco: ['Chico'], jose: ['Zé'], joao: ['Jão', 'Joãozinho'], pedro: ['Pedrinho', 'Pepe'], paulo: ['Paulinho'], paula: ['Paulinha'],
+    thiago: ['Thi'], tiago: ['Ti'], leonardo: ['Leo'], leandro: ['Lê'], roberto: ['Beto'], alberto: ['Beto'], humberto: ['Beto'], luiz: ['Lu'], luis: ['Lu'],
+    luiza: ['Lu', 'Lulu'], luisa: ['Lu', 'Lulu'], larissa: ['Lari'], natalia: ['Nati', 'Nat'], patricia: ['Pati'], priscila: ['Pri'], rebeca: ['Beca'],
+    sofia: ['Sofi'], sophia: ['Sofi'], valentina: ['Val', 'Tina'], manuela: ['Manu'], emanuel: ['Manu'], emanuelle: ['Manu'], samuel: ['Samu'], arthur: ['Tutu'],
+    bernardo: ['Bê'], nicolas: ['Nico'], nicole: ['Nic'], giovanna: ['Gi', 'Gio'], giovana: ['Gi', 'Gio'], giovanni: ['Gio'], vinicius: ['Vini'], marcelo: ['Celo'],
+    marcos: ['Marquinhos'], murilo: ['Mu'], otavio: ['Tavinho'], sergio: ['Serginho'], william: ['Will'], wellington: ['Well'], julio: ['Julinho'],
+    cristiano: ['Cris'], cristina: ['Cris'], fabiana: ['Fabi'], fabio: ['Fabinho'], gisele: ['Gi'], helena: ['Lena', 'Leninha'], elisa: ['Lisa'], elizabeth: ['Beth'],
+    tatiana: ['Tati'], vanessa: ['Van', 'Nessa'], viviane: ['Vivi'], andre: ['Dedé'], andreia: ['Dea'], claudia: ['Clau'], debora: ['Debi'], jessica: ['Jess'],
+    raquel: ['Quel'], renata: ['Rê'], simone: ['Si'], thais: ['Tha'], yasmin: ['Yas'], laura: ['Lau'], livia: ['Livi'], clara: ['Clarinha'], cecilia: ['Ceci', 'Ciça'],
+    benjamin: ['Ben'], lorena: ['Lô'], mariane: ['Mari'], jonathan: ['Jon'], stephanie: ['Tefa'], stefany: ['Tefa'], alice: ['Lice'], heloisa: ['Helô'],
+  };
+  const COMPOUND = { 'joao pedro': 'JP', 'joao vitor': 'JV', 'joao victor': 'JV', 'joao gabriel': 'JG', 'maria eduarda': 'Duda', 'maria clara': 'Maju', 'maria julia': 'Maju', 'ana clara': 'Aninha', 'ana luiza': 'Analu', 'ana julia': 'Anaju', 'pedro henrique': 'PH', 'luiz felipe': 'LF', 'luis felipe': 'LF', 'luiz henrique': 'LH', 'carlos eduardo': 'Cadu', 'luiz eduardo': 'Dudu', 'jose carlos': 'Zé' };
+  const firstName = full => { const w = String(full || '').trim().split(/\s+/)[0] || ''; return w ? w.charAt(0).toUpperCase() + w.slice(1).toLowerCase() : ''; };
+  function nickSuggestions(full) {
+    const words = norm(full).split(' ').filter(Boolean);
+    if (!words.length) return [];
+    const out = [firstName(full)];
+    const two = words.slice(0, 2).join(' ');
+    if (COMPOUND[two]) out.push(COMPOUND[two]);
+    (NICKS[words[0]] || []).forEach(n => out.push(n));
+    return [...new Set(out)].slice(0, 5);
+  }
+  // Como o app chama a pessoa: apelido escolhido → primeiro nome → nome de usuário
+  const userName = () => !account ? '' : account.nick || firstName(account.fullName) || account.user.charAt(0).toUpperCase() + account.user.slice(1);
+  const nickField = (nick, idp) => `<label class="fl" for="${idp}Nick">Como quer ser chamado?</label>
+      <input class="input" id="${idp}Nick" maxlength="20" value="${esc(nick || '')}" placeholder="Apelido ou primeiro nome" autocomplete="nickname" />
+      <div class="nick-chips" id="${idp}Chips"></div>`;
+  function bindNick(root, idp) {
+    const full = root.querySelector(`#${idp}Full`), nick = root.querySelector(`#${idp}Nick`), box = root.querySelector(`#${idp}Chips`);
+    let touched = !!nick.value;
+    const draw = () => {
+      const list = nickSuggestions(full.value);
+      if (!touched) nick.value = list[0] || '';
+      box.innerHTML = list.map(n => `<button type="button" data-nick="${esc(n)}" class="${n === nick.value ? 'on' : ''}">${esc(n)}</button>`).join('');
+    };
+    full.addEventListener('input', draw);
+    nick.addEventListener('input', () => { touched = true; draw(); });
+    box.addEventListener('click', e => { const b = e.target.closest('[data-nick]'); if (!b) return; nick.value = b.dataset.nick; touched = true; draw(); });
+    draw();
+  }
   const greet = () => { const h = new Date().getHours(); return h >= 5 && h < 12 ? 'Bom dia' : h >= 12 && h < 18 ? 'Boa tarde' : 'Boa noite'; };
 
   function showAuth() {
@@ -4896,8 +4949,11 @@ button:focus-visible, a:focus-visible, [role="button"]:focus-visible, [tabindex]
       <p class="hello">${creating ? 'Bem-vindo.' : `${greet()}, ${esc(userName())}.`}</p>
       <h1 class="title">${creating ? 'Crie sua conta pra começar.' : 'Entre na sua conta.'}</h1>
       <p class="hero-sub">${creating ? (hasData ? 'Seus lançamentos continuam aqui. A conta só protege o acesso.' : 'Leva menos de um minuto.') : 'Digite sua senha pra continuar.'}</p>
+      ${creating ? `<label class="fl" for="auFull">Nome completo</label>
+      <input class="input" id="auFull" maxlength="60" autocomplete="name" autocapitalize="words" />
+      ${nickField('', 'au')}` : ''}
       <label class="fl" for="auUser">Nome de usuário</label>
-      <input class="input" id="auUser" maxlength="20" autocomplete="username" autocapitalize="words" value="${creating ? '' : esc(account.user)}" ${creating ? 'autofocus' : ''} />
+      <input class="input" id="auUser" maxlength="20" autocomplete="username" autocapitalize="words" value="${creating ? '' : esc(account.user)}" />
       <label class="fl" for="auPass">Senha</label>
       <input class="input" id="auPass" type="password" autocomplete="${creating ? 'new-password' : 'current-password'}" ${creating ? '' : 'autofocus'} />
       ${creating ? `<label class="fl" for="auPass2">Repita a senha</label><input class="input" id="auPass2" type="password" autocomplete="new-password" />` : ''}
@@ -4908,17 +4964,26 @@ button:focus-visible, a:focus-visible, [role="button"]:focus-visible, [tabindex]
       <p class="auth-note">${creating ? 'A senha fica guardada só neste aparelho, embaralhada: ninguém consegue ler. Seus lançamentos também ficam só aqui.' : ''}</p>
     </form>`;
     const f = $('#authForm'), err = t => { $('#auErr').textContent = t; };
-    setTimeout(() => (creating ? $('#auUser') : $('#auPass')).focus(), 50);
+    setTimeout(() => (creating ? $('#auFull') : $('#auPass')).focus(), 50);
+    if (creating) {
+      bindNick($('#authScreen'), 'au');
+      // sugere o nome de usuário a partir do primeiro nome, até a pessoa mexer nele
+      let userTouched = false;
+      $('#auUser').addEventListener('input', () => { userTouched = true; });
+      $('#auFull').addEventListener('input', () => { if (!userTouched) $('#auUser').value = norm($('#auFull').value).split(' ')[0] || ''; });
+    }
     f.addEventListener('submit', async e => {
       e.preventDefault();
       const user = $('#auUser').value.trim().replace(/\s+/g, ' '), pass = $('#auPass').value;
       if (creating) {
+        const fullName = $('#auFull').value.trim().replace(/\s+/g, ' '), nick = $('#auNick').value.trim();
+        if (fullName.length < 2) return err('Digite seu nome.');
         if (user.length < 2) return err('Escolha um nome de usuário com pelo menos 2 letras.');
         if (pass.length < 6) return err('A senha precisa de pelo menos 6 caracteres.');
         if (pass !== $('#auPass2').value) return err('As senhas não são iguais.');
         $('#auGo').disabled = true;
         const salt = b64(crypto.getRandomValues(new Uint8Array(16)));
-        account = { user, salt, hash: await hashPin(pass, salt), created: Date.now() };
+        account = { user, fullName, nick: nick || firstName(fullName), salt, hash: await hashPin(pass, salt), created: Date.now() };
         saveAccount();
       } else {
         $('#auGo').disabled = true;
@@ -4959,6 +5024,9 @@ button:focus-visible, a:focus-visible, [role="button"]:focus-visible, [tabindex]
   async function openAccountSettings() {
     const bioOk = await bioAvailable();
     openModal(`<form id="f" novalidate>${modalHead('Sua conta', `Conectado como ${esc(account.user)} neste aparelho.`)}
+      <label class="fl" for="acFull">Nome completo</label>
+      <input class="input" id="acFull" maxlength="60" value="${esc(account.fullName || '')}" autocomplete="name" autocapitalize="words" />
+      ${nickField(account.nick, 'ac')}
       <label class="fl" for="acUser">Nome de usuário</label>
       <input class="input" id="acUser" maxlength="20" value="${esc(account.user)}" autocomplete="username" />
       <label class="fl" for="acOld">Senha atual</label><input class="input" id="acOld" type="password" autocomplete="current-password" placeholder="Só pra trocar a senha" />
@@ -4968,6 +5036,7 @@ button:focus-visible, a:focus-visible, [role="button"]:focus-visible, [tabindex]
       <div class="actions"><button type="button" class="btn del" id="acOut">Sair da conta</button><span class="grow"></span>
         <button type="button" class="btn cancel" data-close>Cancelar</button><button type="submit" class="btn save">Salvar</button></div></form>`, m => {
       m.querySelector('#acOut').addEventListener('click', () => logout());
+      bindNick(m, 'ac');
       m.querySelector('#f').addEventListener('submit', async e => {
         e.preventDefault();
         const user = m.querySelector('#acUser').value.trim().replace(/\s+/g, ' '), oldP = m.querySelector('#acOld').value, newP = m.querySelector('#acNew').value;
@@ -4982,6 +5051,8 @@ button:focus-visible, a:focus-visible, [role="button"]:focus-visible, [tabindex]
         if (bio && bio.checked && !account.credId) { try { account.credId = await bioRegister(); } catch (_) { return showErr('Não deu pra ligar a digital agora.'); } }
         if (bio && !bio.checked) delete account.credId;
         account.user = user;
+        account.fullName = m.querySelector('#acFull').value.trim().replace(/\s+/g, ' ');
+        account.nick = m.querySelector('#acNick').value.trim() || firstName(account.fullName);
         saveAccount(); closeModal(); render(); toast('Conta atualizada');
       });
     });
