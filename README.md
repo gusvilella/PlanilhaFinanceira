@@ -101,9 +101,9 @@ Quando você importa um extrato e uma assinatura veio com valor diferente, o app
 
 ## Conta
 
-Na primeira vez, o app pede pra criar uma conta com **nome de usuário e senha**. O topo passa a te chamar pelo nome ("Boa noite, Gustavo"). A senha fica guardada só neste aparelho, embaralhada, e os lançamentos continuam só aqui. Pra usar em outro aparelho, ligue a sincronização.
+Na primeira vez, o app pede pra criar uma conta com **nome completo, como quer ser chamado, nome de usuário e senha**. O app sugere apelidos a partir do seu nome (Gustavo → Gu, Guga, Guto) e o topo passa a te chamar assim ("Boa noite, Gu"). A senha fica guardada só neste aparelho, embaralhada, e os lançamentos continuam só aqui. Pra usar em outro aparelho, ligue a sincronização.
 
-"Manter conectado neste aparelho" evita digitar a senha toda vez. Em **⚙ → Sua conta** dá pra trocar o nome ou a senha, ligar a entrada com digital e **sair**. Esqueceu a senha? Em "Esqueci a senha" o app apaga a conta e os dados deste aparelho, e você recupera tudo pela sincronização ou pelo backup.
+"Manter conectado neste aparelho" evita digitar a senha toda vez. Em **⚙ → Sua conta** dá pra trocar o nome, o apelido ou a senha, ligar a entrada com digital e **sair**. Esqueceu a senha? Em "Esqueci a senha" o app apaga a conta e os dados deste aparelho, e você recupera tudo pela sincronização ou pelo backup.
 
 ## Senha e digital
 
