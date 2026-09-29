@@ -752,6 +752,20 @@ html.auth .auth-screen { display: grid; place-items: center; }
 .auth-note { margin-top: 26px; color: var(--muted); font-size: .78rem; line-height: 1.5; }
 @media (max-width: 640px) { .auth-box .hello, .auth-box .title { font-size: 1.8rem; } }
 
+/* Paletas e ícones no gráfico */
+.donut-box { position: relative; width: 210px; height: 210px; }
+.ov .donut-box { width: 170px; height: 170px; }
+.dn-ic { position: absolute; width: 20px; height: 20px; margin: -10px 0 0 -10px; display: grid; place-items: center; pointer-events: none; }
+.dn-ic svg.i { width: 13px; height: 13px; stroke-width: 2; }
+.ov .dn-ic svg.i { width: 11px; height: 11px; }
+.legend .lic { width: 22px; height: 22px; border-radius: 7px; flex: none; display: grid; place-items: center; }
+.legend .lic svg.i { width: 12px; height: 12px; stroke-width: 2; }
+.pal-pick { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 8px; }
+.pal-pick button { border: 1px solid var(--field-line); background: none; border-radius: 12px; padding: 10px; display: grid; gap: 8px; font-size: .8rem; font-weight: 500; color: var(--ink-2); text-align: left; }
+.pal-pick button.on { border-color: var(--ink); color: var(--ink); box-shadow: inset 0 0 0 1px var(--ink); }
+.pal-pick .sw { display: flex; height: 14px; border-radius: 5px; overflow: hidden; }
+.pal-pick .sw i { flex: 1; }
+
 /* ===== Resumo do mês (impressão / PDF) ===== */
 #report { display: none; }
 @media print {
@@ -1102,6 +1116,7 @@ button:focus-visible, a:focus-visible, [role="button"]:focus-visible, [tabindex]
     <symbol id="c-circle-dollar-sign" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M16 8h-6a2 2 0 1 0 0 4h4a2 2 0 1 1 0 4H8"/><path d="M12 18V6"/></symbol>
     <symbol id="c-badge-percent" viewBox="0 0 24 24"><path d="M3.85 8.62a4 4 0 0 1 4.78-4.77 4 4 0 0 1 6.74 0 4 4 0 0 1 4.78 4.78 4 4 0 0 1 0 6.74 4 4 0 0 1-4.77 4.78 4 4 0 0 1-6.75 0 4 4 0 0 1-4.78-4.77 4 4 0 0 1 0-6.76Z"/><path d="m15 9-6 6"/><path d="M9 9h.01"/><path d="M15 15h.01"/></symbol>
     <symbol id="c-tag" viewBox="0 0 24 24"><path d="M12.586 2.586A2 2 0 0 0 11.172 2H4a2 2 0 0 0-2 2v7.172a2 2 0 0 0 .586 1.414l8.704 8.704a2.426 2.426 0 0 0 3.42 0l6.58-6.58a2.426 2.426 0 0 0 0-3.42z"/><circle cx="7.5" cy="7.5" r=".5" fill="currentColor"/></symbol>
+    <symbol id="c-credit-card" viewBox="0 0 24 24"><rect width="20" height="14" x="2" y="5" rx="2"/><line x1="2" x2="22" y1="10" y2="10"/><path d="M6 14h2"/></symbol>
     <symbol id="c-target" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="6"/><circle cx="12" cy="12" r="2"/></symbol>
     <symbol id="c-life-buoy" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="m4.93 4.93 4.24 4.24"/><path d="m14.83 9.17 4.24-4.24"/><path d="m14.83 14.83 4.24 4.24"/><path d="m9.17 14.83-4.24 4.24"/><circle cx="12" cy="12" r="4"/></symbol>
     <symbol id="c-tree-palm" viewBox="0 0 24 24"><path d="M13 8c0-2.76-2.46-5-5.5-5S2 5.24 2 8h2l1-1 1 1h4"/><path d="M13 7.14A5.82 5.82 0 0 1 16.5 6c3.04 0 5.5 2.24 5.5 5h-3l-1-1-1 1h-3"/><path d="M5.89 9.71c-2.15 2.15-2.3 5.47-.35 7.43l4.24-4.25.7-.7.71-.71 2.12-2.12c-1.95-1.96-5.27-1.8-7.42.35"/><path d="M11 15.5c.5 2.5-.17 4.5-1 6.5h4c2-5.5-.5-12-1-14"/></symbol>
@@ -1414,6 +1429,7 @@ button:focus-visible, a:focus-visible, [role="button"]:focus-visible, [tabindex]
   if (!['light', 'dark'].includes(ui.theme)) ui.theme = null;
   if (![6, 12].includes(ui.evoRange)) delete ui.evoRange;
   if (typeof ui.name !== 'string') delete ui.name;
+  if (!['vivas', 'salvia', 'nevoa', 'terracota', 'pastel', 'grafite'].includes(ui.palette)) ui.palette = 'vivas';
   // visual novo: quem estava na fonte padrão antiga passa para a nova (uma vez só)
   if (!ui.look2) { if (ui.font === 'Urbanist') ui.font = 'Instrument Sans'; ui.look2 = 1; }
   const saveUi = () => { try { localStorage.setItem(UI_KEY, JSON.stringify(ui)); } catch (_) {} };
@@ -1737,7 +1753,7 @@ button:focus-visible, a:focus-visible, [role="button"]:focus-visible, [tabindex]
 
   function tagHtml(c) {
     if (!c) return `<span class="tag cat-t" style="--cc:var(--field-line)">Sem categoria</span>`;
-    return `<span class="tag cat-t" style="--cc:${c.color}">${esc(c.name)}</span>`;
+    return `<span class="tag cat-t" style="--cc:${pc(c.color)}">${esc(c.name)}</span>`;
   }
 
   function renderTable() {
@@ -1815,12 +1831,12 @@ button:focus-visible, a:focus-visible, [role="button"]:focus-visible, [tabindex]
     let groups = [];
     const key = view.month;
     if (ui.tab === 'fixa') {
-      groups = fixasOf(key).map((f, i) => ({ name: f.desc || 'Sem nome', color: PALETTE[i % PALETTE.length], value: f.amount }));
+      groups = fixasOf(key).map((f, i) => ({ name: f.desc || 'Sem nome', color: PALETTE[i % PALETTE.length], value: f.amount, icon: iconForText(f.desc) || 'receipt' }));
     } else {
       const src = ui.tab === 'receita' ? receitasOf(key).filter(r => !r.pending) : variaveisOf(key);
       const sums = new Map();
       src.forEach(r => sums.set(r.category, (sums.get(r.category) || 0) + r.amount));
-      groups = [...sums].map(([id, value]) => { const c = cat(id); return { id: id || '', name: c?.name || 'Sem categoria', color: c?.color || '#94a3b8', value }; });
+      groups = [...sums].map(([id, value]) => { const c = cat(id); return { id: id || '', name: c?.name || 'Sem categoria', color: c?.color || '#94a3b8', value, icon: catIcon(c) }; });
     }
     groups = groups.filter(g => g.value > 0).sort((a, b) => b.value - a.value);
     const total = groups.reduce((s, g) => s + g.value, 0);
@@ -1836,20 +1852,53 @@ button:focus-visible, a:focus-visible, [role="button"]:focus-visible, [tabindex]
     $('#chart').innerHTML = donutHtml(groups, total, label) + extra;
   }
 
+
+  // ================= Paletas dos gráficos =================
+  // As cores padrão (categorias, contas fixas, investimentos) viram as da paleta escolhida;
+  // cores escolhidas na mão e cores de marca ficam suavizadas para combinar.
+  const PALETTES = {
+    vivas: { name: 'Vivas', cols: null },
+    salvia: { name: 'Sálvia', cols: ['#8fae9d', '#d2ab85', '#9aa9c9', '#d9a7a7', '#b9b48c', '#a898bf', '#7fa6ab', '#dcc093', '#a4958a', '#b7bec6'] },
+    nevoa: { name: 'Névoa', cols: ['#94afc8', '#c9b49d', '#a5b8a7', '#b3a5c6', '#c7a3a9', '#9dbab5', '#8c9cb0', '#d2c2a8', '#aab2bd', '#b9c7d6'] },
+    terracota: { name: 'Terracota', cols: ['#d49a82', '#dcc099', '#a8b394', '#c4a79c', '#e2b8a8', '#b59a8a', '#d6c29c', '#9fa89a', '#c9a88c', '#bfb3a6'] },
+    pastel: { name: 'Pastel', cols: ['#9fcfe0', '#f5c29a', '#c2b0e2', '#aedcbd', '#f2b0b0', '#f5dc9a', '#a8c3ea', '#d9c1a1', '#b3dfd0', '#cdcdd8'] },
+    grafite: { name: 'Grafite', cols: ['#3d4a57', '#6f7f8f', '#a3afbb', '#56626e', '#8a97a4', '#c5ccd3', '#4b5866', '#97a3af', '#7b8896', '#b4bdc6'] },
+  };
+  const DEFAULT_COLORS = [...PALETTE, '#16956a', '#94a3b8'].map(c => c.toLowerCase());
+  const mixWhite = (hex, t) => {
+    const n = parseInt(String(hex).slice(1, 7), 16); if (Number.isNaN(n)) return hex;
+    const ch = k => Math.round(((n >> k) & 255) * (1 - t) + 255 * t);
+    return '#' + [16, 8, 0].map(k => ch(k).toString(16).padStart(2, '0')).join('');
+  };
+  function pc(hex) {
+    const pal = PALETTES[ui.palette]?.cols;
+    if (!pal || !hex || hex[0] !== '#') return hex;
+    const i = DEFAULT_COLORS.indexOf(hex.toLowerCase());
+    return i >= 0 ? pal[i % pal.length] : ui.palette === 'grafite' ? '#7b8896' : mixWhite(hex, .42);
+  }
+
   function donutHtml(groups, total, label) {
+    groups = groups.map(g => ({ ...g, color: pc(g.color) }));
     const gap = groups.length > 1 ? 0.8 : 0;
     let offset = 0;
+    const marks = [];
     const arcs = groups.map(g => {
       const len = g.value / total * 100;
       const arc = `<circle cx="21" cy="21" r="15.915" fill="none" stroke="${g.color}" stroke-width="5.2"
         stroke-dasharray="${Math.max(len - gap, 0.01)} ${100 - Math.max(len - gap, 0.01)}" stroke-dashoffset="${-offset}"><title>${esc(g.name)}: ${brl.format(g.value / 100)}</title></circle>`;
+      // ícone no meio da fatia (só nas que têm espaço)
+      if (g.icon && len >= 6) {
+        const a = (offset + len / 2) / 100 * 2 * Math.PI, r = 15.915 / 42 * 100;
+        const x = 50 + r * Math.sin(a), y = 50 - r * Math.cos(a);
+        marks.push(`<span class="dn-ic" style="left:${x.toFixed(2)}%;top:${y.toFixed(2)}%;color:${lightColor(g.color) ? 'rgba(20,20,18,.72)' : '#fff'}"><svg class="i"><use href="#c-${g.icon}"/></svg></span>`);
+      }
       offset += len;
       return arc;
     }).join('');
 
     return `
       <div class="donut-wrap">
-        <svg class="donut" viewBox="0 0 42 42">${arcs}</svg>
+        <div class="donut-box"><svg class="donut" viewBox="0 0 42 42">${arcs}</svg>${marks.join('')}</div>
         <div class="donut-center"><small>${label}</small><strong class="num">${money(total)}</strong></div>
       </div>
       <ul class="legend">${groups.map(g => {
@@ -1857,7 +1906,8 @@ button:focus-visible, a:focus-visible, [role="button"]:focus-visible, [tabindex]
         // com id de categoria: tocar filtra a lista por ela (tocar de novo tira o filtro)
         const pick = g.id !== undefined && g.id !== '' ? ` data-catpick="${esc(g.id)}" role="button" tabindex="0" title="Filtrar por ${esc(g.name)}" class="${view.cat === g.id ? 'on' : view.cat ? 'dim' : ''}"`
           : g.go ? ` data-go="${g.go}" data-catpick="" role="button" tabindex="0" title="Ver ${esc(g.name)}"` : '';
-        return `<li${pick}><span class="ldot" style="background:${g.color}"></span><span class="pct">${pct}%</span><span class="lname" title="${esc(g.name)}">${esc(g.name)}<small class="lval num">${money(g.value)}</small></span></li>`;
+        const mark = g.icon ? `<span class="lic" style="background:${g.color};color:${lightColor(g.color) ? 'rgba(20,20,18,.72)' : '#fff'}"><svg class="i"><use href="#c-${g.icon}"/></svg></span>` : `<span class="ldot" style="background:${g.color}"></span>`;
+        return `<li${pick}>${mark}<span class="pct">${pct}%</span><span class="lname" title="${esc(g.name)}">${esc(g.name)}<small class="lval num">${money(g.value)}</small></span></li>`;
       }).join('')}</ul>`;
   }
 
@@ -2057,10 +2107,10 @@ button:focus-visible, a:focus-visible, [role="button"]:focus-visible, [tabindex]
     const groups = new Map();
     // extra: id da categoria (tocar filtra a aba Despesa variável) ou aba para onde ir
     const add = (name, color, v, extra = {}) => { if (!v) return; const g = groups.get(name) || { name, color, value: 0, ...extra }; g.value += v; groups.set(name, g); };
-    variaveisOf(key).filter(countable(key)).forEach(v => { const c = cat(v.category); add(c?.name || 'Sem categoria', c?.color || '#94a3b8', v.amount, c ? { id: c.id } : {}); });
-    add('Contas fixas', '#475569', fixasOf(key).filter(countable(key)).reduce((s, f) => s + f.amount, 0), { go: 'fixa' });
-    add('Assinaturas', '#d97706', assinaturasOf(key).filter(countable(key)).reduce((s, a) => s + a.amount, 0), { go: 'assin' });
-    add('Faturas do cartão', '#1d4ed8', totals(key).faturas, { go: 'cartoes' });
+    variaveisOf(key).filter(countable(key)).forEach(v => { const c = cat(v.category); add(c?.name || 'Sem categoria', c?.color || '#94a3b8', v.amount, c ? { id: c.id, icon: catIcon(c) } : { icon: 'tag' }); });
+    add('Contas fixas', '#475569', fixasOf(key).filter(countable(key)).reduce((s, f) => s + f.amount, 0), { go: 'fixa', icon: 'receipt' });
+    add('Assinaturas', '#d97706', assinaturasOf(key).filter(countable(key)).reduce((s, a) => s + a.amount, 0), { go: 'assin', icon: 'tv' });
+    add('Faturas do cartão', '#1d4ed8', totals(key).faturas, { go: 'cartoes', icon: 'credit-card' });
     let list = [...groups.values()].sort((a, b) => b.value - a.value);
     if (list.length > 6) {
       // junta o resto em "Outros" (somando na categoria Outros, se ela já estiver entre as 5 maiores, pra não aparecer duas vezes)
@@ -2264,7 +2314,7 @@ button:focus-visible, a:focus-visible, [role="button"]:focus-visible, [tabindex]
     const txt = { ok: '', warn: '', over: '' };
     return `<div class="limits"><div class="limits-h">Limites do mês</div>${list.map(l => `
       <div class="limit" title="${esc(l.name)}: ${brl.format(l.spent / 100)} de ${brl.format(l.limit / 100)}">
-        <div class="limit-top"><span><span class="ldot" style="background:${l.color}"></span>${esc(l.name)}</span>
+        <div class="limit-top"><span><span class="ldot" style="background:${pc(l.color)}"></span>${esc(l.name)}</span>
           <span class="num">${txt[l.state]}${money(l.spent)} <small>de ${money(l.limit)}</small></span></div>
         <div class="meter ${l.state === 'ok' ? '' : l.state}" role="progressbar" aria-valuenow="${Math.round(l.pct * 100)}" aria-valuemin="0" aria-valuemax="100" aria-label="${esc(l.name)}"><i style="width:${Math.min(l.pct, 1) * 100}%"></i></div>
         <div class="limit-sub">${l.state === 'over' ? `Passou ${money(l.spent - l.limit)} do limite` : `Ainda cabe ${money(l.limit - l.spent)} · ${Math.round(l.pct * 100)}%`}</div>
@@ -2969,7 +3019,7 @@ button:focus-visible, a:focus-visible, [role="button"]:focus-visible, [tabindex]
   }
 
   function renderInvestChart() {
-    const rows = state.investments.map((i, n) => ({ name: i.name, color: PALETTE[n % PALETTE.length], value: estimate(i) }))
+    const rows = state.investments.map((i, n) => ({ name: i.name, color: PALETTE[n % PALETTE.length], value: estimate(i), icon: 'trending-up' }))
       .filter(g => g.value > 0).sort((a, b) => b.value - a.value);
     const total = rows.reduce((s, g) => s + g.value, 0);
     $('#chart').innerHTML = total ? donutHtml(rows, total, 'Patrimônio')
@@ -3810,6 +3860,8 @@ button:focus-visible, a:focus-visible, [role="button"]:focus-visible, [tabindex]
   function openMenu() {
     openModal(`${modalHead('Configurações', 'Seus dados ficam salvos só neste navegador.')}
       <button class="menu-item" id="mAccount" style="border-top:0">Sua conta <span style="margin-left:auto;font-weight:500;font-size:.78rem;color:var(--muted)">${esc(account ? account.user : '')}</span></button>
+      <p class="fl">Cores dos gráficos</p>
+      <div class="pal-pick" id="mPal">${Object.entries(PALETTES).map(([k, v]) => `<button type="button" data-pal="${k}" class="${k === ui.palette ? 'on' : ''}"><span class="sw">${(v.cols || PALETTE).slice(0, 5).map(c => `<i style="background:${c}"></i>`).join('')}</span>${v.name}</button>`).join('')}</div>
       <p class="fl">Fonte</p>
       <div class="font-pick" id="mFonts">${FONTS.map(f => `<button type="button" data-font="${f}" style="font-family:'${f}'" class="${f === ui.font ? 'on' : ''}"><span>Aa</span>${f}</button>`).join('')}</div>
       <p class="fl">App</p>
@@ -3832,6 +3884,11 @@ button:focus-visible, a:focus-visible, [role="button"]:focus-visible, [tabindex]
         m.querySelectorAll('#mFonts button').forEach(x => x.classList.toggle('on', x === b));
       };
       m.querySelector('#mAccount').onclick = () => openAccountSettings();
+      m.querySelector('#mPal').onclick = e => {
+        const b = e.target.closest('[data-pal]'); if (!b) return;
+        ui.palette = b.dataset.pal; saveUi(); render();
+        m.querySelectorAll('#mPal button').forEach(x => x.classList.toggle('on', x === b));
+      };
       m.querySelector('#mInstall').onclick = () => installApp();
       m.querySelector('#mSync').onclick = () => openSync();
       m.querySelector('#mLock').onclick = () => openLockSettings();
