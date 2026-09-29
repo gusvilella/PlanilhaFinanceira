@@ -755,9 +755,15 @@ html.auth .auth-screen { display: grid; place-items: center; }
 /* Paletas e ícones no gráfico */
 .donut-box { position: relative; width: 210px; height: 210px; }
 .ov .donut-box { width: 170px; height: 170px; }
-.dn-ic { position: absolute; width: 20px; height: 20px; margin: -10px 0 0 -10px; display: grid; place-items: center; pointer-events: none; }
-.dn-ic svg.i { width: 13px; height: 13px; stroke-width: 2; }
-.ov .dn-ic svg.i { width: 11px; height: 11px; }
+.dn-ic { position: absolute; width: 24px; height: 24px; margin: -12px 0 0 -12px; display: grid; place-items: center; pointer-events: none; }
+.dn-ic svg.i { width: 17px; height: 17px; stroke-width: 1.9; }
+.ov .dn-ic { width: 20px; height: 20px; margin: -10px 0 0 -10px; }
+.ov .dn-ic svg.i { width: 14px; height: 14px; }
+.dn-out { position: absolute; width: 22px; height: 22px; margin: -11px 0 0 -11px; border-radius: 50%; display: grid; place-items: center; pointer-events: none; box-shadow: 0 0 0 2px var(--card); }
+.dn-out svg.i { width: 12px; height: 12px; stroke-width: 2; }
+.ov .dn-out { width: 20px; height: 20px; margin: -10px 0 0 -10px; }
+.ov .dn-out svg.i { width: 11px; height: 11px; }
+.donut-wrap { padding-top: 16px; padding-bottom: 20px; }
 .legend .lic { width: 22px; height: 22px; border-radius: 7px; flex: none; display: grid; place-items: center; }
 .legend .lic svg.i { width: 12px; height: 12px; stroke-width: 2; }
 .pal-pick { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 8px; }
@@ -982,6 +988,13 @@ html.auth .auth-screen { display: grid; place-items: center; }
 
 @keyframes fade { from { opacity: 0; } }
 @keyframes pop { from { transform: scale(.96); opacity: 0; } }
+@keyframes rise { from { opacity: 0; transform: translateY(8px); } }
+@keyframes dn-in { from { opacity: 0; transform: rotate(-30deg) scale(.94); } }
+.enter .ov, .enter #table .row:not(.head), .enter #table .total, .enter #table .yield, .enter #table .det-banner, .enter .legend li, .enter #chart .limit, .enter .evo { animation: rise .34s cubic-bezier(.2, .75, .25, 1) both; }
+.enter .donut-box { animation: dn-in .55s cubic-bezier(.2, .75, .25, 1) both; }
+.enter .donut-center { animation: fade .4s .1s ease both; }
+@media (prefers-reduced-motion: reduce) { .enter *, .enter { animation: none !important; } }
+
 @media (prefers-reduced-motion: reduce) { * { animation: none !important; transition: none !important; } }
 
 /* Responsivo */
@@ -1429,7 +1442,8 @@ button:focus-visible, a:focus-visible, [role="button"]:focus-visible, [tabindex]
   if (!['light', 'dark'].includes(ui.theme)) ui.theme = null;
   if (![6, 12].includes(ui.evoRange)) delete ui.evoRange;
   if (typeof ui.name !== 'string') delete ui.name;
-  if (!['vivas', 'salvia', 'nevoa', 'terracota', 'pastel', 'grafite'].includes(ui.palette)) ui.palette = 'vivas';
+  if (!['vivas', 'salvia', 'nevoa', 'terracota', 'pastel', 'grafite'].includes(ui.palette)) ui.palette = 'nevoa';
+  if (!ui.pal2) { ui.palette = 'nevoa'; ui.pal2 = 1; }   // Névoa virou o padrão (vale uma vez; depois fica a escolha da pessoa)
   // visual novo: quem estava na fonte padrão antiga passa para a nova (uma vez só)
   if (!ui.look2) { if (ui.font === 'Urbanist') ui.font = 'Instrument Sans'; ui.look2 = 1; }
   const saveUi = () => { try { localStorage.setItem(UI_KEY, JSON.stringify(ui)); } catch (_) {} };
@@ -1673,7 +1687,21 @@ button:focus-visible, a:focus-visible, [role="button"]:focus-visible, [tabindex]
 
   // ================= Render =================
   const render = withMemo(renderNow);
+  // Entrada suave ao trocar de aba ou de mês: linhas e cards sobem e aparecem em sequência, o gráfico gira de leve
+  let lastView = '';
+  function animateEnter() {
+    if (matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+    const el = ui.tab === 'geral' ? $('#overview') : $('#mainGrid');
+    if (!el) return;
+    el.classList.remove('enter'); void el.offsetWidth;
+    const items = el.querySelectorAll('.ov, #table .row:not(.head), #table .total, #table .yield, #table .det-banner, .legend li, #chart .limit, .evo');
+    items.forEach((it, i) => { it.style.animationDelay = Math.min(i, 14) * 22 + 'ms'; });
+    el.classList.add('enter');
+    clearTimeout(animateEnter.t);
+    animateEnter.t = setTimeout(() => { el.classList.remove('enter'); items.forEach(it => { it.style.animationDelay = ''; }); }, 900);
+  }
   function renderNow() {
+    { const v = ui.tab + '|' + view.month; if (v !== lastView) { if (lastView) requestAnimationFrame(animateEnter); lastView = v; } }
     // saudação pela hora do dia
     $('#hello').textContent = greet() + (account ? ', ' + userName() : '');
     const [y, m] = view.month.split('-').map(Number);
@@ -1882,15 +1910,26 @@ button:focus-visible, a:focus-visible, [role="button"]:focus-visible, [tabindex]
     const gap = groups.length > 1 ? 0.8 : 0;
     let offset = 0;
     const marks = [];
+    let lastOut = -99;   // ângulo do último selo de fora, pra não encostar um no outro
     const arcs = groups.map(g => {
       const len = g.value / total * 100;
       const arc = `<circle cx="21" cy="21" r="15.915" fill="none" stroke="${g.color}" stroke-width="5.2"
         stroke-dasharray="${Math.max(len - gap, 0.01)} ${100 - Math.max(len - gap, 0.01)}" stroke-dashoffset="${-offset}"><title>${esc(g.name)}: ${brl.format(g.value / 100)}</title></circle>`;
       // ícone no meio da fatia (só nas que têm espaço)
       if (g.icon && len >= 6) {
-        const a = (offset + len / 2) / 100 * 2 * Math.PI, r = 15.915 / 42 * 100;
+        // fatia que passa pela parte de baixo do anel: ícone embaixo, no centro; as outras, no meio da fatia
+        const mid = offset < 50 - 3 && offset + len > 50 + 3 ? 50 : offset + len / 2;
+        const a = mid / 100 * 2 * Math.PI, r = 15.915 / 42 * 100;
         const x = 50 + r * Math.sin(a), y = 50 - r * Math.cos(a);
         marks.push(`<span class="dn-ic" style="left:${x.toFixed(2)}%;top:${y.toFixed(2)}%;color:${lightColor(g.color) ? 'rgba(20,20,18,.72)' : '#fff'}"><svg class="i"><use href="#c-${g.icon}"/></svg></span>`);
+      } else if (g.icon) {
+        // fatia fina: o ícone vai num selo do lado de fora do anel, na cor da fatia
+        let deg = (offset + len / 2) * 3.6;
+        if (deg - lastOut < 14) deg = lastOut + 14;
+        lastOut = deg;
+        const a = deg * Math.PI / 180, r = 54;
+        const x = 50 + r * Math.sin(a), y = 50 - r * Math.cos(a);
+        marks.push(`<span class="dn-out" title="${esc(g.name)}" style="left:${x.toFixed(2)}%;top:${y.toFixed(2)}%;background:${g.color};color:${lightColor(g.color) ? 'rgba(20,20,18,.75)' : '#fff'}"><svg class="i"><use href="#c-${g.icon}"/></svg></span>`);
       }
       offset += len;
       return arc;
