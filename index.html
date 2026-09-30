@@ -787,6 +787,23 @@ html.auth .auth-screen { display: grid; place-items: center; }
 .pal-pick .sw { display: flex; height: 14px; border-radius: 5px; overflow: hidden; }
 .pal-pick .sw i { flex: 1; }
 
+/* Topo animado */
+@keyframes word-in { from { opacity: 0; transform: translateY(.35em); filter: blur(5px); } }
+#headline .w { display: inline-block; animation: word-in .55s cubic-bezier(.2, .75, .25, 1) both; }
+.top.intro .hello { animation: rise .5s cubic-bezier(.2, .75, .25, 1) both; }
+.top.intro .hero-sub { animation: rise .5s cubic-bezier(.2, .75, .25, 1) .55s both; }
+.top.intro .top-right { animation: fade .6s ease .3s both; }
+.kpis.intro .kpi { animation: rise .5s cubic-bezier(.2, .75, .25, 1) both; }
+.kpis.intro .kpi:nth-child(1) { animation-delay: .45s; } .kpis.intro .kpi:nth-child(2) { animation-delay: .52s; }
+.kpis.intro .kpi:nth-child(3) { animation-delay: .59s; } .kpis.intro .kpi:nth-child(4) { animation-delay: .66s; }
+/* Calendário: Hoje / Ontem / Amanhã */
+.cal-day { display: flex; align-items: center; gap: 8px; font-size: .78rem; font-weight: 700; }
+.cal-day > span:last-child::first-letter { text-transform: uppercase; }
+.cal-rel { font-size: .7rem; font-weight: 600; padding: 3px 8px; border-radius: 99px; background: var(--field); color: var(--ink-2); animation: ic-pop .35s ease-out both; }
+.cal-rel.today { background: var(--accent); color: #fff; }
+.cal button.today.sel { background: var(--accent); color: #fff; box-shadow: none; }
+@media (prefers-reduced-motion: reduce) { #headline .w, .top.intro *, .kpis.intro *, .cal-rel { animation: none !important; } }
+
 /* ===== Resumo do mês (impressão / PDF) ===== */
 #report { display: none; }
 @media print {
@@ -1413,6 +1430,7 @@ button:focus-visible, a:focus-visible, [role="button"]:focus-visible, [tabindex]
       .map(t => ({ ...t, id: String(t.id || uid()), amount: Math.abs(num(t.amount)), date: fixIso(t.date) || todayIso }));
     if (s.subIgnore !== undefined && !Array.isArray(s.subIgnore)) s.subIgnore = [];
     for (const k of ['snapshots', 'received', 'subPrice']) if (s[k] !== undefined && !isObj(s[k])) delete s[k];
+    if (s.owner !== undefined && !(isObj(s.owner) && typeof s.owner.user === 'string')) delete s.owner;
     // Imagens próprias de ícone não são mais aceitas: ficam só os logos oficiais
     for (const k of ['accounts', 'cards', 'assinaturas']) (s[k] || []).forEach(x => { if (x && x.icon) delete x.icon; });
     return s;
@@ -1704,9 +1722,16 @@ button:focus-visible, a:focus-visible, [role="button"]:focus-visible, [tabindex]
     if (t.receita && t.saldo < 0) return [`Faltam ${reais(t.saldo) || 'alguns reais'} pra fechar ${mes} no azul.`, 'Pequenos ajustes já fazem diferença.'];
     return ['Tudo em dia por aqui.', 'Lance o que entrar e sair pra acompanhar o mês.'];
   }
+  let lastHeadline = '';
+  // palavras da frase entram uma a uma (sobem e saem de um leve desfoque)
+  function wordsIn(el, text, delay = 0) {
+    el.innerHTML = text.split(' ').map((w, i) => `<span class="w" style="animation-delay:${delay + i * 45}ms">${esc(w)}</span>`).join(' ');
+  }
   function renderHeadline(t) {
     const [h, sub] = headlineText(t);
-    $('#headline').textContent = h;
+    if (h !== lastHeadline && lastHeadline && !matchMedia('(prefers-reduced-motion: reduce)').matches) wordsIn($('#headline'), h);
+    else if (h !== lastHeadline) $('#headline').textContent = h;
+    lastHeadline = h;
     let el = $('#heroSub');
     if (!el) { el = document.createElement('p'); el.id = 'heroSub'; el.className = 'hero-sub'; $('#headline').after(el); }
     el.textContent = sub;
@@ -1858,7 +1883,9 @@ button:focus-visible, a:focus-visible, [role="button"]:focus-visible, [tabindex]
 
     if (!rows.length) {
       const msg = filtered ? 'Nada encontrado com esse filtro.'
-        : { receita: 'Sem receita no período.', fixa: 'Nenhuma despesa fixa cadastrada.', variavel: 'Sem despesas variáveis no período.' }[ui.tab];
+        : { receita: 'Nenhuma receita neste mês.<br>Salário, freelas, vendas, pix recebido… tudo que entra.',
+          fixa: 'Nenhuma despesa fixa ainda.<br>Aluguel, luz, água, internet, plano de saúde, escola…',
+          variavel: 'Nenhum gasto neste mês.<br>Mercado, iFood, gasolina, farmácia, cinema…' }[ui.tab];
       $('#table').innerHTML = `<div class="empty">${msg}${filtered ? '' : `<br><button class="btn-soft" data-add>${ico('plus')}Adicionar</button>`}</div>`;
       return;
     }
@@ -2182,7 +2209,7 @@ button:focus-visible, a:focus-visible, [role="button"]:focus-visible, [tabindex]
     box.innerHTML = `<h3>Calendário</h3>
       <div class="cal">${['D', 'S', 'T', 'Q', 'Q', 'S', 'S'].map(w => `<span class="wd">${w}</span>`).join('')}${cells.join('')}</div>
       <div class="cal-legend"><span><i style="background:var(--green)"></i>Entrada</span><span><i style="background:var(--out)"></i>Saída</span></div>
-      <div class="cal-list"><div style="font-size:.78rem;font-weight:700">${new Date(calSel + 'T12:00:00').toLocaleDateString('pt-BR', { weekday: 'long', day: '2-digit', month: 'long' })}</div>
+      <div class="cal-list"><div class="cal-day">${(() => { const d = daysUntil(calSel), rel = d === 0 ? 'Hoje' : d === -1 ? 'Ontem' : d === 1 ? 'Amanhã' : ''; return rel ? `<span class="cal-rel${d === 0 ? ' today' : ''}">${rel}</span>` : ''; })()}<span>${new Date(calSel + 'T12:00:00').toLocaleDateString('pt-BR', { weekday: 'long', day: '2-digit', month: 'long' })}</span></div>
         ${sel.length ? sel.map(e => `<div class="ev" ${e.ref ? `data-open="${esc(e.ref)}" role="button" tabindex="0" title="Abrir"` : ''}>${e.logo || icoTile(e.icon || 'tag')}<span>${esc(e.label)}${e.done ? ' <small style="color:var(--muted)">✓</small>' : ''}</span><span class="v ${e.dir === 'in' ? 'in' : ''}">${e.dir === 'in' ? '+' : '–'}${money(e.amount)}</span></div>`).join('')
           : '<div class="ov-empty" style="padding:6px 0;text-align:left">Nada neste dia.</div>'}</div>`;
     box.querySelector('.cal').addEventListener('click', e => { const b = e.target.closest('[data-day]'); if (b) { calSel = b.dataset.day; renderCalendar(); } });
@@ -2863,7 +2890,7 @@ button:focus-visible, a:focus-visible, [role="button"]:focus-visible, [tabindex]
       return { ...c, fk: k, fatura: (state.faturas[c.id] || {})[k] || null, dates: faturaDates(c, k) };
     });
     if (!rows.length) {
-      $('#table').innerHTML = `<div class="empty">${q ? 'Nada encontrado com esse filtro.' : 'Nenhum cartão ainda.<br>Cadastre seus cartões e lance a fatura de cada mês.'}${q ? '' : `<br><button class="btn-soft" data-add>${ico('plus')}Adicionar cartão</button>`}</div>`;
+      $('#table').innerHTML = `<div class="empty">${q ? 'Nada encontrado com esse filtro.' : 'Nenhum cartão ainda.<br>Nubank, Itaú, Inter, C6… cadastre e lance a fatura de cada mês.'}${q ? '' : `<br><button class="btn-soft" data-add>${ico('plus')}Adicionar cartão</button>`}</div>`;
       return;
     }
     const head = `<div class="row head"><span></span><span>Cartão</span><span class="cat">Fatura</span><span class="val">Valor</span><span></span></div>`;
@@ -4149,8 +4176,12 @@ button:focus-visible, a:focus-visible, [role="button"]:focus-visible, [tabindex]
       if (Array.isArray(data.receitas) && Array.isArray(data.variaveis)) next = normalize(data);
       else if (Array.isArray(data.transactions)) next = migrate(data);
       else throw new Error('formato');
-      if (!confirm('Restaurar este backup? Os dados atuais serão substituídos.')) return;
-      const undoSnap = JSON.stringify(state); state = next; commit(); fillFilter(); undoToast('Backup restaurado', undoSnap);
+      const other = next.owner && account && !sameUser(next.owner.user, account.user);
+      if (!confirm(other ? `Este backup é de ${ownerName(next.owner)} (usuário ${next.owner.user}), não da sua conta (${account.user}). Restaurar mesmo assim? Os dados atuais serão substituídos e passarão para o seu nome.`
+        : 'Restaurar este backup? Os dados atuais serão substituídos.')) return;
+      const undoSnap = JSON.stringify(state); state = next;
+      if (other) { stampOwner.force = true; stampOwner(); stampOwner.force = false; }
+      commit(); fillFilter(); undoToast('Backup restaurado', undoSnap);
     } catch (_) { toast('Arquivo de backup inválido'); }
   });
 
@@ -5119,6 +5150,32 @@ button:focus-visible, a:focus-visible, [role="button"]:focus-visible, [tabindex]
     });
   }
 
+
+  // Os dados sabem de quem são: usuário, nome e apelido vão junto no backup e na sincronização.
+  // Só grava quando ainda não há dono ou quando é a mesma pessoa (não briga entre aparelhos com usuários diferentes).
+  const sameUser = (a, b) => String(a || '').toLowerCase() === String(b || '').toLowerCase();
+  function stampOwner() {
+    if (!account) return;
+    if (state.owner && !sameUser(state.owner.user, account.user) && !stampOwner.force) return;
+    const o = { user: account.user, fullName: account.fullName || '', nick: account.nick || '' };
+    const cur = state.owner || {};
+    if (cur.user === o.user && cur.fullName === o.fullName && cur.nick === o.nick) return;   // nada mudou
+    state.owner = { ...o, since: state.owner && sameUser(state.owner.user, o.user) ? state.owner.since : todayIso };
+    save();
+  }
+  const ownerName = o => o ? (o.fullName || o.nick || o.user) : '';
+
+
+  // Abertura: saudação sobe, a frase entra palavra por palavra, depois o subtítulo e os cards
+  function introAnim() {
+    if (matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+    const top = $('.top'), kpis = $('.kpis');
+    wordsIn($('#headline'), lastHeadline || $('#headline').textContent, 140);
+    [top, kpis].forEach(el => { el.classList.remove('intro'); void el.offsetWidth; el.classList.add('intro'); });
+    clearTimeout(introAnim.t);
+    introAnim.t = setTimeout(() => [top, kpis].forEach(el => el.classList.remove('intro')), 1600);
+  }
+
   function showAuth() {
     document.documentElement.classList.add('auth');
     closeModal();
@@ -5193,8 +5250,10 @@ button:focus-visible, a:focus-visible, [role="button"]:focus-visible, [tabindex]
   }
   function enterApp(created) {
     document.documentElement.classList.remove('auth');
+    stampOwner();
     $('#authScreen').innerHTML = '';
     render();
+    requestAnimationFrame(introAnim);
     if (created) toast(`Conta criada. Bem-vindo, ${userName()}!`);
   }
   function logout() {
@@ -5203,7 +5262,7 @@ button:focus-visible, a:focus-visible, [role="button"]:focus-visible, [tabindex]
   // Configurações da conta: nome de usuário, senha, digital e sair
   async function openAccountSettings() {
     const bioOk = await bioAvailable();
-    openModal(`<form id="f" novalidate>${modalHead('Sua conta', `Conectado como ${esc(account.user)} neste aparelho.`)}
+    openModal(`<form id="f" novalidate>${modalHead('Sua conta', `Conectado como ${esc(account.user)} neste aparelho.${state.owner && !sameUser(state.owner.user, account.user) ? ` Os lançamentos daqui estão no nome de ${esc(ownerName(state.owner))}.` : state.owner?.since ? ` Seus lançamentos estão no seu nome desde ${dm(state.owner.since)}/${state.owner.since.slice(0, 4)}.` : ''}`)}
       <label class="fl" for="acUser">Nome de usuário</label>
       <input class="input" id="acUser" maxlength="20" value="${esc(account.user)}" autocomplete="username" autocapitalize="none" spellcheck="false" />
       <label class="fl" for="acFull">Nome completo</label>
@@ -5234,13 +5293,13 @@ button:focus-visible, a:focus-visible, [role="button"]:focus-visible, [tabindex]
         account.user = user;
         account.fullName = m.querySelector('#acFull').value.trim().replace(/\s+/g, ' ');
         account.nick = m.querySelector('#acNick').value.trim() || firstName(account.fullName);
-        saveAccount(); closeModal(); render(); toast('Conta atualizada');
+        saveAccount(); stampOwner(); closeModal(); render(); toast('Conta atualizada');
       });
     });
   }
 
   let pinBuf = '';
-  function unlock() { document.documentElement.classList.remove('locked'); pinBuf = ''; }
+  function unlock() { document.documentElement.classList.remove('locked'); pinBuf = ''; requestAnimationFrame(introAnim); }
   function drawLock(msg, err) {
     const n = lockCfg.len || 4;
     $('#pinDots').innerHTML = Array.from({ length: n }, (_, i) => `<i class="${i < pinBuf.length ? 'on' : ''}"></i>`).join('');
@@ -5394,7 +5453,7 @@ button:focus-visible, a:focus-visible, [role="button"]:focus-visible, [tabindex]
   setInterval(refreshDay, 60000);
 
   if (!account || !hasSession()) showAuth();
-  else { document.documentElement.classList.remove('auth'); if (lockCfg) lockNow(); }
+  else { document.documentElement.classList.remove('auth'); stampOwner(); if (lockCfg) lockNow(); else requestAnimationFrame(introAnim); }
   fillFilter();
   render();
   // Atalhos do ícone do app instalado (segurar o ícone): ?acao=rapido abre o lançamento rápido, ?aba=… abre uma aba
