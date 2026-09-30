@@ -787,22 +787,37 @@ html.auth .auth-screen { display: grid; place-items: center; }
 .pal-pick .sw { display: flex; height: 14px; border-radius: 5px; overflow: hidden; }
 .pal-pick .sw i { flex: 1; }
 
-/* Topo animado */
-@keyframes word-in { from { opacity: 0; transform: translateY(.35em); filter: blur(5px); } }
-#headline .w { display: inline-block; animation: word-in .55s cubic-bezier(.2, .75, .25, 1) both; }
-.top.intro .hello { animation: rise .5s cubic-bezier(.2, .75, .25, 1) both; }
-.top.intro .hero-sub { animation: rise .5s cubic-bezier(.2, .75, .25, 1) .55s both; }
-.top.intro .top-right { animation: fade .6s ease .3s both; }
-.kpis.intro .kpi { animation: rise .5s cubic-bezier(.2, .75, .25, 1) both; }
-.kpis.intro .kpi:nth-child(1) { animation-delay: .45s; } .kpis.intro .kpi:nth-child(2) { animation-delay: .52s; }
-.kpis.intro .kpi:nth-child(3) { animation-delay: .59s; } .kpis.intro .kpi:nth-child(4) { animation-delay: .66s; }
+/* Topo animado: a frase sobe de dentro de uma janela invisível; o resto só aparece */
+@keyframes head-in { from { opacity: 0; transform: translateY(40%); clip-path: inset(0 0 100% 0); } to { clip-path: inset(0 0 -20% 0); } }
+@keyframes soft-in { from { opacity: 0; transform: translateY(4px); } }
+#headline.reveal { animation: head-in .8s cubic-bezier(.16, 1, .3, 1) both; }
+.top.intro .hello { animation: soft-in .6s ease both; }
+.top.intro .hero-sub { animation: soft-in .6s ease .45s both; }
+.top.intro .top-right > div > *, .top.intro .month { animation: soft-in .5s ease both; }
+.top.intro .top-right > div > :nth-child(1) { animation-delay: .25s; } .top.intro .top-right > div > :nth-child(2) { animation-delay: .3s; }
+.top.intro .top-right > div > :nth-child(3) { animation-delay: .35s; } .top.intro .top-right > div > :nth-child(4) { animation-delay: .4s; }
+.top.intro .month { animation-delay: .45s; }
+.kpis.intro .kpi { animation: soft-in .6s ease both; }
+.kpis.intro .kpi:nth-child(1) { animation-delay: .35s; } .kpis.intro .kpi:nth-child(2) { animation-delay: .41s; }
+.kpis.intro .kpi:nth-child(3) { animation-delay: .47s; } .kpis.intro .kpi:nth-child(4) { animation-delay: .53s; }
+/* Botões do topo: cada um reage do seu jeito */
+.ghost-ico, .month button { transition: background-color .2s, color .2s, transform .15s; }
+.ghost-ico:active, .month button:active { transform: scale(.9); }
+.ghost-ico:not(.theme-btn) svg.i, .month button svg.i { transition: transform .45s cubic-bezier(.3, 1.4, .5, 1); }
+#menuBtn:hover svg.i { transform: rotate(75deg); }
+@keyframes bell-swing { 20% { transform: rotate(14deg); } 45% { transform: rotate(-10deg); } 70% { transform: rotate(5deg); } 100% { transform: rotate(0); } }
+#bellBtn:hover svg.i { animation: bell-swing .7s ease; transform-origin: 50% 15%; }
+@keyframes blink { 0%, 100% { transform: scaleY(1); } 45% { transform: scaleY(.1); } }
+#eyeBtn:hover svg.i { animation: blink .45s ease; }
+#prevMonth:hover svg.i { transform: translateX(-2px); } #nextMonth:hover svg.i { transform: translateX(2px); }
+.adjust { transition: color .2s, text-decoration-color .25s; }
 /* Calendário: Hoje / Ontem / Amanhã */
 .cal-day { display: flex; align-items: center; gap: 8px; font-size: .78rem; font-weight: 700; }
 .cal-day > span:last-child::first-letter { text-transform: uppercase; }
 .cal-rel { font-size: .7rem; font-weight: 600; padding: 3px 8px; border-radius: 99px; background: var(--field); color: var(--ink-2); animation: ic-pop .35s ease-out both; }
 .cal-rel.today { background: var(--accent); color: #fff; }
 .cal button.today.sel { background: var(--accent); color: #fff; box-shadow: none; }
-@media (prefers-reduced-motion: reduce) { #headline .w, .top.intro *, .kpis.intro *, .cal-rel { animation: none !important; } }
+@media (prefers-reduced-motion: reduce) { #headline, .top.intro *, .kpis.intro *, .cal-rel, .ghost-ico svg.i, .month button svg.i { animation: none !important; transition: none !important; } }
 
 /* ===== Resumo do mês (impressão / PDF) ===== */
 #report { display: none; }
@@ -1725,7 +1740,10 @@ button:focus-visible, a:focus-visible, [role="button"]:focus-visible, [tabindex]
   let lastHeadline = '';
   // palavras da frase entram uma a uma (sobem e saem de um leve desfoque)
   function wordsIn(el, text, delay = 0) {
-    el.innerHTML = text.split(' ').map((w, i) => `<span class="w" style="animation-delay:${delay + i * 45}ms">${esc(w)}</span>`).join(' ');
+    el.textContent = text;
+    el.style.animationDelay = delay + 'ms';
+    el.classList.remove('reveal'); void el.offsetWidth; el.classList.add('reveal');
+    clearTimeout(wordsIn.t); wordsIn.t = setTimeout(() => { el.classList.remove('reveal'); el.style.animationDelay = ''; }, delay + 900);
   }
   function renderHeadline(t) {
     const [h, sub] = headlineText(t);
