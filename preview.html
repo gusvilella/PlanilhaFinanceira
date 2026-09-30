@@ -843,6 +843,30 @@ button.kpi-label:hover { color: var(--ink); text-decoration-color: currentColor;
 @media (max-width: 1000px) { .steps { grid-template-columns: 1fr 1fr; } }
 @media (max-width: 640px) { .steps { grid-template-columns: 1fr; } }
 
+/* Categorias em botões, atalhos de data e voltar ao mês atual */
+.sr-only { position: absolute !important; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; border: 0; padding: 0; }
+.cat-chips { display: grid; grid-template-columns: repeat(auto-fill, minmax(82px, 1fr)); gap: 6px; }
+.cat-chip { display: flex; flex-direction: column; align-items: center; gap: 5px; padding: 8px 4px 7px; border: 1px solid var(--line); border-radius: 12px; background: none; color: var(--ink-2); font-size: .76rem; font-weight: 500; transition: border-color .2s, background-color .2s, transform .15s; }
+.cat-chip:hover { border-color: var(--field-line); }
+.cat-chip:active { transform: scale(.96); }
+.cat-chip.on { border-color: var(--ink); color: var(--ink); background: var(--field); box-shadow: inset 0 0 0 1px var(--ink); }
+.cat-chip .tx-ic { width: 28px; height: 28px; border-radius: 9px; }
+.cat-chip.on .tx-ic { background: var(--card); }
+.cat-chip.add { justify-content: center; color: var(--muted); border-style: dashed; }
+.cat-chip.add svg.i { width: 18px; height: 18px; margin: 7px 0; }
+.date-row { display: flex; gap: 8px; align-items: center; }
+.date-row .input { flex: 1; min-width: 0; }
+.date-chips { margin: 0; flex-wrap: nowrap; }
+.month-wrap { display: flex; align-items: center; gap: 8px; }
+.back-today { display: inline-flex; align-items: center; gap: 6px; border: 0; border-radius: 99px; padding: 8px 14px 8px 11px; background: var(--ink); color: var(--bg); font-size: .8rem; font-weight: 600; white-space: nowrap; transition: transform .15s; }
+.back-today:hover { transform: translateY(-1px); }
+.back-today:active { transform: scale(.96); }
+.back-today svg.i { width: 15px; height: 15px; }
+.back-today[hidden] { display: none; }
+.back-today.pop-in { animation: ic-pop .4s ease-out both; }
+.month .label.away::after { display: none; }
+@media (max-width: 640px) { .back-today { order: 5; } .top-right { flex-wrap: wrap; } }
+
 /* ===== Resumo do mês (impressão / PDF) ===== */
 #report { display: none; }
 @media print {
@@ -1250,6 +1274,7 @@ button:focus-visible, a:focus-visible, [role="button"]:focus-visible, [tabindex]
           <span class="label" id="monthLabel" role="button" tabindex="0"></span>
           <button id="nextMonth" aria-label="Próximo mês"><svg class="i"><use href="#i-right"/></svg></button>
         </div>
+        <button class="back-today" id="backToday" type="button" hidden></button>
       </div>
     </header>
 
@@ -1845,6 +1870,8 @@ button:focus-visible, a:focus-visible, [role="button"]:focus-visible, [tabindex]
     // fora do mês atual: mostra "hoje" (tocar no nome do mês volta pro mês atual)
     const away = view.month !== curKey();
     $('#monthLabel').classList.toggle('away', away);
+    { const bt = $('#backToday'); const wasHidden = bt.hidden; bt.hidden = !away;
+      if (away) { bt.innerHTML = `${ico(view.month < curKey() ? 'right' : 'left')}Voltar para ${monthName(curKey())}`; if (wasHidden) { bt.classList.remove('pop-in'); void bt.offsetWidth; bt.classList.add('pop-in'); } } }
     $('#monthLabel').title = away ? 'Voltar para o mês atual' : '';
     $('#monthLabel').setAttribute('aria-label', `${$('#monthLabel').textContent}${away ? ' (tocar volta para o mês atual)' : ''}`);
 
@@ -3024,27 +3051,28 @@ button:focus-visible, a:focus-visible, [role="button"]:focus-visible, [tabindex]
     const editing = !!item;
     const c = item ? { ...item } : { bank: '', name: '', flag: '', last4: '', closeDay: 3, dueDay: 10, limit: 0, count: true };
     const banks = Object.keys(BRANDS).filter(k => BRANDS[k].kind === 'bank');
-    openModal(`<form id="f" novalidate>${modalHead(editing ? 'Editar cartão' : 'Novo cartão de crédito', 'Banco, bandeira e datas da fatura.')}
+    openModal(`<form id="f" novalidate>${modalHead(editing ? 'Editar cartão' : 'Novo cartão de crédito', 'Cadastre uma vez. Depois é só lançar a fatura de cada mês.')}
       <div id="ccPrev"></div>
-      <label class="fl">Banco</label>
+      <label class="fl">De qual banco?</label>
       <div class="bank-chips" id="ccBanks">${banks.map(k => `<button type="button" data-bank="${k}" class="${k === c.bank ? 'on' : ''}">${logoHtml({ brand: k }, 'sm')}${esc(BRANDS[k].name)}</button>`).join('')}
         <button type="button" data-bank="" class="${editing && !c.bank ? 'on' : ''}">${ico('plus', 'width:12px;height:12px')}Outro</button></div>
-      <label class="fl">Bandeira</label>
+      <label class="fl">Bandeira <span style="color:var(--muted);font-weight:500">(vem escrita no cartão)</span></label>
       <div class="flag-pick" id="ccFlags">${Object.keys(FLAGS).map(k => `<button type="button" data-flag="${k}" class="${k === c.flag ? 'on' : ''}">${flagHtml(k)}${FLAGS[k].name}</button>`).join('')}</div>
       <div class="two">
-        <div><label class="fl" for="fName">Nome do cartão</label><input class="input" id="fName" maxlength="30" placeholder="Ex.: Nubank, Itaú Click" value="${esc(c.name)}" /></div>
-        <div><label class="fl" for="fLast4">Final <span style="color:var(--muted);font-weight:500">(opcional)</span></label><input class="input num" id="fLast4" inputmode="numeric" placeholder="1234" value="${esc(c.last4)}" /></div>
+        <div><label class="fl" for="fName">Como quer chamar?</label><input class="input" id="fName" maxlength="30" placeholder="Ex.: Nubank, Itaú Click" value="${esc(c.name)}" /></div>
+        <div><label class="fl" for="fLast4">Últimos 4 números <span style="color:var(--muted);font-weight:500">(opcional)</span></label><input class="input num" id="fLast4" inputmode="numeric" placeholder="1234" value="${esc(c.last4)}" /></div>
       </div>
       <div class="three">
-        <div>${moneyField('fLimit', c.limit, 'Limite (opcional)')}</div>
-        <div><label class="fl" for="fClose">Fecha dia</label><select class="select" id="fClose">${Array.from({ length: 31 }, (_, i) => `<option value="${i + 1}" ${i + 1 === c.closeDay ? 'selected' : ''}>${pad(i + 1)}</option>`).join('')}</select></div>
-        <div><label class="fl" for="fDue">Vence dia</label><select class="select" id="fDue">${Array.from({ length: 31 }, (_, i) => `<option value="${i + 1}" ${i + 1 === c.dueDay ? 'selected' : ''}>${pad(i + 1)}</option>`).join('')}</select></div>
+        <div>${moneyField('fLimit', c.limit, 'Limite total (opcional)')}</div>
+        <div><label class="fl" for="fClose">Fatura fecha dia</label><select class="select" id="fClose">${Array.from({ length: 31 }, (_, i) => `<option value="${i + 1}" ${i + 1 === c.closeDay ? 'selected' : ''}>${pad(i + 1)}</option>`).join('')}</select></div>
+        <div><label class="fl" for="fDue">Você paga dia</label><select class="select" id="fDue">${Array.from({ length: 31 }, (_, i) => `<option value="${i + 1}" ${i + 1 === c.dueDay ? 'selected' : ''}>${pad(i + 1)}</option>`).join('')}</select></div>
       </div>
-      ${editing ? '' : moneyField('fAmount', 0, 'Valor da fatura atual (opcional)')}
-      ${state.accounts.length ? `<label class="fl" for="fPayAcc">Fatura paga com a conta</label>
-      <select class="select" id="fPayAcc"><option value="">Não informar</option>${state.accounts.map(a => `<option value="${a.id}" ${a.id === c.payAccount ? 'selected' : ''}>${esc(a.name)}</option>`).join('')}</select>
+      <p class="help">Compras depois do fechamento vão pra fatura do mês seguinte. As duas datas aparecem no app do banco, na tela da fatura.</p>
+      ${editing ? '' : moneyField('fAmount', 0, 'Quanto está a fatura agora? (opcional)')}
+      ${state.accounts.length ? `<label class="fl" for="fPayAcc">De qual conta sai o pagamento?</label>
+      <select class="select" id="fPayAcc"><option value="">Prefiro não dizer</option>${state.accounts.map(a => `<option value="${a.id}" ${a.id === c.payAccount ? 'selected' : ''}>${esc(a.name)}</option>`).join('')}</select>
       <p class="help">Quando você marcar a fatura como paga, o valor sai do saldo dessa conta.</p>` : ''}
-      ${checkField('fCount', 'Somar a fatura no que saiu', 'Desmarque se você já lança as compras deste cartão em Gastos, pra não contar duas vezes.', c.count !== false)}
+      ${checkField('fCount', 'Contar a fatura no que saiu', 'Desmarque se você já lança cada compra deste cartão em Gastos, pra não contar duas vezes.', c.count !== false)}
       ${footer(editing)}</form>`, m => {
       const prev = () => { m.querySelector('#ccPrev').innerHTML = ccPreview(c); };
       const nameInput = m.querySelector('#fName');
@@ -3538,6 +3566,7 @@ button:focus-visible, a:focus-visible, [role="button"]:focus-visible, [tabindex]
     onModalClose = null;
     setup && setup($('#modal'));
     pwToggles($('#modal'));
+    syncDateChips($('#modal'));
     const first = $('#modal').querySelector('[autofocus]') || $('#modal').querySelector('input:not([type=checkbox]):not([type=date]), select');
     // Foca o primeiro campo, a menos que a pessoa já tenha clicado em outro
     if (first && matchMedia('(pointer: fine)').matches) setTimeout(() => { if (!$('#modal').contains(document.activeElement)) first.focus(); }, 30);
@@ -3573,9 +3602,26 @@ button:focus-visible, a:focus-visible, [role="button"]:focus-visible, [tabindex]
     <div class="money"><span>R$</span><input id="${id}" inputmode="numeric" value="${centsText(cents || 0)}" data-cents="${cents || 0}" autocomplete="off" /></div>`;
   const checkField = (id, title, text, checked) => `<label class="check"><input type="checkbox" id="${id}" ${checked ? 'checked' : ''}/>
     <span class="box">${ico('check')}</span><span><strong>${title}</strong>${text ? `<small>${text}</small>` : ''}</span></label>`;
-  const catSelect = (kind, selected, label) => `<label class="fl" for="fCategory">${label}</label>
-    <select class="select" id="fCategory"><option value="">Selecione…</option>${catsOf(kind).map(c => `<option value="${c.id}" ${c.id === selected ? 'selected' : ''}>${esc(c.name)}</option>`).join('')}
-    <option value="__new">+ Nova categoria…</option></select>`;
+  const catChipsHtml = (kind, selected) => catsOf(kind).map(c => `<button type="button" class="cat-chip${c.id === selected ? ' on' : ''}" data-cat="${c.id}">${icoTile(catIcon(c), pc(c.color))}<span>${esc(c.name)}</span></button>`).join('')
+    + `<button type="button" class="cat-chip add" data-cat="__new">${ico('plus')}<span>Nova</span></button>`;
+  const catSelect = (kind, selected, label) => `<label class="fl">${label}</label>
+    <select class="select sr-only" id="fCategory" tabindex="-1" aria-hidden="true"><option value="">Selecione…</option>${catsOf(kind).map(c => `<option value="${c.id}" ${c.id === selected ? 'selected' : ''}>${esc(c.name)}</option>`).join('')}
+    <option value="__new">+ Nova categoria…</option></select>
+    <div class="cat-chips" id="catChips" data-kind="${kind}">${catChipsHtml(kind, selected)}</div>`;
+  // mantém os botões de categoria iguais ao select escondido (também quando a categoria é sugerida sozinha)
+  function syncCatChips(m) {
+    const sel = m.querySelector('#fCategory'), box = m.querySelector('#catChips');
+    if (!sel || !box) return;
+    if (box.querySelectorAll('[data-cat]').length !== sel.options.length - 1) box.innerHTML = catChipsHtml(box.dataset.kind, sel.value);
+    box.querySelectorAll('[data-cat]').forEach(b => b.classList.toggle('on', b.dataset.cat === sel.value));
+  }
+  document.addEventListener('click', e => {
+    const b = e.target.closest('#catChips [data-cat]'); if (!b) return;
+    const m = b.closest('.modal'), sel = m.querySelector('#fCategory');
+    sel.value = sel.value === b.dataset.cat && b.dataset.cat !== '__new' ? '' : b.dataset.cat;   // tocar de novo desmarca
+    sel.dispatchEvent(new Event('change', { bubbles: true }));
+  });
+  document.addEventListener('change', e => { if (e.target.id === 'fCategory') setTimeout(() => syncCatChips(e.target.closest('.modal') || document), 0); });
   const footer = (editing, dup) => `<div class="err" id="fErr"></div><div class="actions">
     ${editing ? `<button type="button" class="btn del" id="fDelete">Excluir</button>` : ''}${editing && dup ? `<button type="button" class="link" id="fDup" style="margin-left:10px" title="Criar um novo lançamento igual a este, com a data de hoje">Duplicar</button>` : ''}<span class="grow"></span>
     <button type="button" class="btn cancel" data-close>Cancelar</button>
@@ -3646,9 +3692,20 @@ button:focus-visible, a:focus-visible, [role="button"]:focus-visible, [tabindex]
       const id = desc.value.trim().length >= 3 ? suggestCategory(desc.value, kind) : '';
       const outros = catsOf(kind).find(c => norm(c.name) === 'outros')?.id;
       sel.value = id && id !== outros ? id : '';   // "Outros" é o chute padrão: melhor deixar você escolher
+      syncCatChips(m);
     });
   }
 
+  // Atalhos de data (Hoje / Ontem) ao lado do campo, pra não precisar abrir o calendário
+  const dateChips = () => { const y = (() => { const d = new Date(todayIso + 'T12:00:00'); d.setDate(d.getDate() - 1); return isoOf(d); })();
+    return `<div class="nick-chips date-chips"><button type="button" data-date="${todayIso}">Hoje</button><button type="button" data-date="${y}">Ontem</button></div>`; };
+  function syncDateChips(m) { const d = m.querySelector('#fDate'); m.querySelectorAll('[data-date]').forEach(b => b.classList.toggle('on', b.dataset.date === d?.value)); }
+  document.addEventListener('click', e => {
+    const b = e.target.closest('.date-chips [data-date]'); if (!b) return;
+    const m = b.closest('.modal'), d = m.querySelector('#fDate');
+    d.value = b.dataset.date; d.dispatchEvent(new Event('change', { bubbles: true })); syncDateChips(m);
+  });
+  document.addEventListener('change', e => { if (e.target.id === 'fDate') syncDateChips(e.target.closest('.modal') || document); });
   function defaultDate() {
     return view.month === monthOf(todayIso) ? todayIso : `${view.month}-01`;
   }
@@ -3697,13 +3754,14 @@ button:focus-visible, a:focus-visible, [role="button"]:focus-visible, [tabindex]
   function openVariavel(item, prefill) {
     const editing = !!item;
     const v = item || { date: defaultDate(), amount: 0, desc: '', category: '', ...prefill };
-    openModal(`<form id="f" novalidate>${modalHead(editing ? 'Editar gasto' : 'Novo gasto', v.installment ? `Parcela ${v.installment.i} de ${v.installment.n}.` : 'Lançamento deste mês.')}
-      <label class="fl" for="fDate">Data</label><input type="date" class="input" id="fDate" value="${v.date}" required />
-      ${moneyField('fAmount', v.amount)}
-      ${editing ? '' : checkField('fInst', 'Parcelado', 'Divide o valor total nos próximos meses.', false) +
-        `<div class="inline" id="instBox" hidden><input type="number" class="input" id="fN" min="2" max="48" value="2" /><span id="instHint"></span></div>`}
-      <label class="fl" for="fDesc">Descrição</label><input class="input" id="fDesc" maxlength="60" placeholder="Ex.: Mercado, Gasolina…" value="${esc(v.desc)}" />
+    openModal(`<form id="f" novalidate>${modalHead(editing ? 'Editar gasto' : 'Novo gasto', v.installment ? `Parcela ${v.installment.i} de ${v.installment.n}.` : 'Anote uma compra ou gasto.')}
+      ${moneyField('fAmount', v.amount, 'Quanto foi?')}
+      <label class="fl" for="fDesc">Com o quê?</label><input class="input" id="fDesc" maxlength="60" placeholder="Ex.: Mercado, iFood, gasolina…" value="${esc(v.desc)}" />
       ${catSelect('despesa', v.category, 'Categoria')}
+      <label class="fl" for="fDate">Quando?</label>
+      <div class="date-row">${dateChips()}<input type="date" class="input" id="fDate" value="${v.date}" required /></div>
+      ${editing ? '' : checkField('fInst', 'Parcelou?', 'Divide o valor em parcelas nos próximos meses.', false) +
+        `<div class="inline" id="instBox" hidden><input type="number" class="input" id="fN" min="2" max="48" value="2" /><span id="instHint"></span></div>`}
       ${payField(item || prefill ? v : null)}
       ${editing && v.installment ? checkField('fAllParc', `Aplicar a todas as ${v.installment.n} parcelas`, 'Descrição, categoria e forma de pagamento. Data e valor mudam só nesta parcela.', true) : ''}
       ${footer(editing, true)}</form>`, m => {
@@ -3886,7 +3944,7 @@ button:focus-visible, a:focus-visible, [role="button"]:focus-visible, [tabindex]
     const isNew = !item || item.payCard === undefined && item.payAccount === undefined;
     const sel = isNew ? (receita ? ui.lastIn : ui.lastPay) || '' : item.payCard ? 'card:' + item.payCard : item.payAccount ? 'acc:' + item.payAccount : '';
     const valid = [...state.accounts.map(a => 'acc:' + a.id), ...cards.map(c => 'card:' + c.id)].includes(sel) ? sel : '';
-    return `<label class="fl">${receita ? 'Recebido em' : 'Pago com'}</label>
+    return `<label class="fl">${receita ? 'Onde caiu?' : 'Como você pagou?'}</label>
       <div class="bank-chips pay-pick" id="fPay" data-receita="${receita ? 1 : ''}">${payOptionsHtml(valid, { receita })}</div>
       <p class="help" id="payHelp"></p>`;
   }
@@ -4290,6 +4348,7 @@ button:focus-visible, a:focus-visible, [role="button"]:focus-visible, [tabindex]
     ui.tab = b.dataset.tab; view.cat = ''; saveUi();
     fillFilter(); render();
   });
+  $('#backToday').addEventListener('click', () => { view.month = curKey(); render(); });
   $('#prevMonth').addEventListener('click', () => { view.month = addMonths(view.month, -1); render(); });
   // Celular: arrastar o dedo para os lados troca o mês (para a esquerda = próximo, para a direita = anterior)
   let swipe = null;
