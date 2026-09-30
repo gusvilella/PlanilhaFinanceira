@@ -744,6 +744,21 @@ html.auth .auth-screen { display: grid; place-items: center; }
 .auth-foot { display: flex; justify-content: space-between; align-items: center; margin-top: 18px; }
 .auth-foot button { border: 0; background: none; padding: 4px 0; color: var(--muted); font-size: .82rem; text-decoration: underline; text-decoration-color: var(--field-line); text-underline-offset: 4px; }
 .auth-foot button:hover { color: var(--ink); }
+/* Olho da senha */
+.pw { position: relative; }
+.pw .input { padding-right: 46px; }
+.pw-eye { position: absolute; right: 6px; top: 50%; width: 36px; height: 36px; margin-top: -18px; border: 0; background: none; border-radius: 10px; color: var(--muted); display: grid; place-items: center; transition: color .2s, background-color .2s; }
+.pw-eye:hover { color: var(--ink); background: color-mix(in srgb, var(--field-line) 45%, transparent); }
+.pw-svg { width: 19px; height: 19px; fill: none; stroke: currentColor; stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round; overflow: visible; }
+.pw-svg .pupil { transform-origin: 12px 12px; transition: transform .35s cubic-bezier(.3, 1.5, .5, 1); }
+.pw-svg .slash, .pw-svg .gap { stroke-dasharray: 1; stroke-dashoffset: 1; transition: stroke-dashoffset .32s cubic-bezier(.4, 0, .2, 1); }
+.pw-svg .gap { stroke: var(--field); stroke-width: 4.5; }
+.pw-eye.on { color: var(--ink); }
+.pw-eye.on .slash, .pw-eye.on .gap { stroke-dashoffset: 0; }
+.pw-eye.on .pupil { transform: scale(.55); }
+.pw-eye:active .pw-svg { transform: scale(.9); }
+.pw-svg { transition: transform .15s ease; }
+@media (prefers-reduced-motion: reduce) { .pw-svg *, .pw-svg { transition: none !important; } }
 .nick-chips { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 8px; }
 .nick-chips:empty { display: none; }
 .nick-chips button { border: 1px solid var(--field-line); background: none; color: var(--ink-2); border-radius: 99px; padding: 5px 12px; font-size: .8rem; font-weight: 500; }
@@ -3415,6 +3430,7 @@ button:focus-visible, a:focus-visible, [role="button"]:focus-visible, [tabindex]
     $('#overlay').hidden = false;
     onModalClose = null;
     setup && setup($('#modal'));
+    pwToggles($('#modal'));
     const first = $('#modal').querySelector('[autofocus]') || $('#modal').querySelector('input:not([type=checkbox]):not([type=date]), select');
     // Foca o primeiro campo, a menos que a pessoa já tenha clicado em outro
     if (first && matchMedia('(pointer: fine)').matches) setTimeout(() => { if (!$('#modal').contains(document.activeElement)) first.focus(); }, 30);
@@ -5079,6 +5095,30 @@ button:focus-visible, a:focus-visible, [role="button"]:focus-visible, [tabindex]
   }
   const greet = () => { const h = new Date().getHours(); return h >= 5 && h < 12 ? 'Bom dia' : h >= 12 && h < 18 ? 'Boa tarde' : 'Boa noite'; };
 
+
+  // Olho ao lado de cada campo de senha: mostra/esconde o que foi digitado (o risco do olho é desenhado/apagado)
+  const EYE_SVG = `<svg class="pw-svg" viewBox="0 0 24 24" aria-hidden="true"><path class="lid" d="M2 12s3.5-7 10-7 10 7 10 7-3.5 7-10 7S2 12 2 12Z"/><circle class="pupil" cx="12" cy="12" r="3"/><line class="gap" x1="4" y1="4" x2="20" y2="20" pathLength="1"/><line class="slash" x1="4" y1="4" x2="20" y2="20" pathLength="1"/></svg>`;
+  function pwToggles(root) {
+    root.querySelectorAll('input[type=password]').forEach(inp => {
+      if (inp.parentElement.classList.contains('pw')) return;
+      const wrap = document.createElement('div'); wrap.className = 'pw';
+      inp.replaceWith(wrap); wrap.appendChild(inp);
+      const btn = document.createElement('button');
+      btn.type = 'button'; btn.className = 'pw-eye'; btn.innerHTML = EYE_SVG;
+      btn.setAttribute('aria-label', 'Mostrar senha'); btn.title = 'Mostrar senha';
+      wrap.appendChild(btn);
+      btn.addEventListener('mousedown', e => e.preventDefault());   // não tira o foco do campo
+      btn.addEventListener('click', () => {
+        const show = inp.type === 'password';
+        inp.type = show ? 'text' : 'password';
+        btn.classList.toggle('on', show);
+        const lbl = show ? 'Esconder senha' : 'Mostrar senha';
+        btn.setAttribute('aria-label', lbl); btn.title = lbl;
+        inp.focus(); const n = inp.value.length; try { inp.setSelectionRange(n, n); } catch (_) {}
+      });
+    });
+  }
+
   function showAuth() {
     document.documentElement.classList.add('auth');
     closeModal();
@@ -5088,11 +5128,11 @@ button:focus-visible, a:focus-visible, [role="button"]:focus-visible, [tabindex]
       <p class="hello">${creating ? 'Bem-vindo.' : `${greet()}, ${esc(userName())}.`}</p>
       <h1 class="title">${creating ? 'Crie sua conta pra começar.' : 'Entre na sua conta.'}</h1>
       <p class="hero-sub">${creating ? (hasData ? 'Seus lançamentos continuam aqui. A conta só protege o acesso.' : 'Leva menos de um minuto.') : 'Digite sua senha pra continuar.'}</p>
+      <label class="fl" for="auUser">Nome de usuário</label>
+      <input class="input" id="auUser" maxlength="20" autocomplete="username" autocapitalize="none" spellcheck="false" value="${creating ? '' : esc(account.user)}" />
       ${creating ? `<label class="fl" for="auFull">Nome completo</label>
       <input class="input" id="auFull" maxlength="60" autocomplete="name" autocapitalize="words" />
       ${nickField('', 'au')}` : ''}
-      <label class="fl" for="auUser">Nome de usuário</label>
-      <input class="input" id="auUser" maxlength="20" autocomplete="username" autocapitalize="words" value="${creating ? '' : esc(account.user)}" />
       <label class="fl" for="auPass">Senha</label>
       <input class="input" id="auPass" type="password" autocomplete="${creating ? 'new-password' : 'current-password'}" ${creating ? '' : 'autofocus'} />
       ${creating ? `<label class="fl" for="auPass2">Repita a senha</label><input class="input" id="auPass2" type="password" autocomplete="new-password" />` : ''}
@@ -5103,7 +5143,8 @@ button:focus-visible, a:focus-visible, [role="button"]:focus-visible, [tabindex]
       <p class="auth-note">${creating ? 'A senha fica guardada só neste aparelho, embaralhada: ninguém consegue ler. Seus lançamentos também ficam só aqui.' : ''}</p>
     </form>`;
     const f = $('#authForm'), err = t => { $('#auErr').textContent = t; };
-    setTimeout(() => (creating ? $('#auFull') : $('#auPass')).focus(), 50);
+    setTimeout(() => (creating ? $('#auUser') : $('#auPass')).focus(), 50);
+    pwToggles($('#authScreen'));
     if (creating) {
       bindNick($('#authScreen'), 'au');
       // sugere o nome de usuário a partir do primeiro nome, até a pessoa mexer nele
@@ -5163,11 +5204,11 @@ button:focus-visible, a:focus-visible, [role="button"]:focus-visible, [tabindex]
   async function openAccountSettings() {
     const bioOk = await bioAvailable();
     openModal(`<form id="f" novalidate>${modalHead('Sua conta', `Conectado como ${esc(account.user)} neste aparelho.`)}
+      <label class="fl" for="acUser">Nome de usuário</label>
+      <input class="input" id="acUser" maxlength="20" value="${esc(account.user)}" autocomplete="username" autocapitalize="none" spellcheck="false" />
       <label class="fl" for="acFull">Nome completo</label>
       <input class="input" id="acFull" maxlength="60" value="${esc(account.fullName || '')}" autocomplete="name" autocapitalize="words" />
       ${nickField(account.nick, 'ac')}
-      <label class="fl" for="acUser">Nome de usuário</label>
-      <input class="input" id="acUser" maxlength="20" value="${esc(account.user)}" autocomplete="username" />
       <label class="fl" for="acOld">Senha atual</label><input class="input" id="acOld" type="password" autocomplete="current-password" placeholder="Só pra trocar a senha" />
       <label class="fl" for="acNew">Nova senha</label><input class="input" id="acNew" type="password" autocomplete="new-password" placeholder="Deixe em branco pra manter" />
       ${bioOk ? checkField('acBio', 'Entrar com a digital ou o rosto', 'Usa o leitor do aparelho na tela de entrar.', !!account.credId) : ''}
@@ -5176,6 +5217,7 @@ button:focus-visible, a:focus-visible, [role="button"]:focus-visible, [tabindex]
         <button type="button" class="btn cancel" data-close>Cancelar</button><button type="submit" class="btn save">Salvar</button></div></form>`, m => {
       m.querySelector('#acOut').addEventListener('click', () => logout());
       bindNick(m, 'ac');
+      pwToggles(m);
       m.querySelector('#f').addEventListener('submit', async e => {
         e.preventDefault();
         const user = m.querySelector('#acUser').value.trim().replace(/\s+/g, ' '), oldP = m.querySelector('#acOld').value, newP = m.querySelector('#acNew').value;
