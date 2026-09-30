@@ -187,7 +187,7 @@ svg.i { width: 16px; height: 16px; flex: none; fill: none; stroke: currentColor;
 .two { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 10px; }
 .two > div, .three > div { min-width: 0; }
 .input[type=month], .input[type=date] { min-width: 0; }
-.seg2 button.on[data-src], .seg2 button.on[data-cy] { background: var(--card); color: var(--ink); box-shadow: var(--shadow); }
+.seg2 button.on[data-src], .seg2 button.on[data-cy], .seg2 button.on[data-next] { background: var(--card); color: var(--ink); box-shadow: var(--shadow); }
 .picked { display: flex; align-items: center; gap: 12px; background: var(--field); border-radius: 14px; padding: 10px 12px; }
 .picked .input { background: var(--card); }
 .picked .grow { flex: 1; min-width: 0; }
@@ -819,6 +819,30 @@ html.auth .auth-screen { display: grid; place-items: center; }
 .cal button.today.sel { background: var(--accent); color: #fff; box-shadow: none; }
 @media (prefers-reduced-motion: reduce) { #headline, .top.intro *, .kpis.intro *, .cal-rel, .ghost-ico svg.i, .month button svg.i { animation: none !important; transition: none !important; } }
 
+/* Linguagem simples e guias */
+.title-wrap { min-width: 0; }
+.tab-hint { margin: 3px 0 0; font-size: .78rem; color: var(--muted); line-height: 1.4; }
+.tab-hint:empty { display: none; }
+button.kpi-label { border: 0; background: none; padding: 0; cursor: help; text-align: left; text-decoration: underline dotted var(--field-line); text-underline-offset: 4px; }
+button.kpi-label:hover { color: var(--ink); text-decoration-color: currentColor; }
+.explain-main { font-size: 1rem; line-height: 1.5; margin: 4px 0 10px; }
+.explain-more { font-size: .88rem; line-height: 1.55; color: var(--muted); margin: 0 0 6px; }
+.ov-steps { grid-column: 1 / -1; }
+.steps-bar { height: 4px; border-radius: 9px; background: var(--field); overflow: hidden; margin-bottom: 12px; }
+.steps-bar i { display: block; height: 100%; background: var(--accent); border-radius: 9px; transition: width .6s cubic-bezier(.2, .8, .2, 1); }
+.steps { display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); gap: 10px; }
+.step { display: flex; gap: 10px; align-items: flex-start; text-align: left; border: 1px solid var(--line); background: none; border-radius: 12px; padding: 12px; color: var(--ink); transition: border-color .2s, transform .15s; }
+.step:hover { border-color: var(--field-line); transform: translateY(-1px); }
+.step-n { width: 24px; height: 24px; border-radius: 50%; flex: none; display: grid; place-items: center; font-size: .75rem; font-weight: 600; background: var(--field); color: var(--ink-2); }
+.step-n svg.i { width: 13px; height: 13px; stroke-width: 2.5; }
+.step-t b { display: block; font-size: .84rem; font-weight: 600; }
+.step-t small { display: block; margin-top: 2px; font-size: .74rem; color: var(--muted); line-height: 1.35; }
+.step.ok { cursor: default; }
+.step.ok .step-n { background: var(--accent); color: #fff; }
+.step.ok .step-t b { color: var(--muted); text-decoration: line-through; text-decoration-color: var(--field-line); }
+@media (max-width: 1000px) { .steps { grid-template-columns: 1fr 1fr; } }
+@media (max-width: 640px) { .steps { grid-template-columns: 1fr; } }
+
 /* ===== Resumo do mês (impressão / PDF) ===== */
 #report { display: none; }
 @media print {
@@ -1231,25 +1255,25 @@ button:focus-visible, a:focus-visible, [role="button"]:focus-visible, [tabindex]
 
     <section class="kpis">
       <div class="kpi contas">
-        <div class="kpi-head"><span class="kpi-label">Nas suas contas</span>
+        <div class="kpi-head"><button type="button" class="kpi-label" data-explain="contas">Nas suas contas</button>
           <button class="adjust dark" id="accountsBtn" title="Saldo das suas contas"><span class="t">Contas</span><svg class="i"><use href="#i-pencil"/></svg></button>
         </div>
         <div class="kpi-value num" id="kSaldo"></div>
         <div class="kpi-sub" id="kSaldoSub"></div>
       </div>
       <div class="kpi receita">
-        <div class="kpi-head"><span class="kpi-label">Entrou</span></div>
+        <div class="kpi-head"><button type="button" class="kpi-label" data-explain="entrou">Entrou</button></div>
         <div class="kpi-value num" id="kReceita"></div>
         <div class="kpi-sub" id="kReceitaSub"></div>
       </div>
       <div class="kpi despesas">
-        <div class="kpi-head"><span class="kpi-label">Saiu</span></div>
+        <div class="kpi-head"><button type="button" class="kpi-label" data-explain="saiu">Saiu</button></div>
         <div class="kpi-value num" id="kDespesas"></div>
         <div class="kpi-sub" id="kDespesasSub"></div>
       </div>
       <div class="kpi sobra">
-        <div class="kpi-head"><span class="kpi-label" id="kSobraLabel">Sobra do mês</span>
-          <button class="adjust" id="investBtn" title="Quanto guardar por mês"><span class="t">Guardar</span><svg class="i"><use href="#i-pencil"/></svg></button>
+        <div class="kpi-head"><button type="button" class="kpi-label" id="kSobraLabel" data-explain="sobra">Sobra do mês</button>
+          <button class="adjust" id="investBtn" title="Quanto você pretende guardar este mês"><span class="t">Planejar</span><svg class="i"><use href="#i-pencil"/></svg></button>
         </div>
         <div class="kpi-value num" id="kSobra"></div>
         <div class="kpi-sub" id="kSobraSub"></div>
@@ -1258,9 +1282,9 @@ button:focus-visible, a:focus-visible, [role="button"]:focus-visible, [tabindex]
 
     <nav class="tabs" id="tabs" role="tablist"><span class="tab-ind" id="tabInd" aria-hidden="true"></span>
       <button role="tab" data-tab="geral">Visão geral</button>
-      <button role="tab" data-tab="receita">Receita</button>
-      <button role="tab" data-tab="fixa">Despesa fixa</button>
-      <button role="tab" data-tab="variavel">Despesa variável</button>
+      <button role="tab" data-tab="receita">Entradas</button>
+      <button role="tab" data-tab="fixa">Contas fixas</button>
+      <button role="tab" data-tab="variavel">Gastos</button>
       <button role="tab" data-tab="assin">Assinaturas</button>
       <button role="tab" data-tab="cartoes">Cartões</button>
       <button role="tab" data-tab="invest">Investimentos</button>
@@ -1271,7 +1295,7 @@ button:focus-visible, a:focus-visible, [role="button"]:focus-visible, [tabindex]
     <section class="grid" id="mainGrid">
       <div class="card table-card">
         <div class="card-head">
-          <h2 id="tableTitle"></h2>
+          <div class="title-wrap"><h2 id="tableTitle"></h2><p class="tab-hint" id="tableHint"></p></div>
           <div class="head-actions">
             <button class="btn-soft" id="filterBtn"><svg class="i"><use href="#i-filter"/></svg><span class="t">Filtro</span></button>
             <button class="btn-soft" id="addBtn"><svg class="i"><use href="#i-plus"/></svg>Adicionar</button>
@@ -1608,10 +1632,10 @@ button:focus-visible, a:focus-visible, [role="button"]:focus-visible, [tabindex]
     const inRange = (iso, ts) => iso <= todayIso && (iso > from || (iso === from && !!acc.balanceAt && !!ts && ts > acc.balanceAt));
     for (let k = addMonths(monthOf(from), -1); k <= curKey(); k = addMonths(k, 1)) {
       receitasOf(k).filter(r => r.payAccount === acc.id && !r.pending && inRange(r.shownDate, !r.imported && r.created))
-        .forEach(r => out.push({ date: r.shownDate, amount: r.amount, label: r.desc || 'Receita' }));
+        .forEach(r => out.push({ date: r.shownDate, amount: r.amount, label: r.desc || 'Entrada' }));
       [...variaveisOf(k).map(i => [i, i.desc || cat(i.category)?.name]), ...fixasOf(k).map(i => [i, i.desc]), ...assinaturasOf(k).map(i => [i, i.name])]
         .filter(([i]) => i.payAccount === acc.id && !i.payCard && inRange(i.shownDate, !i.imported && i.created))
-        .forEach(([i, label]) => out.push({ date: i.shownDate, amount: -i.amount, label: label || 'Despesa' }));
+        .forEach(([i, label]) => out.push({ date: i.shownDate, amount: -i.amount, label: label || 'Gasto' }));
     }
     for (const card of state.cards) for (const [k, f] of Object.entries(state.faturas[card.id] || {}))
       if (f.paid && f.payAccount === acc.id && f.paidAt && inRange(f.paidAt, f.paidTs)) out.push({ date: f.paidAt, amount: -f.amount, label: `Fatura ${card.name} (${monthName(k)})` });
@@ -1677,9 +1701,9 @@ button:focus-visible, a:focus-visible, [role="button"]:focus-visible, [tabindex]
     const card = state.cards.find(c => c.id === cardId);
     const out = [];
     for (const k of [addMonths(key, -2), addMonths(key, -1), key]) out.push(
-      ...fixasOf(k).map(i => ({ ...i, kind: 'Despesa fixa', label: i.desc })),
+      ...fixasOf(k).map(i => ({ ...i, kind: 'Conta fixa', label: i.desc })),
       ...assinaturasOf(k).map(i => ({ ...i, kind: 'Assinatura', label: i.name })),
-      ...variaveisOf(k).map(i => ({ ...i, kind: i.installment ? `Parcela ${i.installment.i}/${i.installment.n}` : 'Despesa variável', label: (i.desc || cat(i.category)?.name || 'Despesa') + (i.installment ? ` (${i.installment.i}/${i.installment.n})` : '') })));
+      ...variaveisOf(k).map(i => ({ ...i, kind: i.installment ? `Parcela ${i.installment.i}/${i.installment.n}` : 'Gasto', label: (i.desc || cat(i.category)?.name || 'Gasto') + (i.installment ? ` (${i.installment.i}/${i.installment.n})` : '') })));
     return out.filter(i => i.payCard === cardId && card && faturaKeyFor(card, i.shownDate) === key);
   }
   // Prévia da fatura: soma do que já caiu nela (compras até hoje e parcelas)
@@ -1733,7 +1757,7 @@ button:focus-visible, a:focus-visible, [role="button"]:focus-visible, [tabindex]
     }
     const today = dueSoon().filter(f => daysUntil(f.shownDate) === 0);
     if (today.length) return [`Hoje vence ${today[0].desc}.`, today.length > 1 ? `E mais ${today.length - 1}. O resto está em dia.` : 'O resto está em dia.'];
-    if (t.receita && t.saldo >= 0) return [`Sobram ${reais(t.saldo) || 'alguns reais'} em ${mes}.`, t.pct ? 'E você ainda está guardando. Bom trabalho.' : 'Que tal guardar uma parte?'];
+    if (t.receita && t.saldo >= 0) return [`Sobram ${reais(t.saldo) || 'alguns reais'} em ${mes}.`, t.pct ? 'E ainda cabe o que você planejou guardar. Bom trabalho.' : 'Que tal planejar guardar uma parte?'];
     if (t.receita && t.saldo < 0) return [`Faltam ${reais(t.saldo) || 'alguns reais'} pra fechar ${mes} no azul.`, 'Pequenos ajustes já fazem diferença.'];
     return ['Tudo em dia por aqui.', 'Lance o que entrar e sair pra acompanhar o mês.'];
   }
@@ -1759,6 +1783,17 @@ button:focus-visible, a:focus-visible, [role="button"]:focus-visible, [tabindex]
   // ================= Render =================
   const render = withMemo(renderNow);
   // Entrada suave ao trocar de aba ou de mês: linhas e cards sobem e aparecem em sequência, o gráfico gira de leve
+
+  // Uma frase simples explicando cada aba (linguagem de conversa, sem jargão)
+  const TAB_HINTS = {
+    receita: 'Tudo que entra: salário, pix, vendas. No que se repete, marque "Recebo todo mês".',
+    fixa: 'Contas que chegam todo mês. Toque no status pra marcar como paga.',
+    variavel: 'Compras do dia a dia: mercado, delivery, transporte. O botão + lança rapidinho.',
+    assin: 'Serviços cobrados todo mês ou todo ano, como streaming e apps.',
+    cartoes: 'Cada cartão com a fatura do mês e quanto do limite ainda sobra.',
+    invest: 'Onde o seu dinheiro guardado está e quanto ele rende sozinho.',
+    metas: 'Objetivos com valor e prazo. O app calcula quanto guardar por mês.',
+  };
   let lastView = '';
   let donutAnim = true;
   // valor do meio do gráfico conta de 0 até o total enquanto as fatias são desenhadas
@@ -1795,6 +1830,7 @@ button:focus-visible, a:focus-visible, [role="button"]:focus-visible, [tabindex]
     animateEnter.t = setTimeout(() => { el.classList.remove('enter'); items.forEach(it => { it.style.animationDelay = ''; }); }, 900);
   }
   function renderNow() {
+    if ($('#tableHint')) $('#tableHint').textContent = TAB_HINTS[ui.tab] || '';
     { const v = ui.tab + '|' + view.month;
       if (v !== lastView) {
         if (lastView) requestAnimationFrame(animateEnter);
@@ -1817,7 +1853,7 @@ button:focus-visible, a:focus-visible, [role="button"]:focus-visible, [tabindex]
     $('#kReceitaSub').textContent = t.aReceber ? `+ ${money(t.aReceber)} a receber` : t.receita ? '' : 'Nada lançado ainda';
     $('#kDespesas').textContent = money(t.despesas);
     // cada "rótulo valor" fica junto na mesma linha
-    $('#kDespesasSub').innerHTML = [['Fixas', t.fixas], ['Variáveis', t.variaveis], ['Assinaturas', t.assinaturas], ['Faturas', t.faturas]]
+    $('#kDespesasSub').innerHTML = [['Contas', t.fixas], ['Gastos', t.variaveis], ['Assinaturas', t.assinaturas], ['Faturas', t.faturas]]
       .filter(([, v]) => v).map(([n, v]) => `<span style="display:inline-block">${n} <span style="white-space:nowrap">${esc(money(v))}</span></span>`).join(' · ');
     const signed = c => (c < 0 && !ui.hidden ? '–' : '') + money(Math.abs(c));
     // Nas suas contas: o dinheiro real somado dos bancos
@@ -1837,7 +1873,7 @@ button:focus-visible, a:focus-visible, [role="button"]:focus-visible, [tabindex]
     $('#kSobraLabel').textContent = t.saldo < 0 ? 'Falta no mês' : 'Sobra do mês';
     $('#kSobra').textContent = money(Math.abs(t.saldo));
     $('#kSobra').classList.toggle('short', t.saldo < 0);
-    $('#kSobraSub').textContent = t.pct ? `Guardando ${money(t.investir)} (${fmtPct(t.pct)})` : t.saldo < 0 ? 'Veja ideias na Visão geral' : 'Toque em Guardar para reservar uma parte';
+    $('#kSobraSub').textContent = t.pct ? `Pretende guardar ${money(t.investir)} (${fmtPct(t.pct)})` : t.saldo < 0 ? 'Veja ideias na Visão geral' : 'Quanto você pretende guardar este mês?';
     renderHeadline(t);
 
     $('#eyeBtn').innerHTML = ico(ui.hidden ? 'eye-off' : 'eye');
@@ -1889,7 +1925,7 @@ button:focus-visible, a:focus-visible, [role="button"]:focus-visible, [tabindex]
     if (ui.tab === 'assin') return renderAssinTable();
     if (ui.tab === 'cartoes') return renderCardsTable();
     if (ui.tab === 'metas') return renderMetasTable();
-    const titles = { receita: 'Receita', fixa: 'Despesas fixas', variavel: 'Despesas variáveis' };
+    const titles = { receita: 'Entradas', fixa: 'Contas fixas', variavel: 'Gastos do dia a dia' };
     $('#tableTitle').textContent = titles[ui.tab];
     const all = searchAll();
     const found = rowsForTab();
@@ -1973,12 +2009,12 @@ button:focus-visible, a:focus-visible, [role="button"]:focus-visible, [tabindex]
 
     const extra = ui.tab === 'variavel' ? limitsHtml(key) : '';
     if (!total) {
-      const msg = { receita: 'Sem receita neste mês ainda', fixa: 'Sem despesas fixas ainda', variavel: 'Sem despesas neste mês ainda' }[ui.tab];
+      const msg = { receita: 'Nada entrou neste mês ainda', fixa: 'Sem despesas fixas ainda', variavel: 'Sem despesas neste mês ainda' }[ui.tab];
       $('#chart').innerHTML = `<div class="chart-empty">${ico('pie')}<span>${msg}</span></div>` + extra;
       return;
     }
 
-    const label = { receita: 'Receita', fixa: 'Fixas', variavel: 'Variáveis' }[ui.tab];
+    const label = { receita: 'Entradas', fixa: 'Contas fixas', variavel: 'Gastos' }[ui.tab];
     $('#chart').innerHTML = donutHtml(groups, total, label) + extra;
   }
 
@@ -2058,10 +2094,10 @@ button:focus-visible, a:focus-visible, [role="button"]:focus-visible, [tabindex]
   function monthEvents(key) {
     const ev = [];
     const cardLogo = c => logoHtml({ brand: c.bank, name: c.name, color: c.color });
-    receitasOf(key).forEach(r => ev.push({ date: r.shownDate, amount: r.amount, dir: 'in', label: r.desc || cat(r.category)?.name || 'Receita', icon: 'circle-dollar-sign', done: !r.pending && r.shownDate <= todayIso, ref: 'r:' + r.id }));
+    receitasOf(key).forEach(r => ev.push({ date: r.shownDate, amount: r.amount, dir: 'in', label: r.desc || cat(r.category)?.name || 'Entrada', icon: 'circle-dollar-sign', done: !r.pending && r.shownDate <= todayIso, ref: 'r:' + r.id }));
     fixasOf(key).filter(f => fixaState(f) !== 'card').forEach(f => ev.push({ date: f.shownDate, amount: f.amount, dir: 'out', label: f.desc, icon: iconForText(f.desc) || 'receipt', done: f.paid, ref: 'f:' + f.id }));
     assinaturasOf(key).filter(a => !a.payCard).forEach(a => ev.push({ date: a.shownDate, amount: a.amount, dir: 'out', label: a.name, logo: logoHtml(a), done: a.shownDate <= todayIso, ref: 'a:' + a.id }));
-    variaveisOf(key).filter(v => !v.payCard).forEach(v => ev.push({ date: v.shownDate, amount: v.amount, dir: 'out', label: v.desc || cat(v.category)?.name || 'Despesa', icon: catIcon(cat(v.category)), done: v.shownDate <= todayIso, ref: 'v:' + v.id }));
+    variaveisOf(key).filter(v => !v.payCard).forEach(v => ev.push({ date: v.shownDate, amount: v.amount, dir: 'out', label: v.desc || cat(v.category)?.name || 'Gasto', icon: catIcon(cat(v.category)), done: v.shownDate <= todayIso, ref: 'v:' + v.id }));
     cardsOf(key).filter(c => c.fatura).forEach(c => ev.push({ date: c.shownDate, amount: c.fatura.amount, dir: 'out', label: `Fatura ${c.name}`, logo: cardLogo(c), done: c.fatura.paid, fatura: true, ref: 'c:' + c.id + ':' + key }));
     return ev;
   }
@@ -2094,9 +2130,35 @@ button:focus-visible, a:focus-visible, [role="button"]:focus-visible, [tabindex]
     return { start, days };
   }
 
+
+  // Primeiros passos: um guia curto pra quem está começando; some quando tudo estiver feito (ou se a pessoa esconder)
+  function stepsHtml() {
+    if (ui.stepsHidden) return '';
+    const steps = [
+      ['acc', 'Diga quanto você tem no banco', 'Assim o app sabe de onde você está partindo.', state.accounts.length > 0],
+      ['in', 'Lance o que você ganha', 'Salário, bicos, pix recebidos.', state.receitas.length > 0],
+      ['fix', 'Adicione suas contas fixas', 'Aluguel, luz, internet: o que chega todo mês.', state.fixas.length > 0],
+      ['out', 'Registre um gasto', 'Pode ser o café de hoje. O botão + é o jeito mais rápido.', state.variaveis.length > 0],
+      ['save', 'Planeje quanto guardar', 'Quanto do que entra você quer separar. Mesmo 5% já ajuda.', Object.values(state.invest || {}).some(v => v > 0)],
+    ];
+    const done = steps.filter(x => x[3]).length;
+    if (done === steps.length) return '';
+    return `<div class="ov ov-steps"><h3>Primeiros passos <button class="ov-link" data-steps-hide>Esconder</button></h3>
+      <p class="ov-sub">${done} de ${steps.length} feitos. Leva uns 5 minutos.</p>
+      <div class="steps-bar"><i style="width:${done / steps.length * 100}%"></i></div>
+      <div class="steps">${steps.map(([k, t, sub, ok], i) => `<button type="button" class="step${ok ? ' ok' : ''}" data-step="${k}" ${ok ? 'tabindex="-1"' : ''}>
+        <span class="step-n">${ok ? ico('check') : i + 1}</span><span class="step-t"><b>${t}</b><small>${sub}</small></span></button>`).join('')}</div></div>`;
+  }
+  document.addEventListener('click', e => {
+    if (e.target.closest('[data-steps-hide]')) { ui.stepsHidden = true; saveUi(); render(); return; }
+    const st = e.target.closest('[data-step]'); if (!st || st.classList.contains('ok')) return;
+    ({ acc: () => openAccounts(), in: () => openReceita(), fix: () => openFixa(), out: () => openVariavel(), save: () => openInvest() })[st.dataset.step]();
+  });
+
   function renderOverview() {
     const el = $('#overview');
     el.innerHTML = `
+      ${stepsHtml()}
       <div class="ov ov-forecast" id="ovForecast"></div>
       <div class="ov ov-cal" id="ovCal"></div>
       <div class="ov ov-where" id="ovWhere"></div>
@@ -2263,7 +2325,7 @@ button:focus-visible, a:focus-visible, [role="button"]:focus-visible, [tabindex]
     }
     const total = list.reduce((s, g) => s + g.value, 0);
     box.innerHTML = `<h3>Para onde vai o dinheiro <button class="ov-link" data-pdf>Resumo em PDF</button></h3>`
-      + (total ? donutHtml(list, total, 'Despesas') : '<div class="ov-empty">Sem despesas neste mês ainda.</div>');
+      + (total ? donutHtml(list, total, 'Saiu') : '<div class="ov-empty">Sem despesas neste mês ainda.</div>');
   }
 
   function renderOvCards() {
@@ -2326,7 +2388,7 @@ button:focus-visible, a:focus-visible, [role="button"]:focus-visible, [tabindex]
     box.innerHTML = `<div class="evo-head"><h2>Evolução</h2>
       <div class="evo-ctl"><div class="pills" id="evoRange">${[6, 12].map(x => `<button type="button" data-n="${x}" class="${x === n ? 'on' : ''}">${x} meses</button>`).join('')}</div>
         <button class="btn-soft" id="evoTableBtn" type="button">${table ? 'Ver gráfico' : 'Ver tabela'}</button></div></div>
-      <div class="evo-body"><div>${table ? evoTable(data) : `<div class="evo-legend"><span><i style="background:var(--green)"></i>Receita</span><span><i style="background:var(--out)"></i>Despesas</span></div><div class="evo-chart" id="evoChart"></div>`}</div>
+      <div class="evo-body"><div>${table ? evoTable(data) : `<div class="evo-legend"><span><i style="background:var(--green)"></i>Entrou</span><span><i style="background:var(--out)"></i>Saiu</span></div><div class="evo-chart" id="evoChart"></div>`}</div>
         <div class="insights">${insights()}</div></div>`;
     if (!table) drawEvoChart(data);
     box.querySelector('#evoRange').onclick = e => { const b = e.target.closest('[data-n]'); if (b) { ui.evoRange = +b.dataset.n; saveUi(); renderEvo(); } };
@@ -2375,8 +2437,8 @@ button:focus-visible, a:focus-visible, [role="button"]:focus-visible, [tabindex]
     const show = g => {
       const d = data[+g.dataset.i];
       tip.innerHTML = `<div class="tt">${monthLabel(d.k)}</div>
-        <div class="r"><span><i style="background:var(--green)"></i>Receita</span><b>${money(d.receita)}</b></div>
-        <div class="r"><span><i style="background:var(--out)"></i>Despesas</span><b>${money(d.despesas)}</b></div>
+        <div class="r"><span><i style="background:var(--green)"></i>Entrou</span><b>${money(d.receita)}</b></div>
+        <div class="r"><span><i style="background:var(--out)"></i>Saiu</span><b>${money(d.despesas)}</b></div>
         <div class="r"><span>Sobra</span><b style="color:${d.saldo < 0 ? 'var(--red)' : 'inherit'}">${d.saldo < 0 && !ui.hidden ? '–' : ''}${money(Math.abs(d.saldo))}</b></div>`;
       // abre ao lado da coluna (à esquerda se couber, senão à direita), sem cobrir o mês que você está olhando
       const i = +g.dataset.i, k = wrap.clientWidth / W, slotL = (padL + slot * i) * k, slotR = slotL + slot * k;
@@ -2428,7 +2490,7 @@ button:focus-visible, a:focus-visible, [role="button"]:focus-visible, [tabindex]
     if (avg) out.push(['🧮', `Média de despesas: <b>${money(avg)}</b>/mês`, 'Últimos 3 meses com lançamentos']);
     if (t.receita) {
       const rate = Math.round((t.receita - t.despesas) / t.receita * 100);
-      out.push([rate >= 20 ? '🌱' : rate >= 0 ? '🙂' : '⚠️', rate >= 0 ? `Sobrou <b>${rate}%</b> da receita neste mês` : `Gastou <b>${-rate}%</b> além da receita`, rate >= 20 ? 'Ótimo ritmo pra investir' : rate >= 0 ? 'Tente chegar em 20%' : 'Vale rever as maiores categorias']);
+      out.push([rate >= 20 ? '🌱' : rate >= 0 ? '🙂' : '⚠️', rate >= 0 ? `Sobrou <b>${rate}%</b> do que entrou neste mês` : `Saiu <b>${-rate}%</b> a mais do que entrou`, rate >= 20 ? 'Ótimo ritmo pra investir' : rate >= 0 ? 'Tente chegar em 20%' : 'Vale rever as maiores categorias']);
     }
     const snaps = Object.entries(state.snapshots || {}).sort(([x], [y]) => x.localeCompare(y));
     if (snaps.length) {
@@ -2436,7 +2498,7 @@ button:focus-visible, a:focus-visible, [role="button"]:focus-visible, [tabindex]
       out.push(['🏦', `Patrimônio: <b>${money(lastV)}</b>`, snaps.length > 1 ? `${d >= 0 ? '+' : '–'}${money(Math.abs(d))} desde ${monthLabel(firstK)} (contas + investimentos)` : 'Contas + investimentos. A evolução aparece nos próximos meses.']);
     }
     return out.length ? out.map(([, h, sub]) => `<div class="ins"><div>${h}<small>${sub}</small></div></div>`).join('')
-      : `<div class="ins"><div>Lance receitas e despesas por alguns meses pra ver as comparações aqui.</div></div>`;
+      : `<div class="ins"><div>Lance o que entra e o que sai por alguns meses pra ver as comparações aqui.</div></div>`;
   }
   let evoResize;
   window.addEventListener('resize', () => { clearTimeout(evoResize); evoResize = setTimeout(withMemo(renderEvo), 150); });
@@ -2523,7 +2585,7 @@ button:focus-visible, a:focus-visible, [role="button"]:focus-visible, [tabindex]
         <div><span>Você reserva pra investir</span><b class="num">${money(t.investir)}/mês</b></div>
         <div><span>Metas concluídas</span><b>${infos.filter(i => i.done).length} de ${infos.length}</b></div>
       </div>
-      ${perMonth > t.investir && t.receita ? `<p class="help" style="margin-top:12px">As metas pedem ${money(perMonth - t.investir)} a mais por mês do que você reserva em "Investir". Ajuste os prazos ou o quanto investe.</p>` : ''}`;
+      ${perMonth > t.investir && t.receita ? `<p class="help" style="margin-top:12px">As metas pedem ${money(perMonth - t.investir)} a mais por mês do que você planejou guardar. Ajuste os prazos ou o valor em Planejar.</p>` : ''}`;
   }
 
   function openMeta(item) {
@@ -2982,7 +3044,7 @@ button:focus-visible, a:focus-visible, [role="button"]:focus-visible, [tabindex]
       ${state.accounts.length ? `<label class="fl" for="fPayAcc">Fatura paga com a conta</label>
       <select class="select" id="fPayAcc"><option value="">Não informar</option>${state.accounts.map(a => `<option value="${a.id}" ${a.id === c.payAccount ? 'selected' : ''}>${esc(a.name)}</option>`).join('')}</select>
       <p class="help">Quando você marcar a fatura como paga, o valor sai do saldo dessa conta.</p>` : ''}
-      ${checkField('fCount', 'Somar a fatura nas despesas', 'Desmarque se você já lança as compras deste cartão em Despesa variável, pra não contar duas vezes.', c.count !== false)}
+      ${checkField('fCount', 'Somar a fatura no que saiu', 'Desmarque se você já lança as compras deste cartão em Gastos, pra não contar duas vezes.', c.count !== false)}
       ${footer(editing)}</form>`, m => {
       const prev = () => { m.querySelector('#ccPrev').innerHTML = ccPreview(c); };
       const nameInput = m.querySelector('#fName');
@@ -3339,7 +3401,7 @@ button:focus-visible, a:focus-visible, [role="button"]:focus-visible, [tabindex]
     const accs = state.accounts, opts = sel => accs.map(a => `<option value="${a.id}" ${a.id === sel ? 'selected' : ''}>${esc(a.name)}</option>`).join('');
     const recent = (state.transfers || []).filter(t => !t.inv).slice().sort((a, b) => b.date.localeCompare(a.date)).slice(0, 5);
     const name = id => esc(accs.find(a => a.id === id)?.name || 'conta removida');
-    openModal(`<form id="f" novalidate>${modalHead('Transferir entre contas', 'Move dinheiro de uma conta sua para outra. Não conta como receita nem como despesa.')}
+    openModal(`<form id="f" novalidate>${modalHead('Transferir entre contas', 'Move dinheiro de uma conta sua para outra. Não conta como entrada nem como gasto.')}
       <div class="two"><div><label class="fl" for="tFrom">De</label><select class="select" id="tFrom">${opts(accs[0].id)}</select></div>
         <div><label class="fl" for="tTo">Para</label><select class="select" id="tTo">${opts(accs[1].id)}</select></div></div>
       ${moneyField('fAmount', 0)}
@@ -3596,14 +3658,14 @@ button:focus-visible, a:focus-visible, [role="button"]:focus-visible, [tabindex]
   function openReceita(item, prefill) {
     const editing = !!item;
     const r = item || { date: defaultDate(), amount: 0, desc: '', category: '', recurring: false, pending: false, ...prefill };
-    openModal(`<form id="f" novalidate>${modalHead(editing ? 'Editar Receita' : 'Nova Receita', r.recurring ? 'Se repete todo mês.' : 'Lançamento deste mês.')}
+    openModal(`<form id="f" novalidate>${modalHead(editing ? 'Editar entrada' : 'Nova entrada', r.recurring ? 'Entra todo mês.' : 'Dinheiro que entrou: salário, pix, venda…')}
       <label class="fl" for="fDate">Data</label><input type="date" class="input" id="fDate" value="${r.date}" required />
-      ${checkField('fPending', 'Recebimento futuro', 'Não conta na sua receita até você marcar como recebido.', r.pending)}
+      ${checkField('fPending', 'Ainda vou receber', 'Só conta no que entrou quando você marcar como recebido.', r.pending)}
       ${moneyField('fAmount', r.amount)}
       <label class="fl" for="fDesc">Descrição</label><input class="input" id="fDesc" maxlength="60" placeholder="Ex.: Salário, Freela…" value="${esc(r.desc)}" />
       ${catSelect('receita', r.category, 'Tipo de renda')}
       ${payField(item || prefill ? r : null, true)}
-      ${checkField('fRecurring', 'Receita recorrente', 'Repete todo mês, como o salário.', r.recurring)}
+      ${checkField('fRecurring', 'Recebo todo mês', 'Como o salário: aparece sozinho nos próximos meses.', r.recurring)}
       ${footer(editing, true)}</form>`, m => {
       m.querySelector('#fDup')?.addEventListener('click', () => openReceita(null, { amount: item.amount, desc: item.desc, category: item.category, payAccount: item.payAccount || '', payCard: '' }));
       bindMoney(m.querySelector('#fAmount'));
@@ -3623,7 +3685,7 @@ button:focus-visible, a:focus-visible, [role="button"]:focus-visible, [tabindex]
         if (!data.amount) return showErr('Digite o valor.');
         if (data.category === '__new') data.category = '';
         upsertRecurringAware(state.receitas, item, data, 'recurring');
-        undoToast(editing ? 'Receita atualizada' : 'Receita adicionada', undoSnap);
+        undoToast(editing ? 'Entrada atualizada' : 'Entrada adicionada', undoSnap);
         goToMonthOf(data.date, item);
         commit();
       });
@@ -3635,7 +3697,7 @@ button:focus-visible, a:focus-visible, [role="button"]:focus-visible, [tabindex]
   function openVariavel(item, prefill) {
     const editing = !!item;
     const v = item || { date: defaultDate(), amount: 0, desc: '', category: '', ...prefill };
-    openModal(`<form id="f" novalidate>${modalHead(editing ? 'Editar Despesa Variável' : 'Nova Despesa Variável', v.installment ? `Parcela ${v.installment.i} de ${v.installment.n}.` : 'Lançamento deste mês.')}
+    openModal(`<form id="f" novalidate>${modalHead(editing ? 'Editar gasto' : 'Novo gasto', v.installment ? `Parcela ${v.installment.i} de ${v.installment.n}.` : 'Lançamento deste mês.')}
       <label class="fl" for="fDate">Data</label><input type="date" class="input" id="fDate" value="${v.date}" required />
       ${moneyField('fAmount', v.amount)}
       ${editing ? '' : checkField('fInst', 'Parcelado', 'Divide o valor total nos próximos meses.', false) +
@@ -3693,7 +3755,7 @@ button:focus-visible, a:focus-visible, [role="button"]:focus-visible, [tabindex]
           if (item.installment && m.querySelector('#fAllParc')?.checked)
             state.variaveis.filter(x => x.installment?.group === item.installment.group)
               .forEach(x => Object.assign(x, { desc: data.desc, category: data.category, payCard: data.payCard, payAccount: data.payAccount }));
-          undoToast('Despesa atualizada', undoSnap);
+          undoToast('Gasto atualizado', undoSnap);
         } else if (m.querySelector('#fInst').checked) {
           const n = Math.max(2, Math.min(48, +m.querySelector('#fN').value || 2));
           const group = uid(), base = Math.floor(data.amount / n), rest = data.amount - base * n;
@@ -3705,7 +3767,7 @@ button:focus-visible, a:focus-visible, [role="button"]:focus-visible, [tabindex]
           undoToast(`Parcelado em ${n}x`, undoSnap);
         } else {
           state.variaveis.push({ ...data, id: uid(), created: Date.now() });
-          undoToast('Despesa adicionada', undoSnap);
+          undoToast('Gasto adicionado', undoSnap);
         }
         goToMonthOf(data.date, item);
         commit();
@@ -3725,7 +3787,7 @@ button:focus-visible, a:focus-visible, [role="button"]:focus-visible, [tabindex]
           return;
         }
         state.variaveis = state.variaveis.filter(x => x.id !== item.id);
-        done('Despesa excluída');
+        done('Gasto excluído');
       });
     });
   }
@@ -3734,17 +3796,36 @@ button:focus-visible, a:focus-visible, [role="button"]:focus-visible, [tabindex]
   function openFixa(item) {
     const editing = !!item;
     const f = item || { amount: 0, desc: '', day: +defaultDate().slice(8) };
-    openModal(`<form id="f" novalidate>${modalHead(editing ? 'Editar Despesa Fixa' : 'Nova Despesa Fixa', 'Vale deste mês em diante.')}
-      ${moneyField('fAmount', f.amount)}
-      <label class="fl" for="fDesc">Descrição</label><input class="input" id="fDesc" maxlength="60" placeholder="Ex.: Aluguel, Internet…" value="${esc(f.desc)}" />
-      <label class="fl" for="fDay">Vencimento (dia do mês)</label>
-      <select class="select" id="fDay">${Array.from({ length: 31 }, (_, i) => `<option value="${i + 1}" ${i + 1 === f.day ? 'selected' : ''}>Todo dia ${pad(i + 1)}</option>`).join('')}</select>
-      ${checkField('fDueNext', 'Vence no mês seguinte', 'Ex.: o plano de saúde de setembro que você paga dia 5 de outubro. Conta nas despesas de setembro e vence em outubro.', f.dueNext)}
+    openModal(`<form id="f" novalidate>${modalHead(editing ? 'Editar conta fixa' : 'Nova conta fixa', 'Conta que chega todo mês: aluguel, luz, internet… Vale deste mês em diante.')}
+      <label class="fl" for="fDesc">Que conta é essa?</label><input class="input" id="fDesc" maxlength="60" placeholder="Ex.: Aluguel" value="${esc(f.desc)}" />
+      ${editing ? '' : `<div class="nick-chips" id="fixSug">${['Aluguel', 'Luz', 'Água', 'Internet', 'Celular', 'Condomínio', 'Plano de saúde', 'Escola'].map(n => `<button type="button" data-sug="${n}">${n}</button>`).join('')}</div>`}
+      ${moneyField('fAmount', f.amount, 'Quanto costuma vir?')}
+      <div class="two">
+        <div><label class="fl" for="fDay">Vence todo dia</label>
+          <select class="select" id="fDay">${Array.from({ length: 31 }, (_, i) => `<option value="${i + 1}" ${i + 1 === f.day ? 'selected' : ''}>Dia ${pad(i + 1)}</option>`).join('')}</select></div>
+        <div><label class="fl">Quando você paga?</label>
+          <div class="seg2" id="fWhen"><button type="button" data-next="0">No mesmo mês</button><button type="button" data-next="1">No mês seguinte</button></div></div>
+      </div>
+      <input type="checkbox" id="fDueNext" hidden ${f.dueNext ? 'checked' : ''} />
+      <p class="help" id="fWhenHelp"></p>
       ${editing ? '' : `<div id="paidNowBox" hidden>${checkField('fPaidNow', 'Já paguei a deste mês', 'O vencimento deste mês já passou. Desmarque se ainda não pagou.', true)}</div>`}
       ${payField(item ? f : null)}
       ${footer(editing)}</form>`, m => {
       bindMoney(m.querySelector('#fAmount'));
       bindPay(m);
+      // sugestões de nome e "quando você paga" com a frase mostrando o resultado
+      m.querySelector('#fixSug')?.addEventListener('click', e => { const b = e.target.closest('[data-sug]'); if (!b) return; m.querySelector('#fDesc').value = b.dataset.sug; m.querySelectorAll('#fixSug button').forEach(x => x.classList.toggle('on', x === b)); m.querySelector('#fAmount').focus(); });
+      const drawWhen = () => {
+        const next = m.querySelector('#fDueNext').checked, day = +m.querySelector('#fDay').value;
+        m.querySelectorAll('#fWhen button').forEach(b => b.classList.toggle('on', (b.dataset.next === '1') === next));
+        const due = dateIn(next ? addMonths(view.month, 1) : view.month, day);
+        m.querySelector('#fWhenHelp').textContent = next
+          ? `A conta de ${monthName(view.month)} você paga em ${dm(due)}. Ela entra no que saiu em ${monthName(view.month)}.`
+          : `A conta de ${monthName(view.month)} vence em ${dm(due)}.`;
+      };
+      m.querySelector('#fWhen').addEventListener('click', e => { const b = e.target.closest('[data-next]'); if (!b) return; const c = m.querySelector('#fDueNext'); c.checked = b.dataset.next === '1'; c.dispatchEvent(new Event('change')); drawWhen(); });
+      m.querySelector('#fDay').addEventListener('change', drawWhen);
+      drawWhen();
       // Conta nova com o vencimento deste mês já passado: pergunta se já foi paga, pra não nascer "Atrasada"
       const paidNow = () => {
         const box = m.querySelector('#paidNowBox'); if (!box) return;
@@ -3774,7 +3855,7 @@ button:focus-visible, a:focus-visible, [role="button"]:focus-visible, [tabindex]
         } else {
           Object.assign(state.fixas.find(x => x.id === item.id), data);
         }
-        undoToast(editing ? 'Despesa fixa atualizada' : 'Despesa fixa adicionada', undoSnap);
+        undoToast(editing ? 'Conta fixa atualizada' : 'Conta fixa adicionada', undoSnap);
         commit();
       });
       if (editing) m.querySelector('#fDelete').addEventListener('click', () => removeRecurringAware('fixas', item, true));
@@ -3914,13 +3995,13 @@ button:focus-visible, a:focus-visible, [role="button"]:focus-visible, [tabindex]
   function openInvest() {
     const t = totals(view.month);
     let pct = t.pct;
-    openModal(`${modalHead('Investir', 'Quanto da sua receita você reserva pra investir.')}
+    openModal(`${modalHead('Quanto pretende guardar?', 'É um plano: o app não guarda dinheiro. Ele tira esse valor da sobra do mês pra você não gastar sem perceber. Depois é só transferir pra sua poupança ou investimento.')}
       <div class="big-pct num" id="iPct"></div>
       <input type="range" class="range" id="iRange" min="0" max="100" step="1" aria-label="Percentual" />
       <div class="presets">${[10, 20, 30, 40, 50].map(p => `<button type="button" data-p="${p}">${p}%</button>`).join('')}</div>
       <div class="inv-label">Valor a investir</div>
       <div class="inv-value"><span>R$</span><input id="iVal" inputmode="numeric" aria-label="Valor a investir" /></div>
-      <p class="hint">${t.receita ? 'Toque no valor pra digitar. O percentual se ajusta sozinho.' : 'Adicione uma receita neste mês para calcular o valor.'}</p>
+      <p class="hint">${t.receita ? 'Toque no valor pra digitar. O percentual se ajusta sozinho.' : 'Lance o que entrou neste mês pra calcular o valor.'}</p>
       <div class="actions"><span class="grow"></span><button class="btn cancel" data-close>Cancelar</button><button class="btn save" id="iSave">Salvar</button></div>`, m => {
       const val = m.querySelector('#iVal'), range = m.querySelector('#iRange');
       const draw = (fromValue) => {
@@ -3959,7 +4040,7 @@ button:focus-visible, a:focus-visible, [role="button"]:focus-visible, [tabindex]
         <button class="x" data-remove aria-label="Excluir categoria">${ico('x')}</button></div>`).join('');
       m.querySelectorAll('[data-limit]').forEach(inp => bindMoney(inp, v => { cat(inp.closest('.cat-edit').dataset.id).limit = v; save(); }));
     };
-    openModal(`${modalHead('Categorias', kind === 'receita' ? 'Tipos de renda.' : 'Categorias das despesas variáveis e um limite por mês para cada uma (opcional).')}
+    openModal(`${modalHead('Categorias', kind === 'receita' ? 'De onde vem o seu dinheiro.' : 'Tipos de gasto e, se quiser, um limite por mês pra cada um.')}
       <div id="catList"></div>
       <button class="btn-soft" id="catAdd" style="margin-top:12px">${ico('plus')}Nova categoria</button>
       <div class="actions"><span class="grow"></span><button class="btn save" data-close>Pronto</button></div>`, m => {
@@ -4077,14 +4158,14 @@ button:focus-visible, a:focus-visible, [role="button"]:focus-visible, [tabindex]
       const len = g.value / catTotal * 100, gap = cats.length > 1 ? 0.8 : 0;
       const s = `<circle cx="21" cy="21" r="15.915" fill="none" stroke="${g.color}" stroke-width="5.2" stroke-dasharray="${Math.max(len - gap, 0.01)} ${100 - Math.max(len - gap, 0.01)}" stroke-dashoffset="${-off}"/>`;
       off += len; return s;
-    }).join('')}</g><text x="21" y="20" text-anchor="middle" class="r-dl">Despesas</text><text x="21" y="24.5" text-anchor="middle" class="r-dv">${R(catTotal)}</text></svg>` : '';
+    }).join('')}</g><text x="21" y="20" text-anchor="middle" class="r-dl">Saiu</text><text x="21" y="24.5" text-anchor="middle" class="r-dv">${R(catTotal)}</text></svg>` : '';
     const catRows = cats.map(g => `<div class="r-cat"><span class="dot" style="background:${g.color}"></span><span class="n">${esc(g.name)}</span><span class="p">${Math.round(g.value / catTotal * 100)}%</span><b>${R(g.value)}</b></div>`).join('');
     // Últimos 6 meses
     const months = Array.from({ length: 6 }, (_, i) => addMonths(key, i - 5)), series = months.map(k => ({ k, ...totals(k) }));
     const top = niceScale(Math.max(...series.map(s => Math.max(s.receita, s.despesas)), 1)).max;
     const evo = `<div class="r-evo">${series.map(s => `<div class="col${s.k === key ? ' cur' : ''}"><div class="bars">
       <i class="in" style="height:${s.receita / top * 100}%"></i><i class="out" style="height:${s.despesas / top * 100}%"></i></div><span>${shortMonth(s.k)}</span></div>`).join('')}</div>
-      <div class="r-leg"><span><i class="in"></i>Receita</span><span><i class="out"></i>Despesas</span><span class="grow"></span><span>escala até ${R(top)}</span></div>`;
+      <div class="r-leg"><span><i class="in"></i>Entrou</span><span><i class="out"></i>Saiu</span><span class="grow"></span><span>escala até ${R(top)}</span></div>`;
     // Listas
     const table = (title, rows, empty, foot) => `<section class="r-sec"><h2>${title}</h2>${rows.length ? `<table>${rows.join('')}</table>${foot || ''}` : `<p class="r-empty">${empty}</p>`}</section>`;
     const tr = (...cells) => `<tr>${cells.map((c, i) => `<td${i === cells.length - 1 ? ' class="v"' : ''}>${c}</td>`).join('')}</tr>`;
@@ -4101,10 +4182,10 @@ button:focus-visible, a:focus-visible, [role="button"]:focus-visible, [tabindex]
     const tips = insights().replace(/<span class="ic"[^>]*>.*?<\/span>/g, '');
     const lbl = new Date(+key.slice(0, 4), +key.slice(5) - 1, 1).toLocaleDateString('pt-BR', { month: 'long', year: 'numeric' });
     return `<header class="r-head"><div><p>Orçamento</p><h1>Resumo de ${lbl}</h1></div><small>Gerado em ${new Date().toLocaleDateString('pt-BR')}</small></header>
-      <div class="r-kpis">${kpi('Receita', t.receita, delta(t.receita, tp.receita, true) + (t.aReceber ? `<small>+ ${R(t.aReceber)} a receber</small>` : ''), '#15803d')}
-        ${kpi('Despesas', t.despesas, delta(t.despesas, tp.despesas, false), '#b91c1c')}
-        ${kpi('Investir', t.investir, t.pct ? `<small>${fmtPct(t.pct)} da receita</small>` : '', '#1d4ed8')}
-        ${kpi('Saldo', t.saldo, t.receita ? `<small>${Math.round((t.receita - t.despesas) / t.receita * 100)}% da receita sobrou</small>` : '', t.saldo < 0 ? '#b91c1c' : '#111827')}</div>
+      <div class="r-kpis">${kpi('Entrou', t.receita, delta(t.receita, tp.receita, true) + (t.aReceber ? `<small>+ ${R(t.aReceber)} a receber</small>` : ''), '#15803d')}
+        ${kpi('Saiu', t.despesas, delta(t.despesas, tp.despesas, false), '#b91c1c')}
+        ${kpi('Pretende guardar', t.investir, t.pct ? `<small>${fmtPct(t.pct)} do que entrou</small>` : '', '#1d4ed8')}
+        ${kpi('Sobrou', t.saldo, t.receita ? `<small>${Math.round((t.receita - t.despesas) / t.receita * 100)}% do que entrou</small>` : '', t.saldo < 0 ? '#b91c1c' : '#111827')}</div>
       <div class="r-grid r-top">
         <section class="r-sec"><h2>Para onde foi o dinheiro</h2>${catTotal ? `<div class="r-where">${donut}<div class="r-cats">${catRows}</div></div>` : '<p class="r-empty">Sem despesas neste mês.</p>'}</section>
         <section class="r-sec"><h2>Últimos 6 meses</h2>${evo}<div class="r-tips">${tips}</div></section>
@@ -5193,6 +5274,22 @@ button:focus-visible, a:focus-visible, [role="button"]:focus-visible, [tabindex]
     clearTimeout(introAnim.t);
     introAnim.t = setTimeout(() => [top, kpis].forEach(el => el.classList.remove('intro')), 1600);
   }
+
+
+  // "Entenda": explicações curtas dos números do topo, como uma conversa
+  const EXPLAIN = {
+    contas: ['Nas suas contas', 'É o dinheiro que você tem agora, somando os bancos que cadastrou em <b>Contas</b>.', 'Ele muda sozinho quando você lança uma entrada ou um gasto pago com aquela conta. Se ficar diferente do app do banco, é só corrigir o valor em Contas.'],
+    entrou: ['Entrou', 'Tudo que entrou no mês: salário, pix, vendas, rendimentos.', 'O que você ainda vai receber aparece embaixo, como "a receber", e só entra na conta quando você marcar como recebido.'],
+    saiu: ['Saiu', 'Tudo que saiu no mês: contas fixas, gastos do dia a dia, assinaturas e faturas de cartão.', 'O que você pagou no cartão entra pela fatura, pra não contar duas vezes.'],
+    sobra: ['Sobra do mês', 'É o que entrou, menos o que saiu, menos o que você planejou guardar (se planejou).', 'Se ficar negativo, o card mostra "Falta no mês": é quanto falta pra fechar o mês sem se apertar. Na Visão geral tem ideias pra resolver.'],
+  };
+  document.addEventListener('click', e => {
+    const b = e.target.closest('[data-explain]'); if (!b) return;
+    const [title, main, more] = EXPLAIN[b.dataset.explain] || [];
+    if (!title) return;
+    openModal(`${modalHead(title, 'Entenda')}<p class="explain-main">${main}</p><p class="explain-more">${more}</p>
+      <div class="actions"><span class="grow"></span><button class="btn save" data-close>Entendi</button></div>`);
+  });
 
   function showAuth() {
     document.documentElement.classList.add('auth');
