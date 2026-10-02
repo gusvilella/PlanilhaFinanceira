@@ -776,6 +776,9 @@ html.auth .auth-screen { display: grid; place-items: center; }
 .ov .dn-ic svg.i { width: 14px; height: 14px; }
 .dn-out { position: absolute; width: 22px; height: 22px; margin: -11px 0 0 -11px; border-radius: 50%; display: grid; place-items: center; pointer-events: none; box-shadow: 0 0 0 2px var(--card); }
 .dn-out svg.i { width: 12px; height: 12px; stroke-width: 2; }
+.dn-lines { position: absolute; inset: 0; width: 100%; height: 100%; overflow: visible; pointer-events: none; }
+.dn-lines line { stroke-width: .6; stroke-linecap: round; }
+.donut-wrap.draw .dn-lines line { animation: fade .3s ease var(--dl) both; }
 .ov .dn-out { width: 20px; height: 20px; margin: -10px 0 0 -10px; }
 .ov .dn-out svg.i { width: 11px; height: 11px; }
 .donut-wrap { padding-top: 16px; padding-bottom: 20px; }
@@ -2075,7 +2078,7 @@ button:focus-visible, a:focus-visible, [role="button"]:focus-visible, [tabindex]
     const gap = groups.length > 1 ? 0.8 : 0;
     let offset = 0;
     const marks = [];
-    let lastOut = -99;   // ângulo do último selo de fora, pra não encostar um no outro
+    const outs = [];   // fatias finas: o ícone vai num selo do lado de fora (posicionados depois, todos juntos)
     const arcs = groups.map(g => {
       const len = g.value / total * 100;
       const t0 = 250 + offset * 7, dur = Math.max(len * 7, 120);   // ms: começa depois do giro e segue a volta
@@ -2084,22 +2087,33 @@ button:focus-visible, a:focus-visible, [role="button"]:focus-visible, [tabindex]
       // ícone no meio da fatia (só nas que têm espaço)
       if (g.icon && len >= 6) {
         // fatia que passa pela parte de baixo do anel: ícone embaixo, no centro; as outras, no meio da fatia
-        const mid = offset < 50 - 3 && offset + len > 50 + 3 ? 50 : offset + len / 2;
+        const mid = offset < 50 - 3 && offset + len > 50 + 3 ? 50 : offset + (len - gap) / 2;
         const a = mid / 100 * 2 * Math.PI, r = 15.915 / 42 * 100;
         const x = 50 + r * Math.sin(a), y = 50 - r * Math.cos(a);
         marks.push(`<span class="dn-ic" style="--dl:${Math.round(250 + (offset + len) * 7)}ms;left:${x.toFixed(2)}%;top:${y.toFixed(2)}%;color:${lightColor(g.color) ? 'rgba(20,20,18,.72)' : '#fff'}"><svg class="i"><use href="#c-${g.icon}"/></svg></span>`);
       } else if (g.icon) {
-        // fatia fina: o ícone vai num selo do lado de fora do anel, na cor da fatia
-        let deg = (offset + len / 2) * 3.6;
-        if (deg - lastOut < 14) deg = lastOut + 14;
-        lastOut = deg;
-        const a = deg * Math.PI / 180, r = 54;
-        const x = 50 + r * Math.sin(a), y = 50 - r * Math.cos(a);
-        marks.push(`<span class="dn-out" title="${esc(g.name)}" style="--dl:${Math.round(250 + (offset + len) * 7)}ms;left:${x.toFixed(2)}%;top:${y.toFixed(2)}%;background:${g.color};color:${lightColor(g.color) ? 'rgba(20,20,18,.75)' : '#fff'}"><svg class="i"><use href="#c-${g.icon}"/></svg></span>`);
+        // centro visível da fatia (o traço começa no offset e tem len − gap)
+        outs.push({ g, deg: (offset + Math.max(len - gap, 0) / 2) * 3.6, dl: Math.round(250 + (offset + len) * 7) });
       }
       offset += len;
       return arc;
     }).join('');
+    // Selos de fora: cada um fica exatamente em cima da sua fatia. Se vizinhos se encostariam, o grupo se abre
+    // por igual para os dois lados (centralizado nas fatias) e uma linha fina liga cada selo à sua fatia.
+    const SEP = 15, P = (deg, r) => [50 + r * Math.sin(deg * Math.PI / 180), 50 - r * Math.cos(deg * Math.PI / 180)];
+    const clusters = [];
+    outs.forEach(o => { const last = clusters[clusters.length - 1]; if (last && o.deg - last[last.length - 1].deg < SEP) last.push(o); else clusters.push([o]); });
+    const lines = [];
+    clusters.forEach(cl => {
+      const mean = cl.reduce((t, o) => t + o.deg, 0) / cl.length;
+      cl.forEach((o, i) => {
+        const at = cl.length > 1 ? mean + (i - (cl.length - 1) / 2) * SEP : o.deg;
+        const [x, y] = P(at, 55);
+        if (Math.abs(at - o.deg) > 1) { const [x1, y1] = P(o.deg, 45), [x2, y2] = P(at, 49.5); lines.push(`<line x1="${x1.toFixed(2)}" y1="${y1.toFixed(2)}" x2="${x2.toFixed(2)}" y2="${y2.toFixed(2)}" stroke="${o.g.color}" style="--dl:${o.dl}ms"/>`); }
+        marks.push(`<span class="dn-out" title="${esc(o.g.name)}" style="--dl:${o.dl}ms;left:${x.toFixed(2)}%;top:${y.toFixed(2)}%;background:${o.g.color};color:${lightColor(o.g.color) ? 'rgba(20,20,18,.75)' : '#fff'}"><svg class="i"><use href="#c-${o.g.icon}"/></svg></span>`);
+      });
+    });
+    if (lines.length) marks.unshift(`<svg class="dn-lines" viewBox="0 0 100 100" aria-hidden="true">${lines.join('')}</svg>`);
 
     return `
       <div class="donut-wrap${donutAnim ? ' draw' : ''}">
