@@ -613,11 +613,11 @@ html.locked .lock { place-items: normal; overflow-y: auto; }
 .ov-row > .logo, .ov-row > .goal-emoji, .ov-row > .tx-ic { margin-top: 1px; }
 .ov-row .grow b { line-height: 1.35; }
 .ov-row .amt { line-height: 1.35; padding-top: 1px; }
-.row.top { align-items: start; }
-.row.top > .date { padding-top: 2px; }
-.row.top > .cat { padding-top: 0; }
-.row.top > .val { padding-top: 2px; }
-.row.top > .edit { margin-top: -4px; }
+.row.atop { align-items: start; }
+.row.atop > .date { padding-top: 2px; }
+.row.atop > .cat { padding-top: 0; }
+.row.atop > .val { padding-top: 2px; }
+.row.atop > .edit { margin-top: -4px; }
 .kpi-head { min-height: 28px; }
 .kpi-label { line-height: 1; }
 .top-right { align-self: flex-start; margin-top: 6px; }
@@ -774,14 +774,18 @@ html.auth .auth-screen { display: grid; place-items: center; }
 .dn-ic svg.i { width: 17px; height: 17px; stroke-width: 1.9; }
 .ov .dn-ic { width: 20px; height: 20px; margin: -10px 0 0 -10px; }
 .ov .dn-ic svg.i { width: 14px; height: 14px; }
-.dn-out { position: absolute; width: 22px; height: 22px; margin: -11px 0 0 -11px; border-radius: 50%; display: grid; place-items: center; pointer-events: none; box-shadow: 0 0 0 2px var(--card); }
+.dn-out { position: absolute; width: 21px; height: 21px; margin: -10.5px 0 0 -10.5px; border-radius: 50%; display: grid; place-items: center; pointer-events: none; box-shadow: 0 0 0 2px var(--card); }
 .dn-out svg.i { width: 12px; height: 12px; stroke-width: 2; }
-.dn-lines { position: absolute; inset: 0; width: 100%; height: 100%; overflow: visible; pointer-events: none; }
-.dn-lines line { stroke-width: .6; stroke-linecap: round; }
-.donut-wrap.draw .dn-lines line { animation: fade .3s ease var(--dl) both; }
+.dn-lg { width: 26px !important; height: 26px !important; margin: -13px 0 0 -13px !important; border-radius: 8px; background: var(--card); box-shadow: 0 0 0 2px var(--card), 0 2px 6px rgba(0, 0, 0, .12); overflow: hidden; }
+.dn-lg .logo { width: 100%; height: 100%; border-radius: 8px; box-shadow: none; font-size: .6rem; }
+.ov .dn-lg { width: 22px !important; height: 22px !important; margin: -11px 0 0 -11px !important; }
+.legend .llg { flex: none; display: grid; }
+.legend .llg .logo { width: 22px; height: 22px; border-radius: 7px; font-size: .55rem; }
+
+
 .ov .dn-out { width: 20px; height: 20px; margin: -10px 0 0 -10px; }
 .ov .dn-out svg.i { width: 11px; height: 11px; }
-.donut-wrap { padding-top: 16px; padding-bottom: 20px; }
+.donut-wrap { padding-top: 26px; padding-bottom: 26px; }
 .legend .lic { width: 22px; height: 22px; border-radius: 7px; flex: none; display: grid; place-items: center; }
 .legend .lic svg.i { width: 12px; height: 12px; stroke-width: 2; }
 .pal-pick { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 8px; }
@@ -2085,7 +2089,13 @@ button:focus-visible, a:focus-visible, [role="button"]:focus-visible, [tabindex]
       const arc = `<circle cx="21" cy="21" r="15.915" fill="none" stroke="${g.color}" stroke-width="5.2" style="--dl:${t0}ms;--du:${dur}ms"
         stroke-dasharray="${Math.max(len - gap, 0.01)} ${100 - Math.max(len - gap, 0.01)}" stroke-dashoffset="${-offset}"><title>${esc(g.name)}: ${brl.format(g.value / 100)}</title></circle>`;
       // ícone no meio da fatia (só nas que têm espaço)
-      if (g.icon && len >= 6) {
+      if (g.logo && len >= 6) {
+        const mid = offset < 50 - 3 && offset + len > 50 + 3 ? 50 : offset + (len - gap) / 2;
+        const a = mid / 100 * 2 * Math.PI, r = 15.915 / 42 * 100;
+        marks.push(`<span class="dn-ic dn-lg" style="--dl:${Math.round(250 + (offset + len) * 7)}ms;left:${(50 + r * Math.sin(a)).toFixed(2)}%;top:${(50 - r * Math.cos(a)).toFixed(2)}%">${g.logo}</span>`);
+      } else if (g.logo) {
+        outs.push({ g, deg: (offset + Math.max(len - gap, 0) / 2) * 3.6, dl: Math.round(250 + (offset + len) * 7) });
+      } else if (g.icon && len >= 6) {
         // fatia que passa pela parte de baixo do anel: ícone embaixo, no centro; as outras, no meio da fatia
         const mid = offset < 50 - 3 && offset + len > 50 + 3 ? 50 : offset + (len - gap) / 2;
         const a = mid / 100 * 2 * Math.PI, r = 15.915 / 42 * 100;
@@ -2098,22 +2108,17 @@ button:focus-visible, a:focus-visible, [role="button"]:focus-visible, [tabindex]
       offset += len;
       return arc;
     }).join('');
-    // Selos de fora: cada um fica exatamente em cima da sua fatia. Se vizinhos se encostariam, o grupo se abre
-    // por igual para os dois lados (centralizado nas fatias) e uma linha fina liga cada selo à sua fatia.
-    const SEP = 15, P = (deg, r) => [50 + r * Math.sin(deg * Math.PI / 180), 50 - r * Math.cos(deg * Math.PI / 180)];
-    const clusters = [];
-    outs.forEach(o => { const last = clusters[clusters.length - 1]; if (last && o.deg - last[last.length - 1].deg < SEP) last.push(o); else clusters.push([o]); });
-    const lines = [];
-    clusters.forEach(cl => {
-      const mean = cl.reduce((t, o) => t + o.deg, 0) / cl.length;
-      cl.forEach((o, i) => {
-        const at = cl.length > 1 ? mean + (i - (cl.length - 1) / 2) * SEP : o.deg;
-        const [x, y] = P(at, 55);
-        if (Math.abs(at - o.deg) > 1) { const [x1, y1] = P(o.deg, 45), [x2, y2] = P(at, 49.5); lines.push(`<line x1="${x1.toFixed(2)}" y1="${y1.toFixed(2)}" x2="${x2.toFixed(2)}" y2="${y2.toFixed(2)}" stroke="${o.g.color}" style="--dl:${o.dl}ms"/>`); }
-        marks.push(`<span class="dn-out" title="${esc(o.g.name)}" style="--dl:${o.dl}ms;left:${x.toFixed(2)}%;top:${y.toFixed(2)}%;background:${o.g.color};color:${lightColor(o.g.color) ? 'rgba(20,20,18,.75)' : '#fff'}"><svg class="i"><use href="#c-${o.g.icon}"/></svg></span>`);
-      });
+    // Selos de fora: cada um fica exatamente em cima da sua fatia. Se encostaria no vizinho,
+    // vai um pouco mais pra fora, na mesma direção (alterna entre dois anéis)
+    const P = (deg, r) => [50 + r * Math.sin(deg * Math.PI / 180), 50 - r * Math.cos(deg * Math.PI / 180)];
+    let prev = null;
+    outs.forEach(o => {
+      const r = prev && o.deg - prev.deg < 9.5 && prev.r === 59 ? 70 : 59;
+      prev = { deg: o.deg, r };
+      const [x, y] = P(o.deg, r);
+      marks.push(o.g.logo ? `<span class="dn-out dn-lg" title="${esc(o.g.name)}" style="--dl:${o.dl}ms;left:${x.toFixed(2)}%;top:${y.toFixed(2)}%">${o.g.logo}</span>`
+        : `<span class="dn-out" title="${esc(o.g.name)}" style="--dl:${o.dl}ms;left:${x.toFixed(2)}%;top:${y.toFixed(2)}%;background:${o.g.color};color:${lightColor(o.g.color) ? 'rgba(20,20,18,.75)' : '#fff'}"><svg class="i"><use href="#c-${o.g.icon}"/></svg></span>`);
     });
-    if (lines.length) marks.unshift(`<svg class="dn-lines" viewBox="0 0 100 100" aria-hidden="true">${lines.join('')}</svg>`);
 
     return `
       <div class="donut-wrap${donutAnim ? ' draw' : ''}">
@@ -2125,7 +2130,7 @@ button:focus-visible, a:focus-visible, [role="button"]:focus-visible, [tabindex]
         // com id de categoria: tocar filtra a lista por ela (tocar de novo tira o filtro)
         const pick = g.id !== undefined && g.id !== '' ? ` data-catpick="${esc(g.id)}" role="button" tabindex="0" title="Filtrar por ${esc(g.name)}" class="${view.cat === g.id ? 'on' : view.cat ? 'dim' : ''}"`
           : g.go ? ` data-go="${g.go}" data-catpick="" role="button" tabindex="0" title="Ver ${esc(g.name)}"` : '';
-        const mark = g.icon ? `<span class="lic" style="background:${g.color};color:${lightColor(g.color) ? 'rgba(20,20,18,.72)' : '#fff'}"><svg class="i"><use href="#c-${g.icon}"/></svg></span>` : `<span class="ldot" style="background:${g.color}"></span>`;
+        const mark = g.logo ? `<span class="llg">${g.logo}</span>` : g.icon ? `<span class="lic" style="background:${g.color};color:${lightColor(g.color) ? 'rgba(20,20,18,.72)' : '#fff'}"><svg class="i"><use href="#c-${g.icon}"/></svg></span>` : `<span class="ldot" style="background:${g.color}"></span>`;
         return `<li${pick}>${mark}<span class="pct">${pct}%</span><span class="lname" title="${esc(g.name)}">${esc(g.name)}<small class="lval num">${money(g.value)}</small></span></li>`;
       }).join('')}</ul>`;
   }
@@ -2772,7 +2777,7 @@ button:focus-visible, a:focus-visible, [role="button"]:focus-visible, [tabindex]
   function renderAssinChart() {
     const rows = state.assinaturas.filter(a => activeIn(a, view.month)).map(a => {
       const b = BRANDS[a.brand];
-      return { name: a.name, color: b ? b.color : (a.color || '#64748b'), value: perMonth(a) };
+      return { name: a.name, color: b ? b.color : (a.color || '#64748b'), value: perMonth(a), logo: logoHtml({ brand: a.brand, name: a.name, color: a.color }) };
     }).filter(g => g.value > 0).sort((a, b) => b.value - a.value);
     const total = rows.reduce((s, g) => s + g.value, 0);
     $('#chart').innerHTML = total ? donutHtml(rows, total, 'Por mês')
@@ -3023,7 +3028,7 @@ button:focus-visible, a:focus-visible, [role="button"]:focus-visible, [tabindex]
       const avail = c.limit ? c.limit - cardUsed(c) : 0;
       const limit = c.limit ? ` · disponível <b style="color:${avail < c.limit * 0.1 ? 'var(--red)' : 'inherit'}">${money(Math.max(avail, 0))}</b> de ${money(c.limit)}` : '';
       const prev = !f ? faturaPreview(c.id, c.fk) : 0;
-      return `<div class="row top">
+      return `<div class="row atop">
         <span class="date">${logoHtml({ brand: c.bank, name: c.name, color: c.color })}</span>
         <div class="name"><span>${esc(c.name)}${c.count === false ? `<small>fora das despesas</small>` : ''}</span>
           <div class="card-sub">${flagHtml(c.flag)}${c.last4 ? `•••• ${esc(c.last4)} · ` : ''}${c.fk !== view.month ? `fatura de ${monthName(c.fk)} · ` : ''}fecha ${dm(c.dates.close)} · vence ${dm(c.dates.due)}${limit}</div>
@@ -3045,7 +3050,7 @@ button:focus-visible, a:focus-visible, [role="button"]:focus-visible, [tabindex]
     const rows = cardsOf(view.month).map(c => ({ ...c, fatura: (state.faturas[c.id] || {})[focusKey(c, view.month)] }))
       .filter(c => c.fatura && c.fatura.amount > 0).map(c => {
       const b = BRANDS[c.bank];
-      return { name: c.name, color: b ? b.color : (c.color || '#64748b'), value: c.fatura.amount };
+      return { name: c.name, color: b ? b.color : (c.color || '#64748b'), value: c.fatura.amount, logo: logoHtml({ brand: c.bank, name: c.name, color: c.color }) };
     }).sort((a, b) => b.value - a.value);
     const total = rows.reduce((s, g) => s + g.value, 0);
     $('#chart').innerHTML = total ? donutHtml(rows, total, 'Faturas')
@@ -3237,6 +3242,12 @@ button:focus-visible, a:focus-visible, [role="button"]:focus-visible, [tabindex]
   const monthlyYield = inv => Math.round(estimate(inv) * (Math.pow(1 + dailyRate(inv), 21) - 1));
   const rateText = inv => inv.type === 'cdi' ? `${fmtRate(inv.rate).replace(',00', '')} CDI` : inv.type === 'pre' ? `${fmtRate(inv.rate).replace(',00', '')} a.a.` : 'Sem rendimento';
 
+  // Banco de um investimento, reconhecido pelo nome ou pela instituição (ex.: "CDB Bradesco", "Mercado Pago")
+  function investBrand(i) {
+    const t = squash((i.institution || '') + ' ' + (i.name || ''));
+    return Object.keys(BRANDS).find(k => BRANDS[k].kind === 'bank' && (t.includes(squash(BRANDS[k].name)) || t.includes(k))) || '';
+  }
+  const investMark = i => { const b = investBrand(i); return b ? `<span class="tx-logo">${logoHtml({ brand: b })}</span>` : icoTile('trending-up'); };
   function renderInvestTable() {
     $('#tableTitle').textContent = 'Investimentos';
     const q = view.query.trim().toLowerCase();
@@ -3251,7 +3262,7 @@ button:focus-visible, a:focus-visible, [role="button"]:focus-visible, [tabindex]
       const tag = `<span class="tag rate">${rateText(i)}</span>`;
       return `<div class="row">
         <span class="date num" title="Última vez que você informou o saldo">${ddmm(i.updatedAt)}</span>
-        <div class="name"><span>${esc(i.name)}${i.institution ? `<small class="inst">${esc(i.institution)}</small>` : ''}</span><div class="tag-m">${tag}</div></div>
+        <div class="name has-ic">${investMark(i)}<div class="nm"><span>${esc(i.name)}${i.institution ? `<small class="inst">${esc(i.institution)}</small>` : ''}</span><div class="tag-m">${tag}</div></div></div>
         <span class="cat">${tag}</span>
         <span class="val num">${money(i.now)}</span>
         <button class="edit" data-edit="${i.id}" aria-label="Editar">${ico('pencil', 'width:14px;height:14px')}</button>
@@ -3265,7 +3276,7 @@ button:focus-visible, a:focus-visible, [role="button"]:focus-visible, [tabindex]
   }
 
   function renderInvestChart() {
-    const rows = state.investments.map((i, n) => ({ name: i.name, color: PALETTE[n % PALETTE.length], value: estimate(i), icon: 'trending-up' }))
+    const rows = state.investments.map((i, n) => { const b = investBrand(i); return { name: i.name, color: PALETTE[n % PALETTE.length], value: estimate(i), icon: 'trending-up', logo: b ? logoHtml({ brand: b }) : '' }; })
       .filter(g => g.value > 0).sort((a, b) => b.value - a.value);
     const total = rows.reduce((s, g) => s + g.value, 0);
     $('#chart').innerHTML = total ? donutHtml(rows, total, 'Patrimônio')
