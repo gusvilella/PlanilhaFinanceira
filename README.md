@@ -119,4 +119,4 @@ Os logos ficam embutidos no arquivo (funcionam sem internet):
 - Serviços: [svgl](https://svgl.app) e [Simple Icons](https://simpleicons.org) (CC0)
 - Bandeiras de cartão: [svg-credit-card-payment-icons](https://github.com/aaronfagan/svg-credit-card-payment-icons) (Apache 2.0)
 
-Marcas sem logo disponível aparecem com a inicial na cor da marca. Não dá para enviar imagens próprias: só aparecem os logos que já vêm no app. O símbolo do Bradesco vem do pacote react-bancos (licença MIT). As marcas pertencem aos seus donos e aparecem aqui só para identificar as contas, cartões e assinaturas de quem usa o app.
+Marcas sem logo disponível aparecem com a inicial na cor da marca. Não dá para enviar imagens próprias: só aparecem os logos que já vêm no app. O símbolo do Bradesco vem do pacote react-bancos (MIT). Nos gráficos, os símbolos de um tom só vêm do Simple Icons (CC0) e do @edusites/icons (MIT). As marcas pertencem aos seus donos e aparecem aqui só para identificar as contas, cartões e assinaturas de quem usa o app.
