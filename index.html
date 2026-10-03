@@ -47,6 +47,7 @@
   --red: #cc353c;
   --red-soft: #fbeaea;
   --amber: #8f620a;
+  --over: #a34b22;   /* atenção sem alarme: atrasada, passou do limite */
   --amber-soft: #f9f0dc;
   --grain: .035;
   --out: #a8a49b;
@@ -217,7 +218,7 @@ svg.i { width: 16px; height: 16px; flex: none; fill: none; stroke: currentColor;
 .three { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 10px; }
 .status.none { background: var(--field); color: var(--muted); }
 .status.open { background: var(--blue-soft); color: var(--blue); }
-.status.late { background: var(--red-soft); color: var(--red); }
+.status.late { background: var(--amber-soft); color: var(--over); }
 .fnav { display: flex; align-items: center; justify-content: space-between; gap: 8px; background: var(--field); border-radius: 12px; padding: 6px; margin-bottom: 10px; }
 .fnav button { border: 0; background: var(--card); border-radius: 8px; width: 32px; height: 32px; display: grid; place-items: center; color: var(--ink-2); }
 .fnav div { text-align: center; font-size: .8rem; }
@@ -254,7 +255,7 @@ svg.i { width: 16px; height: 16px; flex: none; fill: none; stroke: currentColor;
 .meter { height: 8px; border-radius: 99px; background: var(--field); overflow: hidden; margin-top: 7px; }
 .meter i { display: block; height: 100%; border-radius: 99px; background: var(--green); transition: width .5s cubic-bezier(.2, .8, .2, 1); }
 .meter.warn i { background: var(--amber); }
-.meter.over i { background: var(--over, #c4622d); }   /* passou do limite: terracota, sem vermelho de alarme */
+.meter.over i { background: var(--over); }   /* passou do limite: terracota, sem vermelho de alarme */
 .meter.info i { background: var(--blue); }
 .goal-emoji { width: 32px; height: 32px; border-radius: 9px; display: grid; place-items: center; background: var(--field); font-size: 1.05rem; }
 .goal-meta { display: flex; justify-content: space-between; gap: 8px; margin-top: 4px; font-size: .74rem; color: var(--muted); font-weight: 500; white-space: normal; }
@@ -728,7 +729,7 @@ body::before { content: ""; position: fixed; inset: 0; z-index: 0; pointer-event
 .status { background: none !important; padding: 0 !important; font-weight: 500; }
 .status::before { display: none !important; }
 .status.none { color: var(--ink-2); text-decoration: underline; text-decoration-color: var(--field-line); text-underline-offset: 4px; }
-.status.paid { color: var(--green); } .status.late { color: var(--red); } .status.pending, .status.open { color: var(--amber); }
+.status.paid { color: var(--green); } .status.late { color: var(--over); } .status.pending, .status.open { color: var(--amber); }
 .tx-ic, :root[data-theme="dark"] .tx-ic { background: var(--field); color: var(--ink-2); box-shadow: inset 0 0 0 1px var(--edge); }
 .goal-emoji { background: var(--field); color: var(--ink-2); box-shadow: inset 0 0 0 1px var(--edge); }
 .goal-emoji svg.i { width: 16px; height: 16px; stroke-width: 1.8; }
@@ -2585,11 +2586,11 @@ button:focus-visible, a:focus-visible, [role="button"]:focus-visible, [tabindex]
 
   function evoTable(data) {
     return `<table class="evo-table"><thead><tr><th>Mês</th><th>Receita</th><th>Despesas</th><th>Sobra</th></tr></thead><tbody>${data.map(d =>
-      `<tr><td>${monthLabel(d.k)}</td><td>${money(d.receita)}</td><td>${money(d.despesas)}</td><td style="color:${d.saldo < 0 ? 'var(--red)' : 'inherit'}">${d.saldo < 0 && !ui.hidden ? '–' : ''}${money(Math.abs(d.saldo))}</td></tr>`).join('')}</tbody>
+      `<tr><td>${monthLabel(d.k)}</td><td>${money(d.receita)}</td><td>${money(d.despesas)}</td><td style="color:${d.saldo < 0 ? 'var(--amber)' : 'inherit'}">${d.saldo < 0 && !ui.hidden ? '–' : ''}${money(Math.abs(d.saldo))}</td></tr>`).join('')}</tbody>
       ${(() => {
         // total do período e média dos meses com movimento
         const used = data.filter(d => d.receita || d.despesas), sum = f => data.reduce((s, d) => s + d[f], 0), avg = f => used.length ? Math.round(used.reduce((s, d) => s + d[f], 0) / used.length) : 0;
-        const cell = v => `<td style="color:${v < 0 ? 'var(--red)' : 'inherit'}">${v < 0 && !ui.hidden ? '–' : ''}${money(Math.abs(v))}</td>`;
+        const cell = v => `<td style="color:${v < 0 ? 'var(--amber)' : 'inherit'}">${v < 0 && !ui.hidden ? '–' : ''}${money(Math.abs(v))}</td>`;
         return `<tfoot><tr><th>Total</th>${cell(sum('receita'))}${cell(sum('despesas'))}${cell(sum('saldo'))}</tr>
           <tr><th>Média/mês</th>${cell(avg('receita'))}${cell(avg('despesas'))}${cell(avg('saldo'))}</tr></tfoot>`;
       })()}</table>`;
@@ -2627,7 +2628,7 @@ button:focus-visible, a:focus-visible, [role="button"]:focus-visible, [tabindex]
       tip.innerHTML = `<div class="tt">${monthLabel(d.k)}</div>
         <div class="r"><span><i style="background:var(--green)"></i>Entrou</span><b>${money(d.receita)}</b></div>
         <div class="r"><span><i style="background:var(--out)"></i>Saiu</span><b>${money(d.despesas)}</b></div>
-        <div class="r"><span>Sobra</span><b style="color:${d.saldo < 0 ? 'var(--red)' : 'inherit'}">${d.saldo < 0 && !ui.hidden ? '–' : ''}${money(Math.abs(d.saldo))}</b></div>`;
+        <div class="r"><span>Sobra</span><b style="color:${d.saldo < 0 ? 'var(--amber)' : 'inherit'}">${d.saldo < 0 && !ui.hidden ? '–' : ''}${money(Math.abs(d.saldo))}</b></div>`;
       // abre ao lado da coluna (à esquerda se couber, senão à direita), sem cobrir o mês que você está olhando
       const i = +g.dataset.i, k = wrap.clientWidth / W, slotL = (padL + slot * i) * k, slotR = slotL + slot * k;
       tip.classList.add('on');
@@ -2920,7 +2921,7 @@ button:focus-visible, a:focus-visible, [role="button"]:focus-visible, [tabindex]
     const inside = assinaturasOf(view.month).filter(a => inFatura(a, view.month)).reduce((s, a) => s + a.amount, 0);
     $('#table').innerHTML = detectBanner() + head + body + `
       <div class="total"><span>Custo por mês</span><strong class="num negc">${money(month)}</strong></div>
-      <div class="yield"><span>Cobrado neste mês ${money(now)}${inside ? ` · ${money(inside)} já nas faturas` : ''}</span><span>Por ano <strong class="num" style="color:var(--red)">${money(month * 12)}</strong></span></div>`;
+      <div class="yield"><span>Cobrado neste mês ${money(now)}${inside ? ` · ${money(inside)} já nas faturas` : ''}</span><span>Por ano <strong class="num" style="color:var(--ink)">${money(month * 12)}</strong></span></div>`;
   }
 
   function renderAssinChart() {
@@ -3710,9 +3711,9 @@ button:focus-visible, a:focus-visible, [role="button"]:focus-visible, [tabindex]
     $('#bellDot').hidden = !list.length && !renew.length && !faturasDue.length && !limAlert.length && !found.length && !prices.length && !needBackup && !syncErr;
     const whenTxt = diff => diff < 0 ? `Venceu há ${-diff} dia${diff === -1 ? '' : 's'}` : diff === 0 ? 'Vence hoje' : `Vence em ${diff} dia${diff === 1 ? '' : 's'}`;
     const faturasHtml = faturasDue.length ? `<h4 style="margin-top:12px">Faturas do cartão</h4>` + faturasDue.map(c =>
-      `<div class="note" data-bellopen="${c.id}" data-key="${c.fk}" style="cursor:pointer" title="Abrir fatura">${logoHtml({ brand: c.bank, name: c.name, color: c.color }, 'sm')}<div><strong>${esc(c.name)} · ${monthName(c.fk)}</strong><small style="color:${c.diff < 0 ? 'var(--red)' : ''}">${whenTxt(c.diff)} · ${money(c.fatura.amount)}</small></div><button class="mini" data-bellfat="${c.id}" data-key="${c.fk}">Paguei</button></div>`).join('') : '';
+      `<div class="note" data-bellopen="${c.id}" data-key="${c.fk}" style="cursor:pointer" title="Abrir fatura">${logoHtml({ brand: c.bank, name: c.name, color: c.color }, 'sm')}<div><strong>${esc(c.name)} · ${monthName(c.fk)}</strong><small style="color:${c.diff < 0 ? 'var(--over)' : ''}">${whenTxt(c.diff)} · ${money(c.fatura.amount)}</small></div><button class="mini" data-bellfat="${c.id}" data-key="${c.fk}">Paguei</button></div>`).join('') : '';
     const limHtml = limAlert.length ? `<h4 style="margin-top:12px">Limites de gastos</h4>` + limAlert.map(l =>
-      `<div class="note"><span class="ldot" style="background:${l.color};width:10px;height:10px;border-radius:50%;flex:none"></span><div><strong>${esc(l.name)}</strong><small style="color:${l.state === 'over' ? 'var(--red)' : 'var(--amber)'}">${l.state === 'over' ? `Passou ${money(l.spent - l.limit)}` : `${Math.round(l.pct * 100)}% usado`} · ${money(l.spent)} de ${money(l.limit)}</small></div></div>`).join('') : '';
+      `<div class="note"><span class="ldot" style="background:${l.color};width:10px;height:10px;border-radius:50%;flex:none"></span><div><strong>${esc(l.name)}</strong><small style="color:${l.state === 'over' ? 'var(--over)' : 'var(--amber)'}">${l.state === 'over' ? `Passou ${money(l.spent - l.limit)}` : `${Math.round(l.pct * 100)}% usado`} · ${money(l.spent)} de ${money(l.limit)}</small></div></div>`).join('') : '';
     const renewHtml = renew.length ? `<h4 style="margin-top:12px">Assinaturas renovando</h4>` + renew.map(a =>
       `<div class="note">${logoHtml(a, 'sm')}<div><strong>${esc(a.name)}</strong><small>${a.diff === 0 ? 'Cobra hoje' : `Cobra em ${a.diff} dia${a.diff === 1 ? '' : 's'}`} · ${money(a.amount)}</small></div></div>`).join('') : '';
     $('#bellPop').innerHTML = (syncErr ? `<div class="note"><span class="det-ic"><svg class="i"><use href="#c-cloud-alert"/></svg></span><div style="flex:1"><strong>Sincronização parada</strong><small style="color:var(--red)">${esc(syncErr)}</small></div><button class="mini" data-bellsync>Tentar</button></div>` : '')
@@ -3720,7 +3721,7 @@ button:focus-visible, a:focus-visible, [role="button"]:focus-visible, [tabindex]
       + `<h4${needBackup ? ' style="margin-top:12px"' : ''}>Contas a vencer</h4>` + (list.length ? list.map(f => {
       const diff = daysUntil(f.shownDate);
       const when = diff < 0 ? `Venceu há ${-diff} dia${diff === -1 ? '' : 's'}` : diff === 0 ? 'Vence hoje' : `Vence em ${diff} dia${diff === 1 ? '' : 's'}`;
-      return `<div class="note"><div><strong>${esc(f.desc)}</strong><small style="color:${diff < 0 ? 'var(--red)' : ''}">${when} · ${money(f.amount)}</small></div><button class="mini" data-bellpay="${f.id}" data-key="${f.key}">Paguei</button></div>`;
+      return `<div class="note"><div><strong>${esc(f.desc)}</strong><small style="color:${diff < 0 ? 'var(--over)' : ''}">${when} · ${money(f.amount)}</small></div><button class="mini" data-bellpay="${f.id}" data-key="${f.key}">Paguei</button></div>`;
     }).join('') : `<p class="empty" style="padding:6px 0">${faturasDue.length ? 'Nenhuma conta fixa pendente' : 'Tudo em dia por aqui'}</p>`) + faturasHtml + limHtml + renewHtml
       + (found.length || prices.length ? `<h4 style="margin-top:12px">Assinaturas</h4>` : '')
       + (found.length ? `<div class="note"><div style="flex:1"><strong>${found.length === 1 ? '1 possível assinatura' : `${found.length} possíveis assinaturas`}</strong><small>${esc(found.slice(0, 3).map(d => d.name).join(', '))}</small></div><button class="mini" data-detect>Revisar</button></div>` : '')
