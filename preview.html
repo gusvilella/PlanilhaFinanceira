@@ -958,7 +958,7 @@ button.kpi-label:hover { color: var(--ink); text-decoration-color: currentColor;
 .r-kpi span { display: block; font-size: 8pt; color: #6b7280; text-transform: uppercase; letter-spacing: .06em; font-weight: 600; }
 .r-kpi strong { display: block; font-size: 14pt; font-weight: 700; margin: 2px 0 1px; font-variant-numeric: tabular-nums; }
 .r-kpi small { display: block; font-size: 7.5pt; color: #6b7280; }
-.r-kpi small.up { color: #15803d; } .r-kpi small.down { color: #b91c1c; }
+.r-kpi small.up { color: #15803d; } .r-kpi small.down { color: #8f620a; }
 .r-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
 .r-grid.r-top { grid-template-columns: 1.12fr .88fr; }
 .r-sec { border: 1px solid #e5e7eb; border-radius: 10px; padding: 10px 12px; margin-bottom: 12px; break-inside: avoid; }
@@ -978,7 +978,7 @@ button.kpi-label:hover { color: var(--ink); text-decoration-color: currentColor;
 .r-evo .col { flex: 1; display: flex; flex-direction: column; align-items: center; }
 .r-evo .bars { flex: 1; width: 100%; display: flex; gap: 2px; align-items: flex-end; justify-content: center; }
 .r-evo .bars i { width: 12px; border-radius: 3px 3px 0 0; min-height: 1px; }
-.r-evo i.in, .r-leg i.in { background: #16a34a; } .r-evo i.out, .r-leg i.out { background: #dc2626; }
+.r-evo i.in, .r-leg i.in { background: #16a34a; } .r-evo i.out, .r-leg i.out { background: #a8a49c; }
 .r-evo .col:not(.cur) i { opacity: .45; }
 .r-evo span { font-size: 7.5pt; color: #6b7280; padding-top: 3px; }
 .r-evo .cur span { color: #111827; font-weight: 700; }
@@ -995,7 +995,8 @@ button.kpi-label:hover { color: var(--ink); text-decoration-color: currentColor;
 #report td:first-child { color: #6b7280; white-space: nowrap; width: 1%; }
 #report td.v { text-align: right; font-weight: 600; white-space: nowrap; font-variant-numeric: tabular-nums; }
 #report td small { color: #6b7280; }
-#report small.st-late { color: #b91c1c; font-weight: 600; } #report small.st-paid { color: #15803d; }
+#report small.st-late { color: #8f620a; font-weight: 600; }
+#report td small.st { white-space: nowrap; } #report small.st-paid { color: #15803d; }
 .r-foot { margin: 6px 0 0; text-align: right; font-size: 8.5pt; color: #6b7280; }
 .r-foot b { color: #111827; }
 .r-empty { margin: 0; color: #9ca3af; font-size: 8.5pt; }
@@ -4390,7 +4391,7 @@ button:focus-visible, a:focus-visible, [role="button"]:focus-visible, [tabindex]
       const s = `<circle cx="21" cy="21" r="15.915" fill="none" stroke="${g.color}" stroke-width="5.2" stroke-dasharray="${Math.max(len - gap, 0.01)} ${100 - Math.max(len - gap, 0.01)}" stroke-dashoffset="${-off}"/>`;
       off += len; return s;
     }).join('')}</g><text x="21" y="20" text-anchor="middle" class="r-dl">Saiu</text><text x="21" y="24.5" text-anchor="middle" class="r-dv">${R(catTotal)}</text></svg>` : '';
-    const catRows = cats.map(g => `<div class="r-cat"><span class="dot" style="background:${g.color}"></span><span class="n">${esc(g.name)}</span><span class="p">${Math.round(g.value / catTotal * 100)}%</span><b>${R(g.value)}</b></div>`).join('');
+    const catRows = cats.map(g => `<div class="r-cat"><span class="dot" style="background:${g.color}"></span><span class="n">${esc(g.name)}</span><span class="p">${g.value / catTotal < 0.01 ? '<1' : Math.round(g.value / catTotal * 100)}%</span><b>${R(g.value)}</b></div>`).join('');
     // Últimos 6 meses
     const months = Array.from({ length: 6 }, (_, i) => addMonths(key, i - 5)), series = months.map(k => ({ k, ...totals(k) }));
     const top = niceScale(Math.max(...series.map(s => Math.max(s.receita, s.despesas)), 1)).max;
@@ -4406,7 +4407,7 @@ button:focus-visible, a:focus-visible, [role="button"]:focus-visible, [tabindex]
     const fixas = fixasOf(key).sort((a, b) => a.shownDate.localeCompare(b.shownDate)).map(f => { const s = fixaState(f); return tr(ddmm(f.shownDate), esc(f.desc), `<small class="st st-${s}">${FST[s]}</small>`, R(f.amount)); });
     const subs = assinaturasOf(key).sort((a, b) => b.amount - a.amount).map(a => tr(`dia ${pad(a.day)}`, esc(a.name), `<small>${a.cycle === 'anual' ? 'anual' : 'mensal'}${a.payCard && payCardOf(a) ? ' · ' + esc(payCardOf(a).name) : ''}</small>`, R(a.amount)));
     const cards = cardsOf(key).map(c => { const f = c.fatura, prev = f ? 0 : faturaPreview(c.id, key);
-      return tr(`vence ${dm(faturaDates(c, key).due)}`, esc(c.name) + (c.last4 ? ` <small>•${esc(c.last4)}</small>` : ''), `<small>${f ? FSTATE[faturaState(c, key, f)][1] : prev ? 'prévia' : 'sem fatura'}</small>`, f ? R(f.amount) : prev ? '≈ ' + R(prev) : '—'); });
+      return tr(`vence ${dm(faturaDates(c, key).due)}`, esc(c.name) + (c.last4 ? ` <small>•${esc(c.last4)}</small>` : ''), `<small class="st">${f ? FSTATE[faturaState(c, key, f)][1] : prev ? 'prévia' : 'sem fatura'}</small>`, f ? R(f.amount) : prev ? '≈ ' + R(prev) : '—'); });
     const recs = receitasOf(key).sort((a, b) => b.amount - a.amount).map(r => tr(ddmm(r.shownDate), esc(r.desc || cat(r.category)?.name || 'Receita'), `<small>${r.pending ? 'a receber' : esc(cat(r.category)?.name || '')}</small>`, R(r.amount)));
     const acc = state.accounts.reduce((s, a) => s + accBalance(a), 0), inv = state.investments.reduce((s, i) => s + estimate(i), 0);
     const goals = state.metas.map(g => { const i = goalInfo(g); return `<div class="r-goal"><span>${esc(g.name)}</span><span class="bar"><i style="width:${i.pct * 100}%"></i></span><b>${Math.round(i.pct * 100)}%</b></div>`; }).join('');
@@ -4414,9 +4415,10 @@ button:focus-visible, a:focus-visible, [role="button"]:focus-visible, [tabindex]
     const lbl = new Date(+key.slice(0, 4), +key.slice(5) - 1, 1).toLocaleDateString('pt-BR', { month: 'long', year: 'numeric' });
     return `<header class="r-head"><div><p>Orçamento</p><h1>Resumo de ${lbl}</h1></div><small>Gerado em ${new Date().toLocaleDateString('pt-BR')}</small></header>
       <div class="r-kpis">${kpi('Entrou', t.receita, delta(t.receita, tp.receita, true) + (t.aReceber ? `<small>+ ${R(t.aReceber)} a receber</small>` : ''), '#15803d')}
-        ${kpi('Saiu', t.despesas, delta(t.despesas, tp.despesas, false), '#b91c1c')}
+        ${kpi('Saiu', t.despesas, delta(t.despesas, tp.despesas, false), '#111827')}
         ${kpi('Pretende guardar', t.investir, t.pct ? `<small>${fmtPct(t.pct)} do que entrou</small>` : '', '#1d4ed8')}
-        ${kpi('Sobrou', t.saldo, t.receita ? `<small>${Math.round((t.receita - t.despesas) / t.receita * 100)}% do que entrou</small>` : '', t.saldo < 0 ? '#b91c1c' : '#111827')}</div>
+        ${t.saldo < 0 ? kpi('Faltou', -t.saldo, '<small>pra fechar o mês sem se apertar</small>', '#8f620a')
+          : kpi('Sobrou', t.saldo, t.receita ? `<small>${Math.round(t.saldo / t.receita * 100)}% do que entrou</small>` : '', '#111827')}</div>
       <div class="r-grid r-top">
         <section class="r-sec"><h2>Para onde foi o dinheiro</h2>${catTotal ? `<div class="r-where">${donut}<div class="r-cats">${catRows}</div></div>` : '<p class="r-empty">Sem despesas neste mês.</p>'}</section>
         <section class="r-sec"><h2>Últimos 6 meses</h2>${evo}<div class="r-tips">${tips}</div></section>
@@ -4428,7 +4430,7 @@ button:focus-visible, a:focus-visible, [role="button"]:focus-visible, [tabindex]
       </div>
       <div class="r-grid">
         ${table('Cartões', cards, 'Nenhum cartão cadastrado.')}
-        ${table('Receitas', recs, 'Nenhuma receita.')}
+        ${table('Entradas', recs, 'Nenhuma entrada.')}
       </div>
       <section class="r-sec"><h2>Patrimônio e metas</h2><div class="r-kpis r-kpis-3">${kpi('Contas', acc, '', '#111827')}${kpi('Investimentos', inv, '', '#111827')}${kpi('Total', acc + inv, '', '#111827')}</div>${goals}</section>
       <p class="r-note">Itens pagos no cartão entram pelo valor da fatura, sem contar duas vezes.</p>`;
