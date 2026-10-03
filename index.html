@@ -1590,7 +1590,7 @@ button:focus-visible, a:focus-visible, [role="button"]:focus-visible, [tabindex]
     if (s.transfers !== undefined) s.transfers = (Array.isArray(s.transfers) ? s.transfers.filter(isObj) : [])
       .map(t => ({ ...t, id: String(t.id || uid()), amount: Math.abs(num(t.amount)), date: fixIso(t.date) || todayIso }));
     if (s.subIgnore !== undefined && !Array.isArray(s.subIgnore)) s.subIgnore = [];
-    for (const k of ['snapshots', 'received', 'subPrice']) if (s[k] !== undefined && !isObj(s[k])) delete s[k];
+    for (const k of ['snapshots', 'received', 'subPrice', 'paidOn']) if (s[k] !== undefined && !isObj(s[k])) delete s[k];
     if (s.owner !== undefined && !(isObj(s.owner) && typeof s.owner.user === 'string')) delete s.owner;
     // Imagens próprias de ícone não são mais aceitas: ficam só os logos oficiais
     for (const k of ['accounts', 'cards', 'assinaturas']) (s[k] || []).forEach(x => { if (x && x.icon) delete x.icon; });
@@ -1755,9 +1755,15 @@ button:focus-visible, a:focus-visible, [role="button"]:focus-visible, [tabindex]
     for (let k = addMonths(monthOf(from), -1); k <= curKey(); k = addMonths(k, 1)) {
       receitasOf(k).filter(r => r.payAccount === acc.id && !r.pending && inRange(r.shownDate, !r.imported && r.created))
         .forEach(r => out.push({ date: r.shownDate, amount: r.amount, label: r.desc || 'Entrada' }));
-      [...variaveisOf(k).map(i => [i, i.desc || cat(i.category)?.name]), ...fixasOf(k).map(i => [i, i.desc]), ...assinaturasOf(k).map(i => [i, i.name])]
+      [...variaveisOf(k).map(i => [i, i.desc || cat(i.category)?.name]), ...assinaturasOf(k).map(i => [i, i.name])]
         .filter(([i]) => i.payAccount === acc.id && !i.payCard && inRange(i.shownDate, !i.imported && i.created))
         .forEach(([i, label]) => out.push({ date: i.shownDate, amount: -i.amount, label: label || 'Gasto' }));
+      // conta fixa: só sai do banco quando você marca como paga (no dia em que marcou; marcadas antes disso existir, no vencimento)
+      fixasOf(k).filter(i => i.paid && i.payAccount === acc.id && !i.payCard).forEach(i => {
+        const on = (state.paidOn || {})[k]?.[i.id];
+        const d = on ? on.d : i.shownDate;
+        if (inRange(d, on ? on.ts : i.created)) out.push({ date: d, amount: -i.amount, label: i.desc || 'Conta fixa' });
+      });
     }
     for (const card of state.cards) for (const [k, f] of Object.entries(state.faturas[card.id] || {}))
       if (f.paid && f.payAccount === acc.id && f.paidAt && inRange(f.paidAt, f.paidTs)) out.push({ date: f.paidAt, amount: -f.amount, label: `Fatura ${card.name} (${monthName(k)})` });
@@ -2285,9 +2291,9 @@ button:focus-visible, a:focus-visible, [role="button"]:focus-visible, [tabindex]
     const start = state.accounts.reduce((s, a) => s + accBalance(a), 0);
     const end = (() => { const d = new Date(todayIso + 'T12:00:00'); d.setDate(d.getDate() + 30); return isoOf(d); })();
     const evs = [curKey(), addMonths(curKey(), 1), addMonths(curKey(), -1)].flatMap(monthEvents)
-      .filter(e => e.date > todayIso && e.date <= end);
-    // contas atrasadas e ainda não pagas saem "hoje" (as ligadas a uma conta já saíram do saldo na data delas)
-    const lateFixas = [addMonths(curKey(), -1), curKey()].flatMap(fixasOf).filter(f => fixaState(f) === 'late' && !f.payAccount)
+      .filter(e => e.date > todayIso && e.date <= end && !(e.done && (e.fatura || e.ref?.startsWith('f:'))));
+    // contas atrasadas e ainda não pagas saem "hoje" (o dinheiro ainda está no banco até você marcar como paga)
+    const lateFixas = [addMonths(curKey(), -1), curKey()].flatMap(fixasOf).filter(f => fixaState(f) === 'late')
       .map(f => ({ date: todayIso, amount: f.amount, dir: 'out', label: f.desc + ' (atrasada)', icon: iconForText(f.desc) || 'receipt' }));
     const lateFat = [addMonths(curKey(), -1), curKey()].flatMap(k => cardsOf(k).filter(c => c.fatura && !c.fatura.paid && c.shownDate <= todayIso))
       .map(c => ({ date: todayIso, amount: c.fatura.amount, dir: 'out', label: `Fatura ${c.name} (vencida)`, logo: logoHtml({ brand: c.bank, name: c.name, color: c.color }) }));
@@ -4042,7 +4048,7 @@ button:focus-visible, a:focus-visible, [role="button"]:focus-visible, [tabindex]
       <input type="checkbox" id="fDueNext" hidden ${f.dueNext ? 'checked' : ''} />
       <p class="help" id="fWhenHelp"></p>
       ${editing ? '' : `<div id="paidNowBox" hidden>${checkField('fPaidNow', 'Já paguei a deste mês', 'O vencimento deste mês já passou. Desmarque se ainda não pagou.', true)}</div>`}
-      ${payField(item ? f : null)}
+      ${payField(item ? f : null).replace('id="fPay"', 'id="fPay" data-fixa="1"')}
       ${footer(editing)}</form>`, m => {
       bindMoney(m.querySelector('#fAmount'));
       bindPay(m);
@@ -4084,7 +4090,7 @@ button:focus-visible, a:focus-visible, [role="button"]:focus-visible, [tabindex]
           old.end = addMonths(view.month, -1);
           const nf = { ...data, id: uid(), created: old.created, start: view.month, end, ...skipFrom(old, view.month) };
           state.fixas.push(nf);
-          if ((state.paid[view.month] || []).includes(old.id)) state.paid[view.month].push(nf.id);
+          if ((state.paid[view.month] || []).includes(old.id)) { state.paid[view.month].push(nf.id); const po = state.paidOn?.[view.month]?.[old.id]; if (po) state.paidOn[view.month][nf.id] = po; }
         } else {
           Object.assign(state.fixas.find(x => x.id === item.id), data);
         }
@@ -4128,7 +4134,7 @@ button:focus-visible, a:focus-visible, [role="button"]:focus-visible, [tabindex]
     const help = () => {
       const v = box.querySelector('.on')?.dataset.card || '';
       m.querySelector('#payHelp').textContent = v.startsWith('card:') ? 'Entra na fatura do cartão. Quando a fatura for lançada, passa a contar só dentro dela (não soma duas vezes).'
-        : v.startsWith('acc:') ? (box.dataset.receita ? 'Soma no saldo dessa conta na data do recebimento.' : 'Sai do saldo dessa conta na data do pagamento.') : '';
+        : v.startsWith('acc:') ? (box.dataset.receita ? 'Soma no saldo dessa conta na data do recebimento.' : box.dataset.fixa ? 'Sai do saldo desse banco quando você marcar a conta como paga.' : 'Sai do saldo dessa conta na data do pagamento.') : '';
     };
     box.addEventListener('click', e => {
       const b = e.target.closest('[data-card]'); if (!b) return;
@@ -4615,7 +4621,9 @@ button:focus-visible, a:focus-visible, [role="button"]:focus-visible, [tabindex]
   function togglePaid(id, key) {
     const list = state.paid[key] ||= [];
     const i = list.indexOf(id);
-    if (i >= 0) list.splice(i, 1); else list.push(id);
+    const on = (state.paidOn ||= {})[key] ||= {};
+    if (i >= 0) { list.splice(i, 1); delete on[id]; }
+    else { list.push(id); on[id] = { d: todayIso, ts: Date.now() }; }   // o banco ligado a ela desconta a partir de agora
     save(); render();
   }
 
@@ -5002,11 +5010,11 @@ button:focus-visible, a:focus-visible, [role="button"]:focus-visible, [tabindex]
         // faturas pagas que apareceram no extrato da conta: marca como pagas, na data e com a conta do extrato
         let paidFat = 0;
         // contas fixas que apareceram no extrato: marca como pagas naquele mês
-        const paidSnap = JSON.stringify({ p: state.paid, x: state.received || {} });
+        const paidSnap = JSON.stringify({ p: state.paid, x: state.received || {}, o: state.paidOn || {} });
         // receitas "a receber" que caíram na conta: marca como recebidas
         rows.filter(r => r.recv && !r.on).forEach(r => { const rc = state.receitas.find(x => x.id === r.recv.id); if (!rc) return;
           if (r.recv.recurring) ((state.received ||= {})[r.recv.key] ||= []).push(rc.id); else rc.pending = false; paidFat++; });
-        rows.filter(r => r.payFixa && !r.on).forEach(r => { const l = state.paid[r.payFixa.key] ||= []; if (!l.includes(r.payFixa.id)) { l.push(r.payFixa.id); paidFat++; } });
+        rows.filter(r => r.payFixa && !r.on).forEach(r => { const l = state.paid[r.payFixa.key] ||= []; if (!l.includes(r.payFixa.id)) { l.push(r.payFixa.id); ((state.paidOn ||= {})[r.payFixa.key] ||= {})[r.payFixa.id] = { d: r.date }; paidFat++; } });
         rows.filter(r => r.payFat && !r.on).forEach(r => { const f = state.faturas[r.payFat.card.id]?.[r.payFat.key];
           if (f && !f.paid) { Object.assign(f, { paid: true, paidAt: r.date, payAccount: source.slice(4) }); delete f.paidTs; paidFat++; } });
         on.forEach((r, n) => {
@@ -5023,7 +5031,7 @@ button:focus-visible, a:focus-visible, [role="button"]:focus-visible, [tabindex]
           if (r.amount !== a.amount) { (state.subPrice ||= {})[r.sub] = { amount: r.amount, date: r.date }; changed++; }
           else if (seen) delete state.subPrice[r.sub];
         });
-        const undoImp = () => { const o = JSON.parse(snap); state.variaveis = o.v; state.receitas = o.r; state.faturas = o.f; const ps = JSON.parse(paidSnap); state.paid = ps.p; state.received = ps.x; commit(); };
+        const undoImp = () => { const o = JSON.parse(snap); state.variaveis = o.v; state.receitas = o.r; state.faturas = o.f; const ps = JSON.parse(paidSnap); state.paid = ps.p; state.received = ps.x; state.paidOn = ps.o; commit(); };
         const latest = on.map(r => r.date).sort().pop();
         if (!latest) { commit(); closeModal();
           return paidFat ? toast(`${paidFat} ${paidFat > 1 ? 'itens atualizados' : 'item atualizado'} (pago/recebido)`, 'Desfazer', undoImp) : toast(changed ? 'Uma assinatura mudou de preço, veja no sininho' : 'Nada para importar'); }
