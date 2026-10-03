@@ -892,6 +892,23 @@ button.kpi-label:hover { color: var(--ink); text-decoration-color: currentColor;
 @keyframes bar-up { from { transform: scaleY(0); } }
 @keyframes line-draw { from { stroke-dashoffset: 1; } }
 .fill-anim .eb { transform-box: fill-box; transform-origin: 50% 100%; animation: bar-up .7s cubic-bezier(.22, .8, .25, 1) var(--d) both; }
+.evo-out { opacity: 0; transform: translateY(4px); transition: opacity .14s ease, transform .14s ease; }
+.evo-in { animation: rise .45s cubic-bezier(.2, .75, .25, 1) both; }
+.evo-in .evo-table tbody tr, .evo-in .evo-table tfoot tr { animation: rise .4s cubic-bezier(.2, .75, .25, 1) both; }
+.evo-in .evo-table tbody tr:nth-child(1) { animation-delay: 90ms; }
+.evo-in .evo-table tbody tr:nth-child(2) { animation-delay: 120ms; }
+.evo-in .evo-table tbody tr:nth-child(3) { animation-delay: 150ms; }
+.evo-in .evo-table tbody tr:nth-child(4) { animation-delay: 180ms; }
+.evo-in .evo-table tbody tr:nth-child(5) { animation-delay: 210ms; }
+.evo-in .evo-table tbody tr:nth-child(6) { animation-delay: 240ms; }
+.evo-in .evo-table tbody tr:nth-child(7) { animation-delay: 270ms; }
+.evo-in .evo-table tbody tr:nth-child(8) { animation-delay: 300ms; }
+.evo-in .evo-table tbody tr:nth-child(9) { animation-delay: 330ms; }
+.evo-in .evo-table tbody tr:nth-child(10) { animation-delay: 360ms; }
+.evo-in .evo-table tbody tr:nth-child(11) { animation-delay: 390ms; }
+.evo-in .evo-table tbody tr:nth-child(12) { animation-delay: 420ms; }
+.evo-in .evo-table tfoot tr { animation-delay: .45s; }
+@media (prefers-reduced-motion: reduce) { .evo-in, .evo-in * { animation: none !important; } }
 .fill-anim .fc-line { stroke-dasharray: 1; animation: line-draw 1.3s cubic-bezier(.4, 0, .2, 1) .3s both; }
 .fill-anim .insights .ins { animation: rise .5s cubic-bezier(.2, .75, .25, 1) both; }
 .fill-anim .insights .ins:nth-child(1) { animation-delay: .35s; } .fill-anim .insights .ins:nth-child(2) { animation-delay: .43s; }
@@ -1872,6 +1889,30 @@ button:focus-visible, a:focus-visible, [role="button"]:focus-visible, [tabindex]
       requestAnimationFrame(step);
     });
   }
+  // Números que sobem até o valor certo (easeOutCubic). Do zero ao abrir/trocar de aba ou mês;
+  // depois, quando um lançamento muda o valor, ele anda do valor antigo até o novo.
+  const reduced = () => matchMedia('(prefers-reduced-motion: reduce)').matches;
+  let countZero = true, lastKpiMonth = '';
+  function countTo(el, to, fmt, from, delay = 0) {
+    cancelAnimationFrame(el._cu); clearTimeout(el._cuT);
+    el._v = to; el._fmt = fmt;
+    if (ui.hidden || reduced() || from == null || from === to) { el.textContent = fmt(to); return; }
+    el.textContent = fmt(from);
+    const run = () => {
+      const t0 = performance.now(), dur = 950;
+      const step = now => {
+        const k = Math.min((now - t0) / dur, 1), e = 1 - Math.pow(1 - k, 3);
+        el.textContent = fmt(Math.round(from + (to - from) * e));
+        if (k < 1 && el.isConnected) el._cu = requestAnimationFrame(step); else el.textContent = fmt(to);
+      };
+      el._cu = requestAnimationFrame(step);
+    };
+    if (delay) el._cuT = setTimeout(run, delay); else run();
+  }
+  // valores montados no HTML com data-cu="centavos" (cards da visão geral, metas)
+  function countUpMarked(root = document) {
+    root.querySelectorAll('[data-cu]').forEach(el => countTo(el, +el.dataset.cu, money, 0));
+  }
   function moveTabInd() {
     const ind = $('#tabInd'), act = document.querySelector('#tabs button.active');
     if (!ind || !act) return;
@@ -1897,8 +1938,10 @@ button:focus-visible, a:focus-visible, [role="button"]:focus-visible, [tabindex]
     { const v = ui.tab + '|' + view.month;
       if (v !== lastView) {
         if (lastView) requestAnimationFrame(animateEnter);
-        lastView = v;
-        if (!matchMedia('(prefers-reduced-motion: reduce)').matches) { fillAnim(); donutAnim = true; requestAnimationFrame(() => { countUpDonuts(); donutAnim = false; }); }
+        // os números do topo só contam de novo quando muda o mês (trocar de aba não mexe neles)
+        if (lastView.split('|')[1] !== view.month || !lastKpiMonth) countZero = true;
+        lastKpiMonth = view.month; lastView = v;
+        if (!matchMedia('(prefers-reduced-motion: reduce)').matches) { fillAnim(); donutAnim = true; requestAnimationFrame(() => { countUpDonuts(); countUpMarked(); donutAnim = false; }); }
       } }
     // saudação pela hora do dia
     $('#hello').textContent = greet() + (account ? ', ' + userName() : '');
@@ -1914,9 +1957,10 @@ button:focus-visible, a:focus-visible, [role="button"]:focus-visible, [tabindex]
     $('#monthLabel').setAttribute('aria-label', `${$('#monthLabel').textContent}${away ? ' (tocar volta para o mês atual)' : ''}`);
 
     const t = totals(view.month);
-    $('#kReceita').textContent = money(t.receita);
+    const cnt = (el, v, fmt = money) => countTo(el, v, fmt, countZero ? 0 : el._v);
+    cnt($('#kReceita'), t.receita);
     $('#kReceitaSub').textContent = t.aReceber ? `+ ${money(t.aReceber)} a receber` : t.receita ? '' : 'Nada lançado ainda';
-    $('#kDespesas').textContent = money(t.despesas);
+    cnt($('#kDespesas'), t.despesas);
     // cada "rótulo valor" fica junto na mesma linha
     $('#kDespesasSub').innerHTML = [['Contas', t.fixas], ['Gastos', t.variaveis], ['Assinaturas', t.assinaturas], ['Faturas', t.faturas]]
       .filter(([, v]) => v).map(([n, v]) => `<span style="display:inline-block">${n} <span style="white-space:nowrap">${esc(money(v))}</span></span>`).join(' · ');
@@ -1924,19 +1968,20 @@ button:focus-visible, a:focus-visible, [role="button"]:focus-visible, [tabindex]
     // Nas suas contas: o dinheiro real somado dos bancos
     if (state.accounts.length) {
       const total = state.accounts.reduce((s, a) => s + accBalance(a), 0);
-      $('#kSaldo').textContent = signed(total);
+      cnt($('#kSaldo'), total, signed);
       $('#kSaldo').classList.toggle('neg', total < 0);
       $('#kSaldo').title = state.accounts.map(a => `${a.name}: ${brl.format(accBalance(a) / 100)}`).join('\n');
       $('#kSaldoSub').innerHTML = `<span class="logo-stack">${state.accounts.slice(0, 5).map(a => logoHtml(a, 'sm')).join('')}</span>${state.accounts.length === 1 ? esc(state.accounts[0].name) : `${state.accounts.length} contas`}`;
     } else {
-      $('#kSaldo').textContent = '—';
+      $('#kSaldo').textContent = '—'; $('#kSaldo')._v = null;
       $('#kSaldo').classList.remove('neg');
       $('#kSaldo').title = '';
       $('#kSaldoSub').textContent = 'Toque em Contas para somar seus bancos';
     }
     // Sobra do mês: entrou − saiu − o que você guarda. Quando falta, mostra "Falta no mês" sem alarme
     $('#kSobraLabel').textContent = t.saldo < 0 ? 'Falta no mês' : 'Sobra do mês';
-    $('#kSobra').textContent = money(Math.abs(t.saldo));
+    cnt($('#kSobra'), Math.abs(t.saldo));
+    countZero = false;
     $('#kSobra').classList.toggle('short', t.saldo < 0);
     $('#kSobraSub').textContent = t.pct ? `Pretende guardar ${money(t.investir)} (${fmtPct(t.pct)})` : t.saldo < 0 ? 'Veja ideias na Visão geral' : 'Quanto você pretende guardar este mês?';
     renderHeadline(t);
@@ -2269,7 +2314,7 @@ button:focus-visible, a:focus-visible, [role="button"]:focus-visible, [tabindex]
     const min = days.reduce((m, d) => d.bal < m.bal ? d : m, days[0]);
     const firstNeg = days.find(d => d.bal < 0);
     // valores abaixo de zero aparecem como "faltam R$ X", sem vermelho
-    const show = c => c < 0 ? `<span class="short">faltam ${money(-c)}</span>` : money(c);
+    const show = c => c < 0 ? `<span class="short">faltam ${money(-c)}</span>` : `<span data-cu="${c}">${money(c)}</span>`;
     box.innerHTML = `<h3>Próximos 30 dias</h3>
       <div class="fc-stats"><div><small>Hoje</small><b class="num">${show(start)}</b></div><div><small>Em ${dm(days[days.length - 1].iso)}</small><b class="num">${show(endBal)}</b></div>
         <div><small>Mais apertado</small><b class="num">${show(min.bal)}</b> <small style="display:inline">em ${dm(min.iso)}</small></div></div>
@@ -2430,7 +2475,7 @@ button:focus-visible, a:focus-visible, [role="button"]:focus-visible, [tabindex]
     const box = $('#ovGoals');
     const inv = state.investments.reduce((s, i) => s + estimate(i), 0), acc = state.accounts.reduce((s, a) => s + accBalance(a), 0);
     box.innerHTML = `<h3>Metas e patrimônio <button class="ov-link" data-go="metas">Ver metas</button></h3><p class="ov-sub">Contas ${money(acc)} · Investimentos ${money(inv)}</p>
-      <div class="stat-hero" style="padding:0 0 6px;text-align:left"><small>Patrimônio</small><strong>${(acc + inv < 0 && !ui.hidden ? '–' : '') + money(Math.abs(acc + inv))}</strong></div>`
+      <div class="stat-hero" style="padding:0 0 6px;text-align:left"><small>Patrimônio</small><strong${acc + inv >= 0 ? ` data-cu="${acc + inv}"` : ''}>${(acc + inv < 0 && !ui.hidden ? '–' : '') + money(Math.abs(acc + inv))}</strong></div>`
       + (state.metas.length ? state.metas.map(g => {
         const i = goalInfo(g);
         return `<div class="ov-row">${goalTile(g)}<div class="grow"><b>${esc(g.name)}</b>
@@ -2474,8 +2519,19 @@ button:focus-visible, a:focus-visible, [role="button"]:focus-visible, [tabindex]
       <div class="evo-body"><div>${table ? evoTable(data) : `<div class="evo-legend"><span><i style="background:var(--green)"></i>Entrou</span><span><i style="background:var(--out)"></i>Saiu</span></div><div class="evo-chart" id="evoChart"></div>`}</div>
         <div class="insights">${insights()}</div></div>`;
     if (!table) drawEvoChart(data);
-    box.querySelector('#evoRange').onclick = e => { const b = e.target.closest('[data-n]'); if (b) { ui.evoRange = +b.dataset.n; saveUi(); renderEvo(); } };
-    box.querySelector('#evoTableBtn').onclick = () => { ui.evoTable = !ui.evoTable; saveUi(); renderEvo(); };
+    box.querySelector('#evoRange').onclick = e => { const b = e.target.closest('[data-n]'); if (b && +b.dataset.n !== n) { ui.evoRange = +b.dataset.n; saveUi(); evoSwap(); } };
+    box.querySelector('#evoTableBtn').onclick = () => { ui.evoTable = !ui.evoTable; saveUi(); evoSwap(); };
+  }
+  // troca suave: o conteúdo some rapidinho, volta subindo e as barras crescem de novo
+  function evoSwap() {
+    const body = $('#evo .evo-body > div:first-child');
+    if (reduced() || !body) { renderEvo(); return; }
+    body.classList.add('evo-out');
+    setTimeout(() => {
+      fillAnim(); renderEvo();
+      const nb = $('#evo .evo-body > div:first-child');
+      nb?.classList.add('evo-in'); setTimeout(() => nb?.classList.remove('evo-in'), 900);
+    }, 140);
   }
 
   function evoTable(data) {
@@ -2661,7 +2717,7 @@ button:focus-visible, a:focus-visible, [role="button"]:focus-visible, [tabindex]
     const saved = infos.reduce((s, i) => s + i.saved, 0), target = state.metas.reduce((s, g) => s + g.target, 0);
     const perMonth = infos.reduce((s, i) => s + i.perMonth, 0);
     const t = totals(curKey());
-    $('#chart').innerHTML = `<div class="stat-hero"><small>Guardado para as metas</small><strong>${money(saved)}</strong><small>de ${money(target)} · ${target ? Math.round(saved / target * 100) : 0}%</small></div>
+    $('#chart').innerHTML = `<div class="stat-hero"><small>Guardado para as metas</small><strong data-cu="${saved}">${money(saved)}</strong><small>de ${money(target)} · ${target ? Math.round(saved / target * 100) : 0}%</small></div>
       <div class="meter info" style="height:10px"><i style="width:${target ? Math.min(saved / target, 1) * 100 : 0}%"></i></div>
       <div class="stat-rows">
         <div><span>Pra cumprir os prazos</span><b class="num">${money(perMonth)}/mês</b></div>
@@ -5392,6 +5448,8 @@ button:focus-visible, a:focus-visible, [role="button"]:focus-visible, [tabindex]
     const top = $('.top'), kpis = $('.kpis');
     wordsIn($('#headline'), lastHeadline || $('#headline').textContent, 140);
     [top, kpis].forEach(el => { el.classList.remove('intro'); void el.offsetWidth; el.classList.add('intro'); });
+    ['#kSaldo', '#kReceita', '#kDespesas', '#kSobra'].forEach((id, i) => { const el = $(id); if (el._v != null) countTo(el, el._v, el._fmt, 0, 380 + i * 60); });
+    countUpMarked($('#overview'));
     clearTimeout(introAnim.t);
     introAnim.t = setTimeout(() => [top, kpis].forEach(el => el.classList.remove('intro')), 1600);
   }
