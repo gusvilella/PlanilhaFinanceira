@@ -1331,8 +1331,8 @@ button:focus-visible, a:focus-visible, [role="button"]:focus-visible, [tabindex]
 
     <section class="kpis">
       <div class="kpi contas">
-        <div class="kpi-head"><button type="button" class="kpi-label" data-explain="contas">Nas suas contas</button>
-          <button class="adjust dark" id="accountsBtn" title="Saldo das suas contas"><span class="t">Contas</span><svg class="i"><use href="#i-pencil"/></svg></button>
+        <div class="kpi-head"><button type="button" class="kpi-label" data-explain="contas">Seu dinheiro hoje</button>
+          <button class="adjust dark" id="accountsBtn" title="Seus bancos e saldos"><span class="t" id="accountsBtnT">Bancos</span><svg class="i"><use href="#i-pencil"/></svg></button>
         </div>
         <div class="kpi-value num" id="kSaldo"></div>
         <div class="kpi-sub" id="kSaldoSub"></div>
@@ -1967,8 +1967,9 @@ button:focus-visible, a:focus-visible, [role="button"]:focus-visible, [tabindex]
     $('#kDespesasSub').innerHTML = [['Contas', t.fixas], ['Gastos', t.variaveis], ['Assinaturas', t.assinaturas], ['Faturas', t.faturas]]
       .filter(([, v]) => v).map(([n, v]) => `<span style="display:inline-block">${n} <span style="white-space:nowrap">${esc(money(v))}</span></span>`).join(' · ');
     const signed = c => (c < 0 && !ui.hidden ? '–' : '') + money(Math.abs(c));
-    // Nas suas contas: o dinheiro real somado dos bancos
+    // Seu dinheiro hoje: o dinheiro real somado dos bancos
     if (state.accounts.length) {
+      $('#accountsBtnT').textContent = 'Bancos';
       const total = state.accounts.reduce((s, a) => s + accBalance(a), 0);
       cnt($('#kSaldo'), total, signed);
       $('#kSaldo').classList.toggle('neg', total < 0);
@@ -1978,7 +1979,8 @@ button:focus-visible, a:focus-visible, [role="button"]:focus-visible, [tabindex]
       $('#kSaldo').textContent = '—'; $('#kSaldo')._v = null;
       $('#kSaldo').classList.remove('neg');
       $('#kSaldo').title = '';
-      $('#kSaldoSub').textContent = 'Toque em Contas para somar seus bancos';
+      $('#kSaldoSub').textContent = 'Adicione seus bancos pra ver tudo somado';
+      $('#accountsBtnT').textContent = 'Adicionar';
     }
     // Sobra do mês: entrou − saiu − o que você guarda. Quando falta, mostra "Falta no mês" sem alarme
     $('#kSobraLabel').textContent = t.saldo < 0 ? 'Falta no mês' : 'Sobra do mês';
@@ -2307,7 +2309,7 @@ button:focus-visible, a:focus-visible, [role="button"]:focus-visible, [tabindex]
     const box = $('#ovForecast');
     if (!state.accounts.length) {
       box.innerHTML = `<h3>Próximos 30 dias</h3><p class="ov-sub">Previsão do saldo dia a dia</p>
-        <div class="ov-empty">Cadastre suas contas em <b>Contas</b> pra ver quanto vai ter em cada dia.<br><button class="btn-soft" id="fcAcc" style="margin-top:10px">Cadastrar contas</button></div>`;
+        <div class="ov-empty">Adicione seus bancos pra ver quanto vai ter em cada dia.<br><button class="btn-soft" id="fcAcc" style="margin-top:10px">Adicionar bancos</button></div>`;
       box.querySelector('#fcAcc').onclick = openAccounts;
       return;
     }
@@ -3464,7 +3466,7 @@ button:focus-visible, a:focus-visible, [role="button"]:focus-visible, [tabindex]
 
   function openAccounts() {
     const draft = state.accounts.map(a => { const cur = accBalance(a); return { ...a, cur, moves: accountMoves(a), brand: a.brand || brandByName(a.name) || '', neg: cur < 0, abs: Math.abs(cur) }; });
-    openModal(`<form id="f" novalidate>${modalHead('Minhas contas', 'Quanto tem em cada conta agora. A soma vira o seu saldo.')}
+    openModal(`<form id="f" novalidate>${modalHead('Meus bancos', 'Quanto tem em cada um agora. A soma aparece em Seu dinheiro hoje.')}
       <div id="accList"></div>
       <p class="fl" style="margin-top:16px">Adicionar conta</p>
       <div class="bank-chips" id="bankChips"></div>
@@ -5459,7 +5461,7 @@ button:focus-visible, a:focus-visible, [role="button"]:focus-visible, [tabindex]
 
   // "Entenda": explicações curtas dos números do topo, como uma conversa
   const EXPLAIN = {
-    contas: ['Nas suas contas', 'É o dinheiro que você tem agora, somando os bancos que cadastrou em <b>Contas</b>.', 'Ele muda sozinho quando você lança uma entrada ou um gasto pago com aquela conta. Se ficar diferente do app do banco, é só corrigir o valor em Contas.'],
+    contas: ['Seu dinheiro hoje', 'É o dinheiro que você tem agora, somando os bancos que cadastrou em <b>Bancos</b>.', 'Ele muda sozinho quando você lança uma entrada ou um gasto pago com aquela conta. Se ficar diferente do app do banco, é só tocar em Bancos e corrigir o valor.'],
     entrou: ['Entrou', 'Tudo que entrou no mês: salário, pix, vendas, rendimentos.', 'O que você ainda vai receber aparece embaixo, como "a receber", e só entra na conta quando você marcar como recebido.'],
     saiu: ['Saiu', 'Tudo que saiu no mês: contas fixas, gastos do dia a dia, assinaturas e faturas de cartão.', 'O que você pagou no cartão entra pela fatura, pra não contar duas vezes.'],
     sobra: ['Sobra do mês', 'É o que entrou, menos o que saiu, menos o que você planejou guardar (se planejou).', 'Se ficar negativo, o card mostra "Falta no mês": é quanto falta pra fechar o mês sem se apertar. Na Visão geral tem ideias pra resolver.'],
