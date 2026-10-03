@@ -57,6 +57,7 @@
 }
 
 :root[data-theme="dark"] {
+  --over: #e0895c;
   --bg: #0a0a0a;
   --bg-top: #181818;
   --glow: rgba(255, 255, 255, .045);
@@ -249,7 +250,7 @@ svg.i { width: 16px; height: 16px; flex: none; fill: none; stroke: currentColor;
 .meter { height: 8px; border-radius: 99px; background: var(--field); overflow: hidden; margin-top: 7px; }
 .meter i { display: block; height: 100%; border-radius: 99px; background: var(--green); transition: width .5s cubic-bezier(.2, .8, .2, 1); }
 .meter.warn i { background: var(--amber); }
-.meter.over i { background: var(--red); }
+.meter.over i { background: var(--over, #c4622d); }   /* passou do limite: terracota, sem vermelho de alarme */
 .meter.info i { background: var(--blue); }
 .goal-emoji { width: 32px; height: 32px; border-radius: 9px; display: grid; place-items: center; background: var(--field); font-size: 1.05rem; }
 .goal-meta { display: flex; justify-content: space-between; gap: 8px; margin-top: 4px; font-size: .74rem; color: var(--muted); font-weight: 500; white-space: normal; }
@@ -404,6 +405,10 @@ svg.i { width: 16px; height: 16px; flex: none; fill: none; stroke: currentColor;
 .ov-row .meter { margin-top: 5px; height: 6px; }
 .ov-row .amt { font-weight: 700; font-variant-numeric: tabular-nums; white-space: nowrap; }
 .ov-empty { color: var(--muted); font-size: .82rem; padding: 18px 0; text-align: center; }
+/* card vazio ao lado de um card alto (calendário): o aviso fica no meio, sem um buraco embaixo */
+.ov-forecast:has(> .ov-empty), .ov-where:has(> .ov-empty), .ov-cards:has(> .ov-empty) { display: flex; flex-direction: column; }
+.ov-forecast > .ov-empty, .ov-where > .ov-empty, .ov-cards > .ov-empty { flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 4px; }
+.ov-forecast > .ov-empty br { display: none; }
 @media (max-width: 980px) { .ov-forecast, .ov-cal, .ov-where, .ov-cards, .ov-goals { grid-column: span 12; } }
 @media (min-width: 981px) and (max-width: 1180px) { .ov-where, .ov-cards, .ov-goals { grid-column: span 6; } .ov-goals { grid-column: span 12; } }
 
@@ -633,7 +638,8 @@ html.locked .lock { place-items: normal; overflow-y: auto; }
 
 /* Topo: saudação + frase do mês */
 .hello { font-size: 1.95rem; }
-.title { max-width: 21ch; }
+.title { max-width: 24ch; text-wrap: balance; }
+.hero-sub { text-wrap: pretty; }
 .hero-sub { margin: 8px 0 0; color: var(--muted); font-size: .92rem; }
 .kpis { grid-template-columns: minmax(0, 1.25fr) repeat(3, minmax(0, 1fr)); }
 .kpi.contas .kpi-ico { background: var(--accent-soft); color: var(--accent-ink); }
@@ -693,7 +699,8 @@ body::before { content: ""; position: fixed; inset: 0; z-index: 0; pointer-event
 :root[data-theme="dark"] .modal { background: #131313; }
 .toast { background: rgba(24, 24, 24, .94); color: #fefefe; box-shadow: 0 0 0 1px rgba(255, 255, 255, .08), 0 18px 40px -12px rgba(0, 0, 0, .5); backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px); }
 .toast button { color: #8cb8ff; }
-@media (max-width: 640px) { .hello, .title { font-size: 1.6rem; } }
+@media (max-width: 640px) { .hello, .title { font-size: 1.6rem; } .kpi-label { font-size: .76rem; white-space: nowrap; } .kpi-head { gap: 8px; justify-content: space-between; } .kpi-head .adjust { font-size: .76rem; flex: none; } }
+@media (max-width: 400px) { .kpi-label .lg { display: none; } }
 .kpi.receita .kpi-value, .kpi.investir .kpi-value, .kpi.despesas .kpi-value { color: var(--ink); }
 .kpi.saldo .kpi-value.neg { color: var(--red); }
 .ov-link { color: var(--muted); font-weight: 600; transition: color .15s; }
@@ -1342,7 +1349,7 @@ button:focus-visible, a:focus-visible, [role="button"]:focus-visible, [tabindex]
 
     <section class="kpis">
       <div class="kpi contas">
-        <div class="kpi-head"><button type="button" class="kpi-label" data-explain="contas">Seu dinheiro hoje</button>
+        <div class="kpi-head"><button type="button" class="kpi-label" data-explain="contas">Seu dinheiro<span class="lg"> hoje</span></button>
           <button class="adjust dark" id="accountsBtn" title="Seus bancos e saldos"><span class="t" id="accountsBtnT">Bancos</span><svg class="i"><use href="#i-pencil"/></svg></button>
         </div>
         <div class="kpi-value num" id="kSaldo"></div>
@@ -2626,28 +2633,34 @@ button:focus-visible, a:focus-visible, [role="button"]:focus-visible, [tabindex]
     const t = totals(k), tp = totals(prev);
     const out = [];
     const pctTxt = (a, b) => b ? Math.round((a - b) / b * 100) : null;
-    const dp = pctTxt(t.despesas, tp.despesas);
-    if (t.despesas && dp !== null) out.push(['📊', dp > 0 ? `Você gastou <b>${dp}% a mais</b> que em ${shortMonth(prev)}` : dp < 0 ? `Você gastou <b>${-dp}% a menos</b> que em ${shortMonth(prev)}` : `Gastos iguais a ${shortMonth(prev)}`, `${money(t.despesas)} contra ${money(tp.despesas)}`]);
+    // Mês em andamento: comparar o mês inteiro de antes com só alguns dias deste engana ("caiu 100%" no dia 3).
+    // Então compara os gastos do dia a dia até hoje com o mesmo período do mês anterior.
+    const cur = k === curKey(), dd = today.getDate(), upTo = v => !cur || +String(v.shownDate || v.date).slice(8, 10) <= dd;
+    const sumV = key => variaveisOf(key).filter(upTo).reduce((s, v) => s + v.amount, 0);
+    const dp = cur ? pctTxt(sumV(k), sumV(prev)) : pctTxt(t.despesas, tp.despesas);
+    const period = cur ? ` no mesmo período de ${shortMonth(prev)}` : ` que em ${shortMonth(prev)}`;
+    if (cur && dd < daysIn(k) && dp !== null && sumV(k)) out.push(['📊', dp > 0 ? `Gastos do dia a dia: <b>${dp}% a mais</b>${period}` : dp < 0 ? `Gastos do dia a dia: <b>${-dp}% a menos</b>${period}` : `Gastos do dia a dia iguais${period}`, `${money(sumV(k))} contra ${money(sumV(prev))} até o dia ${dd}`]);
+    else if (t.despesas && dp !== null && !cur) out.push(['📊', dp > 0 ? `Você gastou <b>${dp}% a mais</b> que em ${shortMonth(prev)}` : dp < 0 ? `Você gastou <b>${-dp}% a menos</b> que em ${shortMonth(prev)}` : `Gastos iguais a ${shortMonth(prev)}`, `${money(t.despesas)} contra ${money(tp.despesas)}`]);
     // categorias que mais mudaram
-    const byCat = key => { const m = new Map(); variaveisOf(key).forEach(v => m.set(v.category, (m.get(v.category) || 0) + v.amount)); return m; };
+    const byCat = key => { const m = new Map(); variaveisOf(key).filter(upTo).forEach(v => m.set(v.category, (m.get(v.category) || 0) + v.amount)); return m; };
     const a = byCat(k), b = byCat(prev);
     const changes = [...new Set([...a.keys(), ...b.keys()])].map(id => ({ id, now: a.get(id) || 0, before: b.get(id) || 0 }))
       .map(c => ({ ...c, diff: c.now - c.before })).filter(c => c.before && Math.abs(c.diff) >= 1000).sort((x, y) => Math.abs(y.diff) - Math.abs(x.diff)).slice(0, 2);
     changes.forEach(c => {
       const name = cat(c.id)?.name || 'Sem categoria', p = Math.round(c.diff / c.before * 100);
-      out.push([c.diff > 0 ? '↑' : '↓', `<b>${esc(name)}</b> ${c.diff > 0 ? 'subiu' : 'caiu'} ${Math.abs(p)}%`, `${money(c.now)} contra ${money(c.before)} em ${shortMonth(prev)}`]);
+      out.push([c.diff > 0 ? '↑' : '↓', `<b>${esc(name)}</b> ${c.diff > 0 ? 'subiu' : 'caiu'} ${Math.abs(p)}%`, `${money(c.now)} contra ${money(c.before)} ${cur ? `até ${dd} de ${shortMonth(prev)}` : `em ${shortMonth(prev)}`}`]);
     });
     // Mês atual: quanto dá pra gastar por dia até o fim do mês com o que sobra (receita − investir − despesas já previstas)
     if (k === curKey() && t.receita) {
       const daysLeft = daysIn(k) - today.getDate() + 1;
-      out.push(t.saldo > 0 ? ['📅', `Dá para gastar <b>${money(Math.floor(t.saldo / daysLeft))}</b> por dia`, `até o fim do mês (${daysLeft} dia${daysLeft > 1 ? 's' : ''}), mantendo o que você separou pra investir`]
-        : ['', `Faltam <b>${money(-t.saldo)}</b> pra fechar o mês`, 'Contando o que você separou pra investir']);
+      out.push(t.saldo > 0 ? ['📅', `Dá para gastar <b>${money(Math.floor(t.saldo / daysLeft))}</b> por dia`, `até o fim do mês (${daysLeft} dia${daysLeft > 1 ? 's' : ''})${t.pct ? ', mantendo o que você planejou guardar' : ''}`]
+        : ['', `Faltam <b>${money(-t.saldo)}</b> pra fechar o mês`, t.pct ? 'Contando o que você planejou guardar' : 'Já somando as contas que ainda vão vencer']);
     }
     const avg = avgExpenses();
     if (avg) out.push(['🧮', `Média de despesas: <b>${money(avg)}</b>/mês`, 'Últimos 3 meses com lançamentos']);
-    if (t.receita) {
+    if (t.receita && !(cur && t.saldo <= 0)) {   // no mês atual com falta, o "Faltam R$ X" acima já diz isso
       const rate = Math.round((t.receita - t.despesas) / t.receita * 100);
-      out.push([rate >= 20 ? '🌱' : rate >= 0 ? '🙂' : '⚠️', rate >= 0 ? `Sobrou <b>${rate}%</b> do que entrou neste mês` : `Saiu <b>${-rate}%</b> a mais do que entrou`, rate >= 20 ? 'Ótimo ritmo pra investir' : rate >= 0 ? 'Tente chegar em 20%' : 'Vale rever as maiores categorias']);
+      out.push([rate >= 20 ? '🌱' : rate >= 0 ? '🙂' : '⚠️', rate >= 0 ? `Sobrou <b>${rate}%</b> do que entrou neste mês` : `Saiu <b>${money(t.despesas - t.receita)}</b> a mais do que entrou`, rate >= 20 ? 'Ótimo ritmo pra investir' : rate >= 0 ? 'Tente chegar em 20%' : 'Vale rever as maiores categorias']);
     }
     const snaps = Object.entries(state.snapshots || {}).sort(([x], [y]) => x.localeCompare(y));
     if (snaps.length) {
@@ -3138,7 +3151,7 @@ button:focus-visible, a:focus-visible, [role="button"]:focus-visible, [tabindex]
       const status = !f ? `<button class="tag status none" data-fatura="${c.id}" data-key="${c.fk}">Lançar fatura</button>`
         : `<button class="tag status ${st[0]}" data-fpay="${c.id}" data-key="${c.fk}" title="${f.paid ? 'Marcar como não paga' : 'Marcar como paga'}">${st[1]}</button>`;
       const avail = c.limit ? c.limit - cardUsed(c) : 0;
-      const limit = c.limit ? ` · disponível <b style="color:${avail < c.limit * 0.1 ? 'var(--red)' : 'inherit'}">${money(Math.max(avail, 0))}</b> de ${money(c.limit)}` : '';
+      const limit = c.limit ? ` · disponível <b style="color:${avail < c.limit * 0.1 ? 'var(--amber)' : 'inherit'}">${money(Math.max(avail, 0))}</b> de ${money(c.limit)}` : '';
       const prev = !f ? faturaPreview(c.id, c.fk) : 0;
       return `<div class="row atop">
         <span class="date">${logoHtml({ brand: c.bank, name: c.name, color: c.color })}</span>
