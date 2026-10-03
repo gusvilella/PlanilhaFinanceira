@@ -32,7 +32,7 @@
   --card: #ffffff;
   --ink: #111111;
   --ink-2: #3b3b39;
-  --muted: #72716c;
+  --muted: #666560;
   --line: #eeede8;
   --field: #f6f5f1;
   --field-line: #e3e1db;
@@ -42,10 +42,11 @@
   --blue: #1467e0;
   --blue-soft: #e8f0fd;
   --accent: #146ef5;
+  --accent-ink: #146ef5;   /* azul para texto (no escuro, mais claro pra ler bem) */
   --accent-soft: #e6effe;
   --red: #cc353c;
   --red-soft: #fbeaea;
-  --amber: #b97f10;
+  --amber: #8f620a;
   --amber-soft: #f9f0dc;
   --grain: .035;
   --out: #a8a49b;
@@ -62,7 +63,7 @@
   --card: #141414;
   --ink: #fefefe;
   --ink-2: #b9b9b9;
-  --muted: #808080;
+  --muted: #8c8c8c;
   --line: #202020;
   --field: #1b1b1b;
   --field-line: #2a2a2a;
@@ -72,6 +73,7 @@
   --blue: #4a90f7;
   --blue-soft: #13223a;
   --accent: #146ef5;
+  --accent-ink: #5b9bff;   /* azul para texto (no escuro, mais claro pra ler bem) */
   --accent-soft: #10223f;
   --red: #ef5b62;
   --red-soft: #2e1618;
@@ -135,7 +137,7 @@ svg.i { width: 16px; height: 16px; flex: none; fill: none; stroke: currentColor;
 .month button { border: 0; background: transparent; color: var(--muted); border-radius: 8px; padding: 6px; display: grid; place-items: center; }
 .month button:hover { background: var(--field); color: var(--ink); }
 .month .label { min-width: 130px; text-align: center; font-size: .85rem; font-weight: 600; color: var(--ink); cursor: pointer; }
-.month .label.away::after { content: "hoje"; display: block; font-size: .62rem; font-weight: 700; color: var(--accent); line-height: 1; margin-top: 1px; }
+.month .label.away::after { content: "hoje"; display: block; font-size: .62rem; font-weight: 700; color: var(--accent-ink); line-height: 1; margin-top: 1px; }
 
 /* Indicadores */
 .kpis { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 18px; margin-bottom: 26px; }
@@ -193,7 +195,7 @@ svg.i { width: 16px; height: 16px; flex: none; fill: none; stroke: currentColor;
 .picked { display: flex; align-items: center; gap: 12px; background: var(--field); border-radius: 14px; padding: 10px 12px; }
 .picked .input { background: var(--card); }
 .picked .grow { flex: 1; min-width: 0; }
-.link { border: 0; background: none; color: var(--accent); font-weight: 700; font-size: .78rem; padding: 4px 0; }
+.link { border: 0; background: none; color: var(--accent-ink); font-weight: 700; font-size: .78rem; padding: 4px 0; }
 
 /* Cartões */
 .flag { display: inline-block; width: 30px; height: 19px; border-radius: 4px; overflow: hidden; vertical-align: middle; flex: none; box-shadow: 0 0 0 1px rgba(20, 23, 28, .08); background: #fff; }
@@ -227,7 +229,12 @@ svg.i { width: 16px; height: 16px; flex: none; fill: none; stroke: currentColor;
 
 /* Pago com cartão */
 .via { display: inline-flex; align-items: center; gap: 4px; margin-left: 6px; font-size: .72rem; font-weight: 600; color: var(--muted); vertical-align: middle; white-space: nowrap; }
-.via .logo { width: 16px; height: 16px; border-radius: 4px; }
+.via .logo { width: 16px; height: 16px; border-radius: 4px; flex: none; }
+.via { max-width: 100%; min-width: 0; }
+.via .vt { overflow: hidden; text-overflow: ellipsis; min-width: 0; }
+.row .ex-m { display: none; }
+/* o que acompanha o nome é separado por espaços (não margem): se quebrar a linha, começa alinhado */
+.row .ex small, .row .ex .via { margin-left: 0; }
 .val.absorbed { color: var(--muted); font-weight: 500; }
 .val.absorbed small { display: block; font-size: .68rem; font-weight: 500; }
 .pay-pick button .i { width: 14px; height: 14px; }
@@ -348,7 +355,7 @@ svg.i { width: 16px; height: 16px; flex: none; fill: none; stroke: currentColor;
 .ov-where { grid-column: span 4; }
 .ov-cards { grid-column: span 4; }
 .ov-goals { grid-column: span 4; }
-.ov-link { border: 0; background: none; color: var(--accent); font-weight: 700; font-size: .78rem; padding: 0; margin-left: auto; }
+.ov-link { border: 0; background: none; color: var(--accent-ink); font-weight: 700; font-size: .78rem; padding: 0; margin-left: auto; }
 .fc-stats { display: flex; flex-wrap: wrap; gap: 8px 22px; margin-bottom: 10px; }
 .fc-stats div small { display: block; font-size: .72rem; color: var(--muted); }
 .fc-stats div b { font-size: 1.15rem; font-weight: 700; letter-spacing: -.01em; }
@@ -476,7 +483,7 @@ html.locked .lock { place-items: normal; overflow-y: auto; }
 .acc-note { grid-column: 1 / -1; margin: 2px 0 4px 42px; font-size: .72rem; color: var(--muted); }
 .acc-note summary { cursor: pointer; list-style: none; }
 .acc-note summary::-webkit-details-marker { display: none; }
-.acc-note .acc-more { color: var(--accent); font-weight: 700; margin-left: 4px; }
+.acc-note .acc-more { color: var(--accent-ink); font-weight: 700; margin-left: 4px; }
 .acc-note[open] .acc-more { display: none; }
 .acc-note ul { list-style: none; margin: 6px 0 2px; padding: 0; display: grid; gap: 3px; max-height: 180px; overflow-y: auto; }
 .acc-note li { display: flex; justify-content: space-between; gap: 10px; }
@@ -509,7 +516,7 @@ html.locked .lock { place-items: normal; overflow-y: auto; }
   display: inline-flex; align-items: center; gap: 6px; box-shadow: var(--shadow);
 }
 .btn-soft:hover { background: var(--field); }
-.btn-soft.on { border-color: var(--accent); color: var(--accent); }
+.btn-soft.on { border-color: var(--accent); color: var(--accent-ink); }
 
 .row {
   display: grid; grid-template-columns: 60px minmax(0, 1fr) 120px 130px 34px;
@@ -584,7 +591,7 @@ html.locked .lock { place-items: normal; overflow-y: auto; }
 .note:first-of-type { border-top: 0; }
 .note div { flex: 1; min-width: 0; }
 .note small { display: block; color: var(--muted); font-size: .75rem; }
-.note .mini { border: 0; background: var(--accent-soft); color: var(--accent); font-size: .72rem; font-weight: 700; padding: 5px 8px; border-radius: 8px; white-space: nowrap; }
+.note .mini { border: 0; background: var(--accent-soft); color: var(--accent-ink); font-size: .72rem; font-weight: 700; padding: 5px 8px; border-radius: 8px; white-space: nowrap; }
 
 /* Modal */
 .overlay {
@@ -629,7 +636,7 @@ html.locked .lock { place-items: normal; overflow-y: auto; }
 .title { max-width: 21ch; }
 .hero-sub { margin: 8px 0 0; color: var(--muted); font-size: .92rem; }
 .kpis { grid-template-columns: minmax(0, 1.25fr) repeat(3, minmax(0, 1fr)); }
-.kpi.contas .kpi-ico { background: var(--accent-soft); color: var(--accent); }
+.kpi.contas .kpi-ico { background: var(--accent-soft); color: var(--accent-ink); }
 .kpi.contas .kpi-value { font-size: 1.85rem; }
 .kpi.sobra .kpi-ico { background: var(--field); color: var(--ink-2); }
 .kpi.sobra .kpi-value.short { color: var(--amber); }
@@ -662,7 +669,7 @@ html.locked .lock { place-items: normal; overflow-y: auto; }
 .ic-grid { grid-column: 1 / -1; display: grid; grid-template-columns: repeat(auto-fill, minmax(38px, 1fr)); gap: 6px; padding: 8px; margin-top: 2px; background: var(--field); border-radius: 12px; }
 .ic-grid button { height: 38px; border: 0; border-radius: 10px; background: none; color: var(--ink-2); display: grid; place-items: center; }
 .ic-grid button:hover { background: var(--card); }
-.ic-grid button.on { background: var(--card); color: var(--accent); box-shadow: inset 0 0 0 1.5px var(--accent); }
+.ic-grid button.on { background: var(--card); color: var(--accent-ink); box-shadow: inset 0 0 0 1.5px var(--accent); }
 .ic-grid svg.i { width: 18px; height: 18px; stroke-width: 1.8; }
 
 /* ===== Estética: sóbria, com textura leve e títulos em dois tons ===== */
@@ -723,7 +730,7 @@ body::before { content: ""; position: fixed; inset: 0; z-index: 0; pointer-event
 .idea:first-child { border-top: 0; }
 .det-ic { background: var(--field); color: var(--ink-2); }
 .menu-item { background: none; border-radius: 0; margin: 0; padding: 13px 2px; border-top: 1px solid var(--line); font-weight: 500; }
-.menu-item:hover { filter: none; color: var(--accent); }
+.menu-item:hover { filter: none; color: var(--accent-ink); }
 .ov-link { font-weight: 500; text-decoration: underline; text-decoration-color: var(--field-line); text-underline-offset: 4px; }
 .fc-alert { border-radius: 10px; }
 .ov h3 { margin-bottom: 12px; }
@@ -989,7 +996,7 @@ button.kpi-label:hover { color: var(--ink); text-decoration-color: currentColor;
 .det-banner strong { display: block; font-weight: 600; }
 .det-banner small { display: block; color: var(--muted); font-size: .76rem; margin-top: 2px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 .det-banner .btn-soft { flex: none; margin: 0; }
-.det-ic { width: 32px; height: 32px; border-radius: 10px; display: grid; place-items: center; background: var(--accent-soft); color: var(--accent); flex: none; }
+.det-ic { width: 32px; height: 32px; border-radius: 10px; display: grid; place-items: center; background: var(--accent-soft); color: var(--accent-ink); flex: none; }
 .det-ic svg.i { width: 17px; height: 17px; }
 .det-list { margin-top: 6px; max-height: 50vh; overflow: auto; }
 .det-row { display: flex; align-items: center; gap: 12px; padding: 10px 2px; border-bottom: 1px solid var(--line); font-size: .84rem; transition: opacity .15s; }
@@ -1112,7 +1119,7 @@ button.kpi-label:hover { color: var(--ink); text-decoration-color: currentColor;
 .menu-item.danger { color: var(--red); }
 .sync-steps { margin: 6px 0 0; padding-left: 18px; font-size: .84rem; line-height: 1.5; color: var(--ink-2); }
 .sync-steps li { margin-bottom: 6px; }
-.sync-steps a { color: var(--accent); font-weight: 700; }
+.sync-steps a { color: var(--accent-ink); font-weight: 700; }
 .sync-status { display: flex; align-items: center; gap: 10px; background: var(--field); border-radius: 12px; padding: 12px 14px; margin: 8px 0 4px; font-size: .86rem; }
 .sync-status .dot { width: 9px; height: 9px; border-radius: 50%; background: var(--green); flex: none; }
 .sync-status .dot.err { background: var(--red); }
@@ -1179,7 +1186,11 @@ button.kpi-label:hover { color: var(--ink); text-decoration-color: currentColor;
   .table-card { padding: 14px 12px 12px; }
   .row { grid-template-columns: 44px minmax(0, 1fr) auto 28px; gap: 8px; }
   .row .cat { display: none; }
-  .row .tag-m { display: flex; margin-top: 4px; }
+  .row .tag-m { display: flex; flex-wrap: wrap; align-items: center; gap: 4px 8px; margin-top: 4px; min-width: 0; }
+  .row .name .ex { display: none; }
+  .row .ex-m { display: inline-flex; align-items: center; gap: 6px; min-width: 0; max-width: 100%; font-size: .74rem; color: var(--muted); }
+  .row .ex-m small { margin: 0; font-size: inherit; }
+  .row .ex-m .via { margin-left: 0; }
   .row .name { white-space: normal; }
   /* até 2 linhas: nome + selo do cartão/conta e avisos ("não cobra este mês") sem cortar */
   .row .name > span { display: -webkit-box; -webkit-box-orient: vertical; -webkit-line-clamp: 2; line-clamp: 2; overflow: hidden; white-space: normal; overflow-wrap: anywhere; }
@@ -1210,9 +1221,9 @@ button:focus-visible, a:focus-visible, [role="button"]:focus-visible, [tabindex]
 .evo-chart g.m:focus-visible, #fcHit:focus-visible { outline: none; }
 /* Telas de toque: botões pequenos ganham uma área de toque invisível de pelo menos 44px, sem mudar o visual */
 @media (pointer: coarse) {
-  .ghost-ico, .month button, .adjust, .row .edit, .x, .ov-link, .row.head .sort, button.tag.status, .evo .pills button, .link { position: relative; }
+  .ghost-ico, .month button, .adjust, .row .edit, .x, .ov-link, .row.head .sort, button.tag.status, .evo .pills button, .link, .kpi-label { position: relative; }
   .ghost-ico::after, .month button::after, .adjust::after, .row .edit::after, .x::after, .ov-link::after, .row.head .sort::after,
-  button.tag.status::after, .evo .pills button::after, .link::after {
+  button.tag.status::after, .evo .pills button::after, .link::after, .kpi-label::after {
     content: ""; position: absolute; left: 50%; top: 50%; width: max(100%, 44px); height: max(100%, 44px); transform: translate(-50%, -50%);
   }
   .tabs button { min-height: 40px; }
@@ -1464,6 +1475,9 @@ button:focus-visible, a:focus-visible, [role="button"]:focus-visible, [tabindex]
       const isDark = parseInt(c.slice(1, 3), 16) + parseInt(c.slice(3, 5), 16) + parseInt(c.slice(5, 7), 16) < 150;
       return `<span class="logo tile${isDark ? ' dk-inv' : dk} ${cls}" style="--c:${c}"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="${b.path}"/></svg></span>`;
     }
+    // marca sem logo colorido: o símbolo de uma cor (MONO) em branco sobre a cor dela
+    let m = null; try { m = key && MONO[key]; } catch (_) {}
+    if (m) return `<span class="logo ${cls}" style="background:${color};color:${fg}"><svg viewBox="${m.vb}" aria-hidden="true" style="width:58%;height:58%;fill:currentColor">${m.d ? `<path d="${m.d}"/>` : m.g}</svg></span>`;
     const txt = b ? b.mono : (String(item.name || '?').trim().charAt(0).toUpperCase() || '?');
     return `<span class="logo ${cls}" style="background:${color};color:${fg}">${esc(txt)}</span>`;
   }
@@ -1973,7 +1987,7 @@ button:focus-visible, a:focus-visible, [role="button"]:focus-visible, [tabindex]
       const total = state.accounts.reduce((s, a) => s + accBalance(a), 0);
       cnt($('#kSaldo'), total, signed);
       $('#kSaldo').classList.toggle('neg', total < 0);
-      $('#kSaldo').title = state.accounts.map(a => `${a.name}: ${brl.format(accBalance(a) / 100)}`).join('\n');
+      $('#kSaldo').title = ui.hidden ? '' : state.accounts.map(a => `${a.name}: ${brl.format(accBalance(a) / 100)}`).join('\n');
       $('#kSaldoSub').innerHTML = `<span class="logo-stack">${state.accounts.slice(0, 5).map(a => logoHtml(a, 'sm')).join('')}</span>${state.accounts.length === 1 ? esc(state.accounts[0].name) : `${state.accounts.length} contas`}`;
     } else {
       $('#kSaldo').textContent = '—'; $('#kSaldo')._v = null;
@@ -2020,10 +2034,10 @@ button:focus-visible, a:focus-visible, [role="button"]:focus-visible, [tabindex]
   // Busca em todos os meses (Receita e Despesa variável): com texto ou categoria no filtro e a opção marcada
   const searchAll = () => view.allMonths && !!(view.query.trim() || view.cat) && ['receita', 'variavel'].includes(ui.tab);
   function rowsForTab() {
-    const q = view.query.trim().toLowerCase();
+    const q = norm(view.query);
     let rows = searchAll() ? (ui.tab === 'receita' ? state.receitas : state.variaveis).map(r => ({ ...r, shownDate: r.date }))
       : ui.tab === 'receita' ? receitasOf(view.month) : ui.tab === 'fixa' ? fixasOf(view.month) : variaveisOf(view.month);
-    if (q) rows = rows.filter(r => (r.desc || '').toLowerCase().includes(q));
+    if (q) rows = rows.filter(r => norm(r.desc).includes(q) || norm(cat(r.category)?.name).includes(q));
     if (view.cat && ui.tab !== 'fixa') rows = rows.filter(r => r.category === view.cat);
     const dir = ui.sortAsc ? 1 : -1;
     return rows.sort((a, b) => dir * (a.shownDate.localeCompare(b.shownDate) || (a.created || 0) - (b.created || 0)));
@@ -2077,12 +2091,12 @@ button:focus-visible, a:focus-visible, [role="button"]:focus-visible, [tabindex]
       }
       if (r.installment) extra = `<small>${r.installment.i}/${r.installment.n}</small>`;
       if (r.recurring) extra = `<small>↻ mensal</small>`;
-      extra += viaHtml(r);
+      extra += (extra ? ' ' : '') + viaHtml(r);
       const sign = ui.tab === 'receita' ? '+ ' : '- ';
       const cls = ui.tab === 'receita' ? (r.pending ? '' : 'pos') : '';
       return `<div class="row">
         <span class="date num">${isFixa ? (r.dueNext ? `${ddmm(r.shownDate)}<small style="display:block;font-size:.66rem">mês seguinte</small>` : 'Dia ' + pad(r.day)) : ddmm(r.shownDate)}${all ? `<small style="display:block;font-size:.66rem">${r.shownDate.slice(0, 4)}</small>` : ''}</span>
-        <div class="name has-ic">${txIcon(r, ui.tab)}<div class="nm"><span>${esc(r.desc || cat(r.category)?.name || '—')}${extra}</span><div class="tag-m">${label}</div></div></div>
+        <div class="name has-ic">${txIcon(r, ui.tab)}<div class="nm"><span>${esc(r.desc || cat(r.category)?.name || '—')}${extra ? ` <span class="ex">${extra}</span>` : ''}</span><div class="tag-m">${label}${extra ? `<span class="ex-m">${extra}</span>` : ''}</div></div></div>
         <span class="cat">${label}</span>
         ${ui.tab === 'receita' ? `<span class="val num ${cls}">${ui.hidden ? '' : sign}${money(r.amount)}</span>` : valHtml(r, view.month, (ui.hidden ? '' : sign) + money(r.amount))}
         <button class="edit" data-edit="${r.id}" aria-label="Editar">${ico('pencil', 'width:14px;height:14px')}</button>
@@ -2694,8 +2708,8 @@ button:focus-visible, a:focus-visible, [role="button"]:focus-visible, [tabindex]
 
   function renderMetasTable() {
     $('#tableTitle').textContent = 'Metas';
-    const q = view.query.trim().toLowerCase();
-    const rows = state.metas.filter(g => !q || g.name.toLowerCase().includes(q));
+    const q = norm(view.query);
+    const rows = state.metas.filter(g => !q || norm(g.name).includes(q));
     if (!rows.length) {
       $('#table').innerHTML = `<div class="empty">${q ? 'Nada encontrado com esse filtro.' : 'Nenhuma meta ainda.<br>Viagem, carro novo, reserva de emergência…'}${q ? '' : `<br><button class="btn-soft" data-add>${ico('plus')}Criar meta</button>`}</div>`;
       return;
@@ -2841,8 +2855,8 @@ button:focus-visible, a:focus-visible, [role="button"]:focus-visible, [tabindex]
 
   function renderAssinTable() {
     $('#tableTitle').textContent = 'Assinaturas';
-    const q = view.query.trim().toLowerCase();
-    const rows = state.assinaturas.filter(a => activeIn(a, view.month) && (!q || a.name.toLowerCase().includes(q)))
+    const q = norm(view.query);
+    const rows = state.assinaturas.filter(a => activeIn(a, view.month) && (!q || norm(a.name).includes(q)))
       .sort((a, b) => perMonth(b) - perMonth(a));
     if (!rows.length) {
       $('#table').innerHTML = (q ? '' : detectBanner()) + `<div class="empty">${q ? 'Nada encontrado com esse filtro.' : 'Nenhuma assinatura ainda.<br>Netflix, Spotify, Crunchyroll… tudo num lugar só.'}${q ? '' : `<br><button class="btn-soft" data-add>${ico('plus')}Adicionar</button>`}</div>`;
@@ -2855,7 +2869,8 @@ button:focus-visible, a:focus-visible, [role="button"]:focus-visible, [tabindex]
       const suffix = a.cycle === 'anual' ? '/ano' : '/mês';
       return `<div class="row">
         <span class="date">${logoHtml(a)}</span>
-        <div class="name"><span>${esc(a.name)}${!charged.has(a.id) ? `<small>${(a.skip || []).includes(view.month) ? 'pulada este mês' : 'não cobra este mês'}</small>` : ''}${viaHtml(a)}</span><div class="tag-m">${tag}</div></div>
+        ${(() => { const ex = [!charged.has(a.id) ? `<small>${(a.skip || []).includes(view.month) ? 'pulada este mês' : 'não cobra este mês'}</small>` : '', viaHtml(a)].filter(Boolean).join(' ');
+          return `<div class="name"><span>${esc(a.name)}${ex ? ` <span class="ex">${ex}</span>` : ''}</span><div class="tag-m">${tag}${ex ? `<span class="ex-m">${ex}</span>` : ''}</div></div>`; })()}
         <span class="cat">${tag}</span>
         ${charged.has(a.id) && inFatura({ ...a, shownDate: dateIn(view.month, a.day) }, view.month)
           ? `<span class="val num absorbed" title="Já está dentro da fatura do ${esc(payCardOf(a).name)}">${money(a.amount)}${suffix}<small>na fatura</small></span>`
@@ -3107,8 +3122,8 @@ button:focus-visible, a:focus-visible, [role="button"]:focus-visible, [tabindex]
 
   function renderCardsTable() {
     $('#tableTitle').textContent = 'Cartões de crédito';
-    const q = view.query.trim().toLowerCase();
-    const rows = cardsOf(view.month).filter(c => !q || c.name.toLowerCase().includes(q)).map(c => {
+    const q = norm(view.query);
+    const rows = cardsOf(view.month).filter(c => !q || norm(c.name).includes(q)).map(c => {
       const k = focusKey(c, view.month);
       return { ...c, fk: k, fatura: (state.faturas[c.id] || {})[k] || null, dates: faturaDates(c, k) };
     });
@@ -3347,8 +3362,8 @@ button:focus-visible, a:focus-visible, [role="button"]:focus-visible, [tabindex]
   const investMark = i => { const b = investBrand(i); return b ? `<span class="tx-logo">${logoHtml({ brand: b })}</span>` : icoTile('trending-up'); };
   function renderInvestTable() {
     $('#tableTitle').textContent = 'Investimentos';
-    const q = view.query.trim().toLowerCase();
-    const rows = state.investments.filter(i => !q || (i.name + ' ' + (i.institution || '')).toLowerCase().includes(q))
+    const q = norm(view.query);
+    const rows = state.investments.filter(i => !q || norm(i.name + ' ' + (i.institution || '')).includes(q))
       .map(i => ({ ...i, now: estimate(i) })).sort((a, b) => b.now - a.now);
     if (!rows.length) {
       $('#table').innerHTML = `<div class="empty">${q ? 'Nada encontrado com esse filtro.' : 'Nenhum investimento cadastrado.<br>Ex.: sua conta do Mercado Pago rendendo 120% do CDI.'}${q ? '' : `<br><button class="btn-soft" data-add>${ico('plus')}Adicionar</button>`}</div>`;
@@ -3359,7 +3374,7 @@ button:focus-visible, a:focus-visible, [role="button"]:focus-visible, [tabindex]
       const tag = `<span class="tag rate">${rateText(i)}</span>`;
       return `<div class="row">
         <span class="date num" title="Última vez que você informou o saldo">${ddmm(i.updatedAt)}</span>
-        <div class="name has-ic">${investMark(i)}<div class="nm"><span>${esc(i.name)}${i.institution ? `<small class="inst">${esc(i.institution)}</small>` : ''}</span><div class="tag-m">${tag}</div></div></div>
+        <div class="name has-ic">${investMark(i)}<div class="nm"><span>${esc(i.name)}${i.institution ? `<span class="ex"><small class="inst">${esc(i.institution)}</small></span>` : ''}</span><div class="tag-m">${tag}${i.institution ? `<span class="ex-m"><small class="inst">${esc(i.institution)}</small></span>` : ''}</div></div></div>
         <span class="cat">${tag}</span>
         <span class="val num">${money(i.now)}</span>
         <button class="edit" data-edit="${i.id}" aria-label="Editar">${ico('pencil', 'width:14px;height:14px')}</button>
@@ -4095,9 +4110,9 @@ button:focus-visible, a:focus-visible, [role="button"]:focus-visible, [tabindex]
   // Selo "no cartão" ao lado do nome
   function viaHtml(item) {
     const c = payCardOf(item);
-    if (c) return `<span class="via" title="Cartão ${esc(c.name)} ${FLAGS[c.flag]?.name || ''}${c.last4 ? ' •' + esc(c.last4) : ''}">${logoHtml({ brand: c.bank, name: c.name, color: c.color })}${esc(c.name)}${c.last4 ? ' •' + esc(c.last4) : ''}${flagHtml(c.flag)}</span>`;
+    if (c) return `<span class="via" title="Cartão ${esc(c.name)} ${FLAGS[c.flag]?.name || ''}${c.last4 ? ' •' + esc(c.last4) : ''}">${logoHtml({ brand: c.bank, name: c.name, color: c.color })}<span class="vt">${esc(c.name)}${c.last4 ? ' •' + esc(c.last4) : ''}</span>${flagHtml(c.flag)}</span>`;
     const a = item.payAccount && state.accounts.find(x => x.id === item.payAccount);
-    return a ? `<span class="via" title="Conta ${esc(a.name)}">${logoHtml(a)}${esc(a.name)}</span>` : '';
+    return a ? `<span class="via" title="Conta ${esc(a.name)}">${logoHtml(a)}<span class="vt">${esc(a.name)}</span></span>` : '';
   }
   function valHtml(item, key, text) {
     if (!inFatura(item, key)) return `<span class="val num">${text}</span>`;
@@ -4756,7 +4771,7 @@ button:focus-visible, a:focus-visible, [role="button"]:focus-visible, [tabindex]
   const CAT_RULES = [
     ['Mercado', /supermerc|mercado|carrefour|assai|atacad|pao de acucar|hortifruti|sams club|\bdia\b|extra |zaffari|savegnago|guanabara/],
     ['Comida', /ifood|rappi|restaur|lanch|padaria|pizz|burger|mcdonald|\bbk\b|subway|cafe|starbucks|outback|sushi|acai|delivery|bar |cantina/],
-    ['Carro', /posto|combust|shell|ipiranga|petrobras|\bbr\b|estacion|sem parar|conectcar|veloe|uber|\b99\b|99app|pedagio|ipva|detran|oficina|auto pecas/],
+    ['Carro', /posto|combust|gasolin|etanol|alcool|diesel|shell|ipiranga|petrobras|\bbr\b|estacion|sem parar|conectcar|veloe|uber|\b99\b|99app|pedagio|ipva|detran|oficina|auto pecas/],
     ['Saúde', /farmac|drogar|droga raia|drogasil|pague menos|panvel|hospital|clinic|laborat|unimed|odonto|dentist|medic|amil|hapvida/],
     ['Contas', /enel|cemig|\blight\b|copel|celesc|sabesp|sanepar|copasa|energia|agua|\bgas\b|comgas|vivo|claro|\btim\b|\boi\b|internet|condomin|aluguel/],
     ['Lazer', /cinema|ingresso|steam|playstation|xbox|show|teatro|netflix|spotify|disney|hbo|prime video|crunchyroll|viagem|hotel|airbnb/],
@@ -5195,6 +5210,8 @@ button:focus-visible, a:focus-visible, [role="button"]:focus-visible, [tabindex]
       t = t.replace(d[0], ' ');
     }
     t = t.replace(/\bhoje\b/, ' ');
+    // jeitos de dizer dinheiro que não fazem parte da descrição ("200 reais", "50 conto", "R$")
+    t = t.replace(/\b(reais|real|contos?|pilas?)(?=\s)/g, ' ');
     // parcelado: "12x", "em 10x", "3 x" (antes do valor, pra "12x" não virar R$ 12)
     const px = t.match(/\b(?:em\s+)?(\d{1,2})\s?x\b/);
     if (px && +px[1] >= 2 && +px[1] <= 48) { out.parcelas = +px[1]; t = t.replace(px[0], ' '); }
@@ -5226,6 +5243,11 @@ button:focus-visible, a:focus-visible, [role="button"]:focus-visible, [tabindex]
     const words = t.replace(/\s+/g, ' ').trim();
     const orig = String(text).trim().split(/\s+/).filter(w => words.split(' ').includes(norm(w)));
     out.desc = (orig.join(' ') || words).replace(/^./, c => c.toUpperCase());
+    // marcas com o nome certo (iFood, Uber, Netflix…) e siglas em maiúsculas (TV, IPVA…)
+    const NAMES = { ifood: 'iFood', uber: 'Uber', '99': '99', rappi: 'Rappi', 'mercado livre': 'Mercado Livre', shopee: 'Shopee', amazon: 'Amazon', 'mc donalds': "McDonald's", mcdonalds: "McDonald's", 'burger king': 'Burger King', starbucks: 'Starbucks', drogasil: 'Drogasil', 'droga raia': 'Droga Raia', aliexpress: 'AliExpress', shein: 'Shein', airbnb: 'Airbnb', zara: 'Zara', renner: 'Renner', 'c&a': 'C&A' };
+    const bk = Object.keys(BRANDS).find(k => norm(BRANDS[k].name) === norm(out.desc));
+    out.desc = NAMES[norm(out.desc)] || (bk ? BRANDS[bk].name : out.desc);
+    out.desc = out.desc.replace(/(^|\s)(tv|ipva|iptu|mei|das|cnh|pc|ps5|irpf|inss|fgts|pix)(?=\s|$)/gi, (m, a, w) => a + w.toUpperCase());
     out.category = suggestCategory(out.desc, out.kind === 'receita' ? 'receita' : 'despesa');
     return out;
   }
