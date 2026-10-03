@@ -2099,13 +2099,13 @@ button:focus-visible, a:focus-visible, [role="button"]:focus-visible, [tabindex]
       if (r.installment) extra = `<small>${r.installment.i}/${r.installment.n}</small>`;
       if (r.recurring) extra = `<small>↻ mensal</small>`;
       extra += (extra ? ' ' : '') + viaHtml(r);
-      const sign = ui.tab === 'receita' ? '+ ' : '- ';
+      const neg = r.amount < 0, sign = (ui.tab === 'receita') !== neg ? '+ ' : '- ';
       const cls = ui.tab === 'receita' ? (r.pending ? '' : 'pos') : '';
       return `<div class="row">
         <span class="date num">${isFixa ? (r.dueNext ? `${ddmm(r.shownDate)}<small style="display:block;font-size:.66rem">mês seguinte</small>` : 'Dia ' + pad(r.day)) : ddmm(r.shownDate)}${all ? `<small style="display:block;font-size:.66rem">${r.shownDate.slice(0, 4)}</small>` : ''}</span>
-        <div class="name has-ic">${txIcon(r, ui.tab)}<div class="nm"><span>${esc(r.desc || cat(r.category)?.name || '—')}${extra ? ` <span class="ex">${extra}</span>` : ''}</span><div class="tag-m">${label}${extra ? `<span class="ex-m">${extra}</span>` : ''}</div></div></div>
+        <div class="name has-ic">${txIcon(r, ui.tab)}<div class="nm"><span title="${esc(r.desc || '')}">${esc(r.desc || cat(r.category)?.name || '—')}${extra ? ` <span class="ex">${extra}</span>` : ''}</span><div class="tag-m">${label}${extra ? `<span class="ex-m">${extra}</span>` : ''}</div></div></div>
         <span class="cat">${label}</span>
-        ${ui.tab === 'receita' ? `<span class="val num ${cls}">${ui.hidden ? '' : sign}${money(r.amount)}</span>` : valHtml(r, view.month, (ui.hidden ? '' : sign) + money(r.amount))}
+        ${ui.tab === 'receita' ? `<span class="val num ${cls}">${ui.hidden ? '' : sign}${money(Math.abs(r.amount))}</span>` : valHtml(r, view.month, (ui.hidden ? '' : sign) + money(Math.abs(r.amount)))}
         <button class="edit" data-edit="${r.id}" aria-label="Editar">${ico('pencil', 'width:14px;height:14px')}</button>
       </div>`;
     }).join('');
@@ -2114,7 +2114,7 @@ button:focus-visible, a:focus-visible, [role="button"]:focus-visible, [tabindex]
     const inside = ui.tab === 'receita' || all ? 0 : rows.filter(r => inFatura(r, view.month)).reduce((s, r) => s + r.amount, 0);
     const foot = (all && found.length > rows.length ? `<div class="yield"><span>Mostrando os ${rows.length} mais recentes de ${found.length} encontrados</span></div>` : '')
       + `<div class="total"><span>Total${filtered ? ' filtrado' : ''}${all ? ` (${found.length} em todos os meses)` : ''}</span>
-      <strong class="num ${ui.tab === 'receita' ? 'pos' : 'negc'}">${ui.hidden ? '' : ui.tab === 'receita' ? '+ ' : '- '}${money(sum)}</strong></div>`
+      <strong class="num ${ui.tab === 'receita' ? 'pos' : 'negc'}">${ui.hidden ? '' : (ui.tab === 'receita') !== (sum < 0) ? '+ ' : '- '}${money(Math.abs(sum))}</strong></div>`
       + (inside ? `<div class="yield"><span>Já dentro das faturas dos cartões (não soma de novo)</span><span class="num">${money(inside)}</span></div>` : '')
       + (isFixa && !filtered ? (() => {
         // quanto das contas fixas do mês já foi pago (ou está no cartão) e quanto falta
@@ -2233,7 +2233,7 @@ button:focus-visible, a:focus-visible, [role="button"]:focus-visible, [tabindex]
         <div class="donut-center"><small>${label}</small><strong class="num" data-total="${total}">${money(total)}</strong></div>
       </div>
       <ul class="legend">${groups.map(g => {
-        const pct = Math.round(g.value / total * 100);
+        const raw = g.value / total * 100, pct = raw > 0 && raw < 1 ? '<1' : Math.round(raw);   // fatia pequena: "<1%", não "0%"
         // com id de categoria: tocar filtra a lista por ela (tocar de novo tira o filtro)
         const pick = g.id !== undefined && g.id !== '' ? ` data-catpick="${esc(g.id)}" role="button" tabindex="0" title="Filtrar por ${esc(g.name)}" class="${view.cat === g.id ? 'on' : view.cat ? 'dim' : ''}"`
           : g.go ? ` data-go="${g.go}" data-catpick="" role="button" tabindex="0" title="Ver ${esc(g.name)}"` : '';
