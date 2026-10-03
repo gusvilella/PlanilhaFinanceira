@@ -234,6 +234,8 @@ svg.i { width: 16px; height: 16px; flex: none; fill: none; stroke: currentColor;
 .via { max-width: 100%; min-width: 0; }
 .via .vt { overflow: hidden; text-overflow: ellipsis; min-width: 0; }
 .row .ex-m { display: none; }
+.tag.cat-t { max-width: 100%; min-width: 0; }
+.tag .tt { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; min-width: 0; }
 /* celular: Favorito e Lançar lado a lado; "Formulário completo" embaixo, centralizado */
 @media (max-width: 640px) { .qa-actions #qaFull { order: 3; width: 100%; text-align: center; padding: 8px 0 0; } .qa-actions .grow { display: none; } .qa-actions .btn { flex: 1; } }
 /* o que acompanha o nome é separado por espaços (não margem): se quebrar a linha, começa alinhado */
@@ -1224,6 +1226,17 @@ button.kpi-label:hover { color: var(--ink); text-decoration-color: currentColor;
   /* botões do rodapé das janelas quebram linha em vez de sair da tela */
   .actions { flex-wrap: wrap; row-gap: 8px; }
   .modal { padding-left: 18px; padding-right: 18px; }
+  /* lista: colunas mais justas pra sobrar espaço pro nome (sem quebrar palavra no meio) */
+  .row { grid-template-columns: 38px minmax(0, 1fr) auto 24px; gap: 6px; }
+  .row .date { font-size: .72rem; }
+  .row .val { font-size: .88rem; }
+  .row .name > span, .row .nm > span { overflow-wrap: break-word; }
+  .head-actions .t2 { display: none; }
+  .tab-hint { display: none; }
+}
+/* 320px: os 4 números do topo um embaixo do outro (lado a lado não cabe o valor inteiro) */
+@media (max-width: 340px) {
+  .kpis { grid-template-columns: minmax(0, 1fr); gap: 10px; }
 }
 /* Foco visível ao navegar pelo teclado (Tab) */
 button:focus-visible, a:focus-visible, [role="button"]:focus-visible, [tabindex]:focus-visible, summary:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
@@ -1394,7 +1407,7 @@ button:focus-visible, a:focus-visible, [role="button"]:focus-visible, [tabindex]
           <div class="title-wrap"><h2 id="tableTitle"></h2><p class="tab-hint" id="tableHint"></p></div>
           <div class="head-actions">
             <button class="btn-soft" id="filterBtn"><svg class="i"><use href="#i-filter"/></svg><span class="t">Filtro</span></button>
-            <button class="btn-soft" id="addBtn"><svg class="i"><use href="#i-plus"/></svg>Adicionar</button>
+            <button class="btn-soft" id="addBtn" aria-label="Adicionar"><svg class="i"><use href="#i-plus"/></svg><span class="t2">Adicionar</span></button>
           </div>
           <div class="pop" id="filterPop" hidden>
             <h4>Filtrar</h4>
@@ -2061,8 +2074,8 @@ button:focus-visible, a:focus-visible, [role="button"]:focus-visible, [tabindex]
   }
 
   function tagHtml(c) {
-    if (!c) return `<span class="tag cat-t" style="--cc:var(--field-line)">Sem categoria</span>`;
-    return `<span class="tag cat-t" style="--cc:${pc(c.color)}">${esc(c.name)}</span>`;
+    if (!c) return `<span class="tag cat-t" style="--cc:var(--field-line)"><span class="tt">Sem categoria</span></span>`;
+    return `<span class="tag cat-t" style="--cc:${pc(c.color)}" title="${esc(c.name)}"><span class="tt">${esc(c.name)}</span></span>`;
   }
 
   function renderTable() {
@@ -2146,7 +2159,7 @@ button:focus-visible, a:focus-visible, [role="button"]:focus-visible, [tabindex]
     } else {
       const src = ui.tab === 'receita' ? receitasOf(key).filter(r => !r.pending) : variaveisOf(key);
       const sums = new Map();
-      src.forEach(r => sums.set(r.category, (sums.get(r.category) || 0) + r.amount));
+      src.forEach(r => { const id = cat(r.category) ? r.category : ''; sums.set(id, (sums.get(id) || 0) + r.amount); });
       groups = [...sums].map(([id, value]) => { const c = cat(id); return { id: id || '', name: c?.name || 'Sem categoria', color: c?.color || '#94a3b8', value, icon: catIcon(c) }; });
     }
     groups = groups.filter(g => g.value > 0).sort((a, b) => b.value - a.value);
