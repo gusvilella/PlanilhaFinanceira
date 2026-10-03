@@ -12,7 +12,7 @@
   <meta name="mobile-web-app-capable" content="yes" />
   <meta name="apple-mobile-web-app-status-bar-style" content="default" />
   <meta name="apple-mobile-web-app-title" content="Orçamento" />
-  <script>/* esconde tudo desde o primeiro instante se o app tiver senha ou se for preciso entrar na conta */ try { if (localStorage.getItem('orcamento:lock')) document.documentElement.classList.add('locked'); if (!localStorage.getItem('orcamento:conta') || !(localStorage.getItem('orcamento:sessao') || sessionStorage.getItem('orcamento:sessao'))) document.documentElement.classList.add('auth'); } catch (e) {}</script>
+  <script>/* esconde tudo desde o primeiro instante se o app tiver senha ou se for preciso entrar na conta */ document.documentElement.classList.add('booting'); try { if (localStorage.getItem('orcamento:lock')) document.documentElement.classList.add('locked'); if (!localStorage.getItem('orcamento:conta') || !(localStorage.getItem('orcamento:sessao') || sessionStorage.getItem('orcamento:sessao'))) document.documentElement.classList.add('auth'); } catch (e) {}</script>
   <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns=%27http://www.w3.org/2000/svg%27 viewBox=%270 0 100 100%27%3E%3Crect width=%27100%27 height=%27100%27 rx=%2724%27 fill=%27%2316956a%27/%3E%3Ccircle cx=%2750%27 cy=%2750%27 r=%2724%27 fill=%27none%27 stroke=%27white%27 stroke-width=%2712%27 stroke-dasharray=%27110 41%27/%3E%3C/svg%3E" />
   <style>
 /* Fontes embutidas no próprio arquivo (funcionam sem internet). Licença SIL Open Font License. */
@@ -104,6 +104,8 @@ svg.i { width: 16px; height: 16px; flex: none; fill: none; stroke: currentColor;
 
 /* Cabeçalho */
 .top { display: flex; align-items: flex-end; justify-content: space-between; gap: 16px; margin-bottom: 28px; }
+/* até o app montar a tela (saudação com o nome, números), nada aparece: sem piscar texto provisório no F5 */
+.booting .app { visibility: hidden; }
 .hello { font-size: .8rem; color: var(--muted); margin: 0 0 2px; }
 .title { display: flex; align-items: center; gap: 10px; margin: 0; font-size: 1.55rem; font-weight: 700; letter-spacing: -.02em; }
 .ghost-ico { border: 0; background: transparent; color: var(--muted); padding: 6px; border-radius: 10px; display: grid; place-items: center; }
@@ -1301,8 +1303,8 @@ button:focus-visible, a:focus-visible, [role="button"]:focus-visible, [tabindex]
   <div class="app">
     <header class="top">
       <div>
-        <p class="hello" id="hello">Olá</p>
-        <h1 class="title" id="headline">Orçamento</h1>
+        <p class="hello" id="hello">&nbsp;</p>
+        <h1 class="title" id="headline">&nbsp;</h1>
       </div>
       <div class="top-right">
         <div style="display:flex;gap:4px">
@@ -5748,8 +5750,8 @@ button:focus-visible, a:focus-visible, [role="button"]:focus-visible, [tabindex]
 
   if (!account || !hasSession()) showAuth();
   else { document.documentElement.classList.remove('auth'); stampOwner(); if (lockCfg) lockNow(); else requestAnimationFrame(introAnim); }
-  fillFilter();
-  render();
+  try { fillFilter(); render(); }
+  finally { document.documentElement.classList.remove('booting'); }   // mesmo se algo falhar, a tela aparece
   // Atalhos do ícone do app instalado (segurar o ícone): ?acao=rapido abre o lançamento rápido, ?aba=… abre uma aba
   { const qs = new URLSearchParams(location.search);
     if (qs.has('acao') || qs.has('aba')) {
