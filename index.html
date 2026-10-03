@@ -235,6 +235,8 @@ svg.i { width: 16px; height: 16px; flex: none; fill: none; stroke: currentColor;
 .via { max-width: 100%; min-width: 0; }
 .via .vt { overflow: hidden; text-overflow: ellipsis; min-width: 0; }
 .row .ex-m { display: none; }
+.row .val.est { color: var(--ink-2); font-weight: 500; }
+.row .val.est small, .row .val.absorbed small { display: block; font-size: .68rem; color: var(--muted); font-weight: 500; }
 .tag.cat-t { max-width: 100%; min-width: 0; }
 .tag .tt { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; min-width: 0; }
 /* celular: Favorito e Lançar lado a lado; "Formulário completo" embaixo, centralizado */
@@ -1571,6 +1573,12 @@ button:focus-visible, a:focus-visible, [role="button"]:focus-visible, [tabindex]
       if (x.skip !== undefined) x.skip = Array.isArray(x.skip) ? x.skip.filter(isKey) : [];
     });
     s.fixas.forEach(x => { x.amount = num(x.amount); x.day = day(x.day); x.desc = String(x.desc ?? ''); });
+    // valor que muda todo mês (luz, salário): "varia" + o valor de verdade de cada mês em "amounts" (ambos opcionais)
+    [...s.fixas, ...s.receitas].forEach(x => {
+      if (x.varia !== undefined) x.varia = !!x.varia;
+      if (x.variaSince !== undefined && !isKey(x.variaSince)) delete x.variaSince;
+      if (x.amounts !== undefined) { if (!isObj(x.amounts)) delete x.amounts; else for (const [k, v] of Object.entries(x.amounts)) if (!isKey(k) || !Number.isFinite(+v)) delete x.amounts[k]; else x.amounts[k] = num(v); }
+    });
     s.assinaturas.forEach(x => { x.amount = num(x.amount); x.day = day(x.day); x.month = Math.min(12, Math.max(1, Math.round(+x.month) || 1)); x.name = String(x.name ?? ''); });
     s.cards.forEach(x => { x.closeDay = day(x.closeDay, 3); x.dueDay = day(x.dueDay, 10); x.limit = num(x.limit); x.name = String(x.name ?? 'Cartão'); });
     s.accounts.forEach(x => { withId(x); x.balance = num(x.balance); x.name = String(x.name ?? 'Conta'); if (x.updatedAt && !fixIso(x.updatedAt)) delete x.updatedAt; });
@@ -1706,11 +1714,20 @@ button:focus-visible, a:focus-visible, [role="button"]:focus-visible, [tabindex]
   };
   const withMemo = fn => (...args) => { if (memo) return fn(...args); memo = new Map(); try { return fn(...args); } finally { memo = null; } };
 
+  // Valor de um item recorrente num mês: o que você confirmou naquele mês; se o valor varia e ainda não foi
+  // confirmado, a média dos últimos 3 meses confirmados (ou o valor de sempre, se ainda não tem nenhum)
+  function monthAmount(item, key) {
+    const a = item.amounts || {};
+    if (a[key] != null) return { amount: a[key], est: false };
+    if (!item.varia || (item.variaSince && key < item.variaSince)) return { amount: item.amount, est: false };   // antes de ligar "varia", fica como era
+    const prev = Object.keys(a).filter(k => k < key).sort().slice(-3).map(k => a[k]);
+    return { amount: prev.length ? Math.round(prev.reduce((t, v) => t + v, 0) / prev.length) : item.amount, est: true };
+  }
   function receitasOf(key) { return cached('r' + key, () => receitasOfRaw(key)); }
   function receitasOfRaw(key) {
     return state.receitas
       .filter(r => r.recurring ? activeIn({ start: monthOf(r.date), end: r.end }, key) && !(r.skip || []).includes(key) : monthOf(r.date) === key)
-      .map(r => ({ ...r, shownDate: r.recurring ? dateIn(key, +r.date.slice(8)) : r.date,
+      .map(r => ({ ...r, ...(r.recurring ? monthAmount(r, key) : {}), shownDate: r.recurring ? dateIn(key, +r.date.slice(8)) : r.date,
         // recorrente "a receber": cada mês é marcado como recebido separadamente (state.received[mês])
         pending: r.pending && !(r.recurring && ((state.received || {})[key] || []).includes(r.id)) }));
   }
@@ -1722,7 +1739,7 @@ button:focus-visible, a:focus-visible, [role="button"]:focus-visible, [tabindex]
   });
   // Despesa fixa pertence ao mês "key" (conta nas despesas dele); se "vence no mês seguinte", a data de pagamento é no próximo mês
   const fixasOf = key => cached('f' + key, () => state.fixas.filter(f => activeIn(f, key) && !(f.skip || []).includes(key))
-    .map(f => ({ ...f, key, shownDate: dateIn(f.dueNext ? addMonths(key, 1) : key, f.day), paid: !!(state.paid[key] || []).includes(f.id) })));
+    .map(f => ({ ...f, ...monthAmount(f, key), key, shownDate: dateIn(f.dueNext ? addMonths(key, 1) : key, f.day), paid: !!(state.paid[key] || []).includes(f.id) })));
   const daysUntil = iso => Math.round((new Date(iso + 'T12:00:00') - new Date(todayIso + 'T12:00:00')) / 864e5);
   // Situação da despesa fixa: no cartão (já está na fatura), paga, a vencer ou atrasada
   const fixaState = f => f.payCard && payCardOf(f) ? 'card' : f.paid ? 'paid' : daysUntil(f.shownDate) < 0 ? 'late' : 'due';
@@ -2121,14 +2138,16 @@ button:focus-visible, a:focus-visible, [role="button"]:focus-visible, [tabindex]
         label = `<span class="tag status paid" title="Paga no cartão: já está na fatura">No cartão</span>`;
       } else if (isFixa) {
         const st = { paid: ['paid', 'Paga'], due: ['open', 'A vencer'], late: ['late', 'Atrasada'] }[fixaState(r)];
-        label = `<button class="tag status ${st[0]}" data-pay="${r.id}" title="${r.paid ? 'Marcar como não paga' : 'Marcar como paga'}">${st[1]}</button>`;
+        label = `<button class="tag status ${st[0]}" data-pay="${r.id}" title="${r.paid ? 'Marcar como não paga' : r.est ? 'Dizer quanto veio e marcar como paga' : 'Marcar como paga'}">${st[1]}</button>`;
       } else if (ui.tab === 'receita' && r.pending && !(all && r.recurring)) {
         label = `<button class="tag status pending" data-receive="${r.id}" title="Marcar como recebido">A receber</button>`;
+      } else if (ui.tab === 'receita' && r.est && !all && r.shownDate <= todayIso) {
+        label = `<button class="tag status pending" data-confirm="${r.id}" title="Dizer quanto caiu de verdade">Quanto caiu?</button>`;
       } else {
         label = tagHtml(cat(r.category));
       }
       if (r.installment) extra = `<small>${r.installment.i}/${r.installment.n}</small>`;
-      if (r.recurring) extra = `<small>↻ mensal</small>`;
+      if (r.recurring || isFixa) extra = r.varia ? `<small>↻ valor varia</small>` : r.recurring ? `<small>↻ mensal</small>` : '';
       extra += (extra ? ' ' : '') + viaHtml(r);
       const neg = r.amount < 0, sign = (ui.tab === 'receita') !== neg ? '+ ' : '- ';
       const cls = ui.tab === 'receita' ? (r.pending ? '' : 'pos') : '';
@@ -2136,7 +2155,7 @@ button:focus-visible, a:focus-visible, [role="button"]:focus-visible, [tabindex]
         <span class="date num">${isFixa ? (r.dueNext ? `${ddmm(r.shownDate)}<small style="display:block;font-size:.66rem">mês seguinte</small>` : 'Dia ' + (r.shownDate ? r.shownDate.slice(8, 10) : pad(r.day))) : ddmm(r.shownDate)}${all ? `<small style="display:block;font-size:.66rem">${r.shownDate.slice(0, 4)}</small>` : ''}</span>
         <div class="name has-ic">${txIcon(r, ui.tab)}<div class="nm"><span title="${esc(r.desc || '')}">${esc(r.desc || cat(r.category)?.name || '—')}${extra ? ` <span class="ex">${extra}</span>` : ''}</span><div class="tag-m">${label}${extra ? `<span class="ex-m">${extra}</span>` : ''}</div></div></div>
         <span class="cat">${label}</span>
-        ${ui.tab === 'receita' ? `<span class="val num ${cls}">${ui.hidden ? '' : sign}${money(Math.abs(r.amount))}</span>` : valHtml(r, view.month, (ui.hidden ? '' : sign) + money(Math.abs(r.amount)))}
+        ${ui.tab === 'receita' ? `<span class="val num ${cls}${r.est ? ' est' : ''}">${ui.hidden ? '' : r.est ? '≈ ' : sign}${money(Math.abs(r.amount))}${r.est ? '<small>estimado</small>' : ''}</span>` : valHtml(r, view.month, (ui.hidden ? '' : r.est ? '≈ ' : sign) + money(Math.abs(r.amount)))}
         <button class="edit" data-edit="${r.id}" aria-label="Editar">${ico('pencil', 'width:14px;height:14px')}</button>
       </div>`;
     }).join('');
@@ -3904,8 +3923,10 @@ button:focus-visible, a:focus-visible, [role="button"]:focus-visible, [tabindex]
       ${catSelect('receita', r.category, 'Tipo de renda')}
       ${payField(item || prefill ? r : null, true)}
       ${checkField('fRecurring', 'Recebo todo mês', 'Como o salário: aparece sozinho nos próximos meses.', r.recurring)}
+      <div id="variaBox" ${r.recurring ? '' : 'hidden'}>${checkField('fVaria', 'O valor muda um pouco todo mês', 'O app usa a média dos últimos meses até você dizer quanto caiu.', !!r.varia)}</div>
       ${footer(editing, true)}</form>`, m => {
       m.querySelector('#fDup')?.addEventListener('click', () => openReceita(null, { amount: item.amount, desc: item.desc, category: item.category, payAccount: item.payAccount || '', payCard: '' }));
+      m.querySelector('#fRecurring').addEventListener('change', e => { m.querySelector('#variaBox').hidden = !e.target.checked; });
       bindMoney(m.querySelector('#fAmount'));
       bindNewCategory(m, 'receita');
       if (!editing) bindCatSuggest(m, 'receita');
@@ -3919,6 +3940,7 @@ button:focus-visible, a:focus-visible, [role="button"]:focus-visible, [tabindex]
           pending: m.querySelector('#fPending').checked, recurring: m.querySelector('#fRecurring').checked,
           payAccount: readPay(m).payAccount,
         };
+        data.varia = data.recurring && m.querySelector('#fVaria').checked;
         if (!data.date) return showErr('Escolha a data.');
         if (!data.amount) return showErr('Digite o valor.');
         if (data.category === '__new') data.category = '';
@@ -4038,7 +4060,8 @@ button:focus-visible, a:focus-visible, [role="button"]:focus-visible, [tabindex]
     openModal(`<form id="f" novalidate>${modalHead(editing ? 'Editar conta fixa' : 'Nova conta fixa', 'Conta que chega todo mês: aluguel, luz, internet… Vale deste mês em diante.')}
       <label class="fl" for="fDesc">Que conta é essa?</label><input class="input" id="fDesc" maxlength="60" placeholder="Ex.: Aluguel" value="${esc(f.desc)}" />
       ${editing ? '' : `<div class="nick-chips" id="fixSug">${['Aluguel', 'Luz', 'Água', 'Internet', 'Celular', 'Condomínio', 'Plano de saúde', 'Escola'].map(n => `<button type="button" data-sug="${n}">${n}</button>`).join('')}</div>`}
-      ${moneyField('fAmount', f.amount, 'Quanto costuma vir?')}
+      ${moneyField('fAmount', editing && f.varia ? monthAmount(f, view.month).amount : f.amount, editing && f.varia ? `Quanto veio em ${monthName(view.month)}?` : 'Quanto costuma vir?')}
+      ${checkField('fVaria', 'O valor muda todo mês', 'Ex.: luz, água, gás. O app usa a média dos últimos meses e pergunta quanto veio quando você marcar como paga.', !!f.varia)}
       <div class="two">
         <div><label class="fl" for="fDay">Vence todo dia</label>
           <select class="select" id="fDay">${Array.from({ length: 31 }, (_, i) => `<option value="${i + 1}" ${i + 1 === f.day ? 'selected' : ''}>Dia ${pad(i + 1)}</option>`).join('')}</select></div>
@@ -4075,23 +4098,34 @@ button:focus-visible, a:focus-visible, [role="button"]:focus-visible, [tabindex]
       m.querySelector('#f').addEventListener('submit', e => {
         e.preventDefault();
         const undoSnap = JSON.stringify(state);
-        const data = { amount: cents(m.querySelector('#fAmount')), desc: m.querySelector('#fDesc').value.trim(), day: +m.querySelector('#fDay').value, dueNext: m.querySelector('#fDueNext').checked, ...readPay(m) };
+        const data = { amount: cents(m.querySelector('#fAmount')), desc: m.querySelector('#fDesc').value.trim(), day: +m.querySelector('#fDay').value, dueNext: m.querySelector('#fDueNext').checked, varia: m.querySelector('#fVaria').checked, ...readPay(m) };
         if (!data.amount) return showErr('Digite o valor.');
+        // conta que varia: o valor digitado vale só para este mês (o de costume e os outros meses ficam como estão)
+        if (editing && item.varia && data.varia) {
+          const typed = data.amount; data.amount = item.amount;
+          if (typed !== monthAmount(item, view.month).amount || (item.amounts || {})[view.month] != null) data.amounts = { ...(item.amounts || {}), [view.month]: typed };
+        }
         if (!data.desc) return showErr('Dê um nome, ex.: Aluguel.');
         if (!editing) {
           const id = uid();
-          state.fixas.push({ ...data, id, created: Date.now(), start: view.month });
-          if (!m.querySelector('#paidNowBox').hidden && m.querySelector('#fPaidNow').checked) (state.paid[view.month] ||= []).push(id);
+          const paidNow = !m.querySelector('#paidNowBox').hidden && m.querySelector('#fPaidNow').checked;
+          // já paga e o valor varia: o valor digitado é o deste mês
+          state.fixas.push({ ...data, id, created: Date.now(), start: view.month, ...(paidNow && data.varia ? { amounts: { [view.month]: data.amount } } : {}) });
+          if (paidNow) (state.paid[view.month] ||= []).push(id);
         } else if (item.start < view.month && (item.amount !== data.amount || item.day !== data.day || item.desc !== data.desc || !!item.dueNext !== data.dueNext
           || (item.payCard || '') !== data.payCard || (item.payAccount || '') !== data.payAccount)) {
           // Mudou no meio do caminho: encerra a antiga no mês anterior e cria a nova a partir deste mês
           const old = state.fixas.find(x => x.id === item.id);
           const end = old.end;
           old.end = addMonths(view.month, -1);
-          const nf = { ...data, id: uid(), created: old.created, start: view.month, end, ...skipFrom(old, view.month) };
+          // valores confirmados de cada mês vão junto: os de antes ficam na antiga, os daqui pra frente na nova
+          const am = { ...(old.amounts || {}), ...(data.amounts || {}) }, keep = k => Object.fromEntries(Object.entries(am).filter(([x]) => k(x)));
+          if (Object.keys(am).length) old.amounts = keep(x => x < view.month);
+          const nf = { ...data, id: uid(), created: old.created, start: view.month, end, ...skipFrom(old, view.month), ...(Object.keys(am).length ? { amounts: keep(x => x >= view.month) } : {}) };
           state.fixas.push(nf);
           if ((state.paid[view.month] || []).includes(old.id)) { state.paid[view.month].push(nf.id); const po = state.paidOn?.[view.month]?.[old.id]; if (po) state.paidOn[view.month][nf.id] = po; }
         } else {
+          if (!item.varia && data.varia && item.start < view.month) data.variaSince = view.month;   // meses de antes ficam como eram
           Object.assign(state.fixas.find(x => x.id === item.id), data);
         }
         undoToast(editing ? 'Conta fixa atualizada' : 'Conta fixa adicionada', undoSnap);
@@ -4159,7 +4193,7 @@ button:focus-visible, a:focus-visible, [role="button"]:focus-visible, [tabindex]
     return a ? `<span class="via" title="Conta ${esc(a.name)}">${logoHtml(a)}<span class="vt">${esc(a.name)}</span></span>` : '';
   }
   function valHtml(item, key, text) {
-    if (!inFatura(item, key)) return `<span class="val num">${text}</span>`;
+    if (!inFatura(item, key)) return item.est ? `<span class="val num est" title="Média dos últimos meses. Confirme quando a conta chegar.">${text}<small>estimado</small></span>` : `<span class="val num">${text}</span>`;
     return `<span class="val num absorbed" title="Já está dentro da fatura do ${esc(payCardOf(item).name)}">${text}<small>na fatura</small></span>`;
   }
 
@@ -4170,9 +4204,16 @@ button:focus-visible, a:focus-visible, [role="button"]:focus-visible, [tabindex]
     if (!item) { list.push({ ...data, id: uid(), created: Date.now() }); return; }
     const old = list.find(x => x.id === item.id);
     const startKey = monthOf(old.date);
+    // entrada que varia: o valor digitado vale só para este mês
+    if (old.recurring && old.varia && data.recurring && data.varia) {
+      const typed = data.amount; data.amount = old.amount;
+      if (typed !== monthAmount(old, view.month).amount || (old.amounts || {})[view.month] != null) data.amounts = { ...(old.amounts || {}), [view.month]: typed };
+    }
     if (old.recurring && startKey < view.month && data.recurring) {
       const changed = old.amount !== data.amount || old.desc !== data.desc || old.category !== data.category || +old.date.slice(8) !== +data.date.slice(8)
         || !!old.pending !== !!data.pending || (old.payAccount || '') !== (data.payAccount || '');
+      // ligar/desligar "o valor muda" ou mudar só o valor deste mês: fica no mesmo item, sem dividir em dois
+      if (!changed) { if (!old.varia && data.varia) old.variaSince = view.month; old.varia = !!data.varia; if (data.amounts) old.amounts = data.amounts; return; }
       if (changed) {
         const end = old.end;
         old.end = addMonths(view.month, -1);
@@ -4585,10 +4626,17 @@ button:focus-visible, a:focus-visible, [role="button"]:focus-visible, [tabindex]
     const fat = e.target.closest('[data-fatura]');
     if (fat) return openFatura(state.cards.find(x => x.id === fat.dataset.fatura), fat.dataset.key);
     const pay = e.target.closest('[data-pay]');
-    if (pay) return togglePaid(pay.dataset.pay, view.month);
+    if (pay) {
+      const f = fixasOf(view.month).find(x => x.id === pay.dataset.pay);
+      if (f && f.varia && !f.paid) return withMemo(openConfirmAmount)('fixas', f.id, view.month);
+      return togglePaid(pay.dataset.pay, view.month);
+    }
+    const cf = e.target.closest('[data-confirm]');
+    if (cf) return withMemo(openConfirmAmount)('receitas', cf.dataset.confirm, view.month);
     const rec = e.target.closest('[data-receive]');
     if (rec) {
       const r = state.receitas.find(x => x.id === rec.dataset.receive);
+      if (r.recurring && r.varia) return withMemo(openConfirmAmount)('receitas', r.id, view.month, true);
       const snap = JSON.stringify({ r: state.receitas, x: state.received || {} });
       if (r.recurring) { const l = (state.received ||= {})[view.month] ||= []; if (!l.includes(r.id)) l.push(r.id); }   // só este mês
       else r.pending = false;
@@ -4618,6 +4666,32 @@ button:focus-visible, a:focus-visible, [role="button"]:focus-visible, [tabindex]
     else openVariavel(state.variaveis.find(x => x.id === id));
   });
 
+  // "Quanto veio?": guarda o valor de verdade deste mês (só deste mês) e, na conta fixa, marca como paga;
+  // na entrada "a receber", marca como recebida
+  function openConfirmAmount(listName, id, key, receive = false) {
+    const item = state[listName].find(x => x.id === id); if (!item) return;
+    const isFixa = listName === 'fixas', cur = monthAmount(item, key);
+    const prev = Object.keys(item.amounts || {}).filter(k => k < key).sort().slice(-3);
+    openModal(`<form id="f" novalidate>${modalHead(`${esc(item.desc || (isFixa ? 'Conta' : 'Entrada'))}: ${isFixa ? 'quanto veio?' : 'quanto caiu?'}`, `Valor de ${monthName(key)}. Os outros meses não mudam.`)}
+      ${moneyField('fAmount', cur.amount, isFixa ? 'Valor da conta deste mês' : 'Valor que caiu este mês')}
+      <p class="help">${cur.est ? (prev.length ? `Preenchido com ${prev.length === 1 ? 'o valor do último mês' : `a média dos últimos ${prev.length} meses`}: ${prev.map(k => `${shortMonth(k)} ${brl.format(item.amounts[k] / 100)}`).join(' · ')}.` : 'Preenchido com o valor de costume.') : 'Valor que você já tinha confirmado.'}</p>
+      <div class="err" id="fErr"></div>
+      <div class="actions"><span class="grow"></span><button type="button" class="btn cancel" data-close>Cancelar</button>
+        <button type="submit" class="btn save">${isFixa ? 'Salvar e marcar paga' : receive ? 'Salvar e marcar recebido' : 'Salvar'}</button></div></form>`, m => {
+      bindMoney(m.querySelector('#fAmount'));
+      m.querySelector('#f').addEventListener('submit', e => {
+        e.preventDefault();
+        const v = cents(m.querySelector('#fAmount'));
+        if (!v) return showErr('Digite o valor.');
+        const undoSnap = JSON.stringify(state);
+        (item.amounts ||= {})[key] = v;
+        if (isFixa) { const l = state.paid[key] ||= []; if (!l.includes(id)) { l.push(id); ((state.paidOn ||= {})[key] ||= {})[id] = { d: todayIso, ts: Date.now() }; } }
+        if (receive) { const l = (state.received ||= {})[key] ||= []; if (!l.includes(id)) l.push(id); }
+        undoToast(isFixa ? `${item.desc || 'Conta'} de ${brl.format(v / 100)} paga` : `${brl.format(v / 100)} de ${item.desc || 'entrada'}`, undoSnap);
+        commit();
+      });
+    });
+  }
   function togglePaid(id, key) {
     const list = state.paid[key] ||= [];
     const i = list.indexOf(id);
