@@ -2102,7 +2102,7 @@ button:focus-visible, a:focus-visible, [role="button"]:focus-visible, [tabindex]
       const neg = r.amount < 0, sign = (ui.tab === 'receita') !== neg ? '+ ' : '- ';
       const cls = ui.tab === 'receita' ? (r.pending ? '' : 'pos') : '';
       return `<div class="row">
-        <span class="date num">${isFixa ? (r.dueNext ? `${ddmm(r.shownDate)}<small style="display:block;font-size:.66rem">mês seguinte</small>` : 'Dia ' + pad(r.day)) : ddmm(r.shownDate)}${all ? `<small style="display:block;font-size:.66rem">${r.shownDate.slice(0, 4)}</small>` : ''}</span>
+        <span class="date num">${isFixa ? (r.dueNext ? `${ddmm(r.shownDate)}<small style="display:block;font-size:.66rem">mês seguinte</small>` : 'Dia ' + (r.shownDate ? r.shownDate.slice(8, 10) : pad(r.day))) : ddmm(r.shownDate)}${all ? `<small style="display:block;font-size:.66rem">${r.shownDate.slice(0, 4)}</small>` : ''}</span>
         <div class="name has-ic">${txIcon(r, ui.tab)}<div class="nm"><span title="${esc(r.desc || '')}">${esc(r.desc || cat(r.category)?.name || '—')}${extra ? ` <span class="ex">${extra}</span>` : ''}</span><div class="tag-m">${label}${extra ? `<span class="ex-m">${extra}</span>` : ''}</div></div></div>
         <span class="cat">${label}</span>
         ${ui.tab === 'receita' ? `<span class="val num ${cls}">${ui.hidden ? '' : sign}${money(Math.abs(r.amount))}</span>` : valHtml(r, view.month, (ui.hidden ? '' : sign) + money(Math.abs(r.amount)))}
