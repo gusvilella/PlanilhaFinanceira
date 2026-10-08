@@ -100,6 +100,19 @@ O app olha seus gastos e acha o que parece assinatura: serviços conhecidos (Net
 
 Quando você importa um extrato e uma assinatura veio com valor diferente, o app avisa ("Spotify subiu de R$ 21,90 para R$ 23,90") e atualiza o preço com um toque, guardando o valor antigo no histórico.
 
+## Modo casal
+
+Em **⚙ → Modo casal** vocês dizem os dois nomes e como dividir as contas da casa: **meio a meio**, **pela renda** (quem ganha mais paga uma parte maior, pelo que cada um recebeu no mês) ou numa **proporção fixa**.
+
+- **De quem é?** Cada entrada, gasto, conta fixa, assinatura, cartão, banco e investimento pode ser de um, do outro ou **dos dois**. Uma bolinha com a inicial mostra o dono nas listas. O que já estava lançado vira "dos dois" (ou "seu", se preferir ao ligar). Em *Meus bancos*, toque na bolinha de cada banco pra dizer de quem é (conta conjunta = dos dois).
+- **Juntos / pessoa:** acima dos números do topo dá pra ver tudo da casa ou só o de cada um. Na visão de uma pessoa entra o que é dela e a parte dela no que é dos dois (ex.: "R$ 150,00 de R$ 300,00"). Os bancos dela e a parte dela na conta conjunta formam o "Seu dinheiro hoje"; a fatura conta pelo dono do cartão.
+- **Quem pagou:** sai sozinho do banco ou cartão usado. Gasto dos dois pago em dinheiro pergunta "Quem pagou?".
+- **Acerto do casal** (Visão geral): quanto um passa pro outro no mês, com os detalhes de cada gasto e o botão **Marcar como acertado** (dá pra acertar só uma parte). Também aparece no resumo em PDF.
+- **Dois celulares:** com a sincronização ligada, **Convidar** gera um link e um código. A outra pessoa abre o link, cria a conta dela no app e digita o código: o celular dela passa a usar os mesmos dados, sem precisar de conta no GitHub. O token vai criptografado no link e só abre com o código.
+- **Lançando ao mesmo tempo:** a sincronização junta o que cada um lançou (item por item) em vez de um celular substituir o outro.
+
+No lançamento rápido, "casal", "dos dois" ou "nosso" marcam como dos dois, e o nome de alguém marca como dessa pessoa ("cinema 50 da ana").
+
 ## Conta
 
 Na primeira vez, o app pede pra criar uma conta com **nome completo, como quer ser chamado, nome de usuário e senha**. O app sugere apelidos a partir do seu nome (Gustavo → Gu, Guga, Guto) e o topo passa a te chamar assim ("Boa noite, Gu"). A senha fica guardada só neste aparelho, embaralhada, e os lançamentos continuam só aqui. Pra usar em outro aparelho, ligue a sincronização.
