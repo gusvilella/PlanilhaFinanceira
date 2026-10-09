@@ -1081,6 +1081,38 @@ html.auth .auth-screen { display: grid; place-items: center; }
 .av-pick button:hover { transform: scale(1.1) rotate(-6deg); }
 .av-pick button.on { box-shadow: 0 0 0 2.5px var(--ob-c, var(--accent)); transform: scale(1.06); }
 .ob-hello { display: flex; align-items: center; gap: 10px; }
+/* reações dos bichinhos */
+.ob-me-av, .ob-person { position: relative; } .ob-me-av { cursor: pointer; }
+.av-say { position: absolute; left: 70%; bottom: 88%; z-index: 3; white-space: nowrap; background: var(--card); color: var(--ink); font-size: .72rem; font-weight: 700; padding: 5px 10px; border-radius: 12px 12px 12px 3px;
+  box-shadow: 0 8px 20px -8px rgba(20, 20, 40, .45), 0 0 0 1px var(--edge); pointer-events: none; animation: av-say 1.7s cubic-bezier(.2, .9, .3, 1.3) both; }
+@keyframes av-say { 0% { opacity: 0; transform: translateY(6px) scale(.4) rotate(-8deg); } 15% { opacity: 1; transform: none; } 80% { opacity: 1; transform: translateY(-3px); } 100% { opacity: 0; transform: translateY(-8px) scale(.9); } }
+
+.av.avc .ear, .av.avc .rays, .av.avc .tongue { transform-box: fill-box; }
+.av.avc .ear { transform-origin: 50% 100%; } .av.avc .rays { transform-origin: 50% 50%; } .av.avc .tongue { transform-origin: 50% 0; }
+.av.act-gato { animation: av-tilt 1.2s ease-in-out; } .av.act-gato .ear { animation: av-twitch .5s ease-in-out 2; }
+.av.act-cachorro { animation: av-shake .9s ease-in-out; } .av.act-cachorro .el { animation: av-flapl .3s ease-in-out 4; } .av.act-cachorro .er { animation: av-flapr .3s ease-in-out 4; } .av.act-cachorro .tongue { animation: av-tongue .3s ease-in-out 4; }
+.av.act-coelho { animation: av-hop .55s cubic-bezier(.3, 0, .4, 1) 2; } .av.act-coelho .el { animation: av-flapl .55s ease-in-out 2; } .av.act-coelho .er { animation: av-flapr .55s ease-in-out 2; }
+.av.act-sapo { animation: av-croak 1s cubic-bezier(.3, 1.4, .5, 1); }
+.av.act-urso { animation: av-rumble .8s linear; }
+.av.act-panda { animation: av-roll 1.1s cubic-bezier(.5, 0, .3, 1); }
+.av.act-raposa { animation: av-sly 1.3s ease-in-out; } .av.act-raposa .ear { animation: av-twitch .4s ease-in-out 3; }
+.av.act-pintinho { animation: av-peck .35s ease-in-out 3; }
+.av.act-sol .rays { animation: av-spin 1.2s cubic-bezier(.4, 0, .2, 1); } .av.act-sol { animation: av-glow 1.2s ease; }
+.av.act-estrela { animation: av-star 1.1s cubic-bezier(.3, 1.3, .5, 1); }
+@keyframes av-tilt { 25% { transform: rotate(-12deg); } 60% { transform: rotate(9deg); } }
+@keyframes av-twitch { 50% { transform: scaleY(.7) rotate(-6deg); } }
+@keyframes av-shake { 15%, 45%, 75% { transform: rotate(-9deg); } 30%, 60%, 90% { transform: rotate(9deg); } }
+@keyframes av-flapl { 50% { transform: rotate(-22deg); } } @keyframes av-flapr { 50% { transform: rotate(22deg); } }
+@keyframes av-tongue { 50% { transform: scaleY(1.6); } }
+@keyframes av-hop { 0%, 100% { transform: translateY(0) scale(1, 1); } 15% { transform: translateY(0) scale(1.12, .86); } 50% { transform: translateY(-38%) scale(.94, 1.08); } 85% { transform: translateY(0) scale(1.1, .9); } }
+@keyframes av-croak { 20% { transform: scale(1.25, .78); } 45% { transform: translateY(-30%) scale(.9, 1.15) rotate(-8deg); } 70% { transform: scale(1.12, .9); } }
+@keyframes av-rumble { 10%, 30%, 50%, 70% { transform: translate(-3%, 1%) rotate(-3deg); } 20%, 40%, 60%, 80% { transform: translate(3%, -1%) rotate(3deg); } 90% { transform: scale(1.12); } }
+@keyframes av-roll { 60% { transform: rotate(380deg); } 100% { transform: rotate(360deg); } }
+@keyframes av-sly { 30% { transform: rotate(14deg) translateX(6%); } 55% { transform: rotate(14deg) translateX(6%) scale(1.05); } }
+@keyframes av-peck { 50% { transform: rotate(14deg) translateY(10%); } }
+@keyframes av-spin { to { transform: rotate(180deg); } }
+@keyframes av-glow { 40% { box-shadow: 0 0 0 6px rgba(255, 197, 51, .35), 0 0 26px 6px rgba(255, 176, 32, .5); transform: scale(1.1); } }
+@keyframes av-star { 0% { transform: scale(1) rotate(0); } 40% { transform: scale(1.3) rotate(-25deg); } 70% { transform: scale(.95) rotate(10deg); } 100% { transform: none; } }
 .ob-me-av .av { width: 40px; height: 40px; box-shadow: 0 10px 22px -12px rgba(20, 20, 40, .5); }
 .av.boing { animation: stk-boing .7s cubic-bezier(.2, .9, .3, 1.3); }
 button.ob-person { border: 0; background: none; padding: 0; color: inherit; font: inherit; cursor: pointer; }
@@ -1090,7 +1122,7 @@ button.ob-person.on .av { box-shadow: 0 0 0 3px var(--bg), 0 0 0 5.5px var(--ob-
 .ob-people { align-items: flex-start; }
 .ob-people .av-pick { flex-basis: 100%; }
 .mem-row.mem-edit { grid-template-columns: 34px minmax(0, 1fr) auto 30px; }
-.av-btn { border: 0; background: none; padding: 0; display: inline-flex; border-radius: 50%; }
+.av-btn { border: 0; background: none; padding: 0; display: inline-flex; border-radius: 50%; position: relative; }
 .me-tag { border: 1px solid var(--field-line); background: none; border-radius: 99px; padding: 5px 10px; font-size: .74rem; font-weight: 600; color: var(--muted); white-space: nowrap; }
 .me-tag.on { background: var(--ink); color: var(--card); border-color: var(--ink); }
 .ob-dic { position: absolute; width: 26px; height: 26px; margin: -13px 0 0 -13px; display: grid; place-items: center; color: #fff; animation: ob-pop .45s cubic-bezier(.2, .9, .3, 1.4) var(--d) both; }
@@ -2080,16 +2112,16 @@ button:focus-visible, a:focus-visible, [role="button"]:focus-visible, [tabindex]
   const eyes = (y = 38, dx = 8) => `<circle cx="${32 - dx}" cy="${y}" r="2.6" fill="${K}"/><circle cx="${32 + dx}" cy="${y}" r="2.6" fill="${K}"/>`;
   const blush = (y = 43, dx = 13, c = '#ff8fab') => `<ellipse cx="${32 - dx}" cy="${y}" rx="3.4" ry="2.2" fill="${c}" opacity=".7"/><ellipse cx="${32 + dx}" cy="${y}" rx="3.4" ry="2.2" fill="${c}" opacity=".7"/>`;
   const AVATARS = {
-    gato: { name: 'Gato', bg: '#ffe7b3', svg: `<path d="M14 26 17 10 27 19M50 26 47 10 37 19" fill="#ffb020"/><path d="M18 15 19.5 22M46 15 44.5 22" stroke="#ff8a3d" stroke-width="2.4" stroke-linecap="round"/><circle cx="32" cy="36" r="19" fill="#ffb020"/>${eyes(35)}${blush(41)}<path d="M30 41h4l-2 2.2z" fill="#ff6f91"/><path d="M28.5 45q3.5 2.6 7 0" fill="none" stroke="${K}" stroke-width="1.8" stroke-linecap="round"/><path d="M12 39h8M12 43l8-1M52 39h-8M52 43l-8-1" stroke="${K}" stroke-width="1.3" stroke-linecap="round" opacity=".55"/>` },
-    coelho: { name: 'Coelho', bg: '#ffd9e8', svg: `<ellipse cx="24" cy="14" rx="5.5" ry="13" fill="#fff"/><ellipse cx="40" cy="14" rx="5.5" ry="13" fill="#fff"/><ellipse cx="24" cy="15" rx="2.6" ry="9" fill="#ffadc8"/><ellipse cx="40" cy="15" rx="2.6" ry="9" fill="#ffadc8"/><circle cx="32" cy="38" r="18" fill="#fff"/>${eyes(37)}${blush(42)}<ellipse cx="32" cy="42" rx="2.4" ry="1.7" fill="#ff7aa2"/><path d="M29 45.5q3 2.2 6 0" fill="none" stroke="${K}" stroke-width="1.7" stroke-linecap="round"/>` },
-    urso: { name: 'Urso', bg: '#f1e2d1', svg: `<circle cx="17" cy="21" r="7" fill="#a86f45"/><circle cx="47" cy="21" r="7" fill="#a86f45"/><circle cx="17" cy="21" r="3.4" fill="#e3b78f"/><circle cx="47" cy="21" r="3.4" fill="#e3b78f"/><circle cx="32" cy="36" r="19" fill="#a86f45"/><ellipse cx="32" cy="43" rx="9" ry="7" fill="#e3b78f"/>${eyes(33)}<ellipse cx="32" cy="40.5" rx="3.2" ry="2.3" fill="${K}"/><path d="M29 45q3 2.4 6 0" fill="none" stroke="${K}" stroke-width="1.7" stroke-linecap="round"/>` },
-    panda: { name: 'Panda', bg: '#dff3e6', svg: `<circle cx="17" cy="20" r="7" fill="${K}"/><circle cx="47" cy="20" r="7" fill="${K}"/><circle cx="32" cy="36" r="19" fill="#fff"/><ellipse cx="24" cy="36" rx="5" ry="6.4" fill="${K}" transform="rotate(-20 24 36)"/><ellipse cx="40" cy="36" rx="5" ry="6.4" fill="${K}" transform="rotate(20 40 36)"/><circle cx="24.5" cy="35.5" r="1.8" fill="#fff"/><circle cx="39.5" cy="35.5" r="1.8" fill="#fff"/><ellipse cx="32" cy="43" rx="2.8" ry="1.9" fill="${K}"/><path d="M29 46q3 2 6 0" fill="none" stroke="${K}" stroke-width="1.7" stroke-linecap="round"/>${blush(45, 14, '#ffb3c6')}` },
-    sapo: { name: 'Sapo', bg: '#d8f5c9', svg: `<circle cx="21" cy="21" r="8" fill="#4cc472"/><circle cx="43" cy="21" r="8" fill="#4cc472"/><ellipse cx="32" cy="39" rx="21" ry="16" fill="#4cc472"/><circle cx="21" cy="21" r="5" fill="#fff"/><circle cx="43" cy="21" r="5" fill="#fff"/><circle cx="22" cy="22" r="2.6" fill="${K}"/><circle cx="42" cy="22" r="2.6" fill="${K}"/><path d="M20 40q12 9 24 0" fill="none" stroke="${K}" stroke-width="2" stroke-linecap="round"/>${blush(40, 17)}` },
-    raposa: { name: 'Raposa', bg: '#ffe0cc', svg: `<path d="M13 28 16 9 28 20M51 28 48 9 36 20" fill="#ff7a2f"/><path d="M17 15 19 22M47 15 45 22" stroke="#fff" stroke-width="2.6" stroke-linecap="round"/><path d="M32 55C18 55 12 44 13 32c6-6 12-8 19-8s13 2 19 8c1 12-5 23-19 23z" fill="#ff7a2f"/><path d="M32 55c-8 0-13-5-15-11 5 0 10 1 15 4 5-3 10-4 15-4-2 6-7 11-15 11z" fill="#fff"/>${eyes(36, 9)}<ellipse cx="32" cy="46" rx="2.6" ry="1.9" fill="${K}"/>` },
-    pintinho: { name: 'Pintinho', bg: '#fff3b8', svg: `<path d="M30 14q2-6 5 0q3-5 4 2" fill="none" stroke="#f5b800" stroke-width="2.4" stroke-linecap="round"/><circle cx="32" cy="36" r="19" fill="#ffd43b"/>${eyes(33)}<path d="M27 39h10l-5 5z" fill="#ff8a1f"/>${blush(41, 13)}` },
-    cachorro: { name: 'Cachorro', bg: '#f3e6d6', svg: `<ellipse cx="15" cy="30" rx="6" ry="12" fill="#8a5a3b" transform="rotate(15 15 30)"/><ellipse cx="49" cy="30" rx="6" ry="12" fill="#8a5a3b" transform="rotate(-15 49 30)"/><circle cx="32" cy="35" r="18" fill="#e2b07a"/><ellipse cx="32" cy="43" rx="8" ry="6" fill="#f6dcc0"/><circle cx="24" cy="30" r="4.5" fill="#c98c55" opacity=".6"/>${eyes(33)}<ellipse cx="32" cy="40" rx="3.2" ry="2.3" fill="${K}"/><path d="M29 44q3 2.2 6 0" fill="none" stroke="${K}" stroke-width="1.7" stroke-linecap="round"/><path d="M31 45.5h3.2v3a1.6 1.6 0 0 1-3.2 0z" fill="#ff6f91"/>` },
-    sol: { name: 'Sol', bg: '#fff0c2', svg: `<g stroke="#ffb020" stroke-width="3" stroke-linecap="round"><path d="M32 6v6M32 52v6M6 32h6M52 32h6M13.6 13.6l4.2 4.2M46.2 46.2l4.2 4.2M13.6 50.4l4.2-4.2M46.2 17.8l4.2-4.2"/></g><circle cx="32" cy="32" r="16" fill="#ffc533"/><path d="M24 30q2.5-3 5 0M35 30q2.5-3 5 0" fill="none" stroke="${K}" stroke-width="2" stroke-linecap="round"/><path d="M26 37q6 6 12 0" fill="none" stroke="${K}" stroke-width="2" stroke-linecap="round"/>${blush(36, 11)}` },
-    estrela: { name: 'Estrela', bg: '#e8e0ff', svg: `<path d="M32 7l7.3 14.8 16.3 2.4-11.8 11.5 2.8 16.2L32 44.3l-14.6 7.6 2.8-16.2L8.4 24.2l16.3-2.4z" fill="#8b6cff" stroke="#8b6cff" stroke-width="3" stroke-linejoin="round"/>${eyes(29, 6)}<path d="M28 34q4 3.4 8 0" fill="none" stroke="#fff" stroke-width="1.9" stroke-linecap="round"/>` },
+    gato: { name: 'Gato', bg: '#ffe7b3', say: 'Miau!', svg: `<g class="ear"><path d="M14 26 17 10 27 19M50 26 47 10 37 19" fill="#ffb020"/><path d="M18 15 19.5 22M46 15 44.5 22" stroke="#ff8a3d" stroke-width="2.4" stroke-linecap="round"/></g><circle cx="32" cy="36" r="19" fill="#ffb020"/>${eyes(35)}${blush(41)}<path d="M30 41h4l-2 2.2z" fill="#ff6f91"/><path d="M28.5 45q3.5 2.6 7 0" fill="none" stroke="${K}" stroke-width="1.8" stroke-linecap="round"/><path d="M12 39h8M12 43l8-1M52 39h-8M52 43l-8-1" stroke="${K}" stroke-width="1.3" stroke-linecap="round" opacity=".55"/>` },
+    coelho: { name: 'Coelho', bg: '#ffd9e8', say: 'Hop hop!', svg: `<g class="ear el"><ellipse cx="24" cy="14" rx="5.5" ry="13" fill="#fff"/><ellipse cx="24" cy="15" rx="2.6" ry="9" fill="#ffadc8"/></g><g class="ear er"><ellipse cx="40" cy="14" rx="5.5" ry="13" fill="#fff"/><ellipse cx="40" cy="15" rx="2.6" ry="9" fill="#ffadc8"/></g><circle cx="32" cy="38" r="18" fill="#fff"/>${eyes(37)}${blush(42)}<ellipse cx="32" cy="42" rx="2.4" ry="1.7" fill="#ff7aa2"/><path d="M29 45.5q3 2.2 6 0" fill="none" stroke="${K}" stroke-width="1.7" stroke-linecap="round"/>` },
+    urso: { name: 'Urso', bg: '#f1e2d1', say: 'Grrr… abraço!', svg: `<circle cx="17" cy="21" r="7" fill="#a86f45"/><circle cx="47" cy="21" r="7" fill="#a86f45"/><circle cx="17" cy="21" r="3.4" fill="#e3b78f"/><circle cx="47" cy="21" r="3.4" fill="#e3b78f"/><circle cx="32" cy="36" r="19" fill="#a86f45"/><ellipse cx="32" cy="43" rx="9" ry="7" fill="#e3b78f"/>${eyes(33)}<ellipse cx="32" cy="40.5" rx="3.2" ry="2.3" fill="${K}"/><path d="M29 45q3 2.4 6 0" fill="none" stroke="${K}" stroke-width="1.7" stroke-linecap="round"/>` },
+    panda: { name: 'Panda', bg: '#dff3e6', say: 'Nham nham!', svg: `<circle cx="17" cy="20" r="7" fill="${K}"/><circle cx="47" cy="20" r="7" fill="${K}"/><circle cx="32" cy="36" r="19" fill="#fff"/><ellipse cx="24" cy="36" rx="5" ry="6.4" fill="${K}" transform="rotate(-20 24 36)"/><ellipse cx="40" cy="36" rx="5" ry="6.4" fill="${K}" transform="rotate(20 40 36)"/><circle cx="24.5" cy="35.5" r="1.8" fill="#fff"/><circle cx="39.5" cy="35.5" r="1.8" fill="#fff"/><ellipse cx="32" cy="43" rx="2.8" ry="1.9" fill="${K}"/><path d="M29 46q3 2 6 0" fill="none" stroke="${K}" stroke-width="1.7" stroke-linecap="round"/>${blush(45, 14, '#ffb3c6')}` },
+    sapo: { name: 'Sapo', bg: '#d8f5c9', say: 'Croac!', svg: `<circle cx="21" cy="21" r="8" fill="#4cc472"/><circle cx="43" cy="21" r="8" fill="#4cc472"/><ellipse cx="32" cy="39" rx="21" ry="16" fill="#4cc472"/><circle cx="21" cy="21" r="5" fill="#fff"/><circle cx="43" cy="21" r="5" fill="#fff"/><circle cx="22" cy="22" r="2.6" fill="${K}"/><circle cx="42" cy="22" r="2.6" fill="${K}"/><path d="M20 40q12 9 24 0" fill="none" stroke="${K}" stroke-width="2" stroke-linecap="round"/>${blush(40, 17)}` },
+    raposa: { name: 'Raposa', bg: '#ffe0cc', say: 'Ring-ding-ding!', svg: `<path d="M13 28 16 9 28 20M51 28 48 9 36 20" fill="#ff7a2f"/><path d="M17 15 19 22M47 15 45 22" stroke="#fff" stroke-width="2.6" stroke-linecap="round"/><path d="M32 55C18 55 12 44 13 32c6-6 12-8 19-8s13 2 19 8c1 12-5 23-19 23z" fill="#ff7a2f"/><path d="M32 55c-8 0-13-5-15-11 5 0 10 1 15 4 5-3 10-4 15-4-2 6-7 11-15 11z" fill="#fff"/>${eyes(36, 9)}<ellipse cx="32" cy="46" rx="2.6" ry="1.9" fill="${K}"/>` },
+    pintinho: { name: 'Pintinho', bg: '#fff3b8', say: 'Piu piu!', svg: `<path d="M30 14q2-6 5 0q3-5 4 2" fill="none" stroke="#f5b800" stroke-width="2.4" stroke-linecap="round"/><circle cx="32" cy="36" r="19" fill="#ffd43b"/>${eyes(33)}<path d="M27 39h10l-5 5z" fill="#ff8a1f"/>${blush(41, 13)}` },
+    cachorro: { name: 'Cachorro', bg: '#f3e6d6', say: 'Au au!', svg: `<g class="ear el"><ellipse cx="15" cy="30" rx="6" ry="12" fill="#8a5a3b" transform="rotate(15 15 30)"/></g><g class="ear er"><ellipse cx="49" cy="30" rx="6" ry="12" fill="#8a5a3b" transform="rotate(-15 49 30)"/></g><circle cx="32" cy="35" r="18" fill="#e2b07a"/><ellipse cx="32" cy="43" rx="8" ry="6" fill="#f6dcc0"/><circle cx="24" cy="30" r="4.5" fill="#c98c55" opacity=".6"/>${eyes(33)}<ellipse cx="32" cy="40" rx="3.2" ry="2.3" fill="${K}"/><path d="M29 44q3 2.2 6 0" fill="none" stroke="${K}" stroke-width="1.7" stroke-linecap="round"/><path class="tongue" d="M31 45.5h3.2v3a1.6 1.6 0 0 1-3.2 0z" fill="#ff6f91"/>` },
+    sol: { name: 'Sol', bg: '#fff0c2', say: 'Brilha!', svg: `<g class="rays" stroke="#ffb020" stroke-width="3" stroke-linecap="round"><path d="M32 6v6M32 52v6M6 32h6M52 32h6M13.6 13.6l4.2 4.2M46.2 46.2l4.2 4.2M13.6 50.4l4.2-4.2M46.2 17.8l4.2-4.2"/></g><circle cx="32" cy="32" r="16" fill="#ffc533"/><path d="M24 30q2.5-3 5 0M35 30q2.5-3 5 0" fill="none" stroke="${K}" stroke-width="2" stroke-linecap="round"/><path d="M26 37q6 6 12 0" fill="none" stroke="${K}" stroke-width="2" stroke-linecap="round"/>${blush(36, 11)}` },
+    estrela: { name: 'Estrela', bg: '#e8e0ff', say: 'Tcharam!', svg: `<path d="M32 7l7.3 14.8 16.3 2.4-11.8 11.5 2.8 16.2L32 44.3l-14.6 7.6 2.8-16.2L8.4 24.2l16.3-2.4z" fill="#8b6cff" stroke="#8b6cff" stroke-width="3" stroke-linejoin="round"/>${eyes(29, 6)}<path d="M28 34q4 3.4 8 0" fill="none" stroke="#fff" stroke-width="1.9" stroke-linecap="round"/>` },
   };
   const AV_KEYS = Object.keys(AVATARS);
   const avatarSvg = key => `<svg viewBox="0 0 64 64" aria-hidden="true">${AVATARS[key].svg}</svg>`;
@@ -2097,6 +2129,16 @@ button:focus-visible, a:focus-visible, [role="button"]:focus-visible, [tabindex]
   const avFor = (key, name) => AVATARS[key] ? key : AV_KEYS[[...norm(name || '?')].reduce((a, c) => a + c.charCodeAt(0), 0) % AV_KEYS.length];
   // Escolher bichinho: grade de opções (data-av)
   const avPickHtml = (cur, id) => `<div class="av-pick" id="${id}" role="radiogroup">${AV_KEYS.map(k => `<button type="button" data-av="${k}" class="${k === cur ? 'on' : ''}" role="radio" aria-checked="${k === cur}" title="${AVATARS[k].name}"><span class="av avc" style="--avbg:${AVATARS[k].bg}">${avatarSvg(k)}</span></button>`).join('')}</div>`;
+  // Cada bichinho reage do seu jeito (gato mia, cachorro late...): movimento próprio + balãozinho
+  function avAct(el, key, bubble = true) {
+    if (!el || !AVATARS[key] || matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+    AV_KEYS.forEach(k => el.classList.remove('act-' + k)); void el.offsetWidth; el.classList.add('act-' + key);
+    clearTimeout(el._actT); el._actT = setTimeout(() => el.classList.remove('act-' + key), 1600);
+    const host = el.parentElement; if (!bubble || !host) return;
+    host.querySelector('.av-say')?.remove();
+    host.insertAdjacentHTML('beforeend', `<span class="av-say" aria-hidden="true">${AVATARS[key].say || 'Oi!'}</span>`);
+    const b = host.lastElementChild; setTimeout(() => b.remove(), 1700);
+  }
   const avBadge = (key, cls = '') => `<span class="av avc ${cls}" style="--avbg:${AVATARS[key].bg}" aria-hidden="true">${avatarSvg(key)}</span>`;
 
   // ================= Uso em família =================
@@ -4933,7 +4975,7 @@ button:focus-visible, a:focus-visible, [role="button"]:focus-visible, [tabindex]
       list.addEventListener('click', e => {
         const d = e.target.closest('[data-dev]'); if (d) { device = d.dataset.dev; draw(); return; }
         const ap = e.target.closest('[data-avp]'); if (ap) { pickIdx = pickIdx === +ap.dataset.avp ? -1 : +ap.dataset.avp; draw(); return; }
-        const av = e.target.closest('[data-av]'); if (av && pickIdx >= 0) { cur[pickIdx].av = av.dataset.av; pickIdx = -1; draw(); return; }
+        const av = e.target.closest('[data-av]'); if (av && pickIdx >= 0) { const i = pickIdx; cur[i].av = av.dataset.av; pickIdx = -1; draw(); avAct(list.querySelector(`[data-avp="${i}"] .av`), av.dataset.av); return; }
         const r = e.target.closest('[data-rmmem]'); if (r) { const [gone] = cur.splice(+r.dataset.rmmem, 1); if (gone.id === device) device = cur[0].id; draw(); }
       });
       const add = () => { const inp = m.querySelector('#famIn'), n = inp.value.trim(); if (!n || cur.length >= 8) return;
@@ -6521,7 +6563,8 @@ button:focus-visible, a:focus-visible, [role="button"]:focus-visible, [tabindex]
         inp.addEventListener('input', () => { d.name = inp.value; if (!avTouched) d.av = ''; draw(); });
         chips.addEventListener('click', e => { const b = e.target.closest('[data-nick]'); if (!b) return; d.nick = b.dataset.nick; nickTouched = true; draw(); });
         stage.querySelector('#obAv').addEventListener('click', e => { const b = e.target.closest('[data-av]'); if (!b) return; d.av = b.dataset.av; avTouched = true; draw();
-          const me = stage.querySelector('#obMeAv .av'); if (me && !reduced) { me.classList.remove('boing'); void me.offsetWidth; me.classList.add('boing'); } });
+          avAct(stage.querySelector('#obMeAv .av'), d.av); avAct(stage.querySelector(`#obAv [data-av="${d.av}"] .av`), d.av, false); });
+        stage.querySelector('#obMeAv').addEventListener('click', () => avAct(stage.querySelector('#obMeAv .av'), myAv()));
         draw(); setTimeout(() => inp.focus(), reduced ? 0 : 380);
       }
       if (k === 'uso') {
@@ -6531,7 +6574,8 @@ button:focus-visible, a:focus-visible, [role="button"]:focus-visible, [tabindex]
           const pp = e.target.closest('[data-pp]'); if (pp) { ppIdx = ppIdx === +pp.dataset.pp ? -1 : +pp.dataset.pp; people(); return; }
           const av = e.target.closest('[data-av]'); if (!av) return;
           if (ppIdx === 0) { d.av = av.dataset.av; avTouched = true; } else { const n = [nickOf(), ...d.members][ppIdx]; if (n) d.mav[n] = av.dataset.av; }
-          ppIdx = -1; people(); stage.querySelector('#obMemList') && bindMemberAdd.redraw?.();
+          const who = ppIdx; ppIdx = -1; people(); stage.querySelector('#obMemList') && bindMemberAdd.redraw?.();
+          const pb = stage.querySelector(`#obPeople [data-pp="${who}"] .av`); avAct(pb, av.dataset.av);
         });
       }
     };
