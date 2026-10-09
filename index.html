@@ -962,9 +962,14 @@ html.auth .auth-screen { display: grid; place-items: center; }
 /* no celular as figurinhas ficam na faixa de cima, acima do conteúdo, pra dar pra tocar nelas */
 @media (max-width: 640px) { .stk-face { width: calc(var(--sz) * 58px); height: calc(var(--sz) * 58px); } .ob-stk { z-index: 2; } }
 /* abertura: fundo claro, nome no meio e carinhas grandes que saltam e depois se espalham */
-.ob-splash { position: fixed; inset: 0; z-index: 5; background: var(--bg); display: grid; place-items: center; overflow: hidden; cursor: pointer; transition: opacity .6s ease .15s, visibility 0s .8s; }
+.ob-splash { position: fixed; inset: 0; z-index: 5;
+  background: radial-gradient(60vmax 60vmax at 0% 0%, rgba(20, 110, 245, .22), transparent 60%), radial-gradient(55vmax 55vmax at 100% 30%, rgba(139, 92, 246, .2), transparent 60%), radial-gradient(50vmax 50vmax at 45% 110%, rgba(236, 72, 153, .14), transparent 60%), var(--bg); display: grid; place-items: center; overflow: hidden; cursor: pointer; transition: opacity .6s ease .15s, visibility 0s .8s; }
 .ob-splash .stk { transition: transform .75s cubic-bezier(.6, 0, .3, 1); }
 .ob-splash.gone { opacity: 0; visibility: hidden; }
+/* no escuro: noite azul-arroxeada com luzes, em vez de preto chapado */
+:root[data-theme="dark"] .ob-splash { background: radial-gradient(60vmax 60vmax at 0% 0%, rgba(20, 110, 245, .42), transparent 62%), radial-gradient(55vmax 55vmax at 100% 25%, rgba(139, 92, 246, .4), transparent 62%), radial-gradient(55vmax 55vmax at 50% 115%, rgba(236, 72, 153, .26), transparent 62%), #0b0c1d; }
+:root[data-theme="dark"] .ob-splash .ob-word span { padding-bottom: .14em; margin-bottom: -.14em; background: linear-gradient(100deg, #fff 30%, #c9bcff 70%, #ffc2e0); -webkit-background-clip: text; background-clip: text; color: transparent; }
+:root[data-theme="dark"] .ob-splash .ob-word small { color: rgba(255, 255, 255, .65); }
 .ob-splash.gone .stk { transform: translate(var(--ox), var(--oy)) rotate(25deg) scale(.6); }
 .ob-splash .ob-word { position: relative; z-index: 1; color: var(--ink); transition: transform .6s cubic-bezier(.6, 0, .3, 1), opacity .4s; }
 .ob-splash.gone .ob-word { transform: scale(1.15); opacity: 0; }
@@ -6429,6 +6434,10 @@ button:focus-visible, a:focus-visible, [role="button"]:focus-visible, [tabindex]
     const clearTimers = () => { timers.forEach(t => clearTimeout(t)); timers = []; };
     const later = (fn, ms) => timers.push(setTimeout(fn, ms));
     const R = c => brl.format(c / 100);
+    // relógio do celular da apresentação: a hora de verdade do aparelho, atualizada a cada minuto
+    const hhmm = () => new Date().toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' });
+    clearInterval(showOnboarding.clock);
+    showOnboarding.clock = setInterval(() => { const t = document.querySelectorAll('.duo-time'); t.forEach(el => { el.textContent = hhmm(); }); if (!document.querySelector('#authScreen .ob')) clearInterval(showOnboarding.clock); }, 15000);
     // Figurinhas de dinheiro (desenhadas aqui mesmo): flutuam em volta, pulam e trocam de figura quando tocadas
     const FACES = {
       moeda: '<circle cx="50" cy="50" r="31"/><path d="M60 39q-3-6-10-6q-10 0-10 8q0 8 10 9q11 1 11 10q0 8-11 8q-8 0-12-6M50 26v7M50 67v7"/>',
@@ -6478,13 +6487,13 @@ button:focus-visible, a:focus-visible, [role="button"]:focus-visible, [tabindex]
             <div class="duo-col"><small class="duo-k">Últimos 6 meses</small>
               <div class="ob-bars">${[42, 64, 38, 80, 56, 92].map((h, n) => `<i style="--h:${h}%;--d:${n * 70}ms;--c:${STK_COLORS[(n + 2) % 8][0]};--c2:${STK_COLORS[(n + 2) % 8][1]}"></i>`).join('')}</div>
               ${rows.map(([ic, n, v, pos, c], k) => `<div class="duo-row" style="--d:${300 + k * 90}ms"><span class="ob-ic" style="--c:${c}"><svg class="i"><use href="#c-${ic}"/></svg></span><span>${n}</span><b class="${pos ? 'pos' : ''}">${pos ? '+' : '-'} ${R(v)}</b></div>`).join('')}</div>
-            <span class="duo-sb"><b>9:41</b><span class="duo-sbi"><svg class="duo-wifi" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="10.2"/><path d="M6.6 11.1a7.6 7.6 0 0 1 10.8 0M8.8 13.4a4.5 4.5 0 0 1 6.4 0"/><circle cx="12" cy="16" r="1.25" class="f"/></svg><u></u></span></span><i class="duo-home"></i></div>`;
+            <span class="duo-sb"><b class="duo-time">${hhmm()}</b><span class="duo-sbi"><svg class="duo-wifi" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="10.2"/><path d="M6.6 11.1a7.6 7.6 0 0 1 10.8 0M8.8 13.4a4.5 4.5 0 0 1 6.4 0"/><circle cx="12" cy="16" r="1.25" class="f"/></svg><u></u></span></span><i class="duo-home"></i></div>`;
           return `<div class="ob-hero">
             <div class="duo-tilt" style="--d:${wait}ms"><button type="button" class="duo shut" id="obDuo" aria-label="Abrir e fechar o celular">
               <div class="duo-half duo-base"><div class="duo-scr">${inner}</div></div>
               <i class="duo-key k-vol1"></i><i class="duo-key k-vol2"></i><i class="duo-key k-side"></i>
               <div class="duo-cover">
-                <div class="duo-half duo-front"><div class="duo-scr"><i class="duo-cam"></i><span class="duo-sb"><b>9:41</b><span class="duo-sbi"><svg class="duo-wifi" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="10.2"/><path d="M6.6 11.1a7.6 7.6 0 0 1 10.8 0M8.8 13.4a4.5 4.5 0 0 1 6.4 0"/><circle cx="12" cy="16" r="1.25" class="f"/></svg><u></u></span></span>
+                <div class="duo-half duo-front"><div class="duo-scr"><i class="duo-cam"></i><span class="duo-sb"><b class="duo-time">${hhmm()}</b><span class="duo-sbi"><svg class="duo-wifi" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="10.2"/><path d="M6.6 11.1a7.6 7.6 0 0 1 10.8 0M8.8 13.4a4.5 4.5 0 0 1 6.4 0"/><circle cx="12" cy="16" r="1.25" class="f"/></svg><u></u></span></span>
                   <small>${greet()}</small><b class="duo-l">Sobra do mês</b><b class="num duo-big" data-ob-count="105000">${R(0)}</b>
                   <div class="duo-prog"><i></i></div><small>67% do que entrou já saiu</small>
                   <span class="duo-hint">abra pra ver tudo</span><i class="duo-home"></i></div></div>
