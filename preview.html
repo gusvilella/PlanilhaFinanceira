@@ -1438,6 +1438,13 @@ button.kpi-label:hover { color: var(--ink); text-decoration-color: currentColor;
 .menu-item { display: flex; align-items: center; gap: 10px; width: 100%; border: 0; background: var(--field); border-radius: 12px; padding: 12px 14px; margin-top: 8px; font-size: .88rem; font-weight: 600; text-align: left; cursor: pointer; color: var(--ink); }
 .menu-item:hover { filter: brightness(.97); }
 .menu-item.danger { color: var(--red); }
+.clr-opts { display: grid; gap: 10px; }
+.clr-opts button { display: grid; gap: 4px; text-align: left; border: 1px solid var(--field-line); background: var(--card); border-radius: 14px; padding: 13px 14px; cursor: pointer; color: var(--ink); transition: border-color .2s, background-color .2s; }
+.clr-opts button:hover { border-color: var(--ink); }
+.clr-opts button.danger b { color: var(--red); } .clr-opts button.danger:hover { border-color: var(--red); background: color-mix(in srgb, var(--red) 6%, var(--card)); }
+.clr-opts b { font-size: .92rem; } .clr-opts small { color: var(--muted); font-size: .78rem; line-height: 1.4; }
+.clr-tip { margin: 14px 0 0; font-size: .82rem; color: var(--muted); }
+.clr-tip .link { border: 0; background: none; padding: 0; color: var(--accent-ink, var(--ink)); font: inherit; font-weight: 600; text-decoration: underline; cursor: pointer; }
 .sync-steps { margin: 6px 0 0; padding-left: 18px; font-size: .84rem; line-height: 1.5; color: var(--ink-2); }
 .sync-steps li { margin-bottom: 6px; }
 .sync-steps a { color: var(--accent-ink); font-weight: 700; }
@@ -4816,9 +4823,30 @@ button:focus-visible, a:focus-visible, [role="button"]:focus-visible, [tabindex]
       m.querySelector('#mBackup').onclick = () => { ui.lastBackup = todayIso; saveUi(); download(`orcamento-backup-${todayIso}.json`, JSON.stringify(state, null, 2), 'application/json'); closeModal(); };
       m.querySelector('#mRestore').onclick = () => $('#importFile').click();
       m.querySelector('#mBeforeSync')?.addEventListener('click', () => { if (confirm('Trocar os dados atuais pela cópia guardada antes da última sincronização? A cópia vai para a nuvem também.')) restoreBeforeSync(); });
-      m.querySelector('#mClear').onclick = () => {
+      m.querySelector('#mClear').onclick = () => openClear();
+    });
+  }
+
+  // Apagar tudo: só os lançamentos (dá pra desfazer) ou começar do zero (volta pra apresentação)
+  function openClear() {
+    openModal(`${modalHead('Apagar tudo', 'Escolha o que apagar deste navegador.')}
+      <div class="clr-opts">
+        <button type="button" id="cLanc"><b>Só os lançamentos</b><small>Entradas, contas, gastos, cartões e metas. Seu nome, família e ajustes continuam. Dá pra desfazer por alguns segundos.</small></button>
+        <button type="button" id="cZero" class="danger"><b>Começar do zero</b><small>Apaga tudo: lançamentos, nome, família, senha, sincronização e ajustes. O app abre como na primeira vez, com a apresentação.</small></button>
+      </div>
+      <p class="clr-tip">Quer guardar uma cópia antes? <button type="button" class="link" id="cBackup">Fazer backup</button></p>
+      <div class="actions"><span class="grow"></span><button type="button" class="btn cancel" data-close>Cancelar</button></div>`, m => {
+      m.querySelector('#cBackup').onclick = () => { ui.lastBackup = todayIso; saveUi(); download(`orcamento-backup-${todayIso}.json`, JSON.stringify(state, null, 2), 'application/json'); };
+      m.querySelector('#cLanc').onclick = () => {
         if (!confirm(`Apagar todos os lançamentos deste aparelho?${sync ? '\n\nA sincronização está ligada: os dados da nuvem (e dos outros aparelhos) também serão apagados.' : ''}\n\nDepois só dá para desfazer por alguns segundos.`)) return;
-        const undoSnap = JSON.stringify(state); state = blank(); commit(); undoToast('Tudo apagado', undoSnap);
+        const undoSnap = JSON.stringify(state); state = blank(); closeModal(); commit(); undoToast('Tudo apagado', undoSnap);
+      };
+      m.querySelector('#cZero').onclick = () => {
+        if (!confirm(`Começar do zero?\n\nIsso apaga tudo que o app guardou neste navegador e não dá pra desfazer.${sync ? '\n\nA cópia na nuvem não é apagada: dá pra conectar de novo depois.' : ''}`)) return;
+        // só as chaves do app (o endereço do site pode ter outras coisas salvas)
+        try { Object.keys(localStorage).filter(k => k.startsWith('orcamento:')).forEach(k => localStorage.removeItem(k)); } catch (_) {}
+        try { Object.keys(sessionStorage).filter(k => k.startsWith('orcamento:')).forEach(k => sessionStorage.removeItem(k)); } catch (_) {}
+        location.reload();
       };
     });
   }
