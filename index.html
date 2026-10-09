@@ -1971,7 +1971,7 @@ button:focus-visible, a:focus-visible, [role="button"]:focus-visible, [tabindex]
   const avatar = (id, sm) => `<span class="av${sm ? ' sm' : ''}" style="--av:${memberColor(id)}" aria-hidden="true">${esc((memberName(id) || '?').trim().charAt(0).toUpperCase())}</span>`;
   const famAvatars = sm => `<span class="av-pair">${members().slice(0, 3).map(m => avatar(m.id, sm)).join('')}</span>`;
   const whoBadge = x => { const w = multi() && whoOf(x); return w ? `<span class="who-b" title="De ${esc(memberName(w))}">${avatar(w, true)}</span>` : ''; };
-  // "Gu e Ane", "Gu, Ane e Leo"; mais de 3: "família"
+  // "Leo e Ane", "Leo, Ane e Bia"; mais de 3: "família"
   const familyNames = () => { const n = members().map(m => m.name); return n.length > 3 ? 'família' : n.length > 1 ? n.slice(0, -1).join(', ') + ' e ' + n[n.length - 1] : n[0] || ''; };
 
   // Valor de um item recorrente num mês: o que você confirmou naquele mês; se o valor varia e ainda não foi
@@ -6192,7 +6192,7 @@ button:focus-visible, a:focus-visible, [role="button"]:focus-visible, [tabindex]
           </div>` },
       { k: 'nome', c: ['#8b5cf6', '#ec4899'], q: true, panel: 'Seu perfil', next: 'Continuar', title: 'Como quer ser <em>chamado</em>?', sub: 'É assim que o app vai falar com você.',
         art: () => `<div class="ob-hello"><span id="obGreet">${greet()}${d.name ? ', ' + esc(nickOf()) : ''}</span><i class="ob-caret"></i></div>
-          <label class="fl" for="obName">Seu nome</label><input class="input" id="obName" maxlength="60" autocomplete="name" autocapitalize="words" placeholder="Ex.: Gustavo Vilella" value="${esc(d.name)}" />
+          <label class="fl" for="obName">Seu nome</label><input class="input" id="obName" maxlength="60" autocomplete="name" autocapitalize="words" value="${esc(d.name)}" />
           <div class="nick-chips" id="obChips"></div>` },
       { k: 'uso', c: ['#f97316', '#f43f5e'], q: true, panel: 'Quem usa', skip: !!invited, next: 'Continuar', title: 'Vai usar sozinho ou em <em>família</em>?', sub: 'Em família, cada um lança o seu e tudo soma junto: o salário de um, o do outro, as contas da casa.',
         art: () => `<div class="ob-people" id="obPeople"></div>${usePickHtml(d.fam)}
