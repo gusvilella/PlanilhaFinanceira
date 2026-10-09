@@ -875,6 +875,65 @@ html.auth .auth-screen { display: grid; place-items: center; }
 .ob-done circle, .ob-done path { stroke-dasharray: 1 1; }
 @media (max-width: 640px) { .ob-title { font-size: 1.7rem; } .ob-art { min-height: 200px; margin-bottom: 20px; } .ob-kpi b { font-size: .9rem; } }
 @media (prefers-reduced-motion: reduce) { .ob *, .ob-slide { animation: none !important; transition: none !important; } .ob-chips span { opacity: 1; } }
+/* ----- cor: cada tela tem a sua (--ob-c → --ob-c2) ----- */
+.auth-screen { --ob-c: #146ef5; --ob-c2: #8b5cf6; overflow-x: hidden; }
+.ob-bg { position: fixed; inset: 0; z-index: 0; pointer-events: none; overflow: hidden; }
+.ob-bg i { position: absolute; border-radius: 50%; filter: blur(70px); opacity: .5; transition: background-color 1s ease; }
+.ob-bg i:nth-child(1) { width: 55vmax; height: 55vmax; left: -18vmax; top: -22vmax; background: var(--ob-c); animation: ob-blob1 14s ease-in-out infinite alternate; }
+.ob-bg i:nth-child(2) { width: 46vmax; height: 46vmax; right: -16vmax; bottom: -18vmax; background: var(--ob-c2); animation: ob-blob2 16s ease-in-out infinite alternate; }
+.ob-bg i:nth-child(3) { width: 26vmax; height: 26vmax; right: 8vmax; top: 12vh; background: var(--ob-c2); opacity: .22; animation: ob-blob1 11s ease-in-out infinite alternate-reverse; }
+:root[data-theme="dark"] .ob-bg i { opacity: .32; }
+@keyframes ob-blob1 { to { transform: translate(8vmax, 6vmax) scale(1.12); } }
+@keyframes ob-blob2 { to { transform: translate(-7vmax, -5vmax) scale(.9); } }
+.ob { position: relative; z-index: 1; }
+.ob-title em { font-style: normal; background: linear-gradient(100deg, var(--ob-c), var(--ob-c2)); -webkit-background-clip: text; background-clip: text; color: transparent; padding-right: .04em; }
+.ob-dots i.on { width: 26px; background: linear-gradient(90deg, var(--ob-c), var(--ob-c2)); }
+.ob-nav .btn.save { background: linear-gradient(100deg, var(--ob-c), var(--ob-c2)); box-shadow: 0 10px 28px -10px var(--ob-c); transition: opacity .2s, transform .15s, box-shadow .3s, background .6s; }
+.ob-nav .btn.save:not(:disabled):hover { transform: translateY(-1px); box-shadow: 0 14px 32px -10px var(--ob-c); }
+.ob-caret { background: var(--ob-c); }
+.ob .who-pick button.on, .ob .use-pick button.on { border-color: var(--ob-c); box-shadow: inset 0 0 0 1px var(--ob-c), 0 8px 22px -14px var(--ob-c); }
+.ob .use-pick button.on b svg.i { color: var(--ob-c); }
+.ob .nick-chips button.on { background: linear-gradient(100deg, var(--ob-c), var(--ob-c2)); border-color: transparent; color: #fff; }
+.ob .input:focus { border-color: var(--ob-c); box-shadow: 0 0 0 3px color-mix(in srgb, var(--ob-c) 22%, transparent); }
+/* ----- abertura: tela cheia em degradê com moedas subindo, que sobe e revela a 1ª tela ----- */
+.ob-splash { position: fixed; inset: 0; z-index: 5; background: linear-gradient(140deg, #146ef5, #8b5cf6 55%, #ec4899); display: grid; place-items: center; overflow: hidden; cursor: pointer;
+  transition: transform .75s cubic-bezier(.7, 0, .2, 1), border-radius .75s cubic-bezier(.7, 0, .2, 1); }
+.ob-splash.gone { transform: translateY(-104%); border-radius: 0 0 50% 50% / 0 0 18% 18%; }
+.ob-word { text-align: center; color: #fff; }
+.ob-word span { display: block; font-size: clamp(2.6rem, 9vw, 4.4rem); font-weight: 600; letter-spacing: -.05em; line-height: 1; animation: ob-word .9s cubic-bezier(.2, .9, .25, 1.25) .1s both; }
+.ob-word small { display: block; margin-top: 12px; font-size: 1rem; opacity: .85; letter-spacing: .02em; animation: ob-up .6s ease .55s both; }
+@keyframes ob-word { from { opacity: 0; transform: scale(.6) translateY(20px); filter: blur(8px); } }
+.ob-coins i { position: absolute; left: var(--x); bottom: -60px; width: 46px; height: 46px; border-radius: 50%; display: grid; place-items: center; font-style: normal; font-weight: 800; font-size: .8rem; color: #fff;
+  background: rgba(255, 255, 255, .18); box-shadow: inset 0 0 0 2px rgba(255, 255, 255, .45); backdrop-filter: blur(2px); transform: scale(var(--s)); animation: ob-coin 1.6s cubic-bezier(.3, .6, .4, 1) var(--d) both; }
+@keyframes ob-coin { from { transform: translateY(0) scale(var(--s)) rotate(-20deg); opacity: 0; } 20% { opacity: 1; } to { transform: translateY(-115vh) scale(var(--s)) rotate(25deg); opacity: .9; } }
+/* ----- tela 1: cards coloridos que entram voando e ficam flutuando ----- */
+.ob-kpi { border: 0; color: #fff; box-shadow: 0 16px 34px -18px var(--kc); animation: ob-fly .9s cubic-bezier(.2, .9, .3, 1.3) var(--d) both, ob-float 4s ease-in-out calc(var(--d) + 1s + var(--f)) infinite; }
+.ob-kpi small { color: rgba(255, 255, 255, .82); }
+.ob-kpi b, .ob-kpi b.pos { color: #fff; }
+.ob-kpi.k-in { --kc: #10b981; background: linear-gradient(140deg, #10b981, #0ea5e9); }
+.ob-kpi.k-out { --kc: #f97316; background: linear-gradient(140deg, #f97316, #ec4899); }
+.ob-kpi.k-left { --kc: #6366f1; background: linear-gradient(140deg, #146ef5, #8b5cf6); }
+@keyframes ob-fly { from { opacity: 0; transform: translateY(70px) rotate(var(--r)) scale(.5); } }
+@keyframes ob-float { 50% { transform: translateY(-6px); } }
+.ob-bar i { background: linear-gradient(90deg, #10b981, #0ea5e9, #8b5cf6); }
+/* ----- ícones, listas e gráfico com cor ----- */
+.ob-ic { width: 38px; height: 38px; border-radius: 12px; display: grid; place-items: center; color: #fff; background: var(--c); box-shadow: 0 8px 18px -10px var(--c); }
+.ob-ic svg.i { width: 18px; height: 18px; }
+.ob-row { grid-template-columns: 38px minmax(0, 1fr) auto; }
+.ob-chips.on span { background: color-mix(in srgb, var(--ob-c) 14%, var(--card)); color: var(--ink); }
+.ob-chips span b { color: var(--ob-c); }
+.ob-note > svg.i { color: var(--ob-c); }
+.ob-done svg { stroke: url(#obDoneGrad); stroke: var(--ob-c); stroke-width: 3.5; }
+.ob-done { filter: drop-shadow(0 12px 22px color-mix(in srgb, var(--ob-c) 45%, transparent)); }
+.ob-person .av { box-shadow: 0 0 0 3px var(--bg), 0 10px 20px -10px var(--av); }
+/* ----- última tela: confete ----- */
+.ob-slide[data-k="pronto"] .ob-art { position: relative; }
+.ob-confetti { position: absolute; left: 50%; top: 50%; width: 0; height: 0; pointer-events: none; }
+.ob-confetti i { position: absolute; width: 7px; height: 12px; border-radius: 2px; background: var(--c); opacity: 0; animation: ob-confetti 1.5s cubic-bezier(.15, .7, .3, 1) var(--d) both; }
+@keyframes ob-confetti { 0% { opacity: 1; transform: translate(0, 0) rotate(0) scale(.4); } 70% { opacity: 1; } 100% { opacity: 0; transform: translate(var(--x), calc(var(--y) + 60px)) rotate(calc(var(--r) * 3)) scale(1); } }
+.ob-done { position: relative; animation: ob-pop .6s cubic-bezier(.2, .9, .3, 1.3) both; }
+@media (prefers-reduced-motion: reduce) { .ob-bg i, .ob-kpi { animation: none !important; } .ob-splash { display: none; } }
+
 /* Olho da senha */
 .pw { position: relative; }
 .pw .input { padding-right: 46px; }
@@ -6030,34 +6089,41 @@ button:focus-visible, a:focus-visible, [role="button"]:focus-visible, [tabindex]
     const clearTimers = () => { timers.forEach(t => clearTimeout(t)); timers = []; };
     const later = (fn, ms) => timers.push(setTimeout(fn, ms));
     const R = c => brl.format(c / 100);
-    const row = (ic, name, tag, val, pos, delay, who) => `<div class="ob-row" style="--d:${delay}ms"><span class="tx-ic"><svg class="i"><use href="#c-${ic}"/></svg></span>
+    const row = (ic, name, tag, val, pos, delay, who, col) => `<div class="ob-row" style="--d:${delay}ms"><span class="ob-ic" style="--c:${col}"><svg class="i"><use href="#c-${ic}"/></svg></span>
       <span class="n">${who ? `<span class="av sm" style="--av:${FAM_COLORS[0]};margin-right:6px">${esc(who.charAt(0).toUpperCase())}</span>` : ''}${esc(name)}<small>${tag}</small></span><b class="${pos ? 'pos' : ''}">${pos ? '+ ' : '- '}${R(val)}</b></div>`;
     const SLIDES = [
-      { k: 'oi', next: 'Vamos lá', title: 'Oi! Bora organizar seu dinheiro?', sub: 'Em menos de um minuto você vê como tudo funciona.',
-        art: () => `<div class="ob-kpis">${[['Entrou', 320000, 'pos'], ['Saiu', 215000, ''], ['Sobrou', 105000, 'pos']].map(([l, v, c], n) => `<div class="ob-kpi" style="--d:${120 + n * 110}ms"><small>${l}</small><b class="num ${c}" data-ob-count="${v}">${R(0)}</b></div>`).join('')}</div>
+      { k: 'oi', c: ['#146ef5', '#8b5cf6'], next: 'Vamos lá', title: 'Oi! Bora organizar seu <em>dinheiro</em>?', sub: 'Em menos de um minuto você vê como tudo funciona.',
+        art: () => `<div class="ob-kpis">${[['Entrou', 320000, 'k-in', '-40deg'], ['Saiu', 215000, 'k-out', '0deg'], ['Sobrou', 105000, 'k-left', '40deg']].map(([l, v, c, r], n) => `<div class="ob-kpi ${c}" style="--d:${(first && !introDone ? 1250 : 120) + n * 130}ms;--r:${r};--f:${n * .6}s"><small>${l}</small><b class="num" data-ob-count="${v}">${R(0)}</b></div>`).join('')}</div>
           <div class="ob-bar"><i></i></div><p class="ob-cap">Tudo que entra, tudo que sai e quanto sobra no mês.</p>` },
-      { k: 'nome', q: true, next: 'Continuar', title: 'Como quer ser chamado?', sub: 'É assim que o app vai falar com você.',
+      { k: 'nome', c: ['#8b5cf6', '#ec4899'], q: true, next: 'Continuar', title: 'Como quer ser <em>chamado</em>?', sub: 'É assim que o app vai falar com você.',
         art: () => `<div class="ob-hello"><span id="obGreet">${greet()}${d.name ? ', ' + esc(nickOf()) : ''}</span><i class="ob-caret"></i></div>
           <label class="fl" for="obName">Seu nome</label><input class="input" id="obName" maxlength="60" autocomplete="name" autocapitalize="words" placeholder="Ex.: Gustavo Vilella" value="${esc(d.name)}" />
           <div class="nick-chips" id="obChips"></div>` },
-      { k: 'uso', q: true, skip: !!invited, next: 'Continuar', title: 'Vai usar sozinho ou em família?', sub: 'Em família, cada um lança o seu e tudo soma junto: o salário de um, o do outro, as contas da casa.',
+      { k: 'uso', c: ['#f97316', '#f43f5e'], q: true, skip: !!invited, next: 'Continuar', title: 'Vai usar sozinho ou em <em>família</em>?', sub: 'Em família, cada um lança o seu e tudo soma junto: o salário de um, o do outro, as contas da casa.',
         art: () => `<div class="ob-people" id="obPeople"></div>${usePickHtml(d.fam)}
           <div id="obFamBox" ${d.fam ? '' : 'hidden'}><label class="fl" for="obMemIn">Quem mais faz parte?</label>${memberAddHtml('ob')}</div>` },
-      { k: 'como', expl: true, next: 'Próximo', title: 'Tudo num lugar só', sub: '<b>Entradas</b> é o que chega. <b>Contas fixas</b>, o que vem todo mês. <b>Gastos</b>, o dia a dia.',
-        art: () => `<div class="ob-list">${row('briefcase', 'Salário', 'Entrada', 320000, true, 150, d.fam ? nickOf() : '')}${row('house', 'Aluguel', 'Conta fixa · dia 10', 120000, false, 450)}${row('shopping-cart', 'Mercado', 'Gasto · hoje', 24590, false, 750)}</div>
+      { k: 'como', c: ['#10b981', '#0ea5e9'], expl: true, next: 'Próximo', title: 'Tudo num <em>lugar só</em>', sub: '<b>Entradas</b> é o que chega. <b>Contas fixas</b>, o que vem todo mês. <b>Gastos</b>, o dia a dia.',
+        art: () => `<div class="ob-list">${row('briefcase', 'Salário', 'Entrada', 320000, true, 150, d.fam ? nickOf() : '', '#10b981')}${row('house', 'Aluguel', 'Conta fixa · dia 10', 120000, false, 450, '', '#f59e0b')}${row('shopping-cart', 'Mercado', 'Gasto · hoje', 24590, false, 750, '', '#0ea5e9')}</div>
           <p class="ob-cap" style="--d:1050ms">O app soma tudo sozinho e mostra quanto sobra.</p>` },
-      { k: 'rapido', expl: true, next: 'Próximo', title: 'Lançar é rapidinho', sub: 'Toque no <b>+</b> e escreva do seu jeito. O app entende o resto.',
+      { k: 'rapido', c: ['#0ea5e9', '#6366f1'], expl: true, next: 'Próximo', title: 'Lançar é <em>rapidinho</em>', sub: 'Toque no <b>+</b> e escreva do seu jeito. O app entende o resto.',
         art: () => `<div class="ob-quick"><div class="ob-input"><span id="obTyped"></span><i class="ob-caret"></i></div>
           <div class="ob-chips" id="obParsed"><span style="--d:0ms">Gasto <b>R$ 45,90</b></span><span style="--d:120ms">${ico('tag', 'width:12px;height:12px')}Mercado</span><span style="--d:240ms">Ontem</span></div></div>
           <p class="ob-cap">Também dá pra importar o extrato do banco.</p>` },
-      { k: 'veja', expl: true, next: 'Próximo', title: 'Veja pra onde vai', sub: 'O gráfico mostra cada parte, e o app avisa o que vai vencer pra nada atrasar.',
-        art: () => `<div class="ob-donut"><svg viewBox="0 0 42 42">${[[38, '#94afc8'], [24, '#c9b49d'], [18, '#a5b8a7'], [12, '#b3a5c6']].reduce((a, [len, col]) => { a.s += `<circle cx="21" cy="21" r="15.915" fill="none" stroke="${col}" stroke-width="5" stroke-dasharray="${len - 1.2} ${100 - len + 1.2}" stroke-dashoffset="${25 - a.o}" style="--d:${a.n * 160}ms"/>`; a.o += len; a.n++; return a; }, { s: '', o: 0, n: 0 }).s}</svg>
+      { k: 'veja', c: ['#ec4899', '#f97316'], expl: true, next: 'Próximo', title: 'Veja pra onde <em>vai</em>', sub: 'O gráfico mostra cada parte, e o app avisa o que vai vencer pra nada atrasar.',
+        art: () => `<div class="ob-donut"><svg viewBox="0 0 42 42">${[[38, '#ec4899'], [24, '#f97316'], [18, '#8b5cf6'], [12, '#0ea5e9']].reduce((a, [len, col]) => { a.s += `<circle cx="21" cy="21" r="15.915" fill="none" stroke="${col}" stroke-width="5" stroke-dasharray="${len - 1.2} ${100 - len + 1.2}" stroke-dashoffset="${25 - a.o}" style="--d:${a.n * 160}ms"/>`; a.o += len; a.n++; return a; }, { s: '', o: 0, n: 0 }).s}</svg>
           <div class="ob-dc"><small>Saiu</small><b>${R(215000)}</b></div></div>
           <div class="ob-note">${ico('bell', 'width:15px;height:15px')}<span><b>Amanhã vence a luz</b><small>R$ 180,00 · toque pra marcar como paga</small></span></div>` },
-      { k: 'pronto', last: true, next: 'Começar a usar', title: () => `Tudo pronto, ${esc(nickOf())}!`, sub: () => invited ? 'Agora é só digitar o código do convite que te passaram.' : 'Seus dados ficam só neste aparelho. Se quiser, dá pra colocar senha ou usar em outro celular depois, em ⚙.',
-        art: () => `<div class="ob-done"><svg viewBox="0 0 52 52"><circle cx="26" cy="26" r="24" pathLength="1"/><path d="M15 27l7 7 15-16" pathLength="1"/></svg></div>` },
+      { k: 'pronto', c: ['#22c55e', '#14b8a6'], last: true, next: 'Começar a usar', title: () => `Tudo pronto, <em>${esc(nickOf())}</em>!`, sub: () => invited ? 'Agora é só digitar o código do convite que te passaram.' : 'Seus dados ficam só neste aparelho. Se quiser, dá pra colocar senha ou usar em outro celular depois, em ⚙.',
+        art: () => `<div class="ob-confetti" aria-hidden="true">${Array.from({ length: 34 }, (_, n) => { const a = n / 34 * Math.PI * 2 + (n % 3) * .2, r = 110 + (n * 47) % 90;
+            return `<i style="--x:${Math.round(Math.cos(a) * r)}px;--y:${Math.round(Math.sin(a) * r * .8 - 30)}px;--r:${(n * 97) % 360}deg;--c:${['#146ef5', '#8b5cf6', '#ec4899', '#f97316', '#22c55e', '#0ea5e9', '#facc15'][n % 7]};--d:${120 + (n % 5) * 40}ms;${n % 2 ? 'border-radius:50%;width:8px;height:8px' : ''}"></i>`; }).join('')}</div>
+          <div class="ob-done"><svg viewBox="0 0 52 52"><circle cx="26" cy="26" r="24" pathLength="1"/><path d="M15 27l7 7 15-16" pathLength="1"/></svg></div>` },
     ].filter(s => !s.skip);
-    $('#authScreen').innerHTML = `<div class="ob" id="ob">
+    const first = !reduced && !showOnboarding.seen; showOnboarding.seen = true;
+    let introDone = false;
+    $('#authScreen').innerHTML = `<div class="ob-bg" aria-hidden="true"><i></i><i></i><i></i></div>
+      ${first ? `<div class="ob-splash" id="obSplash" aria-hidden="true"><div class="ob-coins">${Array.from({ length: 9 }, (_, n) => `<i style="--x:${8 + n * 10.5}%;--d:${(n * 137) % 600}ms;--s:${.7 + ((n * 53) % 50) / 100}">R$</i>`).join('')}</div>
+        <div class="ob-word"><span>Orçamento</span><small>seu dinheiro, em ordem</small></div></div>` : ''}
+      <div class="ob" id="ob">
       <div class="ob-top"><div class="ob-dots" id="obDots"></div><button type="button" class="ob-skip" id="obSkip">Pular</button></div>
       <div class="ob-stage" id="obStage"></div>
       <div class="err" id="obErr"></div>
@@ -6066,7 +6132,7 @@ button:focus-visible, a:focus-visible, [role="button"]:focus-visible, [tabindex]
     // número do slide 1 subindo até o valor
     const countUps = () => stage.querySelectorAll('[data-ob-count]').forEach((el, n) => {
       const to = +el.dataset.obCount; if (reduced) { el.textContent = R(to); return; }
-      later(() => { const t0 = performance.now(); const step = t => { const k = Math.min((t - t0) / 900, 1); el.textContent = R(Math.round(to * (1 - Math.pow(1 - k, 3)))); if (k < 1 && el.isConnected) requestAnimationFrame(step); }; requestAnimationFrame(step); }, 200 + n * 110);
+      later(() => { const t0 = performance.now(); const step = t => { const k = Math.min((t - t0) / 1100, 1); el.textContent = R(Math.round(to * (1 - Math.pow(1 - k, 3)))); if (k < 1 && el.isConnected) requestAnimationFrame(step); }; requestAnimationFrame(step); }, (first && !introDone ? 1500 : 250) + n * 130);
     });
     // slide "lançar": digita a frase, mostra o que o app entendeu e repete
     const typing = () => {
@@ -6104,10 +6170,11 @@ button:focus-visible, a:focus-visible, [role="button"]:focus-visible, [tabindex]
           <h1 class="ob-title">${typeof s.title === 'function' ? s.title() : s.title}</h1><p class="ob-sub">${typeof s.sub === 'function' ? s.sub() : s.sub}</p></section>`;
         syncNav(); bind(s.k);
       };
+      const [c1, c2] = SLIDES[to].c; const root = $('#authScreen'); root.style.setProperty('--ob-c', c1); root.style.setProperty('--ob-c2', c2);
       if (old && !reduced) { old.classList.add(dir > 0 ? 'leave-fwd' : 'leave-back'); later(mount, 180); } else mount();
     };
     const bind = k => {
-      if (k === 'oi') countUps();
+      if (k === 'oi') { countUps(); introDone = true; }
       if (k === 'rapido') typing();
       if (k === 'nome') {
         const inp = stage.querySelector('#obName'), chips = stage.querySelector('#obChips'), g = stage.querySelector('#obGreet');
@@ -6159,7 +6226,7 @@ button:focus-visible, a:focus-visible, [role="button"]:focus-visible, [tabindex]
     stage.addEventListener('pointerdown', e => { if (e.target.closest('input, button')) return; sx = e.clientX; sy = e.clientY; });
     stage.addEventListener('pointerup', e => { if (sx == null) return; const dx = e.clientX - sx, dy = e.clientY - sy; sx = null; if (Math.abs(dx) > 50 && Math.abs(dx) > Math.abs(dy) * 1.5) dx < 0 ? next() : back(); });
     show(0);
-    setTimeout(() => $('#obNext').focus(), 50);
+    if (first) { const sp = $('#obSplash'), go = () => sp && sp.classList.add('gone'); sp.addEventListener('click', go); setTimeout(go, 1500); setTimeout(() => sp && sp.remove(), 2400); }
   }
   // Rever a apresentação (em ⚙): mostra de novo, sem apagar nada
   function replayOnboarding() { showOnboarding(); }
