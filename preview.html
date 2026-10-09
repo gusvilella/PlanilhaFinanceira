@@ -1002,10 +1002,10 @@ html.auth .auth-screen { display: grid; place-items: center; }
 /* titânio polido: Star White no tema claro, Night Sky (azul bem escuro) no escuro */
 .duo { --duo-ti: linear-gradient(140deg, #fdfdfb, #d6d4ce 30%, #f7f6f2 52%, #c4c2bb 78%, #ecebe6); --duo-hinge: linear-gradient(90deg, #a9a7a0, #dddbd5 60%, #b9b7b0); }
 :root[data-theme="dark"] .duo { --duo-ti: linear-gradient(140deg, #5a6a8c, #222d47 30%, #46557a 52%, #18203a 78%, #3a4868); --duo-hinge: linear-gradient(90deg, #1c2438, #3d4a6a 60%, #263049); }
-/* botões: volume na borda de cima, botão lateral com Touch ID e Camera Control na direita */
+/* botões: volume na borda de cima e botão lateral (Touch ID) na direita */
 .duo-key { position: absolute; background: var(--duo-ti); border-radius: .2em; box-shadow: inset 0 0 0 1px rgba(0, 0, 0, .12); }
 .duo-key.k-vol1, .duo-key.k-vol2 { top: -.26em; height: .3em; width: 2.3em; } .duo-key.k-vol1 { left: 58%; } .duo-key.k-vol2 { left: calc(58% + 2.9em); }
-.duo-key.k-side, .duo-key.k-cam { right: -.26em; width: .3em; } .duo-key.k-side { top: 18%; height: 3.6em; } .duo-key.k-cam { top: 58%; height: 2.4em; }
+.duo-key.k-side { right: -.26em; width: .3em; top: 18%; height: 3.6em; }
 /* barra de status e indicador de início, como no sistema do celular */
 .duo-sb { position: absolute; top: .55em; left: 1.6em; right: 1.4em; display: flex; justify-content: space-between; align-items: center; font-size: .8em; pointer-events: none; }
 .duo-sb b { font-weight: 700; letter-spacing: -.01em; }
@@ -6482,7 +6482,7 @@ button:focus-visible, a:focus-visible, [role="button"]:focus-visible, [tabindex]
           return `<div class="ob-hero">
             <div class="duo-tilt" style="--d:${wait}ms"><button type="button" class="duo shut" id="obDuo" aria-label="Abrir e fechar o celular">
               <div class="duo-half duo-base"><div class="duo-scr">${inner}</div></div>
-              <i class="duo-key k-vol1"></i><i class="duo-key k-vol2"></i><i class="duo-key k-side"></i><i class="duo-key k-cam"></i>
+              <i class="duo-key k-vol1"></i><i class="duo-key k-vol2"></i><i class="duo-key k-side"></i>
               <div class="duo-cover">
                 <div class="duo-half duo-front"><div class="duo-scr"><i class="duo-cam"></i><span class="duo-sb"><b>9:41</b><span class="duo-sbi"><svg class="duo-wifi" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="10.2"/><path d="M6.6 11.1a7.6 7.6 0 0 1 10.8 0M8.8 13.4a4.5 4.5 0 0 1 6.4 0"/><circle cx="12" cy="16" r="1.25" class="f"/></svg><u></u></span></span>
                   <small>${greet()}</small><b class="duo-l">Sobra do mês</b><b class="num duo-big" data-ob-count="105000">${R(0)}</b>
