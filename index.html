@@ -830,6 +830,8 @@ html.auth .auth-screen { display: grid; place-items: center; }
 .ob-nav .btn.save:disabled { opacity: .35; }
 .ob-nav .btn.save:not(:disabled):active { transform: scale(.98); }
 .ob-cap { color: var(--muted); font-size: .8rem; margin: 14px 0 0; }
+.ob-sum { display: flex; justify-content: space-between; align-items: baseline; gap: 12px; margin-top: 10px; padding: 12px 14px 2px; border-top: 2px dashed var(--field-line); animation: ob-up .5s ease var(--d) both; }
+.ob-sum span { font-weight: 600; font-size: .9rem; } .ob-sum b { font-size: 1.15rem; letter-spacing: -.02em; background: linear-gradient(90deg, var(--ob-c), var(--ob-c2)); -webkit-background-clip: text; background-clip: text; color: transparent; }
 /* entrada e saída das telas */
 @keyframes ob-in-f { from { opacity: 0; transform: translateX(28px); } }
 @keyframes ob-in-b { from { opacity: 0; transform: translateX(-28px); } }
@@ -939,18 +941,19 @@ html.auth .auth-screen { display: grid; place-items: center; }
 
 /* ===== Junção: cartões limpos (produto) + carinhas coloridas (divertido) ===== */
 /* carinhas */
-.ob-stk { position: fixed; inset: 0; z-index: 0; pointer-events: none; transition: opacity .3s; }
+.ob-stk { position: fixed; inset: 0; z-index: 2; pointer-events: none; transition: opacity .3s; }
 .ob-stk.cramped { opacity: 0; } .ob-stk.cramped .stk-face { pointer-events: none; }
 .stk { position: absolute; width: 0; height: 0; transform: translate(calc(var(--px, 0) * var(--dep) * -4), calc(var(--py, 0) * var(--dep) * -4)); transition: transform .5s cubic-bezier(.2, .7, .3, 1); }
 .stk-in { position: absolute; left: 0; top: 0; transform: translate(-50%, -50%) rotate(var(--rot)); animation: stk-pop .7s cubic-bezier(.2, .9, .3, 1.45) var(--pd) both, stk-bob 5s ease-in-out calc(var(--pd) + .7s + var(--f)) infinite; }
 .stk-face { pointer-events: auto; cursor: pointer; display: grid; place-items: center; width: calc(var(--sz) * clamp(62px, 8.5vw, 112px)); height: calc(var(--sz) * clamp(62px, 8.5vw, 112px)); border-radius: 50%; border: 0; padding: 0;
-  background: radial-gradient(120% 120% at 30% 25%, color-mix(in srgb, var(--sc) 70%, #fff), var(--sc) 55%, color-mix(in srgb, var(--sc) 82%, #000));
+  background: radial-gradient(90% 90% at 28% 22%, rgba(255, 255, 255, .45), transparent 55%), linear-gradient(140deg, var(--sc), var(--sc2));
   box-shadow: 0 18px 34px -18px color-mix(in srgb, var(--sc) 80%, #000), inset 0 -6px 14px rgba(0, 0, 0, .12); transition: transform .25s cubic-bezier(.2, .9, .3, 1.4); }
 .stk-face:hover { transform: scale(1.08) rotate(-6deg); }
 .stk-face svg { width: 74%; height: 74%; fill: none; stroke: #fff; stroke-width: 7; stroke-linecap: round; stroke-linejoin: round; }
 .stk-face svg .f { fill: #fff; }
 .stk-face.boing { animation: stk-boing .7s cubic-bezier(.2, .9, .3, 1.3); }
 .stk.out .stk-in { animation: stk-out .35s ease-in both; }
+.stk.off { opacity: 0; transition: opacity .25s; } .stk.off .stk-face { pointer-events: none; }
 @keyframes stk-pop { from { opacity: 0; transform: translate(-50%, -50%) rotate(calc(var(--rot) - 40deg)) scale(0); } }
 @keyframes stk-bob { 50% { transform: translate(-50%, calc(-50% - 10px)) rotate(calc(var(--rot) + 6deg)); } }
 @keyframes stk-out { to { opacity: 0; transform: translate(-50%, -50%) rotate(calc(var(--rot) + 30deg)) scale(.2); } }
@@ -978,7 +981,8 @@ html.auth .auth-screen { display: grid; place-items: center; }
 .ob-slide.q .ob-art .ob-panel { width: 100%; }
 .ob-panel .ob-row { box-shadow: none; background: var(--field); }
 .ob-panel .ob-input { box-shadow: none; background: var(--field); }
-.ob-slide[data-k="veja"] .ob-note { position: relative; transform: rotate(-3.5deg); margin: -22px -10px 0 26px; box-shadow: 0 22px 40px -22px rgba(20, 20, 30, .45); animation: ob-tilt .6s cubic-bezier(.2, .9, .3, 1.3) .9s both; }
+.ob-panel .ob-note { box-shadow: none; background: var(--field); }
+.ob-slide[data-k="veja"] .ob-note { position: relative; margin: 16px 0 0; animation: ob-up .5s cubic-bezier(.2, .75, .25, 1) .9s both; }
 @keyframes ob-tilt { from { opacity: 0; transform: rotate(6deg) translateY(30px) scale(.9); } }
 /* tela 1: celular dobrável (abre como um livro) + cartão de lançamento por cima */
 .ob-hero { position: relative; height: 300px; display: grid; place-items: center; }
@@ -993,7 +997,24 @@ html.auth .auth-screen { display: grid; place-items: center; }
 .duo:focus-visible { outline: 3px solid var(--ob-c); outline-offset: 6px; border-radius: 2.2em; }
 /* moldura de titânio polido, borda fininha e a tela */
 .duo-half { position: absolute; top: 0; left: 50%; width: 50%; height: 100%; padding: .22em; border-radius: 1.9em;
-  background: linear-gradient(140deg, #f3f4f7, #a9adb6 35%, #eceef2 55%, #8f939c 80%, #d9dbe0); box-shadow: inset 0 0 0 1px rgba(255, 255, 255, .5); }
+  background: var(--duo-ti); box-shadow: inset 0 0 0 1px rgba(255, 255, 255, .45); }
+/* titânio polido: Star White no tema claro, Night Sky (azul bem escuro) no escuro */
+.duo { --duo-ti: linear-gradient(140deg, #fdfdfb, #d6d4ce 30%, #f7f6f2 52%, #c4c2bb 78%, #ecebe6); --duo-hinge: linear-gradient(90deg, #a9a7a0, #dddbd5 60%, #b9b7b0); }
+:root[data-theme="dark"] .duo { --duo-ti: linear-gradient(140deg, #5a6a8c, #222d47 30%, #46557a 52%, #18203a 78%, #3a4868); --duo-hinge: linear-gradient(90deg, #1c2438, #3d4a6a 60%, #263049); }
+/* botões: volume na borda de cima, botão lateral com Touch ID e Camera Control na direita */
+.duo-key { position: absolute; background: var(--duo-ti); border-radius: .2em; box-shadow: inset 0 0 0 1px rgba(0, 0, 0, .12); }
+.duo-key.k-vol1, .duo-key.k-vol2 { top: -.26em; height: .3em; width: 2.3em; } .duo-key.k-vol1 { left: 58%; } .duo-key.k-vol2 { left: calc(58% + 2.9em); }
+.duo-key.k-side, .duo-key.k-cam { right: -.26em; width: .3em; } .duo-key.k-side { top: 18%; height: 3.6em; } .duo-key.k-cam { top: 58%; height: 2.4em; }
+/* barra de status e indicador de início, como no sistema do celular */
+.duo-sb { position: absolute; top: .55em; left: 1.6em; right: 1.4em; display: flex; justify-content: space-between; align-items: center; font-size: .8em; pointer-events: none; }
+.duo-sb b { font-weight: 700; letter-spacing: -.01em; }
+.duo-sbi { display: inline-flex; align-items: flex-end; gap: .14em; height: .8em; }
+.duo-sbi i { width: .22em; background: currentColor; border-radius: .08em; } .duo-sbi i:nth-child(1) { height: 35%; } .duo-sbi i:nth-child(2) { height: 55%; } .duo-sbi i:nth-child(3) { height: 75%; } .duo-sbi i:nth-child(4) { height: 100%; }
+.duo-sbi u { margin-left: .35em; width: 1.7em; height: .82em; border-radius: .25em; border: .1em solid color-mix(in srgb, currentColor 45%, transparent); position: relative; text-decoration: none; }
+.duo-sbi u::before { content: ""; position: absolute; inset: .1em; right: 30%; border-radius: .1em; background: currentColor; }
+.duo-home { position: absolute; left: 50%; bottom: .55em; width: 30%; max-width: 9em; height: .32em; margin-left: min(-15%, -4.5em); border-radius: 1em; background: var(--ink); opacity: .85; }
+.duo-in .duo-home { width: 9em; margin-left: -4.5em; }
+.duo-in .duo-col { padding-top: 2.3em; }
 .duo-scr { position: relative; height: 100%; border-radius: 1.7em; background: var(--card); border: .45em solid #0c0d11; overflow: hidden; }
 /* a base é o aparelho aberto inteiro; fechado/girando, só a metade direita aparece */
 .duo-base { left: 0; width: 100%; clip-path: inset(0 0 0 50% round 0 1.9em 1.9em 0); }
@@ -1016,27 +1037,26 @@ html.auth .auth-screen { display: grid; place-items: center; }
 .duo.flip .duo-cover .duo-half::after { animation: duo-shade 1.1s linear; }
 @keyframes duo-shade { 50% { opacity: .5; } }
 .duo-col:first-child { position: relative; }
-.duo-plus { position: absolute; right: 1.15em; bottom: 4.6em; width: 2.6em; height: 2.6em; border-radius: 50%; display: grid; place-items: center; font-style: normal; font-weight: 700; font-size: 1.15em; color: #fff;
+.duo-plus { position: absolute; right: 1.15em; bottom: 2.2em; width: 2.6em; height: 2.6em; border-radius: 50%; display: grid; place-items: center; font-style: normal; font-weight: 700; font-size: 1.15em; color: #fff;
   background: linear-gradient(135deg, var(--ob-c), var(--ob-c2)); box-shadow: 0 .6em 1.2em -.5em color-mix(in srgb, var(--ob-c) 70%, #000); }
-.duo-front::before { content: ""; position: absolute; left: -.15em; top: 12%; bottom: 12%; width: .5em; border-radius: .4em; background: linear-gradient(90deg, #7d818a, #c5c8ce 60%, #9a9ea7); }
-.duo-front .duo-scr { padding: 2.3em 1.15em 0; }
+.duo-front::before { content: ""; position: absolute; left: -.15em; top: 12%; bottom: 12%; width: .5em; border-radius: .4em; background: var(--duo-hinge); }
+.duo-front .duo-scr { padding: 2.6em 1.15em 0; }
+.duo-front .duo-sb { left: 1.3em; right: 1.1em; }
 .duo-cam { position: absolute; top: .55em; left: 50%; width: .85em; height: .85em; margin-left: -.42em; border-radius: 50%; background: #0c0d11; }
 .duo small { display: block; color: var(--muted); font-size: .95em; line-height: 1.3; }
 .duo-l { display: block; font-size: 1.15em; margin-top: .15em; }
 .duo-big { display: block; font-size: 2.25em; letter-spacing: -.035em; line-height: 1.15; white-space: nowrap; }
 .duo-prog { height: .7em; border-radius: 1em; background: var(--field); margin: 1.3em 0 .5em; overflow: hidden; }
 .duo-prog i { display: block; width: 67%; height: 100%; border-radius: inherit; background: linear-gradient(90deg, var(--ob-c), var(--ob-c2)); }
-.duo-hint { position: absolute; left: 1.15em; right: 1.15em; bottom: 1.3em; text-align: center; font-size: .95em; font-weight: 600; padding: .65em; border-radius: 1em; background: var(--field); color: var(--ink); }
+.duo-hint { position: absolute; left: 1.15em; right: 1.15em; bottom: 1.6em; text-align: center; font-size: .95em; font-weight: 600; padding: .65em; border-radius: 1em; background: var(--field); color: var(--ink); }
 .duo-hint::after { content: " →"; }
 .duo-mini { display: grid; gap: .5em; margin-top: 1.1em; }
 .duo-mini div { display: flex; justify-content: space-between; align-items: baseline; background: color-mix(in srgb, var(--c) 13%, var(--card)); border-radius: .9em; padding: .6em .8em; }
 .duo-mini small { font-size: .9em; } .duo-mini b { font-size: 1.05em; color: var(--c); }
-.duo-tab { position: absolute; left: 0; right: 0; bottom: 0; height: 3.6em; display: flex; align-items: center; justify-content: space-evenly; border-top: 1px solid var(--line); }
-.duo-tab span { width: 1.7em; height: .4em; border-radius: .4em; background: var(--field-line); }
 
 .duo-k { font-weight: 600; }
 .duo .ob-bars { display: flex; align-items: flex-end; height: 8.4em; gap: .55em; margin: .8em 0 .9em; }
-.duo .ob-bars i { flex: 1; height: var(--h); background: var(--c); border-radius: .6em .6em .25em .25em; transform-origin: bottom; transform: scaleY(0); }
+.duo .ob-bars i { flex: 1; height: var(--h); background: linear-gradient(180deg, var(--c2, var(--c)), var(--c)); border-radius: .6em .6em .25em .25em; transform-origin: bottom; transform: scaleY(0); }
 .duo.show .ob-bars i { transform: none; animation: bar-up .7s cubic-bezier(.2, .9, .3, 1.3) calc(var(--d) + .75s) both; }
 .duo-row { display: flex; align-items: center; gap: .6em; font-size: 1em; padding: .38em 0; opacity: 0; }
 .duo-row span:nth-child(2) { flex: 1; } .duo-row b { white-space: nowrap; font-size: .95em; } .duo-row b.pos { color: #10b981; }
@@ -6315,7 +6335,8 @@ button:focus-visible, a:focus-visible, [role="button"]:focus-visible, [tabindex]
       recibo: '<path d="M30 17h40v66l-7-5-6 5-7-5-7 5-6-5-7 5z"/><path d="M40 33h20M40 45h20M40 57h11"/>',
     };
     const FACE_KEYS = Object.keys(FACES);
-    const STK_COLORS = ['#ff5a5f', '#ffb020', '#7c5cff', '#22c55e', '#0ea5e9', '#ff7a1a', '#ec4899', '#14b8a6'];
+    // degradês (aurora/doce): fogem do vermelho-amarelo-verde de semáforo
+    const STK_COLORS = [['#ff5fa2', '#ff9a7b'], ['#6d5dfc', '#b28dff'], ['#22c1ee', '#4f7cff'], ['#2dd4bf', '#38bdf8'], ['#ff8a5c', '#ff5f8f'], ['#c084fc', '#f472b6'], ['#4f7cff', '#22d3ee'], ['#8b5cf6', '#ec4899']];
     const faceSvg = f => `<svg viewBox="0 0 100 100" aria-hidden="true">${FACES[f]}</svg>`;
     // posições (em % da tela) por tela: [x, y, tamanho, giro, cara]; no celular ficam nos cantos, meio pra fora
     const STK = {
@@ -6328,7 +6349,7 @@ button:focus-visible, a:focus-visible, [role="button"]:focus-visible, [tabindex]
       pronto: [[10, 18, 1.1, -10, 'grafico'], [88, 16, 1, 12, 'cofrinho'], [90, 70, 1.15, -8, 'moeda'], [8, 66, 1, 10, 'nota'], [50, 6, .7, 0, 'cartao']],
     };
     const stickerHtml = (x, y, sz, rot, face, col, n, extra = '') => `<span class="stk" style="left:${x}%;top:${y}%;--sz:${sz};--dep:${(n % 3 + 1) * 6}px;${extra}">
-        <span class="stk-in" style="--rot:${rot}deg;--f:${(n * .7) % 2.4}s;--pd:${n * 90}ms"><button type="button" class="stk-face" data-face="${face}" style="--sc:${col}" aria-label="Figurinha">${faceSvg(face)}</button></span></span>`;
+        <span class="stk-in" style="--rot:${rot}deg;--f:${(n * .7) % 2.4}s;--pd:${n * 90}ms"><button type="button" class="stk-face" data-face="${face}" style="--sc:${col[0]};--sc2:${col[1]}" aria-label="Figurinha">${faceSvg(face)}</button></span></span>`;
     const drawStickers = (k, idx) => {
       const box = $('#obStk'); if (!box) return;
       box.querySelectorAll('.stk').forEach(el => { el.classList.add('out'); setTimeout(() => el.remove(), 380); });
@@ -6338,7 +6359,7 @@ button:focus-visible, a:focus-visible, [role="button"]:focus-visible, [tabindex]
       box.insertAdjacentHTML('beforeend', html);
     };
     const row = (ic, name, tag, val, pos, delay, who, col) => `<div class="ob-row" style="--d:${delay}ms"><span class="ob-ic" style="--c:${col}"><svg class="i"><use href="#c-${ic}"/></svg></span>
-      <span class="n">${who ? `<span class="av sm" style="--av:${FAM_COLORS[0]};margin-right:6px">${esc(who.charAt(0).toUpperCase())}</span>` : ''}${esc(name)}<small>${tag}</small></span><b class="${pos ? 'pos' : ''}">${pos ? '+ ' : '- '}${R(val)}</b></div>`;
+      <span class="n">${who ? `<span style="margin-right:6px;display:inline-flex">${avBadge(myAv(), 'sm')}</span>` : ''}${esc(name)}<small>${tag}</small></span><b class="${pos ? 'pos' : ''}">${pos ? '+ ' : '- '}${R(val)}</b></div>`;
     const SLIDES = [
       { k: 'oi', c: ['#146ef5', '#8b5cf6'], next: 'Vamos lá', title: 'Oi! Bora organizar seu <em>dinheiro</em>?', sub: 'Em menos de um minuto você vê como tudo funciona.',
         art: () => { const wait = first && !introDone ? 1150 : 80, rows = [['briefcase', 'Salário', 320000, true, '#10b981'], ['house', 'Aluguel', 120000, false, '#f59e0b']];
@@ -6347,17 +6368,18 @@ button:focus-visible, a:focus-visible, [role="button"]:focus-visible, [tabindex]
               <small>${greet()}</small><b class="duo-l">Sobra do mês</b><b class="num duo-big">${R(105000)}</b>
               <div class="duo-mini">${[['Entrou', 320000, '#10b981'], ['Saiu', 215000, '#ff7a1a']].map(([l, v, c]) => `<div style="--c:${c}"><small>${l}</small><b class="num">${R(v)}</b></div>`).join('')}</div><i class="duo-plus">+</i></div>
             <div class="duo-col"><small class="duo-k">Últimos 6 meses</small>
-              <div class="ob-bars">${[42, 64, 38, 80, 56, 92].map((h, n) => `<i style="--h:${h}%;--d:${n * 70}ms;--c:${STK_COLORS[(n + 2) % 8]}"></i>`).join('')}</div>
+              <div class="ob-bars">${[42, 64, 38, 80, 56, 92].map((h, n) => `<i style="--h:${h}%;--d:${n * 70}ms;--c:${STK_COLORS[(n + 2) % 8][0]};--c2:${STK_COLORS[(n + 2) % 8][1]}"></i>`).join('')}</div>
               ${rows.map(([ic, n, v, pos, c], k) => `<div class="duo-row" style="--d:${300 + k * 90}ms"><span class="ob-ic" style="--c:${c}"><svg class="i"><use href="#c-${ic}"/></svg></span><span>${n}</span><b class="${pos ? 'pos' : ''}">${pos ? '+' : '-'} ${R(v)}</b></div>`).join('')}</div>
-            <div class="duo-tab"><span></span><span></span><span></span><span></span></div></div>`;
+            <span class="duo-sb"><b>9:41</b><span class="duo-sbi"><i></i><i></i><i></i><i></i><u></u></span></span><i class="duo-home"></i></div>`;
           return `<div class="ob-hero">
             <div class="duo-tilt" style="--d:${wait}ms"><button type="button" class="duo shut" id="obDuo" aria-label="Abrir e fechar o celular">
               <div class="duo-half duo-base"><div class="duo-scr">${inner}</div></div>
+              <i class="duo-key k-vol1"></i><i class="duo-key k-vol2"></i><i class="duo-key k-side"></i><i class="duo-key k-cam"></i>
               <div class="duo-cover">
-                <div class="duo-half duo-front"><div class="duo-scr"><i class="duo-cam"></i>
+                <div class="duo-half duo-front"><div class="duo-scr"><i class="duo-cam"></i><span class="duo-sb"><b>9:41</b><span class="duo-sbi"><i></i><i></i><i></i><i></i><u></u></span></span>
                   <small>${greet()}</small><b class="duo-l">Sobra do mês</b><b class="num duo-big" data-ob-count="105000">${R(0)}</b>
                   <div class="duo-prog"><i></i></div><small>67% do que entrou já saiu</small>
-                  <span class="duo-hint">abra pra ver tudo</span></div></div>
+                  <span class="duo-hint">abra pra ver tudo</span><i class="duo-home"></i></div></div>
                 <div class="duo-half duo-back" aria-hidden="true"><div class="duo-scr">${inner}</div></div>
               </div></button></div>
             <div class="ob-float" style="--d:${wait + 2100}ms"><span class="ob-ic" style="--c:#0ea5e9"><svg class="i"><use href="#c-shopping-cart"/></svg></span><span><b>Mercado</b><small>agora mesmo</small></span><b class="neg">- ${R(4590)}</b></div>
@@ -6370,9 +6392,9 @@ button:focus-visible, a:focus-visible, [role="button"]:focus-visible, [tabindex]
       { k: 'uso', c: ['#f97316', '#f43f5e'], q: true, panel: 'Quem usa', skip: !!invited, next: 'Continuar', title: 'Vai usar sozinho ou em <em>família</em>?', sub: 'Em família, cada um lança o seu e tudo soma junto: o salário de um, o do outro, as contas da casa.',
         art: () => `<div class="ob-people" id="obPeople"></div>${usePickHtml(d.fam)}
           <div id="obFamBox" ${d.fam ? '' : 'hidden'}><label class="fl" for="obMemIn">Quem mais faz parte?</label>${memberAddHtml('ob')}</div>` },
-      { k: 'como', c: ['#10b981', '#0ea5e9'], expl: true, panel: 'Este mês', next: 'Próximo', title: 'Tudo num <em>lugar só</em>', sub: '<b>Entradas</b> é o que chega. <b>Contas fixas</b>, o que vem todo mês. <b>Gastos</b>, o dia a dia.',
-        art: () => `<div class="ob-list">${row('briefcase', 'Salário', 'Entrada', 320000, true, 150, d.fam ? nickOf() : '', '#10b981')}${row('house', 'Aluguel', 'Conta fixa · dia 10', 120000, false, 450, '', '#f59e0b')}${row('shopping-cart', 'Mercado', 'Gasto · hoje', 24590, false, 750, '', '#0ea5e9')}</div>
-          <p class="ob-cap" style="--d:1050ms">O app soma tudo sozinho e mostra quanto sobra.</p>` },
+      { k: 'como', c: ['#10b981', '#0ea5e9'], expl: true, panel: 'Este mês', next: 'Próximo', title: 'Tudo num <em>lugar só</em>', sub: 'Anote o que você recebe, as contas que chegam todo mês e os gastos do dia a dia. O app faz a conta e mostra quanto sobra.',
+        art: () => `<div class="ob-list">${row('briefcase', 'Salário', 'Entrada · o que chega', 320000, true, 150, d.fam ? nickOf() : '', '#10b981')}${row('house', 'Aluguel', 'Conta fixa · todo mês', 120000, false, 450, '', '#f59e0b')}${row('shopping-cart', 'Mercado', 'Gasto · dia a dia', 24590, false, 750, '', '#0ea5e9')}</div>
+          <div class="ob-sum" style="--d:1050ms"><span>Sobra do mês</span><b class="num">${R(320000 - 120000 - 24590)}</b></div>` },
       { k: 'rapido', c: ['#0ea5e9', '#6366f1'], expl: true, panel: 'Lançamento rápido', next: 'Próximo', title: 'Lançar é <em>rapidinho</em>', sub: 'Toque no <b>+</b> e escreva do seu jeito. O app entende o resto.',
         art: () => `<div class="ob-quick"><div class="ob-input"><span id="obTyped"></span><i class="ob-caret"></i></div>
           <div class="ob-chips" id="obParsed"><span style="--d:0ms">Gasto <b>R$ 45,90</b></span><span style="--d:120ms">${ico('tag', 'width:12px;height:12px')}Mercado</span><span style="--d:240ms">Ontem</span></div></div>
@@ -6383,7 +6405,7 @@ button:focus-visible, a:focus-visible, [role="button"]:focus-visible, [tabindex]
           o = 0; const icons = sl.map(([len, , ic], n) => { const a = (o + (len - 1.6) / 2) / 100 * Math.PI * 2; o += len; return `<span class="ob-dic" style="left:${(50 + 37.9 * Math.sin(a)).toFixed(1)}%;top:${(50 - 37.9 * Math.cos(a)).toFixed(1)}%;--d:${700 + n * 120}ms"><svg class="i"><use href="#c-${ic}"/></svg></span>`; }).join('');
           return `<div class="ob-donut"><svg viewBox="0 0 42 42">${arcs}</svg>${icons}
           <div class="ob-dc"><small>Saiu</small><b>${R(215000)}</b></div></div>
-          <div class="ob-note">${ico('bell', 'width:15px;height:15px')}<span><b>Amanhã vence a luz</b><small>R$ 180,00 · toque pra marcar como paga</small></span></div>`; } },
+          <div class="ob-note">${ico('bell', 'width:15px;height:15px')}<span><b>Amanhã vence a conta de luz</b><small>R$ 180,00 · o app te lembra antes de vencer</small></span></div>`; } },
       { k: 'pronto', c: ['#22c55e', '#14b8a6'], last: true, next: 'Começar a usar', title: () => `Tudo pronto, <em>${esc(nickOf())}</em>!`, sub: () => invited ? 'Agora é só digitar o código do convite que te passaram.' : 'Seus dados ficam só neste aparelho. Se quiser, dá pra colocar senha ou usar em outro celular depois, em ⚙.',
         art: () => `<div class="ob-confetti" aria-hidden="true">${Array.from({ length: 34 }, (_, n) => { const a = n / 34 * Math.PI * 2 + (n % 3) * .2, r = 110 + (n * 47) % 90;
             return `<i style="--x:${Math.round(Math.cos(a) * r)}px;--y:${Math.round(Math.sin(a) * r * .8 - 30)}px;--r:${(n * 97) % 360}deg;--c:${['#146ef5', '#8b5cf6', '#ec4899', '#f97316', '#22c55e', '#0ea5e9', '#facc15'][n % 7]};--d:${120 + (n % 5) * 40}ms;${n % 2 ? 'border-radius:50%;width:8px;height:8px' : ''}"></i>`; }).join('')}</div>
@@ -6406,7 +6428,14 @@ button:focus-visible, a:focus-visible, [role="button"]:focus-visible, [tabindex]
       <div class="ob-nav"><button type="button" class="ob-back" id="obBack">${ico('left')}Voltar</button><button type="button" class="btn save" id="obNext"></button></div></div>`;
     const stage = $('#obStage');
     // sem espaço livre em cima (celular, conteúdo alto): as figurinhas saem de cena pra não cobrir o texto
-    const checkRoom = () => { const sl = stage.querySelector('.ob-slide:not(.leave-fwd):not(.leave-back)'), top = sl ? Math.min(...[...sl.children].map(c => c.getBoundingClientRect().top)) : 999; $('#obStk')?.classList.toggle('cramped', innerWidth < 640 && top < 190); };
+    const checkRoom = () => {
+      const sl = stage.querySelector('.ob-slide:not(.leave-fwd):not(.leave-back)'), top = sl ? Math.min(...[...sl.children].map(c => c.getBoundingClientRect().top)) : 999;
+      $('#obStk')?.classList.toggle('cramped', innerWidth < 640 && top < 190);
+      if (!sl) return;
+      const boxes = [...sl.children, $('#ob .ob-top'), $('#ob .ob-nav')].filter(Boolean).map(e => e.getBoundingClientRect()), m = 14;
+      document.querySelectorAll('#obStk .stk:not(.out)').forEach(st => { const f = st.querySelector('.stk-face'), r = f.getBoundingClientRect();
+        st.classList.toggle('off', boxes.some(a => r.right + m > a.left && r.left - m < a.right && r.bottom + m > a.top && r.top - m < a.bottom)); });
+    };
     if (window.ResizeObserver) new ResizeObserver(() => checkRoom()).observe(stage);
     // número do slide 1 subindo até o valor
     const countUps = () => stage.querySelectorAll('[data-ob-count]').forEach((el, n) => {
@@ -6446,7 +6475,7 @@ button:focus-visible, a:focus-visible, [role="button"]:focus-visible, [tabindex]
       const mount = () => {
         i = to; const s = SLIDES[i];
         stage.innerHTML = `<section class="ob-slide ${s.q ? 'q ' : ''}${reduced ? '' : dir > 0 ? 'fwd' : 'back'}" data-k="${s.k}">
-          <div class="ob-art">${s.panel ? `<div class="ob-panel"><div class="ob-ph"><i></i>${s.panel}<span class="grow"></span><span class="hint">toque nas figurinhas</span></div>${s.art()}</div>` : s.art()}</div>
+          <div class="ob-art">${s.panel ? `<div class="ob-panel"><div class="ob-ph"><i></i>${s.panel}</div>${s.art()}</div>` : s.art()}</div>
           <h1 class="ob-title">${typeof s.title === 'function' ? s.title() : s.title}</h1><p class="ob-sub">${typeof s.sub === 'function' ? s.sub() : s.sub}</p></section>`;
         syncNav(); bind(s.k);
         requestAnimationFrame(checkRoom);
