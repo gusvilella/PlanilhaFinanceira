@@ -860,7 +860,7 @@ html.auth .auth-screen { display: grid; place-items: center; }
 .ob-chips.on span { animation: ob-pop .4s cubic-bezier(.2, .75, .25, 1) var(--d) both; }
 /* 6: gráfico */
 .ob-donut { position: relative; width: 170px; height: 170px; margin: 0 auto; }
-.ob-donut svg { width: 100%; height: 100%; transform: rotate(-90deg); }
+.ob-donut > svg { width: 100%; height: 100%; transform: rotate(-90deg); }
 .ob-donut circle { animation: ob-draw .8s cubic-bezier(.4, 0, .2, 1) var(--d) both; }
 .ob-dc { position: absolute; inset: 0; display: grid; place-content: center; text-align: center; }
 .ob-dc small { color: var(--muted); font-size: .72rem; } .ob-dc b { font-size: 1rem; }
@@ -918,7 +918,8 @@ html.auth .auth-screen { display: grid; place-items: center; }
 
 /* ===== Junção: cartões limpos (produto) + carinhas coloridas (divertido) ===== */
 /* carinhas */
-.ob-stk { position: fixed; inset: 0; z-index: 0; pointer-events: none; }
+.ob-stk { position: fixed; inset: 0; z-index: 0; pointer-events: none; transition: opacity .3s; }
+.ob-stk.cramped { opacity: 0; } .ob-stk.cramped .stk-face { pointer-events: none; }
 .stk { position: absolute; width: 0; height: 0; transform: translate(calc(var(--px, 0) * var(--dep) * -4), calc(var(--py, 0) * var(--dep) * -4)); transition: transform .5s cubic-bezier(.2, .7, .3, 1); }
 .stk-in { position: absolute; left: 0; top: 0; transform: translate(-50%, -50%) rotate(var(--rot)); animation: stk-pop .7s cubic-bezier(.2, .9, .3, 1.45) var(--pd) both, stk-bob 5s ease-in-out calc(var(--pd) + .7s + var(--f)) infinite; }
 .stk-face { pointer-events: auto; cursor: pointer; display: grid; place-items: center; width: calc(var(--sz) * clamp(62px, 8.5vw, 112px)); height: calc(var(--sz) * clamp(62px, 8.5vw, 112px)); border-radius: 50%; border: 0; padding: 0;
@@ -982,6 +983,32 @@ html.auth .auth-screen { display: grid; place-items: center; }
 .ob-float .ob-ic { width: 32px; height: 32px; border-radius: 10px; }
 @media (max-width: 640px) { .ob-hero { height: 270px; } .ob-phone { width: 186px; height: 262px; } .ob-float { right: 2px; bottom: 14px; } .ob-panel { padding: 14px 14px 16px; } .ob-ph .hint { display: none; } }
 @media (prefers-reduced-motion: reduce) { .stk-in, .stk-face, .ob-phone, .ob-float, .ob-panel, .ob-bars i, .ob-note { animation: none !important; } .ob-splash { display: none; } .stk { transition: none; } }
+
+/* ----- bichinhos (avatar) ----- */
+.av.avc { background: var(--avbg); padding: 0; overflow: hidden; color: inherit; }
+.av.avc svg { width: 100%; height: 100%; display: block; }
+.av.avc.sm { width: 18px; height: 18px; }
+.av.avc.md { width: 30px; height: 30px; }
+.av-pick { display: grid; grid-template-columns: repeat(auto-fill, minmax(44px, 1fr)); gap: 8px; margin-top: 8px; }
+.av-pick button { border: 0; background: none; padding: 3px; border-radius: 50%; display: grid; place-items: center; transition: transform .2s cubic-bezier(.2, .9, .3, 1.4); }
+.av-pick button .av { width: 40px; height: 40px; box-shadow: none; }
+.av-pick button:hover { transform: scale(1.1) rotate(-6deg); }
+.av-pick button.on { box-shadow: 0 0 0 2.5px var(--ob-c, var(--accent)); transform: scale(1.06); }
+.ob-hello { display: flex; align-items: center; gap: 10px; }
+.ob-me-av .av { width: 40px; height: 40px; box-shadow: 0 10px 22px -12px rgba(20, 20, 40, .5); }
+.av.boing { animation: stk-boing .7s cubic-bezier(.2, .9, .3, 1.3); }
+button.ob-person { border: 0; background: none; padding: 0; color: inherit; font: inherit; cursor: pointer; }
+button.ob-person .av { width: 46px; height: 46px; box-shadow: 0 0 0 3px var(--bg), 0 10px 20px -10px rgba(20, 20, 40, .45); transition: transform .2s cubic-bezier(.2, .9, .3, 1.4); }
+button.ob-person:hover .av, button.ob-person.on .av { transform: translateY(-3px) rotate(-6deg); }
+button.ob-person.on .av { box-shadow: 0 0 0 3px var(--bg), 0 0 0 5.5px var(--ob-c); }
+.ob-people { align-items: flex-start; }
+.ob-people .av-pick { flex-basis: 100%; }
+.mem-row.mem-edit { grid-template-columns: 34px minmax(0, 1fr) auto 30px; }
+.av-btn { border: 0; background: none; padding: 0; display: inline-flex; border-radius: 50%; }
+.me-tag { border: 1px solid var(--field-line); background: none; border-radius: 99px; padding: 5px 10px; font-size: .74rem; font-weight: 600; color: var(--muted); white-space: nowrap; }
+.me-tag.on { background: var(--ink); color: var(--card); border-color: var(--ink); }
+.ob-dic { position: absolute; width: 26px; height: 26px; margin: -13px 0 0 -13px; display: grid; place-items: center; color: #fff; animation: ob-pop .45s cubic-bezier(.2, .9, .3, 1.4) var(--d) both; }
+.ob-dic svg.i { width: 15px; height: 15px; stroke-width: 2.2; }
 /* ----- última tela: confete ----- */
 .ob-slide[data-k="pronto"] .ob-art { position: relative; }
 .ob-confetti { position: absolute; left: 50%; top: 50%; width: 0; height: 0; pointer-events: none; }
@@ -1831,7 +1858,7 @@ button:focus-visible, a:focus-visible, [role="button"]:focus-visible, [tabindex]
       if (!isObj(s.family) || !Array.isArray(s.family.members)) delete s.family;
       else {
         const seen = new Set();
-        s.family.members = s.family.members.filter(isObj).map(m => ({ id: String(m.id || uid()), name: String(m.name || '').trim().slice(0, 20) }))
+        s.family.members = s.family.members.filter(isObj).map(m => ({ id: String(m.id || uid()), name: String(m.name || '').trim().slice(0, 20), ...(typeof m.av === 'string' && m.av ? { av: m.av.slice(0, 20) } : {}) }))
           .filter(m => m.name && !seen.has(m.id) && seen.add(m.id)).slice(0, 8);
         s.family.solo = !!s.family.solo;
       }
@@ -1955,6 +1982,30 @@ button:focus-visible, a:focus-visible, [role="button"]:focus-visible, [tabindex]
   };
   const withMemo = fn => (...args) => { if (memo) return fn(...args); memo = new Map(); try { return fn(...args); } finally { memo = null; } };
 
+  // Bichinhos pra escolher como avatar (desenhados aqui mesmo, sem imagem de fora). bg = fundo da bolinha
+  const K = '#2b2733';   // olhos e traços
+  const eyes = (y = 38, dx = 8) => `<circle cx="${32 - dx}" cy="${y}" r="2.6" fill="${K}"/><circle cx="${32 + dx}" cy="${y}" r="2.6" fill="${K}"/>`;
+  const blush = (y = 43, dx = 13, c = '#ff8fab') => `<ellipse cx="${32 - dx}" cy="${y}" rx="3.4" ry="2.2" fill="${c}" opacity=".7"/><ellipse cx="${32 + dx}" cy="${y}" rx="3.4" ry="2.2" fill="${c}" opacity=".7"/>`;
+  const AVATARS = {
+    gato: { name: 'Gato', bg: '#ffe7b3', svg: `<path d="M14 26 17 10 27 19M50 26 47 10 37 19" fill="#ffb020"/><path d="M18 15 19.5 22M46 15 44.5 22" stroke="#ff8a3d" stroke-width="2.4" stroke-linecap="round"/><circle cx="32" cy="36" r="19" fill="#ffb020"/>${eyes(35)}${blush(41)}<path d="M30 41h4l-2 2.2z" fill="#ff6f91"/><path d="M28.5 45q3.5 2.6 7 0" fill="none" stroke="${K}" stroke-width="1.8" stroke-linecap="round"/><path d="M12 39h8M12 43l8-1M52 39h-8M52 43l-8-1" stroke="${K}" stroke-width="1.3" stroke-linecap="round" opacity=".55"/>` },
+    coelho: { name: 'Coelho', bg: '#ffd9e8', svg: `<ellipse cx="24" cy="14" rx="5.5" ry="13" fill="#fff"/><ellipse cx="40" cy="14" rx="5.5" ry="13" fill="#fff"/><ellipse cx="24" cy="15" rx="2.6" ry="9" fill="#ffadc8"/><ellipse cx="40" cy="15" rx="2.6" ry="9" fill="#ffadc8"/><circle cx="32" cy="38" r="18" fill="#fff"/>${eyes(37)}${blush(42)}<ellipse cx="32" cy="42" rx="2.4" ry="1.7" fill="#ff7aa2"/><path d="M29 45.5q3 2.2 6 0" fill="none" stroke="${K}" stroke-width="1.7" stroke-linecap="round"/>` },
+    urso: { name: 'Urso', bg: '#f1e2d1', svg: `<circle cx="17" cy="21" r="7" fill="#a86f45"/><circle cx="47" cy="21" r="7" fill="#a86f45"/><circle cx="17" cy="21" r="3.4" fill="#e3b78f"/><circle cx="47" cy="21" r="3.4" fill="#e3b78f"/><circle cx="32" cy="36" r="19" fill="#a86f45"/><ellipse cx="32" cy="43" rx="9" ry="7" fill="#e3b78f"/>${eyes(33)}<ellipse cx="32" cy="40.5" rx="3.2" ry="2.3" fill="${K}"/><path d="M29 45q3 2.4 6 0" fill="none" stroke="${K}" stroke-width="1.7" stroke-linecap="round"/>` },
+    panda: { name: 'Panda', bg: '#dff3e6', svg: `<circle cx="17" cy="20" r="7" fill="${K}"/><circle cx="47" cy="20" r="7" fill="${K}"/><circle cx="32" cy="36" r="19" fill="#fff"/><ellipse cx="24" cy="36" rx="5" ry="6.4" fill="${K}" transform="rotate(-20 24 36)"/><ellipse cx="40" cy="36" rx="5" ry="6.4" fill="${K}" transform="rotate(20 40 36)"/><circle cx="24.5" cy="35.5" r="1.8" fill="#fff"/><circle cx="39.5" cy="35.5" r="1.8" fill="#fff"/><ellipse cx="32" cy="43" rx="2.8" ry="1.9" fill="${K}"/><path d="M29 46q3 2 6 0" fill="none" stroke="${K}" stroke-width="1.7" stroke-linecap="round"/>${blush(45, 14, '#ffb3c6')}` },
+    sapo: { name: 'Sapo', bg: '#d8f5c9', svg: `<circle cx="21" cy="21" r="8" fill="#4cc472"/><circle cx="43" cy="21" r="8" fill="#4cc472"/><ellipse cx="32" cy="39" rx="21" ry="16" fill="#4cc472"/><circle cx="21" cy="21" r="5" fill="#fff"/><circle cx="43" cy="21" r="5" fill="#fff"/><circle cx="22" cy="22" r="2.6" fill="${K}"/><circle cx="42" cy="22" r="2.6" fill="${K}"/><path d="M20 40q12 9 24 0" fill="none" stroke="${K}" stroke-width="2" stroke-linecap="round"/>${blush(40, 17)}` },
+    raposa: { name: 'Raposa', bg: '#ffe0cc', svg: `<path d="M13 28 16 9 28 20M51 28 48 9 36 20" fill="#ff7a2f"/><path d="M17 15 19 22M47 15 45 22" stroke="#fff" stroke-width="2.6" stroke-linecap="round"/><path d="M32 55C18 55 12 44 13 32c6-6 12-8 19-8s13 2 19 8c1 12-5 23-19 23z" fill="#ff7a2f"/><path d="M32 55c-8 0-13-5-15-11 5 0 10 1 15 4 5-3 10-4 15-4-2 6-7 11-15 11z" fill="#fff"/>${eyes(36, 9)}<ellipse cx="32" cy="46" rx="2.6" ry="1.9" fill="${K}"/>` },
+    pintinho: { name: 'Pintinho', bg: '#fff3b8', svg: `<path d="M30 14q2-6 5 0q3-5 4 2" fill="none" stroke="#f5b800" stroke-width="2.4" stroke-linecap="round"/><circle cx="32" cy="36" r="19" fill="#ffd43b"/>${eyes(33)}<path d="M27 39h10l-5 5z" fill="#ff8a1f"/>${blush(41, 13)}` },
+    cachorro: { name: 'Cachorro', bg: '#f3e6d6', svg: `<ellipse cx="15" cy="30" rx="6" ry="12" fill="#8a5a3b" transform="rotate(15 15 30)"/><ellipse cx="49" cy="30" rx="6" ry="12" fill="#8a5a3b" transform="rotate(-15 49 30)"/><circle cx="32" cy="35" r="18" fill="#e2b07a"/><ellipse cx="32" cy="43" rx="8" ry="6" fill="#f6dcc0"/><circle cx="24" cy="30" r="4.5" fill="#c98c55" opacity=".6"/>${eyes(33)}<ellipse cx="32" cy="40" rx="3.2" ry="2.3" fill="${K}"/><path d="M29 44q3 2.2 6 0" fill="none" stroke="${K}" stroke-width="1.7" stroke-linecap="round"/><path d="M31 45.5h3.2v3a1.6 1.6 0 0 1-3.2 0z" fill="#ff6f91"/>` },
+    sol: { name: 'Sol', bg: '#fff0c2', svg: `<g stroke="#ffb020" stroke-width="3" stroke-linecap="round"><path d="M32 6v6M32 52v6M6 32h6M52 32h6M13.6 13.6l4.2 4.2M46.2 46.2l4.2 4.2M13.6 50.4l4.2-4.2M46.2 17.8l4.2-4.2"/></g><circle cx="32" cy="32" r="16" fill="#ffc533"/><path d="M24 30q2.5-3 5 0M35 30q2.5-3 5 0" fill="none" stroke="${K}" stroke-width="2" stroke-linecap="round"/><path d="M26 37q6 6 12 0" fill="none" stroke="${K}" stroke-width="2" stroke-linecap="round"/>${blush(36, 11)}` },
+    estrela: { name: 'Estrela', bg: '#e8e0ff', svg: `<path d="M32 7l7.3 14.8 16.3 2.4-11.8 11.5 2.8 16.2L32 44.3l-14.6 7.6 2.8-16.2L8.4 24.2l16.3-2.4z" fill="#8b6cff" stroke="#8b6cff" stroke-width="3" stroke-linejoin="round"/>${eyes(29, 6)}<path d="M28 34q4 3.4 8 0" fill="none" stroke="#fff" stroke-width="1.9" stroke-linecap="round"/>` },
+  };
+  const AV_KEYS = Object.keys(AVATARS);
+  const avatarSvg = key => `<svg viewBox="0 0 64 64" aria-hidden="true">${AVATARS[key].svg}</svg>`;
+  // bichinho de alguém: o escolhido, ou um que combina com o nome (sempre o mesmo pro mesmo nome)
+  const avFor = (key, name) => AVATARS[key] ? key : AV_KEYS[[...norm(name || '?')].reduce((a, c) => a + c.charCodeAt(0), 0) % AV_KEYS.length];
+  // Escolher bichinho: grade de opções (data-av)
+  const avPickHtml = (cur, id) => `<div class="av-pick" id="${id}" role="radiogroup">${AV_KEYS.map(k => `<button type="button" data-av="${k}" class="${k === cur ? 'on' : ''}" role="radio" aria-checked="${k === cur}" title="${AVATARS[k].name}"><span class="av avc" style="--avbg:${AVATARS[k].bg}">${avatarSvg(k)}</span></button>`).join('')}</div>`;
+  const avBadge = (key, cls = '') => `<span class="av avc ${cls}" style="--avbg:${AVATARS[key].bg}" aria-hidden="true">${avatarSvg(key)}</span>`;
+
   // ================= Uso em família =================
   // Tudo continua somado junto (é um orçamento só); a família muda o jeito de falar ("vocês") e deixa marcar de quem
   // é cada entrada (o salário de cada um), gasto, cartão e banco. Sem dono marcado = da família.
@@ -1968,7 +2019,7 @@ button:focus-visible, a:focus-visible, [role="button"]:focus-visible, [tabindex]
   const vc = (one, many) => familyOn() ? many : one;   // "você" ou "vocês"
   const FAM_COLORS = ['#44679e', '#a14f62', '#3c7559', '#8a6528', '#655597', '#337680', '#9a5434', '#5b6676'];
   const memberColor = id => FAM_COLORS[Math.max(0, (state.family?.members || []).findIndex(m => m.id === id)) % FAM_COLORS.length];
-  const avatar = (id, sm) => `<span class="av${sm ? ' sm' : ''}" style="--av:${memberColor(id)}" aria-hidden="true">${esc((memberName(id) || '?').trim().charAt(0).toUpperCase())}</span>`;
+  const avatar = (id, sm) => { const m = (state.family?.members || []).find(x => x.id === id); return avBadge(avFor(m?.av, m?.name), sm ? 'sm' : ''); };
   const famAvatars = sm => `<span class="av-pair">${members().slice(0, 3).map(m => avatar(m.id, sm)).join('')}</span>`;
   const whoBadge = x => { const w = multi() && whoOf(x); return w ? `<span class="who-b" title="De ${esc(memberName(w))}">${avatar(w, true)}</span>` : ''; };
   // "Leo e Ane", "Leo, Ane e Bia"; mais de 3: "família"
@@ -4725,9 +4776,9 @@ button:focus-visible, a:focus-visible, [role="button"]:focus-visible, [tabindex]
   }
   // Campo "adicionar pessoa" (nome + botão) que monta a lista em "list" (array de nomes)
   const memberAddHtml = p => `<div class="mem-list" id="${p}MemList"></div><div class="mem-add"><input class="input" id="${p}MemIn" maxlength="20" placeholder="Nome ou apelido. Ex.: Ane" autocapitalize="words" /><button type="button" class="btn-soft" id="${p}MemAdd">${ico('plus')}Adicionar</button></div>`;
-  function bindMemberAdd(root, p, list, onChange) {
+  function bindMemberAdd(root, p, list, onChange, avOf = n => avFor('', n)) {
     const draw = () => {
-      root.querySelector(`#${p}MemList`).innerHTML = list.map((n, i) => `<div class="mem-row"><span class="av sm" style="--av:${FAM_COLORS[(i + 1) % FAM_COLORS.length]};width:24px;height:24px;font-size:.66rem">${esc(n.charAt(0).toUpperCase())}</span><span>${esc(n)}</span><button type="button" class="x" data-rmmem="${i}" aria-label="Tirar ${esc(n)}">${ico('x')}</button></div>`).join('');
+      root.querySelector(`#${p}MemList`).innerHTML = list.map((n, i) => `<div class="mem-row">${avBadge(avOf(n), 'md')}<span>${esc(n)}</span><button type="button" class="x" data-rmmem="${i}" aria-label="Tirar ${esc(n)}">${ico('x')}</button></div>`).join('');
       onChange();
     };
     const add = () => { const inp = root.querySelector(`#${p}MemIn`), n = inp.value.trim().replace(/\s+/g, ' '); if (!n) return; if (list.length < 7 && !list.some(x => norm(x) === norm(n))) list.push(n.charAt(0).toUpperCase() + n.slice(1)); inp.value = ''; inp.focus(); draw(); };
@@ -4735,6 +4786,7 @@ button:focus-visible, a:focus-visible, [role="button"]:focus-visible, [tabindex]
     root.querySelector(`#${p}MemIn`).addEventListener('keydown', e => { if (e.key === 'Enter') { e.preventDefault(); add(); } });
     root.querySelector(`#${p}MemList`).addEventListener('click', e => { const b = e.target.closest('[data-rmmem]'); if (b) { list.splice(+b.dataset.rmmem, 1); draw(); } });
     draw();
+    bindMemberAdd.redraw = draw;
   }
   function openFamily() {
     const fam = familyOn(), cur = (state.family?.members || []).map(x => ({ ...x }));
@@ -4747,27 +4799,33 @@ button:focus-visible, a:focus-visible, [role="button"]:focus-visible, [tabindex]
         <label class="fl">Quem faz parte</label>
         <div class="mem-list" id="famList"></div>
         <div class="mem-add"><input class="input" id="famIn" maxlength="20" placeholder="Nome ou apelido" autocapitalize="words" /><button type="button" class="btn-soft" id="famAdd">${ico('plus')}Adicionar</button></div>
-        <p class="help">"Você" é quem usa este aparelho (toque na bolinha de outra pessoa pra trocar): as entradas lançadas aqui já vêm com esse nome.</p>
+        <p class="help">Toque no bichinho pra trocar. "Você" é quem usa este aparelho: as entradas lançadas aqui já vêm com esse nome.</p>
         <label class="fl">Outro celular</label>
         <button type="button" class="btn-soft" id="famInvite">${ico('plus')}Convidar alguém da família</button>
       </div>
       <div class="err" id="fErr"></div>
       <div class="actions"><span class="grow"></span><button type="button" class="btn cancel" data-close>Cancelar</button><button type="submit" class="btn save">Salvar</button></div></form>`, m => {
       const list = m.querySelector('#famList');
+      let pickIdx = -1;
       const draw = () => {
-        list.innerHTML = cur.map((x, i) => `<div class="mem-row"><button type="button" data-dev="${x.id}" title="${x.id === device ? 'Usa este aparelho' : 'Tocar: é quem usa este aparelho'}" style="border:0;background:none;padding:0;display:inline-flex;${x.id === device ? '' : 'opacity:.55'}"><span class="av" style="--av:${FAM_COLORS[i % FAM_COLORS.length]}">${esc((x.name || '?').charAt(0).toUpperCase())}</span></button>
-          <span style="display:flex;align-items:center;gap:8px;min-width:0"><input class="input" data-mem="${i}" value="${esc(x.name)}" maxlength="20" aria-label="Nome" />${x.id === device ? '<span class="tag-me">você</span>' : ''}</span>
-          ${cur.length > 1 ? `<button type="button" class="x" data-rmmem="${i}" aria-label="Tirar ${esc(x.name)}">${ico('x')}</button>` : '<span></span>'}</div>`).join('');
+        list.innerHTML = cur.map((x, i) => `<div class="mem-row mem-edit"><button type="button" class="av-btn" data-avp="${i}" title="Trocar o bichinho de ${esc(x.name)}">${avBadge(avFor(x.av, x.name), 'md')}</button>
+          <input class="input" data-mem="${i}" value="${esc(x.name)}" maxlength="20" aria-label="Nome" />
+          <button type="button" class="me-tag ${x.id === device ? 'on' : ''}" data-dev="${x.id}" title="Quem usa este aparelho">${x.id === device ? 'Você' : 'É você?'}</button>
+          ${cur.length > 1 ? `<button type="button" class="x" data-rmmem="${i}" aria-label="Tirar ${esc(x.name)}">${ico('x')}</button>` : '<span></span>'}</div>
+          ${i === pickIdx ? avPickHtml(avFor(x.av, x.name), 'famAv' + i) : ''}`).join('');
       };
       bindUsePick(m, f => { useFam = f; m.querySelector('#famBox').hidden = !f; });
       list.addEventListener('input', e => { const inp = e.target.closest('[data-mem]'); if (inp) cur[+inp.dataset.mem].name = inp.value; });
       list.addEventListener('click', e => {
         const d = e.target.closest('[data-dev]'); if (d) { device = d.dataset.dev; draw(); return; }
+        const ap = e.target.closest('[data-avp]'); if (ap) { pickIdx = pickIdx === +ap.dataset.avp ? -1 : +ap.dataset.avp; draw(); return; }
+        const av = e.target.closest('[data-av]'); if (av && pickIdx >= 0) { cur[pickIdx].av = av.dataset.av; pickIdx = -1; draw(); return; }
         const r = e.target.closest('[data-rmmem]'); if (r) { const [gone] = cur.splice(+r.dataset.rmmem, 1); if (gone.id === device) device = cur[0].id; draw(); }
       });
       const add = () => { const inp = m.querySelector('#famIn'), n = inp.value.trim(); if (!n || cur.length >= 8) return;
         const id = 'abcdefghijklmnop'.split('').find(c => !cur.some(x => x.id === c) && !(state.family?.members || []).some(x => x.id === c && !cur.some(y => y.id === c))) || uid();
-        cur.push({ id, name: n.charAt(0).toUpperCase() + n.slice(1) }); inp.value = ''; draw(); };
+        const used = new Set(cur.map(x => avFor(x.av, x.name)));
+        cur.push({ id, name: n.charAt(0).toUpperCase() + n.slice(1), av: AV_KEYS.find(k => !used.has(k)) || avFor('', n) }); inp.value = ''; draw(); };
       m.querySelector('#famAdd').onclick = add;
       m.querySelector('#famIn').addEventListener('keydown', e => { if (e.key === 'Enter') { e.preventDefault(); add(); } });
       m.querySelector('#famInvite').onclick = () => openInvite();
@@ -4776,7 +4834,7 @@ button:focus-visible, a:focus-visible, [role="button"]:focus-visible, [tabindex]
         e.preventDefault();
         const undoSnap = JSON.stringify(state);
         if (useFam) {
-          const ms = cur.map(x => ({ id: x.id, name: x.name.trim().slice(0, 20) })).filter(x => x.name);
+          const ms = cur.map(x => ({ id: x.id, name: x.name.trim().slice(0, 20), av: avFor(x.av, x.name) })).filter(x => x.name);
           if (!ms.length) return showErr('Coloque pelo menos um nome.');
           state.family = { members: ms };
           ui.me = ms.some(x => x.id === device) ? device : ms[0].id; saveUi();
@@ -6139,7 +6197,11 @@ button:focus-visible, a:focus-visible, [role="button"]:focus-visible, [tabindex]
     closeModal();
     let invited = null; try { invited = sessionStorage.getItem('orcamento:convite'); } catch (_) {}
     const reduced = matchMedia('(prefers-reduced-motion: reduce)').matches;
-    const d = { name: account?.fullName || '', nick: account?.nick || '', fam: familyOn(), members: members().filter(x => x.id !== meId()).map(x => x.name) };
+    const d = { name: account?.fullName || '', nick: account?.nick || '', fam: familyOn(), members: members().filter(x => x.id !== meId()).map(x => x.name),
+      av: account?.av || member(meId())?.av || '', mav: Object.fromEntries(members().map(x => [x.name, x.av])) };
+    let avTouched = !!d.av, ppIdx = -1;
+    const myAv = () => avFor(d.av, d.name);
+    const memAv = n => avFor(d.mav[n], n);
     let nickTouched = !!d.nick, i = 0, timers = [];
     const nickOf = () => d.nick || firstName(d.name) || 'você';
     const clearTimers = () => { timers.forEach(t => clearTimeout(t)); timers = []; };
@@ -6191,9 +6253,10 @@ button:focus-visible, a:focus-visible, [role="button"]:focus-visible, [tabindex]
             <div class="ob-float" style="--d:${first && !introDone ? 1700 : 450}ms"><span class="ob-ic" style="--c:#0ea5e9"><svg class="i"><use href="#c-shopping-cart"/></svg></span><span><b>Mercado</b><small>agora mesmo</small></span><b class="neg">- ${R(4590)}</b></div>
           </div>` },
       { k: 'nome', c: ['#8b5cf6', '#ec4899'], q: true, panel: 'Seu perfil', next: 'Continuar', title: 'Como quer ser <em>chamado</em>?', sub: 'É assim que o app vai falar com você.',
-        art: () => `<div class="ob-hello"><span id="obGreet">${greet()}${d.name ? ', ' + esc(nickOf()) : ''}</span><i class="ob-caret"></i></div>
+        art: () => `<div class="ob-hello"><span class="ob-me-av" id="obMeAv">${avBadge(myAv())}</span><span id="obGreet">${greet()}${d.name ? ', ' + esc(nickOf()) : ''}</span><i class="ob-caret"></i></div>
           <label class="fl" for="obName">Seu nome</label><input class="input" id="obName" maxlength="60" autocomplete="name" autocapitalize="words" value="${esc(d.name)}" />
-          <div class="nick-chips" id="obChips"></div>` },
+          <div class="nick-chips" id="obChips"></div>
+          <label class="fl">Seu bichinho</label>${avPickHtml(myAv(), 'obAv')}` },
       { k: 'uso', c: ['#f97316', '#f43f5e'], q: true, panel: 'Quem usa', skip: !!invited, next: 'Continuar', title: 'Vai usar sozinho ou em <em>família</em>?', sub: 'Em família, cada um lança o seu e tudo soma junto: o salário de um, o do outro, as contas da casa.',
         art: () => `<div class="ob-people" id="obPeople"></div>${usePickHtml(d.fam)}
           <div id="obFamBox" ${d.fam ? '' : 'hidden'}><label class="fl" for="obMemIn">Quem mais faz parte?</label>${memberAddHtml('ob')}</div>` },
@@ -6205,9 +6268,12 @@ button:focus-visible, a:focus-visible, [role="button"]:focus-visible, [tabindex]
           <div class="ob-chips" id="obParsed"><span style="--d:0ms">Gasto <b>R$ 45,90</b></span><span style="--d:120ms">${ico('tag', 'width:12px;height:12px')}Mercado</span><span style="--d:240ms">Ontem</span></div></div>
           <p class="ob-cap">Também dá pra importar o extrato do banco.</p>` },
       { k: 'veja', c: ['#ec4899', '#f97316'], expl: true, panel: 'Para onde vai', next: 'Próximo', title: 'Veja pra onde <em>vai</em>', sub: 'O gráfico mostra cada parte, e o app avisa o que vai vencer pra nada atrasar.',
-        art: () => `<div class="ob-donut"><svg viewBox="0 0 42 42">${[[38, '#ec4899'], [24, '#f97316'], [18, '#8b5cf6'], [12, '#0ea5e9']].reduce((a, [len, col]) => { a.s += `<circle cx="21" cy="21" r="15.915" fill="none" stroke="${col}" stroke-width="5" stroke-dasharray="${len - 1.2} ${100 - len + 1.2}" stroke-dashoffset="${25 - a.o}" style="--d:${a.n * 160}ms"/>`; a.o += len; a.n++; return a; }, { s: '', o: 0, n: 0 }).s}</svg>
+        art: () => { const sl = [[40, '#ec4899', 'house'], [26, '#f97316', 'shopping-cart'], [20, '#8b5cf6', 'utensils'], [14, '#0ea5e9', 'car']]; let o = 0;
+          const arcs = sl.map(([len, col], n) => { const c = `<circle cx="21" cy="21" r="15.915" fill="none" stroke="${col}" stroke-width="6" stroke-dasharray="${len - 1.6} ${100 - len + 1.6}" stroke-dashoffset="${-o}" style="--d:${n * 160}ms"/>`; o += len; return c; }).join('');
+          o = 0; const icons = sl.map(([len, , ic], n) => { const a = (o + (len - 1.6) / 2) / 100 * Math.PI * 2; o += len; return `<span class="ob-dic" style="left:${(50 + 37.9 * Math.sin(a)).toFixed(1)}%;top:${(50 - 37.9 * Math.cos(a)).toFixed(1)}%;--d:${700 + n * 120}ms"><svg class="i"><use href="#c-${ic}"/></svg></span>`; }).join('');
+          return `<div class="ob-donut"><svg viewBox="0 0 42 42">${arcs}</svg>${icons}
           <div class="ob-dc"><small>Saiu</small><b>${R(215000)}</b></div></div>
-          <div class="ob-note">${ico('bell', 'width:15px;height:15px')}<span><b>Amanhã vence a luz</b><small>R$ 180,00 · toque pra marcar como paga</small></span></div>` },
+          <div class="ob-note">${ico('bell', 'width:15px;height:15px')}<span><b>Amanhã vence a luz</b><small>R$ 180,00 · toque pra marcar como paga</small></span></div>`; } },
       { k: 'pronto', c: ['#22c55e', '#14b8a6'], last: true, next: 'Começar a usar', title: () => `Tudo pronto, <em>${esc(nickOf())}</em>!`, sub: () => invited ? 'Agora é só digitar o código do convite que te passaram.' : 'Seus dados ficam só neste aparelho. Se quiser, dá pra colocar senha ou usar em outro celular depois, em ⚙.',
         art: () => `<div class="ob-confetti" aria-hidden="true">${Array.from({ length: 34 }, (_, n) => { const a = n / 34 * Math.PI * 2 + (n % 3) * .2, r = 110 + (n * 47) % 90;
             return `<i style="--x:${Math.round(Math.cos(a) * r)}px;--y:${Math.round(Math.sin(a) * r * .8 - 30)}px;--r:${(n * 97) % 360}deg;--c:${['#146ef5', '#8b5cf6', '#ec4899', '#f97316', '#22c55e', '#0ea5e9', '#facc15'][n % 7]};--d:${120 + (n % 5) * 40}ms;${n % 2 ? 'border-radius:50%;width:8px;height:8px' : ''}"></i>`; }).join('')}</div>
@@ -6225,6 +6291,9 @@ button:focus-visible, a:focus-visible, [role="button"]:focus-visible, [tabindex]
       <div class="err" id="obErr"></div>
       <div class="ob-nav"><button type="button" class="ob-back" id="obBack">${ico('left')}Voltar</button><button type="button" class="btn save" id="obNext"></button></div></div>`;
     const stage = $('#obStage');
+    // sem espaço livre em cima (celular, conteúdo alto): as carinhas saem de cena pra não cobrir o texto
+    const checkRoom = () => { const sl = stage.querySelector('.ob-slide:not(.leave-fwd):not(.leave-back)'), top = sl ? Math.min(...[...sl.children].map(c => c.getBoundingClientRect().top)) : 999; $('#obStk')?.classList.toggle('cramped', innerWidth < 640 && top < 190); };
+    if (window.ResizeObserver) new ResizeObserver(() => checkRoom()).observe(stage);
     // número do slide 1 subindo até o valor
     const countUps = () => stage.querySelectorAll('[data-ob-count]').forEach((el, n) => {
       const to = +el.dataset.obCount; if (reduced) { el.textContent = R(to); return; }
@@ -6245,7 +6314,8 @@ button:focus-visible, a:focus-visible, [role="button"]:focus-visible, [tabindex]
     const people = () => {
       const box = stage.querySelector('#obPeople'); if (!box) return;
       const all = [nickOf(), ...(d.fam ? d.members : [])];
-      box.innerHTML = all.map((n, k) => `<span class="ob-person" style="--av:${FAM_COLORS[k % FAM_COLORS.length]}"><span class="av">${esc(n.charAt(0).toUpperCase())}</span><small>${esc(k ? n : (d.fam ? n : 'Só você'))}</small></span>`).join('');
+      box.innerHTML = all.map((n, k) => `<button type="button" class="ob-person ${k === ppIdx ? 'on' : ''}" data-pp="${k}" title="Trocar o bichinho">${avBadge(k ? memAv(n) : myAv())}<small>${esc(k ? n : (d.fam ? n : 'Só você'))}</small></button>`).join('')
+        + (ppIdx >= 0 && ppIdx < all.length ? avPickHtml(ppIdx ? memAv(all[ppIdx]) : myAv(), 'obPP') : '');
     };
     const valid = () => SLIDES[i].k !== 'nome' || d.name.trim().length >= 2;
     const syncNav = () => {
@@ -6265,6 +6335,7 @@ button:focus-visible, a:focus-visible, [role="button"]:focus-visible, [tabindex]
           <div class="ob-art">${s.panel ? `<div class="ob-panel"><div class="ob-ph"><i></i>${s.panel}<span class="grow"></span><span class="hint">toque nas carinhas</span></div>${s.art()}</div>` : s.art()}</div>
           <h1 class="ob-title">${typeof s.title === 'function' ? s.title() : s.title}</h1><p class="ob-sub">${typeof s.sub === 'function' ? s.sub() : s.sub}</p></section>`;
         syncNav(); bind(s.k);
+        requestAnimationFrame(checkRoom);
       };
       const [c1, c2] = SLIDES[to].c; const root = $('#authScreen'); root.style.setProperty('--ob-c', c1); root.style.setProperty('--ob-c2', c2);
       drawStickers(SLIDES[to].k, to);
@@ -6281,28 +6352,38 @@ button:focus-visible, a:focus-visible, [role="button"]:focus-visible, [tabindex]
           if (!nickTouched) d.nick = list[0] || '';
           chips.innerHTML = list.map(n => `<button type="button" data-nick="${esc(n)}" class="${n === d.nick ? 'on' : ''}">${esc(n)}</button>`).join('');
           g.textContent = greet() + (d.name.trim() ? ', ' + nickOf() : '');
+          stage.querySelector('#obMeAv').innerHTML = avBadge(myAv());
+          stage.querySelectorAll('#obAv [data-av]').forEach(b => b.classList.toggle('on', b.dataset.av === myAv()));
           $('#obNext').disabled = !valid();
         };
-        inp.addEventListener('input', () => { d.name = inp.value; draw(); });
+        inp.addEventListener('input', () => { d.name = inp.value; if (!avTouched) d.av = ''; draw(); });
         chips.addEventListener('click', e => { const b = e.target.closest('[data-nick]'); if (!b) return; d.nick = b.dataset.nick; nickTouched = true; draw(); });
+        stage.querySelector('#obAv').addEventListener('click', e => { const b = e.target.closest('[data-av]'); if (!b) return; d.av = b.dataset.av; avTouched = true; draw();
+          const me = stage.querySelector('#obMeAv .av'); if (me && !reduced) { me.classList.remove('boing'); void me.offsetWidth; me.classList.add('boing'); } });
         draw(); setTimeout(() => inp.focus(), reduced ? 0 : 380);
       }
       if (k === 'uso') {
         bindUsePick(stage, fam => { d.fam = fam; stage.querySelector('#obFamBox').hidden = !fam; people(); });
-        bindMemberAdd(stage, 'ob', d.members, people);
+        bindMemberAdd(stage, 'ob', d.members, people, memAv);
+        stage.querySelector('#obPeople').addEventListener('click', e => {
+          const pp = e.target.closest('[data-pp]'); if (pp) { ppIdx = ppIdx === +pp.dataset.pp ? -1 : +pp.dataset.pp; people(); return; }
+          const av = e.target.closest('[data-av]'); if (!av) return;
+          if (ppIdx === 0) { d.av = av.dataset.av; avTouched = true; } else { const n = [nickOf(), ...d.members][ppIdx]; if (n) d.mav[n] = av.dataset.av; }
+          ppIdx = -1; people(); stage.querySelector('#obMemList') && bindMemberAdd.redraw?.();
+        });
       }
     };
     const finish = () => {
       const full = d.name.trim().replace(/\s+/g, ' ');
-      account = { ...(account || {}), user: norm(full).split(' ')[0] || 'eu', fullName: full, nick: d.nick || firstName(full), created: account?.created || Date.now() };
+      account = { ...(account || {}), user: norm(full).split(' ')[0] || 'eu', fullName: full, nick: d.nick || firstName(full), av: myAv(), created: account?.created || Date.now() };
       saveAccount();
       if (!invited && d.fam) {
         // quem já existia continua com o mesmo id (os lançamentos marcados com a pessoa não se perdem)
         const old = state.family?.members || [], me = old.find(x => x.id === meId()) || { id: old.some(x => x.id === 'a') ? uid() : 'a' };
-        const used = new Set([me.id]), pick = n => { const hit = old.find(x => !used.has(x.id) && norm(x.name) === norm(n)); const id = hit ? hit.id : 'abcdefghijklmnop'.split('').find(c => !used.has(c) && !old.some(x => x.id === c)) || uid(); used.add(id); return { id, name: n }; };
-        state.family = { members: [{ id: me.id, name: account.nick }, ...d.members.map(pick)] }; ui.me = me.id; saveUi(); save();
+        const used = new Set([me.id]), pick = n => { const hit = old.find(x => !used.has(x.id) && norm(x.name) === norm(n)); const id = hit ? hit.id : 'abcdefghijklmnop'.split('').find(c => !used.has(c) && !old.some(x => x.id === c)) || uid(); used.add(id); return { id, name: n, av: memAv(n) }; };
+        state.family = { members: [{ id: me.id, name: account.nick, av: myAv() }, ...d.members.map(pick)] }; ui.me = me.id; saveUi(); save();
       }
-      else if (!invited && state.family) { state.family.solo = true; save(); }
+      else if (!invited && state.family) { state.family.solo = true; const me = state.family.members.find(x => x.id === meId()); if (me) me.av = myAv(); save(); }
       enterApp(true);
     };
     const next = () => { if (!valid()) { $('#obErr').textContent = 'Diga seu nome pra continuar.'; return; } if (SLIDES[i].last) return finish(); show(i + 1, 1); };
