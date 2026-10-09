@@ -100,11 +100,23 @@ O app olha seus gastos e acha o que parece assinatura: serviços conhecidos (Net
 
 Quando você importa um extrato e uma assinatura veio com valor diferente, o app avisa ("Spotify subiu de R$ 21,90 para R$ 23,90") e atualiza o preço com um toque, guardando o valor antigo no histórico.
 
-## Conta
+## Só eu ou em família
 
-Na primeira vez, o app pede pra criar uma conta com **nome completo, como quer ser chamado, nome de usuário e senha**. O app sugere apelidos a partir do seu nome (Gustavo → Gu, Guga, Guto) e o topo passa a te chamar assim ("Boa noite, Gu"). A senha fica guardada só neste aparelho, embaralhada, e os lançamentos continuam só aqui. Pra usar em outro aparelho, ligue a sincronização.
+Na apresentação da primeira vez, o app pergunta **como vai usar**: **Só eu** ou **Em família** (casal ou a casa toda). Em família você coloca quem faz parte (Leo, Ane, Bia…). Dá pra mudar depois em **⚙ → Uso do app**.
 
-"Manter conectado neste aparelho" evita digitar a senha toda vez. Em **⚙ → Sua conta** dá pra trocar o nome, o apelido ou a senha, ligar a entrada com digital e **sair**. Esqueceu a senha? Em "Esqueci a senha" o app apaga a conta e os dados deste aparelho, e você recupera tudo pela sincronização ou pelo backup.
+Tudo continua sendo **um orçamento só**: os números somam tudo junto, do mesmo jeito. A família muda o jeito do app falar ("Boa noite, Leo e Ane", "Dinheiro de vocês") e deixa marcar **de quem é** cada entrada (o salário de cada um), gasto, cartão e banco, com uma bolinha com a inicial. Sem marcar, fica "da família".
+
+- **Entradas por pessoa:** o card *Entrou* mostra quanto veio de cada um, e o gráfico de Entradas mostra *Por pessoa* ou *Por tipo*.
+- **Bancos:** em *Meus bancos*, toque na bolinha de cada banco pra dizer de quem é (ou da família, numa conta conjunta).
+- **Lançamento rápido:** o nome de alguém marca como dessa pessoa ("tênis 250 do leo"); "família" ou "nosso" marcam como da família.
+- **Cada um no seu celular:** com a sincronização ligada, *Convidar alguém da família* gera um link e um código. A pessoa abre o link, passa pela apresentação do app e digita o código, sem precisar de conta no GitHub. O token vai criptografado no link e só abre com o código.
+- **Lançando ao mesmo tempo:** a sincronização junta o que cada celular lançou, item por item, em vez de um substituir o outro.
+
+## Primeira vez
+
+Não tem cadastro nem senha. Na primeira vez, o app abre uma **apresentação em telas** (dá pra arrastar pro lado no celular): pergunta **como você quer ser chamado** (com sugestões de apelido: Fernanda → Fer, Nanda) e se vai usar **só você ou em família**, e mostra em telas animadas como o app funciona (entradas, contas fixas e gastos; o lançamento rápido; o gráfico e os avisos). Dá pra pular as explicações.
+
+Em **⚙ → Seu nome** dá pra trocar o nome ou o apelido e **ver a apresentação de novo**. Os lançamentos ficam só neste aparelho; pra proteger, use **⚙ → Senha para abrir o app**.
 
 ## Senha e digital
 
