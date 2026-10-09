@@ -878,11 +878,11 @@ html.auth .auth-screen { display: grid; place-items: center; }
 /* ----- cor: cada tela tem a sua (--ob-c → --ob-c2) ----- */
 .auth-screen { --ob-c: #146ef5; --ob-c2: #8b5cf6; overflow-x: hidden; }
 .ob-bg { position: fixed; inset: 0; z-index: 0; pointer-events: none; overflow: hidden; }
-.ob-bg i { position: absolute; border-radius: 50%; filter: blur(70px); opacity: .5; transition: background-color 1s ease; }
+.ob-bg i { position: absolute; border-radius: 50%; filter: blur(80px); opacity: .28; transition: background-color 1s ease; }
 .ob-bg i:nth-child(1) { width: 55vmax; height: 55vmax; left: -18vmax; top: -22vmax; background: var(--ob-c); animation: ob-blob1 14s ease-in-out infinite alternate; }
 .ob-bg i:nth-child(2) { width: 46vmax; height: 46vmax; right: -16vmax; bottom: -18vmax; background: var(--ob-c2); animation: ob-blob2 16s ease-in-out infinite alternate; }
 .ob-bg i:nth-child(3) { width: 26vmax; height: 26vmax; right: 8vmax; top: 12vh; background: var(--ob-c2); opacity: .22; animation: ob-blob1 11s ease-in-out infinite alternate-reverse; }
-:root[data-theme="dark"] .ob-bg i { opacity: .32; }
+:root[data-theme="dark"] .ob-bg i { opacity: .22; }
 @keyframes ob-blob1 { to { transform: translate(8vmax, 6vmax) scale(1.12); } }
 @keyframes ob-blob2 { to { transform: translate(-7vmax, -5vmax) scale(.9); } }
 .ob { position: relative; z-index: 1; }
@@ -895,17 +895,6 @@ html.auth .auth-screen { display: grid; place-items: center; }
 .ob .use-pick button.on b svg.i { color: var(--ob-c); }
 .ob .nick-chips button.on { background: linear-gradient(100deg, var(--ob-c), var(--ob-c2)); border-color: transparent; color: #fff; }
 .ob .input:focus { border-color: var(--ob-c); box-shadow: 0 0 0 3px color-mix(in srgb, var(--ob-c) 22%, transparent); }
-/* ----- abertura: tela cheia em degradê com moedas subindo, que sobe e revela a 1ª tela ----- */
-.ob-splash { position: fixed; inset: 0; z-index: 5; background: linear-gradient(140deg, #146ef5, #8b5cf6 55%, #ec4899); display: grid; place-items: center; overflow: hidden; cursor: pointer;
-  transition: transform .75s cubic-bezier(.7, 0, .2, 1), border-radius .75s cubic-bezier(.7, 0, .2, 1); }
-.ob-splash.gone { transform: translateY(-104%); border-radius: 0 0 50% 50% / 0 0 18% 18%; }
-.ob-word { text-align: center; color: #fff; }
-.ob-word span { display: block; font-size: clamp(2.6rem, 9vw, 4.4rem); font-weight: 600; letter-spacing: -.05em; line-height: 1; animation: ob-word .9s cubic-bezier(.2, .9, .25, 1.25) .1s both; }
-.ob-word small { display: block; margin-top: 12px; font-size: 1rem; opacity: .85; letter-spacing: .02em; animation: ob-up .6s ease .55s both; }
-@keyframes ob-word { from { opacity: 0; transform: scale(.6) translateY(20px); filter: blur(8px); } }
-.ob-coins i { position: absolute; left: var(--x); bottom: -60px; width: 46px; height: 46px; border-radius: 50%; display: grid; place-items: center; font-style: normal; font-weight: 800; font-size: .8rem; color: #fff;
-  background: rgba(255, 255, 255, .18); box-shadow: inset 0 0 0 2px rgba(255, 255, 255, .45); backdrop-filter: blur(2px); transform: scale(var(--s)); animation: ob-coin 1.6s cubic-bezier(.3, .6, .4, 1) var(--d) both; }
-@keyframes ob-coin { from { transform: translateY(0) scale(var(--s)) rotate(-20deg); opacity: 0; } 20% { opacity: 1; } to { transform: translateY(-115vh) scale(var(--s)) rotate(25deg); opacity: .9; } }
 /* ----- tela 1: cards coloridos que entram voando e ficam flutuando ----- */
 .ob-kpi { border: 0; color: #fff; box-shadow: 0 16px 34px -18px var(--kc); animation: ob-fly .9s cubic-bezier(.2, .9, .3, 1.3) var(--d) both, ob-float 4s ease-in-out calc(var(--d) + 1s + var(--f)) infinite; }
 .ob-kpi small { color: rgba(255, 255, 255, .82); }
@@ -926,6 +915,73 @@ html.auth .auth-screen { display: grid; place-items: center; }
 .ob-done svg { stroke: url(#obDoneGrad); stroke: var(--ob-c); stroke-width: 3.5; }
 .ob-done { filter: drop-shadow(0 12px 22px color-mix(in srgb, var(--ob-c) 45%, transparent)); }
 .ob-person .av { box-shadow: 0 0 0 3px var(--bg), 0 10px 20px -10px var(--av); }
+
+/* ===== Junção: cartões limpos (produto) + carinhas coloridas (divertido) ===== */
+/* carinhas */
+.ob-stk { position: fixed; inset: 0; z-index: 0; pointer-events: none; }
+.stk { position: absolute; width: 0; height: 0; transform: translate(calc(var(--px, 0) * var(--dep) * -4), calc(var(--py, 0) * var(--dep) * -4)); transition: transform .5s cubic-bezier(.2, .7, .3, 1); }
+.stk-in { position: absolute; left: 0; top: 0; transform: translate(-50%, -50%) rotate(var(--rot)); animation: stk-pop .7s cubic-bezier(.2, .9, .3, 1.45) var(--pd) both, stk-bob 5s ease-in-out calc(var(--pd) + .7s + var(--f)) infinite; }
+.stk-face { pointer-events: auto; cursor: pointer; display: grid; place-items: center; width: calc(var(--sz) * clamp(62px, 8.5vw, 112px)); height: calc(var(--sz) * clamp(62px, 8.5vw, 112px)); border-radius: 50%; border: 0; padding: 0;
+  background: radial-gradient(120% 120% at 30% 25%, color-mix(in srgb, var(--sc) 70%, #fff), var(--sc) 55%, color-mix(in srgb, var(--sc) 82%, #000));
+  box-shadow: 0 18px 34px -18px color-mix(in srgb, var(--sc) 80%, #000), inset 0 -6px 14px rgba(0, 0, 0, .12); transition: transform .25s cubic-bezier(.2, .9, .3, 1.4); }
+.stk-face:hover { transform: scale(1.08) rotate(-6deg); }
+.stk-face svg { width: 74%; height: 74%; fill: none; stroke: #fff; stroke-width: 7; stroke-linecap: round; stroke-linejoin: round; }
+.stk-face svg .f { fill: #fff; }
+.stk-face.boing { animation: stk-boing .7s cubic-bezier(.2, .9, .3, 1.3); }
+.stk.out .stk-in { animation: stk-out .35s ease-in both; }
+@keyframes stk-pop { from { opacity: 0; transform: translate(-50%, -50%) rotate(calc(var(--rot) - 40deg)) scale(0); } }
+@keyframes stk-bob { 50% { transform: translate(-50%, calc(-50% - 10px)) rotate(calc(var(--rot) + 6deg)); } }
+@keyframes stk-out { to { opacity: 0; transform: translate(-50%, -50%) rotate(calc(var(--rot) + 30deg)) scale(.2); } }
+@keyframes stk-boing { 0% { transform: scale(1); } 25% { transform: scale(1.28, .8) rotate(-10deg); } 50% { transform: scale(.88, 1.14) rotate(8deg); } 75% { transform: scale(1.06, .96); } 100% { transform: scale(1); } }
+@media (max-width: 640px) { .stk-face { width: calc(var(--sz) * 58px); height: calc(var(--sz) * 58px); } }
+/* abertura: fundo claro, nome no meio e carinhas grandes que saltam e depois se espalham */
+.ob-splash { position: fixed; inset: 0; z-index: 5; background: var(--bg); display: grid; place-items: center; overflow: hidden; cursor: pointer; transition: opacity .6s ease .15s, visibility 0s .8s; }
+.ob-splash .stk { transition: transform .75s cubic-bezier(.6, 0, .3, 1); }
+.ob-splash.gone { opacity: 0; visibility: hidden; }
+.ob-splash.gone .stk { transform: translate(var(--ox), var(--oy)) rotate(25deg) scale(.6); }
+.ob-splash .ob-word { position: relative; z-index: 1; color: var(--ink); transition: transform .6s cubic-bezier(.6, 0, .3, 1), opacity .4s; }
+.ob-splash.gone .ob-word { transform: scale(1.15); opacity: 0; }
+.ob-word { text-align: center; }
+.ob-word span { display: block; font-size: clamp(2.8rem, 10vw, 5rem); font-weight: 600; letter-spacing: -.055em; line-height: 1; animation: ob-word .9s cubic-bezier(.2, .9, .25, 1.25) .25s both; }
+.ob-word small { display: block; margin-top: 12px; font-size: 1rem; color: var(--muted); letter-spacing: .01em; animation: ob-up .6s ease .7s both; }
+@keyframes ob-word { from { opacity: 0; transform: scale(.6) translateY(20px); filter: blur(8px); } }
+/* cartões limpos com etiqueta no topo */
+.ob-panel { background: color-mix(in srgb, var(--card) 82%, transparent); backdrop-filter: blur(14px); -webkit-backdrop-filter: blur(14px); border: 1px solid var(--edge); border-radius: 24px; padding: 16px 18px 18px;
+  box-shadow: 0 1px 0 rgba(255, 255, 255, .6) inset, 0 24px 48px -32px rgba(20, 20, 30, .35); animation: ob-up .55s cubic-bezier(.2, .75, .25, 1) .05s both; }
+.ob-ph { display: flex; align-items: center; gap: 7px; font-size: .7rem; font-weight: 600; letter-spacing: .06em; text-transform: uppercase; color: var(--muted); margin-bottom: 14px; }
+.ob-ph > i { width: 7px; height: 7px; border-radius: 50%; background: var(--ob-c); box-shadow: 0 0 0 4px color-mix(in srgb, var(--ob-c) 18%, transparent); }
+.ob-ph .hint { text-transform: none; letter-spacing: 0; font-weight: 500; opacity: .75; }
+.ob-ph .hint::after { content: " ↗"; }
+.ob-slide.q .ob-art .ob-panel { width: 100%; }
+.ob-panel .ob-row { box-shadow: none; background: var(--field); }
+.ob-panel .ob-input { box-shadow: none; background: var(--field); }
+.ob-slide[data-k="veja"] .ob-note { position: relative; transform: rotate(-3.5deg); margin: -22px -10px 0 26px; box-shadow: 0 22px 40px -22px rgba(20, 20, 30, .45); animation: ob-tilt .6s cubic-bezier(.2, .9, .3, 1.3) .9s both; }
+@keyframes ob-tilt { from { opacity: 0; transform: rotate(6deg) translateY(30px) scale(.9); } }
+/* tela 1: celular inclinado com o app + cartão de lançamento por cima */
+.ob-hero { position: relative; height: 300px; display: grid; place-items: center; }
+.ob-phone { position: relative; width: 210px; height: 290px; border-radius: 34px; background: var(--card); border: 7px solid #15161a; box-shadow: 0 40px 70px -36px rgba(20, 20, 40, .55); padding: 26px 14px 0; overflow: hidden;
+  transform: rotate(-7deg); animation: ob-phone 1s cubic-bezier(.2, .9, .3, 1.25) var(--d) both, ob-float 6s ease-in-out calc(var(--d) + 1.2s) infinite; }
+:root[data-theme="dark"] .ob-phone { border-color: #2a2c33; }
+@keyframes ob-phone { from { opacity: 0; transform: rotate(-24deg) translateY(90px) scale(.7); } }
+@keyframes ob-float { 50% { translate: 0 -8px; } }
+.ob-notch { position: absolute; top: 6px; left: 50%; width: 62px; height: 16px; margin-left: -31px; border-radius: 99px; background: #15161a; }
+.ob-ph-head small { display: block; color: var(--muted); font-size: .66rem; }
+.ob-ph-head b { display: block; font-size: .78rem; margin-top: 2px; }
+.ob-ph-head .ob-big { font-size: 1.45rem; letter-spacing: -.03em; margin-top: 0; color: var(--ink); }
+.ob-mini { display: grid; grid-template-columns: 1fr 1fr; gap: 6px; margin-top: 10px; }
+.ob-mini div { background: color-mix(in srgb, var(--c) 13%, var(--card)); border-radius: 10px; padding: 6px 8px; }
+.ob-mini small { display: block; font-size: .58rem; color: var(--muted); } .ob-mini b { font-size: .68rem; color: var(--c); }
+.ob-bars { display: flex; align-items: flex-end; gap: 6px; height: 70px; margin-top: 12px; }
+.ob-bars i { flex: 1; height: var(--h); border-radius: 6px 6px 3px 3px; background: var(--c); transform-origin: bottom; animation: bar-up .7s cubic-bezier(.2, .9, .3, 1.3) var(--d) both; }
+.ob-tabbar { position: absolute; left: 0; right: 0; bottom: 0; height: 40px; display: flex; align-items: center; justify-content: space-around; border-top: 1px solid var(--line); }
+.ob-tabbar span { width: 18px; height: 4px; border-radius: 4px; background: var(--field-line); }
+.ob-tabbar .plus { width: 28px; height: 28px; border-radius: 50%; background: var(--ink); color: var(--card); display: grid; place-items: center; font-weight: 700; margin-top: -2px; }
+.ob-float { position: absolute; right: max(0px, calc(50% - 205px)); bottom: 26px; display: flex; align-items: center; gap: 10px; background: var(--card); border-radius: 16px; padding: 10px 14px 10px 10px; border: 1px solid var(--edge);
+  box-shadow: 0 24px 44px -22px rgba(20, 20, 40, .5); transform: rotate(5deg); animation: ob-tilt .7s cubic-bezier(.2, .9, .3, 1.35) var(--d) both, ob-float 5s ease-in-out calc(var(--d) + 1s) infinite; }
+.ob-float b { display: block; font-size: .82rem; } .ob-float small { color: var(--muted); font-size: .68rem; } .ob-float b.neg { font-size: .84rem; white-space: nowrap; margin-left: 6px; }
+.ob-float .ob-ic { width: 32px; height: 32px; border-radius: 10px; }
+@media (max-width: 640px) { .ob-hero { height: 270px; } .ob-phone { width: 186px; height: 262px; } .ob-float { right: 2px; bottom: 14px; } .ob-panel { padding: 14px 14px 16px; } .ob-ph .hint { display: none; } }
+@media (prefers-reduced-motion: reduce) { .stk-in, .stk-face, .ob-phone, .ob-float, .ob-panel, .ob-bars i, .ob-note { animation: none !important; } .ob-splash { display: none; } .stk { transition: none; } }
 /* ----- última tela: confete ----- */
 .ob-slide[data-k="pronto"] .ob-art { position: relative; }
 .ob-confetti { position: absolute; left: 50%; top: 50%; width: 0; height: 0; pointer-events: none; }
@@ -6089,27 +6145,66 @@ button:focus-visible, a:focus-visible, [role="button"]:focus-visible, [tabindex]
     const clearTimers = () => { timers.forEach(t => clearTimeout(t)); timers = []; };
     const later = (fn, ms) => timers.push(setTimeout(fn, ms));
     const R = c => brl.format(c / 100);
+    // Carinhas coloridas (desenhadas aqui mesmo): flutuam em volta, pulam e mudam de cara quando tocadas
+    const FACES = {
+      smile: '<path d="M29 43q6-8 12 0M59 43q6-8 12 0"/><path d="M31 60q19 19 38 0"/>',
+      wink: '<path d="M29 43q6-8 12 0M58 41h13"/><path d="M33 61q17 15 34 0"/>',
+      calm: '<path d="M29 41q6 7 12 0M59 41q6 7 12 0"/><path d="M38 62q12 9 24 0"/>',
+      star: '<path d="M35 33v15M27.5 40.5h15M65 33v15M57.5 40.5h15"/><path d="M36 61q14 13 28 0"/>',
+      grin: '<circle cx="36" cy="42" r="5" class="f"/><circle cx="64" cy="42" r="5" class="f"/><path d="M30 57h40q-4 20-20 20t-20-20z" class="f"/>',
+      wow: '<circle cx="36" cy="41" r="5" class="f"/><circle cx="64" cy="41" r="5" class="f"/><circle cx="50" cy="65" r="8"/>',
+      cool: '<path d="M27 38h46"/><path d="M28 38q0 11 10 11t10-11M52 38q0 11 10 11t10-11" class="f"/><path d="M38 64q12 7 24-2"/>',
+    };
+    const FACE_KEYS = Object.keys(FACES);
+    const STK_COLORS = ['#ff5a5f', '#ffb020', '#7c5cff', '#22c55e', '#0ea5e9', '#ff7a1a', '#ec4899', '#14b8a6'];
+    const faceSvg = f => `<svg viewBox="0 0 100 100" aria-hidden="true">${FACES[f]}</svg>`;
+    // posições (em % da tela) por tela: [x, y, tamanho, giro, cara]; no celular ficam nos cantos, meio pra fora
+    const STK = {
+      oi: [[9, 16, 1.15, -14, 'smile'], [84, 10, .9, 12, 'star'], [90, 62, 1.25, -8, 'grin'], [6, 70, .85, 16, 'wink']],
+      nome: [[10, 22, .95, 10, 'wink'], [88, 30, 1.1, -12, 'calm'], [82, 80, .8, 8, 'smile']],
+      uso: [[8, 30, 1.05, -10, 'grin'], [90, 18, .85, 14, 'smile'], [86, 74, 1.1, -6, 'calm'], [12, 82, .75, 10, 'star']],
+      como: [[7, 18, .95, 12, 'cool'], [91, 40, 1.15, -10, 'smile'], [10, 76, .9, -14, 'calm']],
+      rapido: [[88, 14, 1, 10, 'wow'], [8, 44, 1.1, -8, 'star'], [86, 78, .85, 14, 'wink']],
+      veja: [[10, 14, .9, -12, 'smile'], [90, 52, 1.2, 8, 'grin'], [8, 78, .95, 12, 'wow']],
+      pronto: [[10, 18, 1.1, -10, 'star'], [88, 16, 1, 12, 'grin'], [90, 70, 1.15, -8, 'smile'], [8, 66, 1, 10, 'cool'], [50, 6, .7, 0, 'wink']],
+    };
+    const stickerHtml = (x, y, sz, rot, face, col, n, extra = '') => `<span class="stk" style="left:${x}%;top:${y}%;--sz:${sz};--dep:${(n % 3 + 1) * 6}px;${extra}">
+        <span class="stk-in" style="--rot:${rot}deg;--f:${(n * .7) % 2.4}s;--pd:${n * 90}ms"><button type="button" class="stk-face" data-face="${face}" style="--sc:${col}" aria-label="Carinha">${faceSvg(face)}</button></span></span>`;
+    const drawStickers = (k, idx) => {
+      const box = $('#obStk'); if (!box) return;
+      box.querySelectorAll('.stk').forEach(el => { el.classList.add('out'); setTimeout(() => el.remove(), 380); });
+      // celular: só na faixa de cima, menores, sem cobrir texto nem botões
+      const list = innerWidth < 640 ? (STK[k] || []).slice(0, 3).map(([, , , rot, f], n) => [[24, 15, .8], [56, 11, .62], [86, 16, .9]][n].concat([rot, f])) : STK[k] || [];
+      const html = list.map(([x, y, sz, rot, f], n) => stickerHtml(x, y, sz, rot, f, STK_COLORS[(idx * 3 + n) % STK_COLORS.length], n)).join('');
+      box.insertAdjacentHTML('beforeend', html);
+    };
     const row = (ic, name, tag, val, pos, delay, who, col) => `<div class="ob-row" style="--d:${delay}ms"><span class="ob-ic" style="--c:${col}"><svg class="i"><use href="#c-${ic}"/></svg></span>
       <span class="n">${who ? `<span class="av sm" style="--av:${FAM_COLORS[0]};margin-right:6px">${esc(who.charAt(0).toUpperCase())}</span>` : ''}${esc(name)}<small>${tag}</small></span><b class="${pos ? 'pos' : ''}">${pos ? '+ ' : '- '}${R(val)}</b></div>`;
     const SLIDES = [
       { k: 'oi', c: ['#146ef5', '#8b5cf6'], next: 'Vamos lá', title: 'Oi! Bora organizar seu <em>dinheiro</em>?', sub: 'Em menos de um minuto você vê como tudo funciona.',
-        art: () => `<div class="ob-kpis">${[['Entrou', 320000, 'k-in', '-40deg'], ['Saiu', 215000, 'k-out', '0deg'], ['Sobrou', 105000, 'k-left', '40deg']].map(([l, v, c, r], n) => `<div class="ob-kpi ${c}" style="--d:${(first && !introDone ? 1250 : 120) + n * 130}ms;--r:${r};--f:${n * .6}s"><small>${l}</small><b class="num" data-ob-count="${v}">${R(0)}</b></div>`).join('')}</div>
-          <div class="ob-bar"><i></i></div><p class="ob-cap">Tudo que entra, tudo que sai e quanto sobra no mês.</p>` },
-      { k: 'nome', c: ['#8b5cf6', '#ec4899'], q: true, next: 'Continuar', title: 'Como quer ser <em>chamado</em>?', sub: 'É assim que o app vai falar com você.',
+        art: () => `<div class="ob-hero">
+            <div class="ob-phone" style="--d:${first && !introDone ? 1150 : 80}ms"><div class="ob-notch"></div>
+              <div class="ob-ph-head"><small>${greet()}</small><b>Sobra do mês</b><b class="num ob-big" data-ob-count="105000">${R(0)}</b></div>
+              <div class="ob-mini">${[['Entrou', 320000, '#10b981'], ['Saiu', 215000, '#ff7a1a']].map(([l, v, c]) => `<div style="--c:${c}"><small>${l}</small><b class="num" data-ob-count="${v}">${R(0)}</b></div>`).join('')}</div>
+              <div class="ob-bars">${[42, 64, 38, 80, 56, 92].map((h, n) => `<i style="--h:${h}%;--d:${(first && !introDone ? 1500 : 300) + n * 70}ms;--c:${STK_COLORS[(n + 2) % 8]}"></i>`).join('')}</div>
+              <div class="ob-tabbar"><span></span><span class="plus">+</span><span></span></div></div>
+            <div class="ob-float" style="--d:${first && !introDone ? 1700 : 450}ms"><span class="ob-ic" style="--c:#0ea5e9"><svg class="i"><use href="#c-shopping-cart"/></svg></span><span><b>Mercado</b><small>agora mesmo</small></span><b class="neg">- ${R(4590)}</b></div>
+          </div>` },
+      { k: 'nome', c: ['#8b5cf6', '#ec4899'], q: true, panel: 'Seu perfil', next: 'Continuar', title: 'Como quer ser <em>chamado</em>?', sub: 'É assim que o app vai falar com você.',
         art: () => `<div class="ob-hello"><span id="obGreet">${greet()}${d.name ? ', ' + esc(nickOf()) : ''}</span><i class="ob-caret"></i></div>
           <label class="fl" for="obName">Seu nome</label><input class="input" id="obName" maxlength="60" autocomplete="name" autocapitalize="words" placeholder="Ex.: Gustavo Vilella" value="${esc(d.name)}" />
           <div class="nick-chips" id="obChips"></div>` },
-      { k: 'uso', c: ['#f97316', '#f43f5e'], q: true, skip: !!invited, next: 'Continuar', title: 'Vai usar sozinho ou em <em>família</em>?', sub: 'Em família, cada um lança o seu e tudo soma junto: o salário de um, o do outro, as contas da casa.',
+      { k: 'uso', c: ['#f97316', '#f43f5e'], q: true, panel: 'Quem usa', skip: !!invited, next: 'Continuar', title: 'Vai usar sozinho ou em <em>família</em>?', sub: 'Em família, cada um lança o seu e tudo soma junto: o salário de um, o do outro, as contas da casa.',
         art: () => `<div class="ob-people" id="obPeople"></div>${usePickHtml(d.fam)}
           <div id="obFamBox" ${d.fam ? '' : 'hidden'}><label class="fl" for="obMemIn">Quem mais faz parte?</label>${memberAddHtml('ob')}</div>` },
-      { k: 'como', c: ['#10b981', '#0ea5e9'], expl: true, next: 'Próximo', title: 'Tudo num <em>lugar só</em>', sub: '<b>Entradas</b> é o que chega. <b>Contas fixas</b>, o que vem todo mês. <b>Gastos</b>, o dia a dia.',
+      { k: 'como', c: ['#10b981', '#0ea5e9'], expl: true, panel: 'Este mês', next: 'Próximo', title: 'Tudo num <em>lugar só</em>', sub: '<b>Entradas</b> é o que chega. <b>Contas fixas</b>, o que vem todo mês. <b>Gastos</b>, o dia a dia.',
         art: () => `<div class="ob-list">${row('briefcase', 'Salário', 'Entrada', 320000, true, 150, d.fam ? nickOf() : '', '#10b981')}${row('house', 'Aluguel', 'Conta fixa · dia 10', 120000, false, 450, '', '#f59e0b')}${row('shopping-cart', 'Mercado', 'Gasto · hoje', 24590, false, 750, '', '#0ea5e9')}</div>
           <p class="ob-cap" style="--d:1050ms">O app soma tudo sozinho e mostra quanto sobra.</p>` },
-      { k: 'rapido', c: ['#0ea5e9', '#6366f1'], expl: true, next: 'Próximo', title: 'Lançar é <em>rapidinho</em>', sub: 'Toque no <b>+</b> e escreva do seu jeito. O app entende o resto.',
+      { k: 'rapido', c: ['#0ea5e9', '#6366f1'], expl: true, panel: 'Lançamento rápido', next: 'Próximo', title: 'Lançar é <em>rapidinho</em>', sub: 'Toque no <b>+</b> e escreva do seu jeito. O app entende o resto.',
         art: () => `<div class="ob-quick"><div class="ob-input"><span id="obTyped"></span><i class="ob-caret"></i></div>
           <div class="ob-chips" id="obParsed"><span style="--d:0ms">Gasto <b>R$ 45,90</b></span><span style="--d:120ms">${ico('tag', 'width:12px;height:12px')}Mercado</span><span style="--d:240ms">Ontem</span></div></div>
           <p class="ob-cap">Também dá pra importar o extrato do banco.</p>` },
-      { k: 'veja', c: ['#ec4899', '#f97316'], expl: true, next: 'Próximo', title: 'Veja pra onde <em>vai</em>', sub: 'O gráfico mostra cada parte, e o app avisa o que vai vencer pra nada atrasar.',
+      { k: 'veja', c: ['#ec4899', '#f97316'], expl: true, panel: 'Para onde vai', next: 'Próximo', title: 'Veja pra onde <em>vai</em>', sub: 'O gráfico mostra cada parte, e o app avisa o que vai vencer pra nada atrasar.',
         art: () => `<div class="ob-donut"><svg viewBox="0 0 42 42">${[[38, '#ec4899'], [24, '#f97316'], [18, '#8b5cf6'], [12, '#0ea5e9']].reduce((a, [len, col]) => { a.s += `<circle cx="21" cy="21" r="15.915" fill="none" stroke="${col}" stroke-width="5" stroke-dasharray="${len - 1.2} ${100 - len + 1.2}" stroke-dashoffset="${25 - a.o}" style="--d:${a.n * 160}ms"/>`; a.o += len; a.n++; return a; }, { s: '', o: 0, n: 0 }).s}</svg>
           <div class="ob-dc"><small>Saiu</small><b>${R(215000)}</b></div></div>
           <div class="ob-note">${ico('bell', 'width:15px;height:15px')}<span><b>Amanhã vence a luz</b><small>R$ 180,00 · toque pra marcar como paga</small></span></div>` },
@@ -6120,8 +6215,9 @@ button:focus-visible, a:focus-visible, [role="button"]:focus-visible, [tabindex]
     ].filter(s => !s.skip);
     const first = !reduced && !showOnboarding.seen; showOnboarding.seen = true;
     let introDone = false;
-    $('#authScreen').innerHTML = `<div class="ob-bg" aria-hidden="true"><i></i><i></i><i></i></div>
-      ${first ? `<div class="ob-splash" id="obSplash" aria-hidden="true"><div class="ob-coins">${Array.from({ length: 9 }, (_, n) => `<i style="--x:${8 + n * 10.5}%;--d:${(n * 137) % 600}ms;--s:${.7 + ((n * 53) % 50) / 100}">R$</i>`).join('')}</div>
+    $('#authScreen').innerHTML = `<div class="ob-bg" aria-hidden="true"><i></i><i></i><i></i></div><div class="ob-stk" id="obStk"></div>
+      ${first ? `<div class="ob-splash" id="obSplash" aria-hidden="true">${[[22, 24, 1.6, -12, 'smile'], [76, 20, 1.25, 14, 'star'], [16, 70, 1.2, 10, 'wink'], [80, 72, 1.7, -8, 'grin'], [50, 12, .9, 6, 'calm'], [52, 86, 1, -10, 'cool']]
+          .map(([x, y, sz, rot, f], n) => stickerHtml(x, y, sz, rot, f, STK_COLORS[n], n, `--ox:${(x - 50) * 3}vw;--oy:${(y - 50) * 3}vh`)).join('')}
         <div class="ob-word"><span>Orçamento</span><small>seu dinheiro, em ordem</small></div></div>` : ''}
       <div class="ob" id="ob">
       <div class="ob-top"><div class="ob-dots" id="obDots"></div><button type="button" class="ob-skip" id="obSkip">Pular</button></div>
@@ -6166,15 +6262,17 @@ button:focus-visible, a:focus-visible, [role="button"]:focus-visible, [tabindex]
       const mount = () => {
         i = to; const s = SLIDES[i];
         stage.innerHTML = `<section class="ob-slide ${s.q ? 'q ' : ''}${reduced ? '' : dir > 0 ? 'fwd' : 'back'}" data-k="${s.k}">
-          <div class="ob-art">${s.art()}</div>
+          <div class="ob-art">${s.panel ? `<div class="ob-panel"><div class="ob-ph"><i></i>${s.panel}<span class="grow"></span><span class="hint">toque nas carinhas</span></div>${s.art()}</div>` : s.art()}</div>
           <h1 class="ob-title">${typeof s.title === 'function' ? s.title() : s.title}</h1><p class="ob-sub">${typeof s.sub === 'function' ? s.sub() : s.sub}</p></section>`;
         syncNav(); bind(s.k);
       };
       const [c1, c2] = SLIDES[to].c; const root = $('#authScreen'); root.style.setProperty('--ob-c', c1); root.style.setProperty('--ob-c2', c2);
+      drawStickers(SLIDES[to].k, to);
       if (old && !reduced) { old.classList.add(dir > 0 ? 'leave-fwd' : 'leave-back'); later(mount, 180); } else mount();
     };
     const bind = k => {
       if (k === 'oi') { countUps(); introDone = true; }
+      if (k === 'pronto' && !reduced) later(() => document.querySelectorAll('#obStk .stk-face').forEach((f, n) => setTimeout(() => { f.classList.remove('boing'); void f.offsetWidth; f.classList.add('boing'); }, n * 90)), 500);
       if (k === 'rapido') typing();
       if (k === 'nome') {
         const inp = stage.querySelector('#obName'), chips = stage.querySelector('#obChips'), g = stage.querySelector('#obGreet');
@@ -6227,6 +6325,15 @@ button:focus-visible, a:focus-visible, [role="button"]:focus-visible, [tabindex]
     stage.addEventListener('pointerup', e => { if (sx == null) return; const dx = e.clientX - sx, dy = e.clientY - sy; sx = null; if (Math.abs(dx) > 50 && Math.abs(dx) > Math.abs(dy) * 1.5) dx < 0 ? next() : back(); });
     show(0);
     if (first) { const sp = $('#obSplash'), go = () => sp && sp.classList.add('gone'); sp.addEventListener('click', go); setTimeout(go, 1500); setTimeout(() => sp && sp.remove(), 2400); }
+    // carinhas: tocar faz pular e trocar de cara; no computador, acompanham o mouse de leve
+    const scr = $('#authScreen');
+    scr.onclick = e => {
+      const f = e.target.closest('.stk-face'); if (!f) return;
+      const cur = f.dataset.face, nf = FACE_KEYS[(FACE_KEYS.indexOf(cur) + 1 + Math.floor(Math.random() * (FACE_KEYS.length - 1))) % FACE_KEYS.length];
+      f.dataset.face = nf; f.innerHTML = faceSvg(nf);
+      f.classList.remove('boing'); void f.offsetWidth; f.classList.add('boing');
+    };
+    scr.onpointermove = e => { if (e.pointerType !== 'mouse' || reduced) return; scr.style.setProperty('--px', (e.clientX / innerWidth - .5).toFixed(3)); scr.style.setProperty('--py', (e.clientY / innerHeight - .5).toFixed(3)); };
   }
   // Rever a apresentação (em ⚙): mostra de novo, sem apagar nada
   function replayOnboarding() { showOnboarding(); }
