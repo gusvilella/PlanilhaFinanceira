@@ -1275,7 +1275,7 @@ button.kpi-label:hover { color: var(--ink); text-decoration-color: currentColor;
 .meter i, .steps-bar i { position: relative; overflow: hidden; transform-origin: left center; }
 .fill-anim .meter i, .fill-anim .steps-bar i { animation: meter-fill 1.1s cubic-bezier(.22, .8, .25, 1) .3s both; }
 .fill-anim .meter i::after, .fill-anim .steps-bar i::after { content: ""; position: absolute; inset: 0; width: 45%;
-  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, .55), transparent); animation: meter-shine .9s ease-in-out 1.25s both; }
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, .35), transparent); animation: meter-shine .9s ease-in-out 1.25s both; }
 @media (prefers-reduced-motion: reduce) { .fill-anim .meter i, .fill-anim .steps-bar i, .fill-anim .meter i::after, .fill-anim .steps-bar i::after { animation: none !important; } }
 
 /* Evolução e previsão animadas */
@@ -1533,12 +1533,16 @@ button.kpi-label:hover { color: var(--ink); text-decoration-color: currentColor;
 @keyframes rise { from { opacity: 0; transform: translateY(12px); } }
 @keyframes panel-in { from { opacity: 0; transform: translateY(14px) scale(.995); } }
 @keyframes dn-in { from { opacity: 0; transform: rotate(-70deg) scale(.9); } }
-.enter .ov, .enter #table .row, .enter #table .total, .enter #table .yield, .enter #table .det-banner, .enter #table .empty, .enter .legend li, .enter #chart .limit, .enter #chart .chart-empty, .enter .evo { animation: rise .45s cubic-bezier(.2, .75, .25, 1) both; }
-#mainGrid.enter > .card, #mainGrid.enter > div > .card { animation: panel-in .4s cubic-bezier(.2, .75, .25, 1) both; }
+/* troca de aba/mês: os quadros deslizam de leve na direção da troca (só os quadros, sem cascata de linha por linha) */
+@keyframes slide-in { from { opacity: 0; transform: translateX(var(--dx, 0)) translateY(var(--dy, 0)); } }
+@keyframes row-in { 0% { opacity: 0; transform: translateY(-6px); background-color: color-mix(in srgb, #6d5dfc 16%, transparent); } 25% { opacity: 1; transform: none; background-color: color-mix(in srgb, #6d5dfc 16%, transparent); } }
+#table .row.just-in { animation: row-in 1.4s cubic-bezier(.2, .75, .25, 1) both; border-radius: 10px; }
+.enter > .ov, .enter .evo, #mainGrid.enter > .card, #mainGrid.enter > div > .card { animation: slide-in .38s cubic-bezier(.2, .75, .25, 1) both; }
 @keyframes dn-roll { from { opacity: 0; transform: rotate(-360deg) scale(.82); } }
 @keyframes arc-draw { from { stroke-dasharray: 0 100; } }
 @keyframes ic-pop { 0% { opacity: 0; transform: scale(0); } 70% { opacity: 1; transform: scale(1.18); } 100% { transform: scale(1); } }
-.donut-wrap.draw .donut { animation: dn-roll .9s cubic-bezier(.22, .8, .26, 1) both; }
+.donut-wrap.draw .donut { animation: pop .6s cubic-bezier(.22, .8, .26, 1) both; }
+.donut-wrap.soft .donut, .donut-wrap.soft .dn-ic, .donut-wrap.soft .dn-out { animation: fade .35s ease both; }
 .donut-wrap.draw .donut circle { animation: arc-draw var(--du) cubic-bezier(.4, .1, .4, 1) var(--dl) both; }
 .donut-wrap.draw .dn-ic, .donut-wrap.draw .dn-out { animation: ic-pop .42s ease-out var(--dl) both; }
 .donut-wrap.draw .donut-center { animation: fade .5s .15s ease both; }
@@ -2407,7 +2411,14 @@ button:focus-visible, a:focus-visible, [role="button"]:focus-visible, [tabindex]
   }
 
   // ================= Render =================
-  const render = withMemo(renderNow);
+  const renderMemo = withMemo(renderNow);
+  // depois de lançar: só a linha nova acende (o resto fica quieto)
+  const tableIds = () => new Set([...document.querySelectorAll('#table [data-edit]')].map(b => b.dataset.edit));
+  const render = (...a) => {
+    const before = tableIds(); renderMemo(...a);
+    if (!sameView || !before.size && !document.querySelector('#table [data-edit]') || matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+    tableIds().forEach(id => { if (!before.has(id)) document.querySelector(`#table [data-edit="${CSS.escape(id)}"]`)?.closest('.row')?.classList.add('just-in'); });
+  };
   // Entrada suave ao trocar de aba ou de mês: linhas e cards sobem e aparecem em sequência, o gráfico gira de leve
 
   // Uma frase simples explicando cada aba (linguagem de conversa, sem jargão)
@@ -2421,7 +2432,7 @@ button:focus-visible, a:focus-visible, [role="button"]:focus-visible, [tabindex]
     metas: 'Objetivos com valor e prazo. O app calcula quanto guardar por mês.',
   };
   let lastView = '';
-  let donutAnim = true;
+  let donutAnim = true, sameView = false;
   // Barras de progresso enchem da esquerda pra direita (e um brilho passa no fim) ao abrir e ao trocar de aba/mês
   function fillAnim() {
     const root = document.documentElement;
@@ -2474,26 +2485,40 @@ button:focus-visible, a:focus-visible, [role="button"]:focus-visible, [tabindex]
   }
   addEventListener('resize', () => requestAnimationFrame(moveTabInd));
   document.fonts?.ready.then(() => moveTabInd());
-  function animateEnter() {
+  // Movimento em três níveis, pra não repetir o mesmo show toda hora:
+  // abertura (uma vez): tudo entra em sequência, números sobem do zero, gráficos se desenham;
+  // trocar de aba ou mês: o conteúdo desliza de leve na direção da troca, os números andam do valor antigo pro novo;
+  // lançar/editar: nada pisca além do que mudou (a linha nova acende e os números andam).
+  function animateEnter(dir = 0, intro = false) {
     if (matchMedia('(prefers-reduced-motion: reduce)').matches) return;
     const el = ui.tab === 'geral' ? $('#overview') : $('#mainGrid');
     if (!el) return;
     el.classList.remove('enter'); void el.offsetWidth;
-    const items = el.querySelectorAll('.ov, #table .row, #table .total, #table .yield, #table .det-banner, #table .empty, .legend li, #chart .limit, #chart .chart-empty, .evo');
-    items.forEach((it, i) => { it.style.animationDelay = 60 + Math.min(i, 14) * 35 + 'ms'; });
+    el.style.setProperty('--dx', dir * 18 + 'px'); el.style.setProperty('--dy', intro ? '14px' : '0px');
+    const items = [...el.querySelectorAll(ui.tab === 'geral' ? ':scope > .ov, .evo' : ':scope > .card, :scope > div > .card')];
+    items.forEach((it, i) => { it.style.animationDelay = (intro ? 520 : 0) + Math.min(i, 5) * (intro ? 70 : 40) + 'ms'; });
     el.classList.add('enter');
     clearTimeout(animateEnter.t);
-    animateEnter.t = setTimeout(() => { el.classList.remove('enter'); items.forEach(it => { it.style.animationDelay = ''; }); }, 900);
+    animateEnter.t = setTimeout(() => { el.classList.remove('enter'); items.forEach(it => { it.style.animationDelay = ''; }); }, intro ? 1400 : 700);
   }
   function renderNow() {
     if ($('#tableHint')) $('#tableHint').textContent = TAB_HINTS[ui.tab] || '';
     { const v = ui.tab + '|' + view.month;
-      if (v !== lastView) {
-        if (lastView) requestAnimationFrame(animateEnter);
-        // os números do topo só contam de novo quando muda o mês (trocar de aba não mexe neles)
-        if (lastView.split('|')[1] !== view.month || !lastKpiMonth) countZero = true;
+      sameView = v === lastView;
+      if (!sameView) {
+        const first = !lastView, [pt, pm] = lastView.split('|');
+        if (first) {
+          // abertura: números do zero, barras enchem, rosca se desenha
+          countZero = true;
+          if (!matchMedia('(prefers-reduced-motion: reduce)').matches) { fillAnim(); donutAnim = true; requestAnimationFrame(() => { countUpDonuts(); countUpMarked(); donutAnim = false; }); }
+        } else {
+          // troca: desliza pro lado certo (mês seguinte vem da direita; aba à direita vem da direita)
+          const tabs = [...document.querySelectorAll('#tabs [data-tab]')].map(b => b.dataset.tab);
+          const dir = pm !== view.month ? (view.month > pm ? 1 : -1) : Math.sign(tabs.indexOf(ui.tab) - tabs.indexOf(pt));
+          requestAnimationFrame(() => animateEnter(dir));
+          donutAnim = 'soft'; requestAnimationFrame(() => { donutAnim = false; });
+        }
         lastKpiMonth = view.month; lastView = v;
-        if (!matchMedia('(prefers-reduced-motion: reduce)').matches) { fillAnim(); donutAnim = true; requestAnimationFrame(() => { countUpDonuts(); countUpMarked(); donutAnim = false; }); }
       } }
     // saudação pela hora do dia
     $('#hello').innerHTML = (multi() ? famAvatars(true) : account ? avBadge(avFor(account.av, userName()), 'sm') : '') + esc(greet() + (multi() ? ', ' + familyNames() : account ? ', ' + userName() : ''));
@@ -2778,7 +2803,7 @@ button:focus-visible, a:focus-visible, [role="button"]:focus-visible, [tabindex]
     });
 
     return `
-      <div class="donut-wrap${donutAnim ? ' draw' : ''}">
+      <div class="donut-wrap${donutAnim === 'soft' ? ' soft' : donutAnim ? ' draw' : ''}">
         <div class="donut-box"><svg class="donut" viewBox="0 0 42 42">${arcs}</svg>${marks.join('')}</div>
         <div class="donut-center"><small>${label}</small><strong class="num" data-total="${total}">${money(total)}</strong></div>
       </div>
@@ -6364,7 +6389,7 @@ button:focus-visible, a:focus-visible, [role="button"]:focus-visible, [tabindex]
     wordsIn($('#headline'), lastHeadline || $('#headline').textContent, 140);
     [top, kpis].forEach(el => { el.classList.remove('intro'); void el.offsetWidth; el.classList.add('intro'); });
     ['#kSaldo', '#kReceita', '#kDespesas', '#kSobra'].forEach((id, i) => { const el = $(id); if (el._v != null) countTo(el, el._v, el._fmt, 0, 380 + i * 60); });
-    countUpMarked($('#overview'));
+    countUpMarked($('#overview')); animateEnter(0, true);
     clearTimeout(introAnim.t);
     introAnim.t = setTimeout(() => [top, kpis].forEach(el => el.classList.remove('intro')), 1600);
   }
