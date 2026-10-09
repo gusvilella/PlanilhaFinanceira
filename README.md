@@ -109,14 +109,14 @@ Tudo continua sendo **um orçamento só**: os números somam tudo junto, do mesm
 - **Entradas por pessoa:** o card *Entrou* mostra quanto veio de cada um, e o gráfico de Entradas mostra *Por pessoa* ou *Por tipo*.
 - **Bancos:** em *Meus bancos*, toque na bolinha de cada banco pra dizer de quem é (ou da família, numa conta conjunta).
 - **Lançamento rápido:** o nome de alguém marca como dessa pessoa ("tênis 250 do leo"); "família" ou "nosso" marcam como da família.
-- **Cada um no seu celular:** com a sincronização ligada, *Convidar alguém da família* gera um link e um código. A pessoa abre o link, cria a conta dela no app e digita o código, sem precisar de conta no GitHub. O token vai criptografado no link e só abre com o código.
+- **Cada um no seu celular:** com a sincronização ligada, *Convidar alguém da família* gera um link e um código. A pessoa abre o link, passa pela apresentação do app e digita o código, sem precisar de conta no GitHub. O token vai criptografado no link e só abre com o código.
 - **Lançando ao mesmo tempo:** a sincronização junta o que cada celular lançou, item por item, em vez de um substituir o outro.
 
-## Conta
+## Primeira vez
 
-Na primeira vez, o app pede pra criar uma conta com **nome completo, como quer ser chamado, nome de usuário e senha**. O app sugere apelidos a partir do seu nome (Gustavo → Gu, Guga, Guto) e o topo passa a te chamar assim ("Boa noite, Gu"). A senha fica guardada só neste aparelho, embaralhada, e os lançamentos continuam só aqui. Pra usar em outro aparelho, ligue a sincronização.
+Não tem cadastro nem senha. Na primeira vez, o app abre uma **apresentação em telas** (dá pra arrastar pro lado no celular): pergunta **como você quer ser chamado** (com sugestões de apelido: Gustavo → Gu, Guga, Guto) e se vai usar **só você ou em família**, e mostra em telas animadas como o app funciona (entradas, contas fixas e gastos; o lançamento rápido; o gráfico e os avisos). Dá pra pular as explicações.
 
-"Manter conectado neste aparelho" evita digitar a senha toda vez. Em **⚙ → Sua conta** dá pra trocar o nome, o apelido ou a senha, ligar a entrada com digital e **sair**. Esqueceu a senha? Em "Esqueci a senha" o app apaga a conta e os dados deste aparelho, e você recupera tudo pela sincronização ou pelo backup.
+Em **⚙ → Seu nome** dá pra trocar o nome ou o apelido e **ver a apresentação de novo**. Os lançamentos ficam só neste aparelho; pra proteger, use **⚙ → Senha para abrir o app**.
 
 ## Senha e digital
 
