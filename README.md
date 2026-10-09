@@ -114,7 +114,7 @@ Tudo continua sendo **um orçamento só**: os números somam tudo junto, do mesm
 
 ## Primeira vez
 
-Não tem cadastro nem senha. Na primeira vez, o app abre uma **apresentação em telas** (dá pra arrastar pro lado no celular): pergunta **como você quer ser chamado** (com sugestões de apelido: Gustavo → Gu, Guga, Guto) e se vai usar **só você ou em família**, e mostra em telas animadas como o app funciona (entradas, contas fixas e gastos; o lançamento rápido; o gráfico e os avisos). Dá pra pular as explicações.
+Não tem cadastro nem senha. Na primeira vez, o app abre uma **apresentação em telas** (dá pra arrastar pro lado no celular): pergunta **como você quer ser chamado** (com sugestões de apelido: Fernanda → Fer, Nanda) e se vai usar **só você ou em família**, e mostra em telas animadas como o app funciona (entradas, contas fixas e gastos; o lançamento rápido; o gráfico e os avisos). Dá pra pular as explicações.
 
 Em **⚙ → Seu nome** dá pra trocar o nome ou o apelido e **ver a apresentação de novo**. Os lançamentos ficam só neste aparelho; pra proteger, use **⚙ → Senha para abrir o app**.
 
