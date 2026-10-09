@@ -102,9 +102,9 @@ Quando você importa um extrato e uma assinatura veio com valor diferente, o app
 
 ## Só eu ou em família
 
-Ao criar a conta, o app pergunta **como vai usar**: **Só eu** ou **Em família** (casal ou a casa toda). Em família você coloca quem faz parte (Gu, Ana, Leo…). Dá pra mudar depois em **⚙ → Uso do app**.
+Na apresentação da primeira vez, o app pergunta **como vai usar**: **Só eu** ou **Em família** (casal ou a casa toda). Em família você coloca quem faz parte (Gu, Ane, Leo…). Dá pra mudar depois em **⚙ → Uso do app**.
 
-Tudo continua sendo **um orçamento só**: os números somam tudo junto, do mesmo jeito. A família muda o jeito do app falar ("Boa noite, Gu e Ana", "Dinheiro de vocês") e deixa marcar **de quem é** cada entrada (o salário de cada um), gasto, cartão e banco, com uma bolinha com a inicial. Sem marcar, fica "da família".
+Tudo continua sendo **um orçamento só**: os números somam tudo junto, do mesmo jeito. A família muda o jeito do app falar ("Boa noite, Gu e Ane", "Dinheiro de vocês") e deixa marcar **de quem é** cada entrada (o salário de cada um), gasto, cartão e banco, com uma bolinha com a inicial. Sem marcar, fica "da família".
 
 - **Entradas por pessoa:** o card *Entrou* mostra quanto veio de cada um, e o gráfico de Entradas mostra *Por pessoa* ou *Por tipo*.
 - **Bancos:** em *Meus bancos*, toque na bolinha de cada banco pra dizer de quem é (ou da família, numa conta conjunta).
