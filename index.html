@@ -193,8 +193,7 @@ svg.i { width: 16px; height: 16px; flex: none; fill: none; stroke: currentColor;
 .two { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 10px; }
 .two > div, .three > div { min-width: 0; }
 .input[type=month], .input[type=date] { min-width: 0; }
-.seg2.three { grid-template-columns: repeat(3, 1fr); }
-.seg2 button.on[data-src], .seg2 button.on[data-cy], .seg2 button.on[data-next], .seg2 button.on[data-v] { background: var(--card); color: var(--ink); box-shadow: var(--shadow); }
+.seg2 button.on[data-src], .seg2 button.on[data-cy], .seg2 button.on[data-next] { background: var(--card); color: var(--ink); box-shadow: var(--shadow); }
 .picked { display: flex; align-items: center; gap: 12px; background: var(--field); border-radius: 14px; padding: 10px 12px; }
 .picked .input { background: var(--card); }
 .picked .grow { flex: 1; min-width: 0; }
@@ -236,36 +235,30 @@ svg.i { width: 16px; height: 16px; flex: none; fill: none; stroke: currentColor;
 .via { max-width: 100%; min-width: 0; }
 .via .vt { overflow: hidden; text-overflow: ellipsis; min-width: 0; }
 .row .ex-m { display: none; }
-/* Modo casal: bolinhas com a inicial de cada um */
+/* Família: bolinhas com a inicial de cada um */
 .av { display: inline-grid; place-items: center; width: 22px; height: 22px; border-radius: 50%; background: var(--av); color: #fff; font-size: .66rem; font-weight: 700; line-height: 1; flex: none; box-shadow: 0 0 0 2px var(--card); }
 .av.sm { width: 16px; height: 16px; font-size: .54rem; box-shadow: 0 0 0 1.5px var(--card); }
-.av-pair { display: inline-flex; }
-.acc-ic { position: relative; display: inline-flex; }
-.inv-code { margin-top: 8px; font-size: 1.6rem; font-weight: 800; letter-spacing: .16em; font-variant-numeric: tabular-nums; color: var(--ink); background: var(--field); border-radius: 12px; padding: 12px 16px; text-align: center; user-select: all; }
-.acc-who { position: absolute; right: -7px; bottom: -6px; border: 0; background: none; padding: 0; display: inline-flex; cursor: pointer; } .av-pair .av + .av { margin-left: -5px; }
+.av-pair { display: inline-flex; } .av-pair .av + .av { margin-left: -5px; }
 .who-b { display: inline-flex; vertical-align: -3px; margin-right: 7px; }
-.who-switch[hidden] { display: none; }
-.who-switch { display: flex; flex-wrap: wrap; align-items: center; gap: 8px 12px; margin: -6px 0 16px; }
-.who-switch .pills button { display: inline-flex; align-items: center; gap: 6px; padding: 6px 12px; font-size: .82rem; }
-.who-switch .note { font-size: .78rem; color: var(--muted); }
-@media (max-width: 640px) { .who-switch .note.all { display: none; } .who-switch { margin-top: -4px; } }
 .who-pick { display: flex; flex-wrap: wrap; gap: 8px; }
 .who-pick button { display: inline-flex; align-items: center; gap: 8px; border: 1px solid var(--field-line); background: var(--card); color: var(--ink-2); border-radius: 99px; padding: 6px 14px 6px 6px; font-weight: 600; font-size: .84rem; }
 .who-pick button.on { border-color: var(--ink); color: var(--ink); box-shadow: inset 0 0 0 1px var(--ink); }
-.who-pick button:not(:has(.av)) { padding-left: 14px; }
-.row .val small.of { display: block; font-size: .68rem; color: var(--muted); font-weight: 500; }
-.acerto { display: flex; align-items: center; gap: 16px; flex-wrap: wrap; }
-.acerto .av-pair .av { width: 34px; height: 34px; font-size: .9rem; } .acerto .av-pair .av + .av { margin-left: -9px; }
-.acerto .txt { flex: 1; min-width: 200px; }
-.acerto .txt b.big { display: block; font-size: 1.15rem; font-weight: 700; letter-spacing: -.01em; }
-.acerto .txt small { display: block; color: var(--muted); font-size: .8rem; margin-top: 2px; }
-.acerto .btns { display: flex; gap: 8px; flex-wrap: wrap; }
-.ov-acerto { grid-column: span 12; }
-.ac-list { margin: 6px 0 0; } .ac-list .ac-row { display: grid; grid-template-columns: 44px minmax(0, 1fr) auto; gap: 10px; align-items: center; padding: 9px 0; border-bottom: 1px solid var(--line); font-size: .86rem; }
-.ac-row .d { color: var(--muted); font-size: .78rem; } .ac-row small { display: block; color: var(--muted); font-size: .74rem; } .ac-row .v { text-align: right; font-weight: 600; white-space: nowrap; }
-.ac-sum { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin: 14px 0 4px; }
-.ac-sum div { background: var(--field); border-radius: 12px; padding: 10px 12px; font-size: .8rem; color: var(--muted); }
-.ac-sum b { display: block; color: var(--ink); font-size: 1rem; margin-top: 2px; }
+.acc-ic { position: relative; display: inline-flex; }
+.acc-who { position: absolute; right: -7px; bottom: -6px; border: 0; background: none; padding: 0; display: inline-flex; cursor: pointer; }
+.acc-who .fam { display: inline-grid; place-items: center; width: 16px; height: 16px; border-radius: 50%; background: var(--field); color: var(--muted); box-shadow: 0 0 0 1.5px var(--card); }
+.acc-who .fam svg.i { width: 10px; height: 10px; }
+.inv-code { margin-top: 8px; font-size: 1.6rem; font-weight: 800; letter-spacing: .16em; font-variant-numeric: tabular-nums; color: var(--ink); background: var(--field); border-radius: 12px; padding: 12px 16px; text-align: center; user-select: all; }
+.use-pick { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+.use-pick button { text-align: left; border: 1px solid var(--field-line); background: var(--card); border-radius: 14px; padding: 12px 14px; color: var(--ink-2); display: grid; gap: 4px; }
+.use-pick button b { color: var(--ink); font-size: .92rem; display: flex; align-items: center; gap: 8px; }
+.use-pick button small { color: var(--muted); font-size: .76rem; line-height: 1.35; }
+.use-pick button svg.i { width: 16px; height: 16px; }
+.use-pick button.on { border-color: var(--ink); box-shadow: inset 0 0 0 1px var(--ink); }
+.mem-list { display: grid; gap: 8px; margin-top: 4px; }
+.mem-row { display: grid; grid-template-columns: 26px minmax(0, 1fr) 30px; gap: 8px; align-items: center; }
+.mem-row .tag-me { font-size: .72rem; color: var(--muted); font-weight: 600; white-space: nowrap; }
+.mem-add { display: flex; gap: 8px; margin-top: 8px; } .mem-add .input { flex: 1; min-width: 0; }
+.chart-by { display: flex; justify-content: flex-end; margin-bottom: 8px; }
 .row .val.est { color: var(--ink-2); font-weight: 500; }
 .row .val.est small, .row .val.absorbed small { display: block; font-size: .68rem; color: var(--muted); font-weight: 500; }
 .tag.cat-t { max-width: 100%; min-width: 0; }
@@ -1365,6 +1358,9 @@ button:focus-visible, a:focus-visible, [role="button"]:focus-visible, [tabindex]
     <symbol id="c-star" viewBox="0 0 24 24"><path d="M11.525 2.295a.53.53 0 0 1 .95 0l2.31 4.679a2.123 2.123 0 0 0 1.595 1.16l5.166.756a.53.53 0 0 1 .294.904l-3.736 3.638a2.123 2.123 0 0 0-.611 1.878l.882 5.14a.53.53 0 0 1-.771.56l-4.618-2.428a2.122 2.122 0 0 0-1.973 0L6.396 21.01a.53.53 0 0 1-.77-.56l.881-5.139a2.122 2.122 0 0 0-.611-1.879L2.16 9.795a.53.53 0 0 1 .294-.906l5.165-.755a2.122 2.122 0 0 0 1.597-1.16z"/></symbol>
     <symbol id="c-cloud-alert" viewBox="0 0 24 24"><path d="M12 12v4"/><path d="M12 20h.01"/><path d="M8.128 16.949A7 7 0 1 1 15.71 8h1.79a1 1 0 0 1 0 9h-1.642"/></symbol>
     <symbol id="c-save" viewBox="0 0 24 24"><path d="M15.2 3a2 2 0 0 1 1.4.6l3.8 3.8a2 2 0 0 1 .6 1.4V19a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2z"/><path d="M17 21v-7a1 1 0 0 0-1-1H8a1 1 0 0 0-1 1v7"/><path d="M7 3v4a1 1 0 0 0 1 1h7"/></symbol>
+    <symbol id="i-users" viewBox="0 0 24 24"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></symbol>
+    <symbol id="c-users" viewBox="0 0 24 24"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></symbol>
+    <symbol id="i-user" viewBox="0 0 24 24"><path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></symbol>
     <symbol id="i-sort" viewBox="0 0 24 24"><path d="m7 15 5 5 5-5M7 9l5-5 5 5"/></symbol>
   </svg>
 
@@ -1397,7 +1393,6 @@ button:focus-visible, a:focus-visible, [role="button"]:focus-visible, [tabindex]
       </div>
     </header>
 
-    <div class="who-switch" id="whoSwitch" hidden></div>
     <section class="kpis">
       <div class="kpi contas">
         <div class="kpi-head"><button type="button" class="kpi-label" data-explain="contas">Seu dinheiro<span class="lg"> hoje</span></button>
@@ -1631,26 +1626,22 @@ button:focus-visible, a:focus-visible, [role="button"]:focus-visible, [tabindex]
       .map(t => ({ ...t, id: String(t.id || uid()), amount: Math.abs(num(t.amount)), date: fixIso(t.date) || todayIso }));
     if (s.subIgnore !== undefined && !Array.isArray(s.subIgnore)) s.subIgnore = [];
     for (const k of ['snapshots', 'received', 'subPrice', 'paidOn']) if (s[k] !== undefined && !isObj(s[k])) delete s[k];
-    // Modo casal (tudo opcional): duas pessoas "a" e "b", como dividir as contas da casa e de quem são os dados antigos
-    if (s.couple !== undefined) {
-      if (!isObj(s.couple)) delete s.couple;
+    // Uso em família (opcional): quem faz parte da casa. O "modo casal" da prévia vira família com as duas pessoas.
+    if (isObj(s.couple)) { if (s.family === undefined && s.couple.on && isObj(s.couple.people)) s.family = { members: ['a', 'b'].map(id => ({ id, name: s.couple.people[id]?.name })) }; }
+    delete s.couple; delete s.acertos;
+    if (s.family !== undefined) {
+      if (!isObj(s.family) || !Array.isArray(s.family.members)) delete s.family;
       else {
-        const c = s.couple, ppl = isObj(c.people) ? c.people : {};
-        c.on = !!c.on;
-        c.people = { a: { name: String(ppl.a?.name || 'Eu').slice(0, 20) }, b: { name: String(ppl.b?.name || 'Parceiro(a)').slice(0, 20) } };
-        if (!['half', 'income', 'custom'].includes(c.split)) c.split = 'half';
-        c.ratioA = Math.min(95, Math.max(5, Math.round(+c.ratioA) || 50));
-        if (!['a', 'b', 'both'].includes(c.legacy)) c.legacy = 'both';
+        const seen = new Set();
+        s.family.members = s.family.members.filter(isObj).map(m => ({ id: String(m.id || uid()), name: String(m.name || '').trim().slice(0, 20) }))
+          .filter(m => m.name && !seen.has(m.id) && seen.add(m.id)).slice(0, 8);
+        s.family.solo = !!s.family.solo;
       }
     }
-    const WHO = ['a', 'b', 'both'];
     for (const k of ['receitas', 'variaveis', 'fixas', 'assinaturas', 'cards', 'accounts', 'investments']) (s[k] || []).forEach(x => {
-      if (x.who !== undefined && !WHO.includes(x.who)) delete x.who;
-      if (x.paidBy !== undefined && !['a', 'b'].includes(x.paidBy)) delete x.paidBy;
+      if (x.who !== undefined && (typeof x.who !== 'string' || x.who === 'both' || !x.who)) delete x.who;
+      delete x.paidBy;
     });
-    if (s.acertos !== undefined) s.acertos = (Array.isArray(s.acertos) ? s.acertos.filter(isObj) : [])
-      .filter(x => isKey(x.key) && ['a', 'b'].includes(x.from) && ['a', 'b'].includes(x.to) && x.from !== x.to)
-      .map(x => ({ ...x, id: String(x.id || uid()), amount: Math.abs(num(x.amount)), date: fixIso(x.date) || todayIso }));
     if (s.owner !== undefined && !(isObj(s.owner) && typeof s.owner.user === 'string')) delete s.owner;
     // Imagens próprias de ícone não são mais aceitas: ficam só os logos oficiais
     for (const k of ['accounts', 'cards', 'assinaturas']) (s[k] || []).forEach(x => { if (x && x.icon) delete x.icon; });
@@ -1766,81 +1757,24 @@ button:focus-visible, a:focus-visible, [role="button"]:focus-visible, [tabindex]
   };
   const withMemo = fn => (...args) => { if (memo) return fn(...args); memo = new Map(); try { return fn(...args); } finally { memo = null; } };
 
-  // ================= Modo casal =================
-  // Cada lançamento, banco e cartão pode ser de "a", de "b" ou dos dois ("both"). Sem dono marcado, vale o que a
-  // pessoa escolheu para os dados antigos ao ligar o modo (padrão: dos dois). Cada aparelho sabe quem está usando (ui.me).
-  const coupleOn = () => !!(state.couple && state.couple.on);
-  const meId = () => ui.me === 'b' ? 'b' : 'a';
-  const otherOf = p => p === 'a' ? 'b' : 'a';
-  const personName = p => p === 'both' ? 'Os dois' : (state.couple?.people?.[p]?.name || (p === 'a' ? 'Eu' : 'Parceiro(a)'));
-  const whoOf = x => x && x.who || state.couple?.legacy || 'both';
-  // Visão da tela: '' = juntos (tudo); 'a'/'b' = só o que é da pessoa + a parte dela no que é dos dois.
-  // Dentro de raw(...) a visão é sempre "juntos": saldo de banco, limite de cartão e previsão são dinheiro de verdade.
-  let rawDepth = 0;
-  const vw = () => rawDepth || !coupleOn() ? '' : ui.whoView === 'a' || ui.whoView === 'b' ? ui.whoView : '';
-  const raw = fn => (...args) => { rawDepth++; try { return fn(...args); } finally { rawDepth--; } };
-  // Quanto das contas dos dois cabe a cada um: meio a meio, proporcional ao que cada um ganhou no mês, ou uma proporção fixa
-  function shareOf(p, key) {
-    const c = state.couple; if (!c) return 0.5;
-    if (c.split === 'custom') return (p === 'a' ? c.ratioA : 100 - c.ratioA) / 100;
-    if (c.split !== 'income') return 0.5;
-    const inc = cached('inc' + key, raw(() => {
-      const t = { a: 0, b: 0 };
-      receitasOf(key).forEach(r => { if (r.pending) return; const w = whoOf(r); if (w === 'a' || w === 'b') t[w] += r.amount; });
-      return t;
-    }));
-    return inc.a + inc.b ? inc[p] / (inc.a + inc.b) : 0.5;
-  }
-  const weightOf = (x, p, key) => { const w = whoOf(x); return w === p ? 1 : w === 'both' ? shareOf(p, key) : 0; };
-  // Aplica a visão a uma lista do mês: tira o que é só do outro e reduz o que é dos dois à parte da pessoa
-  function forView(list, key) {
-    const p = vw(); if (!p) return list;
-    const out = [];
-    for (const x of list) {
-      const w = weightOf(x, p, key);
-      if (w) out.push(w === 1 ? x : { ...x, amount: Math.round(x.amount * w), full: x.amount, part: w });
-    }
-    return out;
-  }
-  // Bolinha com a inicial de cada um (as cores são fixas por pessoa, iguais nos dois celulares)
-  const COUPLE_COLORS = { a: '#44679e', b: '#a14f62' };
-  const avatar = (p, sm) => `<span class="av${sm ? ' sm' : ''}" style="--av:${COUPLE_COLORS[p]}" aria-hidden="true">${esc(personName(p).trim().charAt(0).toUpperCase() || '?')}</span>`;
-  const avatarsOf = (w, sm) => w === 'both' ? `<span class="av-pair">${avatar('a', sm)}${avatar('b', sm)}</span>` : avatar(w, sm);
-  // Selo de dono nas listas (só com o modo casal ligado)
-  const whoBadge = x => { if (!coupleOn()) return ''; const w = whoOf(x); return `<span class="who-b" title="${w === 'both' ? 'Dos dois' : 'De ' + esc(personName(w))}">${avatarsOf(w, true)}</span>`; };
-  // Quem pagou: marcado no lançamento, ou o dono do cartão/banco usado. Conta dos dois ou sem dono: ninguém deve nada.
-  function payerOf(x) {
-    if (x.paidBy) return x.paidBy;
-    const c = x.payCard && state.cards.find(k => k.id === x.payCard), a = !c && x.payAccount && state.accounts.find(k => k.id === x.payAccount);
-    const w = c ? whoOf(c) : a ? whoOf(a) : '';
-    return w === 'a' || w === 'b' ? w : '';
-  }
-  // Acerto do mês: para cada gasto pago por um dos dois, cada um deveria ter pago a sua parte (o que é dos dois, pela
-  // divisão combinada; o que é de um só, inteiro por ele). A diferença é quanto um passa pro outro, menos o que já foi acertado.
-  // Conta o que já aconteceu: gastos, contas fixas pagas (ou no cartão) e assinaturas já cobradas.
-  function acertoOf(key) {
-    return cached('ac' + key, raw(() => {
-      const items = [
-        ...variaveisOf(key).map(x => ({ x, kind: 'Gasto', label: x.desc || cat(x.category)?.name || 'Gasto' })),
-        ...fixasOf(key).filter(f => f.paid || (f.payCard && payCardOf(f))).map(x => ({ x, kind: 'Conta fixa', label: x.desc || 'Conta fixa' })),
-        ...assinaturasOf(key).filter(a => a.shownDate <= todayIso).map(x => ({ x, kind: 'Assinatura', label: x.name })),
-      ].map(o => ({ ...o, payer: payerOf(o.x), who: whoOf(o.x), sa: weightOf(o.x, 'a', key) }))
-        .filter(o => o.payer && (o.who === 'both' || o.who !== o.payer))
-        .map(o => ({ ...o, owes: Math.round(o.x.amount * (o.payer === 'a' ? 1 - o.sa : o.sa)) }))   // quanto o outro deve por este item
-        .sort((p, q) => q.x.shownDate.localeCompare(p.x.shownDate));
-      let aOwes = 0;   // > 0: a passa pra b
-      items.forEach(o => { aOwes += o.payer === 'b' ? o.owes : -o.owes; });
-      const done = (state.acertos || []).filter(z => z.key === key).sort((p, q) => q.date.localeCompare(p.date));
-      done.forEach(z => { aOwes += z.from === 'a' ? -z.amount : z.amount; });
-      const paid = { a: 0, b: 0 };
-      items.filter(o => o.who === 'both').forEach(o => { paid[o.payer] += o.x.amount; });
-      const n = Math.round(aOwes);
-      return { items, done, paid, from: n > 0 ? 'a' : 'b', to: n > 0 ? 'b' : 'a', amount: Math.abs(n) };
-    }));
-  }
-  // Bancos e investimentos na visão da pessoa (conta conjunta entra pela parte dela)
-  const accountsV = () => { const p = vw(); return !p ? state.accounts.map(a => ({ a, w: 1 })) : state.accounts.map(a => ({ a, w: weightOf(a, p, curKey()) })).filter(x => x.w); };
-  const investmentsV = () => { const p = vw(); return !p ? state.investments.map(i => ({ i, w: 1 })) : state.investments.map(i => ({ i, w: weightOf(i, p, curKey()) })).filter(x => x.w); };
+  // ================= Uso em família =================
+  // Tudo continua somado junto (é um orçamento só); a família muda o jeito de falar ("vocês") e deixa marcar de quem
+  // é cada entrada (o salário de cada um), gasto, cartão e banco. Sem dono marcado = da família.
+  const familyOn = () => !!(state.family && !state.family.solo);
+  const members = () => familyOn() ? state.family.members : [];
+  const member = id => members().find(m => m.id === id);
+  const memberName = id => member(id)?.name || '';
+  const multi = () => members().length > 1;
+  const meId = () => member(ui.me) ? ui.me : members()[0]?.id || '';
+  const whoOf = x => x && x.who && member(x.who) ? x.who : '';
+  const vc = (one, many) => familyOn() ? many : one;   // "você" ou "vocês"
+  const FAM_COLORS = ['#44679e', '#a14f62', '#3c7559', '#8a6528', '#655597', '#337680', '#9a5434', '#5b6676'];
+  const memberColor = id => FAM_COLORS[Math.max(0, (state.family?.members || []).findIndex(m => m.id === id)) % FAM_COLORS.length];
+  const avatar = (id, sm) => `<span class="av${sm ? ' sm' : ''}" style="--av:${memberColor(id)}" aria-hidden="true">${esc((memberName(id) || '?').trim().charAt(0).toUpperCase())}</span>`;
+  const famAvatars = sm => `<span class="av-pair">${members().slice(0, 3).map(m => avatar(m.id, sm)).join('')}</span>`;
+  const whoBadge = x => { const w = multi() && whoOf(x); return w ? `<span class="who-b" title="De ${esc(memberName(w))}">${avatar(w, true)}</span>` : ''; };
+  // "Gu e Ana", "Gu, Ana e Leo"; mais de 3: "família"
+  const familyNames = () => { const n = members().map(m => m.name); return n.length > 3 ? 'família' : n.length > 1 ? n.slice(0, -1).join(', ') + ' e ' + n[n.length - 1] : n[0] || ''; };
 
   // Valor de um item recorrente num mês: o que você confirmou naquele mês; se o valor varia e ainda não foi
   // confirmado, a média dos últimos 3 meses confirmados (ou o valor de sempre, se ainda não tem nenhum)
@@ -1851,7 +1785,7 @@ button:focus-visible, a:focus-visible, [role="button"]:focus-visible, [tabindex]
     const prev = Object.keys(a).filter(k => k < key).sort().slice(-3).map(k => a[k]);
     return { amount: prev.length ? Math.round(prev.reduce((t, v) => t + v, 0) / prev.length) : item.amount, est: true };
   }
-  function receitasOf(key) { return cached('r' + vw() + key, () => forView(receitasOfRaw(key), key)); }
+  function receitasOf(key) { return cached('r' + key, () => receitasOfRaw(key)); }
   function receitasOfRaw(key) {
     return state.receitas
       .filter(r => r.recurring ? activeIn({ start: monthOf(r.date), end: r.end }, key) && !(r.skip || []).includes(key) : monthOf(r.date) === key)
@@ -1859,35 +1793,28 @@ button:focus-visible, a:focus-visible, [role="button"]:focus-visible, [tabindex]
         // recorrente "a receber": cada mês é marcado como recebido separadamente (state.received[mês])
         pending: r.pending && !(r.recurring && ((state.received || {})[key] || []).includes(r.id)) }));
   }
-  const variaveisOf = key => cached('v' + vw() + key, () => forView(variaveisOfAll(key), key));
-  const variaveisOfAll = key => cached('vall' + key, () => {
+  const variaveisOf = key => cached('v' + key, () => {
     // durante o render, separa os gastos por mês uma vez só em vez de varrer a lista inteira a cada mês pedido
     const list = memo ? (cached('vidx', () => { const m = new Map(); for (const v of state.variaveis) { const k = monthOf(v.date); if (!m.has(k)) m.set(k, []); m.get(k).push(v); } return m; }).get(key) || [])
       : state.variaveis.filter(v => monthOf(v.date) === key);
     return list.map(v => ({ ...v, shownDate: v.date }));
   });
   // Despesa fixa pertence ao mês "key" (conta nas despesas dele); se "vence no mês seguinte", a data de pagamento é no próximo mês
-  const fixasOf = key => cached('f' + vw() + key, () => forView(state.fixas.filter(f => activeIn(f, key) && !(f.skip || []).includes(key))
-    .map(f => ({ ...f, ...monthAmount(f, key), key, shownDate: dateIn(f.dueNext ? addMonths(key, 1) : key, f.day), paid: !!(state.paid[key] || []).includes(f.id) })), key));
+  const fixasOf = key => cached('f' + key, () => state.fixas.filter(f => activeIn(f, key) && !(f.skip || []).includes(key))
+    .map(f => ({ ...f, ...monthAmount(f, key), key, shownDate: dateIn(f.dueNext ? addMonths(key, 1) : key, f.day), paid: !!(state.paid[key] || []).includes(f.id) })));
   const daysUntil = iso => Math.round((new Date(iso + 'T12:00:00') - new Date(todayIso + 'T12:00:00')) / 864e5);
   // Situação da despesa fixa: no cartão (já está na fatura), paga, a vencer ou atrasada
   const fixaState = f => f.payCard && payCardOf(f) ? 'card' : f.paid ? 'paid' : daysUntil(f.shownDate) < 0 ? 'late' : 'due';
 
   const MESES = ['jan', 'fev', 'mar', 'abr', 'mai', 'jun', 'jul', 'ago', 'set', 'out', 'nov', 'dez'];
   // Assinaturas ativas no mês; as anuais só são cobradas no mês de renovação
-  const assinaturasOf = key => cached('a' + vw() + key, () => forView(state.assinaturas.filter(a => activeIn(a, key) && !(a.skip || []).includes(key) && (a.cycle !== 'anual' || a.month === +key.slice(5)))
-    .map(a => ({ ...a, shownDate: dateIn(key, a.day) })), key));
+  const assinaturasOf = key => cached('a' + key, () => state.assinaturas.filter(a => activeIn(a, key) && !(a.skip || []).includes(key) && (a.cycle !== 'anual' || a.month === +key.slice(5)))
+    .map(a => ({ ...a, shownDate: dateIn(key, a.day) })));
   const perMonth = a => a.cycle === 'anual' ? Math.round(a.amount / 12) : a.amount;
 
   // Cartões ativos no mês, com a fatura daquele mês (vence no dia de vencimento do cartão)
-  // Na visão de uma pessoa, a fatura conta pelo dono do cartão (cartão dos dois: pela parte dela); o acerto do casal
-  // devolve o que um pagou pelo outro
-  const cardsOf = key => {
-    const p = vw();
-    return state.cards.filter(c => activeIn(c, key) && (!p || weightOf(c, p, key)))
-      .map(c => { const f = (state.faturas[c.id] || {})[key] || null, w = p ? weightOf(c, p, key) : 1;
-        return { ...c, fatura: f && w < 1 ? { ...f, amount: Math.round(f.amount * w), full: f.amount } : f, shownDate: dateIn(key, c.dueDay) }; });
-  };
+  const cardsOf = key => state.cards.filter(c => activeIn(c, key))
+    .map(c => ({ ...c, fatura: (state.faturas[c.id] || {})[key] || null, shownDate: dateIn(key, c.dueDay) }));
 
   function investPct(key) {
     const keys = Object.keys(state.invest).filter(k => k <= key).sort();
@@ -1897,7 +1824,7 @@ button:focus-visible, a:focus-visible, [role="button"]:focus-visible, [tabindex]
   // ----- Saldo das contas -----
   // Saldo atual = saldo informado + movimentos ligados à conta depois da data informada (até hoje):
   // receitas recebidas nela, gastos pagos com ela (Pix/débito/boleto) e faturas pagas com ela
-  function accountMoves(acc) { return cached('am' + acc.id + acc.updatedAt + acc.balance, raw(() => accountMovesRaw(acc))); }
+  function accountMoves(acc) { return cached('am' + acc.id + acc.updatedAt + acc.balance, () => accountMovesRaw(acc)); }
   function accountMovesRaw(acc) {
     const from = acc.updatedAt || todayIso, out = [];
     if (from > todayIso) return out;
@@ -1976,7 +1903,7 @@ button:focus-visible, a:focus-visible, [role="button"]:focus-visible, [tabindex]
   }
   // Itens pagos no cartão que caem na fatura que vence em "key": cobrados neste mês, no anterior ou até dois meses antes
   // (cartão que fecha depois do dia do vencimento, ex.: fecha 26 e vence 5: compra de 28/12 vai para a fatura de fevereiro)
-  function itemsOnCard(cardId, key) { return cached('ic' + cardId + key, raw(() => itemsOnCardRaw(cardId, key))); }
+  function itemsOnCard(cardId, key) { return cached('ic' + cardId + key, () => itemsOnCardRaw(cardId, key)); }
   function itemsOnCardRaw(cardId, key) {
     const card = state.cards.find(c => c.id === cardId);
     const out = [];
@@ -1989,8 +1916,7 @@ button:focus-visible, a:focus-visible, [role="button"]:focus-visible, [tabindex]
   // Prévia da fatura: soma do que já caiu nela (compras até hoje e parcelas)
   const faturaPreview = (cardId, key) => itemsOnCard(cardId, key).filter(i => i.shownDate <= todayIso || i.installment).reduce((s, i) => s + i.amount, 0);
   // Quanto do limite está comprometido: faturas lançadas e não pagas + compras/parcelas que ainda vão entrar em faturas não lançadas
-  const cardUsed = card => raw(cardUsedRaw)(card);
-  function cardUsedRaw(card) {
+  function cardUsed(card) {
     let used = 0;
     for (let i = 0, k = focusKey(card, curKey()); i < 48; i++, k = addMonths(k, 1)) {
       const f = (state.faturas[card.id] || {})[k];
@@ -2000,7 +1926,7 @@ button:focus-visible, a:focus-visible, [role="button"]:focus-visible, [tabindex]
   }
   const countable = key => i => !inFatura(i, key);
 
-  function totals(key) { return cached('t' + vw() + key, () => totalsRaw(key)); }
+  function totals(key) { return cached('t' + key, () => totalsRaw(key)); }
   function totalsRaw(key) {
     const rec = receitasOf(key);
     const receita = rec.filter(r => !r.pending).reduce((s, r) => s + r.amount, 0);
@@ -2025,7 +1951,7 @@ button:focus-visible, a:focus-visible, [role="button"]:focus-visible, [tabindex]
     if (!any) return ['Vamos colocar suas contas em ordem?', 'Comece pelo botão + ou importe um extrato.'];
     if (key < cur) {
       if (!t.receita && !t.despesas) return [`Nada lançado em ${mes}.`, ''];
-      return t.saldo >= 0 ? [`Você fechou ${mes} com ${reais(t.saldo) || 'saldo'} de sobra.`, 'Guardar um pouco disso já é meio caminho.']
+      return t.saldo >= 0 ? [`${vc('Você fechou', 'Vocês fecharam')} ${mes} com ${reais(t.saldo) || 'saldo'} de sobra.`, 'Guardar um pouco disso já é meio caminho.']
         : [`${mes.charAt(0).toUpperCase() + mes.slice(1)} ficou ${reais(t.saldo) || 'um pouco'} acima do que entrou.`, 'Todo mês é uma nova chance de virar o jogo.'];
     }
     if (key > cur) return [`Planejando ${mes}.`, t.receita || t.despesas ? (t.saldo >= 0 ? `Por enquanto sobram ${reais(t.saldo) || 'alguns reais'}.` : `Por enquanto faltam ${reais(t.saldo) || 'alguns reais'}.`) : 'Lance o que já sabe que vai entrar e sair.'];
@@ -2038,7 +1964,7 @@ button:focus-visible, a:focus-visible, [role="button"]:focus-visible, [tabindex]
     }
     const today = dueSoon().filter(f => daysUntil(f.shownDate) === 0);
     if (today.length) return [`Hoje vence ${today[0].desc}.`, today.length > 1 ? `E mais ${today.length - 1}. O resto está em dia.` : 'O resto está em dia.'];
-    if (t.receita && t.saldo >= 0) return [`Sobram ${reais(t.saldo) || 'alguns reais'} em ${mes}.`, t.pct ? 'E ainda cabe o que você planejou guardar. Bom trabalho.' : 'Que tal planejar guardar uma parte?'];
+    if (t.receita && t.saldo >= 0) return [`Sobram ${reais(t.saldo) || 'alguns reais'} em ${mes}.`, t.pct ? vc('E ainda cabe o que você planejou guardar. Bom trabalho.', 'E ainda cabe o que vocês planejaram guardar. Bom trabalho.') : 'Que tal planejar guardar uma parte?'];
     if (t.receita && t.saldo < 0) return [`Faltam ${reais(t.saldo) || 'alguns reais'} pra fechar ${mes} no azul.`, 'Pequenos ajustes já fazem diferença.'];
     return ['Tudo em dia por aqui.', 'Lance o que entrar e sair pra acompanhar o mês.'];
   }
@@ -2140,22 +2066,9 @@ button:focus-visible, a:focus-visible, [role="button"]:focus-visible, [tabindex]
     clearTimeout(animateEnter.t);
     animateEnter.t = setTimeout(() => { el.classList.remove('enter'); items.forEach(it => { it.style.animationDelay = ''; }); }, 900);
   }
-  // Juntos / pessoa A / pessoa B (quem usa o aparelho vem primeiro depois de "Juntos")
-  function renderWhoSwitch() {
-    const box = $('#whoSwitch'); if (!box) return;
-    box.hidden = !coupleOn();
-    if (!coupleOn()) return;
-    const me = meId(), cur = vw(), opts = [['', 'Juntos', avatarsOf('both', true)], [me, personName(me), avatar(me, true)], [otherOf(me), personName(otherOf(me)), avatar(otherOf(me), true)]];
-    box.innerHTML = `<div class="pills" role="tablist" aria-label="Ver as contas de">${opts.map(([k, n, av]) => `<button type="button" role="tab" data-whoview="${k}" class="${k === cur ? 'on' : ''}" aria-selected="${k === cur}">${av}${esc(n)}</button>`).join('')}</div>
-      <span class="note${cur ? '' : ' all'}">${cur ? `O que é de ${esc(personName(cur))} + ${Math.round(shareOf(cur, view.month) * 100)}% do que é dos dois` : 'Tudo da casa: o de cada um e o dos dois'}</span>`;
-  }
-  document.addEventListener('click', e => {
-    const b = e.target.closest('[data-whoview]'); if (!b) return;
-    ui.whoView = b.dataset.whoview; saveUi(); lastView = ''; render();
-  });
   function renderNow() {
     if ($('#tableHint')) $('#tableHint').textContent = TAB_HINTS[ui.tab] || '';
-    { const v = ui.tab + '|' + view.month + '|' + vw();
+    { const v = ui.tab + '|' + view.month;
       if (v !== lastView) {
         if (lastView) requestAnimationFrame(animateEnter);
         // os números do topo só contam de novo quando muda o mês (trocar de aba não mexe neles)
@@ -2164,8 +2077,8 @@ button:focus-visible, a:focus-visible, [role="button"]:focus-visible, [tabindex]
         if (!matchMedia('(prefers-reduced-motion: reduce)').matches) { fillAnim(); donutAnim = true; requestAnimationFrame(() => { countUpDonuts(); countUpMarked(); donutAnim = false; }); }
       } }
     // saudação pela hora do dia
-    $('#hello').textContent = greet() + (coupleOn() ? `, ${personName(meId())} e ${personName(otherOf(meId()))}` : account ? ', ' + userName() : '');
-    renderWhoSwitch();
+    $('#hello').textContent = greet() + (multi() ? ', ' + familyNames() : account ? ', ' + userName() : '');
+    document.querySelector('[data-explain="contas"]').innerHTML = familyOn() ? 'Dinheiro<span class="lg"> de vocês</span>' : 'Seu dinheiro<span class="lg"> hoje</span>';
     const [y, m] = view.month.split('-').map(Number);
     const lbl = new Date(y, m - 1, 1).toLocaleDateString('pt-BR', { month: 'long', year: 'numeric' });
     $('#monthLabel').textContent = lbl.charAt(0).toUpperCase() + lbl.slice(1);
@@ -2180,25 +2093,22 @@ button:focus-visible, a:focus-visible, [role="button"]:focus-visible, [tabindex]
     const t = totals(view.month);
     const cnt = (el, v, fmt = money) => countTo(el, v, fmt, countZero ? 0 : el._v);
     cnt($('#kReceita'), t.receita);
-    $('#kReceitaSub').textContent = t.aReceber ? `+ ${money(t.aReceber)} a receber` : t.receita ? '' : 'Nada lançado ainda';
+    const byWho = multi() ? members().map(m => [m, receitasOf(view.month).filter(r => !r.pending && whoOf(r) === m.id).reduce((x, r) => x + r.amount, 0)]).filter(([, v]) => v) : [];
+    $('#kReceitaSub').innerHTML = [byWho.length ? byWho.map(([m, v]) => `<span style="display:inline-block">${esc(m.name)} <span style="white-space:nowrap">${esc(money(v))}</span></span>`).join(' · ') : '',
+      t.aReceber ? `+ ${esc(money(t.aReceber))} a receber` : '', !t.receita && !t.aReceber ? 'Nada lançado ainda' : ''].filter(Boolean).join(' · ');
     cnt($('#kDespesas'), t.despesas);
     // cada "rótulo valor" fica junto na mesma linha
     $('#kDespesasSub').innerHTML = [['Contas', t.fixas], ['Gastos', t.variaveis], ['Assinaturas', t.assinaturas], ['Faturas', t.faturas]]
       .filter(([, v]) => v).map(([n, v]) => `<span style="display:inline-block">${n} <span style="white-space:nowrap">${esc(money(v))}</span></span>`).join(' · ');
     const signed = c => (c < 0 && !ui.hidden ? '–' : '') + money(Math.abs(c));
     // Seu dinheiro hoje: o dinheiro real somado dos bancos
-    const accs = accountsV();   // na visão de uma pessoa: os bancos dela + a parte dela na conta conjunta
-    if (accs.length) {
+    if (state.accounts.length) {
       $('#accountsBtnT').textContent = 'Bancos';
-      const total = Math.round(accs.reduce((s, { a, w }) => s + accBalance(a) * w, 0));
+      const total = state.accounts.reduce((s, a) => s + accBalance(a), 0);
       cnt($('#kSaldo'), total, signed);
       $('#kSaldo').classList.toggle('neg', total < 0);
-      $('#kSaldo').title = ui.hidden ? '' : accs.map(({ a, w }) => `${a.name}: ${brl.format(accBalance(a) * w / 100)}${w < 1 ? ' (parte da conta conjunta)' : ''}`).join('\n');
-      $('#kSaldoSub').innerHTML = `<span class="logo-stack">${accs.slice(0, 5).map(({ a }) => logoHtml(a, 'sm')).join('')}</span>${accs.length === 1 ? esc(accs[0].a.name) : `${accs.length} contas`}${accs.some(x => x.w < 1) ? ' · conjunta pela metade' : ''}`;
-    } else if (vw() && state.accounts.length) {
-      $('#kSaldo').textContent = '—'; $('#kSaldo')._v = null; $('#kSaldo').classList.remove('neg'); $('#kSaldo').title = '';
-      $('#kSaldoSub').textContent = `Nenhum banco marcado como de ${personName(vw())}`;
-      $('#accountsBtnT').textContent = 'Bancos';
+      $('#kSaldo').title = ui.hidden ? '' : state.accounts.map(a => `${a.name}: ${brl.format(accBalance(a) / 100)}`).join('\n');
+      $('#kSaldoSub').innerHTML = `<span class="logo-stack">${state.accounts.slice(0, 5).map(a => logoHtml(a, 'sm')).join('')}</span>${state.accounts.length === 1 ? esc(state.accounts[0].name) : `${state.accounts.length} contas`}`;
     } else {
       $('#kSaldo').textContent = '—'; $('#kSaldo')._v = null;
       $('#kSaldo').classList.remove('neg');
@@ -2211,7 +2121,7 @@ button:focus-visible, a:focus-visible, [role="button"]:focus-visible, [tabindex]
     cnt($('#kSobra'), Math.abs(t.saldo));
     countZero = false;
     $('#kSobra').classList.toggle('short', t.saldo < 0);
-    $('#kSobraSub').textContent = t.pct ? `Pretende guardar ${money(t.investir)} (${fmtPct(t.pct)})` : t.saldo < 0 ? 'Veja ideias na Visão geral' : 'Quanto você pretende guardar este mês?';
+    $('#kSobraSub').textContent = t.pct ? `Pretende guardar ${money(t.investir)} (${fmtPct(t.pct)})` : t.saldo < 0 ? 'Veja ideias na Visão geral' : vc('Quanto você pretende guardar este mês?', 'Quanto vocês pretendem guardar este mês?');
     renderHeadline(t);
 
     $('#eyeBtn').innerHTML = ico(ui.hidden ? 'eye-off' : 'eye');
@@ -2310,7 +2220,7 @@ button:focus-visible, a:focus-visible, [role="button"]:focus-visible, [tabindex]
         <span class="date num">${isFixa ? (r.dueNext ? `${ddmm(r.shownDate)}<small style="display:block;font-size:.66rem">mês seguinte</small>` : 'Dia ' + (r.shownDate ? r.shownDate.slice(8, 10) : pad(r.day))) : ddmm(r.shownDate)}${all ? `<small style="display:block;font-size:.66rem">${r.shownDate.slice(0, 4)}</small>` : ''}</span>
         <div class="name has-ic">${txIcon(r, ui.tab)}<div class="nm"><span title="${esc(r.desc || '')}">${whoBadge(r)}${esc(r.desc || cat(r.category)?.name || '—')}${extra ? ` <span class="ex">${extra}</span>` : ''}</span><div class="tag-m">${label}${extra ? `<span class="ex-m">${extra}</span>` : ''}</div></div></div>
         <span class="cat">${label}</span>
-        ${ui.tab === 'receita' ? `<span class="val num ${cls}${r.est ? ' est' : ''}">${ui.hidden ? '' : r.est ? '≈ ' : sign}${money(Math.abs(r.amount))}${r.est ? '<small>estimado</small>' : ''}${partOf(r)}</span>` : valHtml(r, view.month, (ui.hidden ? '' : r.est ? '≈ ' : sign) + money(Math.abs(r.amount)))}
+        ${ui.tab === 'receita' ? `<span class="val num ${cls}${r.est ? ' est' : ''}">${ui.hidden ? '' : r.est ? '≈ ' : sign}${money(Math.abs(r.amount))}${r.est ? '<small>estimado</small>' : ''}</span>` : valHtml(r, view.month, (ui.hidden ? '' : r.est ? '≈ ' : sign) + money(Math.abs(r.amount)))}
         <button class="edit" data-edit="${r.id}" aria-label="Editar">${ico('pencil', 'width:14px;height:14px')}</button>
       </div>`;
     }).join('');
@@ -2355,6 +2265,20 @@ button:focus-visible, a:focus-visible, [role="button"]:focus-visible, [tabindex]
     }
 
     const label = { receita: 'Entradas', fixa: 'Contas fixas', variavel: 'Gastos' }[ui.tab];
+    // família: as entradas mostram quanto veio de cada um (ou por tipo, se preferir)
+    if (ui.tab === 'receita' && multi()) {
+      const byP = ui.inBy !== 'tipo';
+      if (byP) {
+        const sums = new Map();
+        receitasOf(key).filter(r => !r.pending).forEach(r => { const w = whoOf(r); sums.set(w, (sums.get(w) || 0) + r.amount); });
+        const initial = n => `<svg class="i mono" viewBox="0 0 24 24" aria-hidden="true"><text x="12" y="18.5" text-anchor="middle" font-size="18" font-weight="700" font-family="inherit">${esc((n || '?').charAt(0).toUpperCase())}</text></svg>`;
+        groups = [...sums].filter(([, v]) => v > 0).map(([w, value]) => w ? { name: memberName(w), color: memberColor(w), value, mono: initial(memberName(w)) } : { name: 'Da família', color: '#94a3b8', value, icon: 'users' })
+          .sort((a, b) => b.value - a.value);
+      }
+      $('#chart').innerHTML = `<div class="chart-by"><div class="pills" id="inBy"><button type="button" data-by="pessoa" class="${byP ? 'on' : ''}">Por pessoa</button><button type="button" data-by="tipo" class="${byP ? '' : 'on'}">Por tipo</button></div></div>` + donutHtml(groups, total, label) + extra;
+      $('#inBy').onclick = e => { const b = e.target.closest('[data-by]'); if (b) { ui.inBy = b.dataset.by; saveUi(); renderChart(); } };
+      return;
+    }
     $('#chart').innerHTML = donutHtml(groups, total, label) + extra;
   }
 
@@ -2449,8 +2373,7 @@ button:focus-visible, a:focus-visible, [role="button"]:focus-visible, [tabindex]
 
   // ================= Visão geral =================
   // Eventos do mês (entradas e saídas com data): usados no calendário e na previsão
-  const monthEvents = key => raw(monthEventsRaw)(key);
-  function monthEventsRaw(key) {
+  function monthEvents(key) {
     const ev = [];
     const cardLogo = c => logoHtml({ brand: c.bank, name: c.name, color: c.color });
     receitasOf(key).forEach(r => ev.push({ date: r.shownDate, amount: r.amount, dir: 'in', label: r.desc || cat(r.category)?.name || 'Entrada', icon: 'circle-dollar-sign', done: !r.pending && r.shownDate <= todayIso, ref: 'r:' + r.id }));
@@ -2462,8 +2385,7 @@ button:focus-visible, a:focus-visible, [role="button"]:focus-visible, [tabindex]
   }
 
   // Previsão: saldo das contas hoje + o que ainda vai entrar/sair nos próximos 30 dias
-  const forecast = (...a) => raw(forecastRaw)(...a);
-  function forecastRaw() {
+  function forecast() {
     const start = state.accounts.reduce((s, a) => s + accBalance(a), 0);
     const end = (() => { const d = new Date(todayIso + 'T12:00:00'); d.setDate(d.getDate() + 30); return isoOf(d); })();
     const evs = [curKey(), addMonths(curKey(), 1), addMonths(curKey(), -1)].flatMap(monthEvents)
@@ -2495,8 +2417,8 @@ button:focus-visible, a:focus-visible, [role="button"]:focus-visible, [tabindex]
   function stepsHtml() {
     if (ui.stepsHidden) return '';
     const steps = [
-      ['acc', 'Diga quanto você tem no banco', 'Assim o app sabe de onde você está partindo.', state.accounts.length > 0],
-      ['in', 'Lance o que você ganha', 'Salário, bicos, pix recebidos.', state.receitas.length > 0],
+      ['acc', vc('Diga quanto você tem no banco', 'Digam quanto vocês têm no banco'), vc('Assim o app sabe de onde você está partindo.', 'Os bancos de cada um somam no dinheiro de vocês.'), state.accounts.length > 0],
+      ['in', vc('Lance o que você ganha', 'Lance o que cada um ganha'), vc('Salário, bicos, pix recebidos.', 'O salário de cada um, bicos, pix recebidos.'), state.receitas.length > 0],
       ['fix', 'Adicione suas contas fixas', 'Aluguel, luz, internet: o que chega todo mês.', state.fixas.length > 0],
       ['out', 'Registre um gasto', 'Pode ser o café de hoje. O botão + é o jeito mais rápido.', state.variaveis.length > 0],
       ['save', 'Planeje quanto guardar', 'Quanto do que entra você quer separar. Mesmo 5% já ajuda.', Object.values(state.invest || {}).some(v => v > 0)],
@@ -2519,13 +2441,11 @@ button:focus-visible, a:focus-visible, [role="button"]:focus-visible, [tabindex]
     const el = $('#overview');
     el.innerHTML = `
       ${stepsHtml()}
-      ${coupleOn() ? '<div class="ov ov-acerto" id="ovAcerto"></div>' : ''}
       <div class="ov ov-forecast" id="ovForecast"></div>
       <div class="ov ov-cal" id="ovCal"></div>
       <div class="ov ov-where" id="ovWhere"></div>
       <div class="ov ov-cards" id="ovCards"></div>
       <div class="ov ov-goals" id="ovGoals"></div>`;
-    if (coupleOn()) renderAcerto();
     renderForecast(); renderCalendar(); renderWhere(); renderOvCards(); renderOvGoals();
     el.querySelectorAll('[data-go]').forEach(b => b.addEventListener('click', () => { ui.tab = b.dataset.go; view.cat = ''; saveUi(); fillFilter(); render(); }));
     // categoria no gráfico "Para onde vai": abre Despesa variável filtrada por ela
@@ -2533,74 +2453,6 @@ button:focus-visible, a:focus-visible, [role="button"]:focus-visible, [tabindex]
       ui.tab = 'variavel'; saveUi(); fillFilter(); view.cat = li.dataset.catpick; $('#fCat').value = view.cat; render(); scrollTo({ top: $('#tabs').offsetTop - 10, behavior: 'smooth' });
     }));
     el.querySelector('[data-pdf]')?.addEventListener('click', () => printReport());
-  }
-
-  const splitText = () => state.couple.split === 'income' ? 'pela renda' : state.couple.split === 'custom' ? `${state.couple.ratioA}% / ${100 - state.couple.ratioA}%` : 'meio a meio';
-  function renderAcerto() {
-    const box = $('#ovAcerto'); if (!box) return;
-    const key = view.month, ac = acertoOf(key), mes = monthName(key), prev = addMonths(key, -1), acPrev = acertoOf(prev);
-    const paidTxt = ac.paid.a || ac.paid.b ? `Contas dos dois: ${esc(personName('a'))} pagou ${money(ac.paid.a)}, ${esc(personName('b'))} ${money(ac.paid.b)} · divisão ${splitText()}` : `Divisão ${splitText()}`;
-    const doneTxt = ac.done.length ? ` · já acertado ${money(ac.done.reduce((t, z) => t + z.amount, 0))}` : '';
-    let main, sub, btns = '';
-    if (!ac.items.length && !ac.done.length) {
-      main = `Nada pra acertar em ${mes} ainda`;
-      sub = 'Gastos dos dois pagos com o banco ou cartão de um de vocês aparecem aqui.';
-    } else if (ac.amount < 100) {
-      main = `Tudo certo entre vocês em ${mes}`;
-      sub = paidTxt + doneTxt;
-      btns = `<button class="btn-soft" id="acSee">Ver detalhes</button>`;
-    } else {
-      main = `${esc(personName(ac.from))} passa ${money(ac.amount)} pra ${esc(personName(ac.to))}`;
-      sub = paidTxt + doneTxt;
-      btns = `<button class="btn-soft" id="acSee">Ver detalhes</button><button class="btn-soft on" id="acPay">Marcar como acertado</button>`;
-    }
-    box.innerHTML = `<h3>Acerto do casal</h3><div class="acerto">${avatarsOf('both')}<div class="txt"><b class="big">${main}</b><small>${sub}</small>
-      ${acPrev.amount >= 100 ? `<small><button class="ov-link" style="margin:4px 0 0" id="acPrev">${monthName(prev).replace(/^./, c => c.toUpperCase())} ainda tem ${money(acPrev.amount)} pra acertar</button></small>` : ''}</div>
-      <div class="btns">${btns}</div></div>`;
-    box.querySelector('#acSee')?.addEventListener('click', () => withMemo(openAcerto)(key));
-    box.querySelector('#acPay')?.addEventListener('click', () => withMemo(openSettle)(key));
-    box.querySelector('#acPrev')?.addEventListener('click', () => { view.month = prev; render(); });
-  }
-  // Detalhes: cada gasto que entrou no acerto, quem pagou e quanto o outro deve por ele
-  function openAcerto(key) {
-    const ac = acertoOf(key), A = personName('a'), B = personName('b');
-    const row = o => `<div class="ac-row"><span class="d">${ddmm(o.x.shownDate)}</span>
-      <div>${esc(o.label)}<small>${o.who === 'both' ? 'Dos dois' : 'De ' + esc(personName(o.who))} · ${esc(personName(o.payer))} pagou ${money(o.x.amount)}</small></div>
-      <span class="v">${money(o.owes)}<small>${esc(personName(otherOf(o.payer)))} deve</small></span></div>`;
-    openModal(`${modalHead('Acerto de ' + monthName(key), `Divisão ${splitText()}. Quem pagou por algo que era dos dois (ou do outro) recebe a diferença.`)}
-      <div class="ac-sum"><div>${avatar('a', true)} ${esc(A)} pagou<b>${money(ac.paid.a)}</b>das contas dos dois</div><div>${avatar('b', true)} ${esc(B)} pagou<b>${money(ac.paid.b)}</b>das contas dos dois</div></div>
-      <div class="ac-list">${ac.items.map(row).join('') || '<p class="help">Nenhum gasto pago por um de vocês neste mês.</p>'}</div>
-      ${ac.done.length ? `<p class="fl">Já acertado</p><div class="ac-list">${ac.done.map(z => `<div class="ac-row"><span class="d">${ddmm(z.date)}</span><div>${esc(personName(z.from))} passou pra ${esc(personName(z.to))}</div>
-        <span class="v">${money(z.amount)} <button type="button" class="link" data-unsettle="${z.id}" style="color:var(--red);margin-left:6px">desfazer</button></span></div>`).join('')}</div>` : ''}
-      <div class="acc-total"><span>${ac.amount < 100 ? 'Tudo certo' : `${esc(personName(ac.from))} passa pra ${esc(personName(ac.to))}`}</span><strong class="num">${ac.amount < 100 ? '' : money(ac.amount)}</strong></div>
-      <div class="actions"><span class="grow"></span><button type="button" class="btn cancel" data-close>Fechar</button>${ac.amount >= 100 ? '<button type="button" class="btn save" id="acPay2">Marcar como acertado</button>' : ''}</div>`, m => {
-      m.querySelector('#acPay2')?.addEventListener('click', () => withMemo(openSettle)(key));
-      m.querySelectorAll('[data-unsettle]').forEach(b => b.addEventListener('click', () => {
-        const undoSnap = JSON.stringify(state);
-        state.acertos = (state.acertos || []).filter(z => z.id !== b.dataset.unsettle);
-        closeModal(); commit(); undoToast('Acerto desfeito', undoSnap);
-      }));
-    });
-  }
-  // Registrar que um passou pro outro (dá pra acertar só uma parte)
-  function openSettle(key) {
-    const ac = acertoOf(key);
-    openModal(`<form id="f" novalidate>${modalHead(`${esc(personName(ac.from))} passou pra ${esc(personName(ac.to))}`, `Acerto de ${monthName(key)}. Pode ser só uma parte, o resto continua aparecendo.`)}
-      ${moneyField('fAmount', ac.amount, 'Quanto passou?')}
-      <p class="help">Isso só marca o acerto entre vocês. Se foi um Pix entre bancos cadastrados aqui, lance também como transferência em Bancos.</p>
-      <div class="err" id="fErr"></div>
-      <div class="actions"><span class="grow"></span><button type="button" class="btn cancel" data-close>Cancelar</button><button type="submit" class="btn save">Marcar como acertado</button></div></form>`, m => {
-      bindMoney(m.querySelector('#fAmount'));
-      m.querySelector('#f').addEventListener('submit', e => {
-        e.preventDefault();
-        const v = cents(m.querySelector('#fAmount'));
-        if (!v) return showErr('Digite o valor.');
-        const undoSnap = JSON.stringify(state);
-        (state.acertos ||= []).push({ id: uid(), key, from: ac.from, to: ac.to, amount: v, date: todayIso, created: Date.now() });
-        closeModal(); commit();
-        undoToast(`${personName(ac.from)} passou ${brl.format(v / 100)} pra ${personName(ac.to)}`, undoSnap);
-      });
-    });
   }
 
   function renderForecast() {
@@ -2775,7 +2627,7 @@ button:focus-visible, a:focus-visible, [role="button"]:focus-visible, [tabindex]
 
   function renderOvGoals() {
     const box = $('#ovGoals');
-    const inv = Math.round(investmentsV().reduce((s, { i, w }) => s + estimate(i) * w, 0)), acc = Math.round(accountsV().reduce((s, { a, w }) => s + accBalance(a) * w, 0));
+    const inv = state.investments.reduce((s, i) => s + estimate(i), 0), acc = state.accounts.reduce((s, a) => s + accBalance(a), 0);
     box.innerHTML = `<h3>Metas e patrimônio <button class="ov-link" data-go="metas">Ver metas</button></h3><p class="ov-sub">Contas ${money(acc)} · Investimentos ${money(inv)}</p>
       <div class="stat-hero" style="padding:0 0 6px;text-align:left"><small>Patrimônio</small><strong${acc + inv >= 0 ? ` data-cu="${acc + inv}"` : ''}>${(acc + inv < 0 && !ui.hidden ? '–' : '') + money(Math.abs(acc + inv))}</strong></div>`
       + (state.metas.length ? state.metas.map(g => {
@@ -2788,8 +2640,7 @@ button:focus-visible, a:focus-visible, [role="button"]:focus-visible, [tabindex]
 
   // ================= Evolução mês a mês =================
   // Patrimônio (contas + investimentos): guarda um retrato por mês quando o app é aberto
-  const snapshot = (...a) => raw(snapshotRaw)(...a);
-  function snapshotRaw() {
+  function snapshot() {
     if (!state.accounts.length && !state.investments.length) return;
     const val = state.accounts.reduce((s, a) => s + accBalance(a), 0) + state.investments.reduce((s, i) => s + estimate(i), 0);
     state.snapshots ||= {};
@@ -3161,11 +3012,11 @@ button:focus-visible, a:focus-visible, [role="button"]:focus-visible, [tabindex]
       return `<div class="row">
         <span class="date">${logoHtml(a)}</span>
         ${(() => { const ex = [!charged.has(a.id) ? `<small>${(a.skip || []).includes(view.month) ? 'pulada este mês' : 'não cobra este mês'}</small>` : '', viaHtml(a)].filter(Boolean).join(' ');
-          return `<div class="name"><span>${whoBadge(a)}${esc(a.name)}${ex ? ` <span class="ex">${ex}</span>` : ''}</span><div class="tag-m">${tag}${ex ? `<span class="ex-m">${ex}</span>` : ''}</div></div>`; })()}
+          return `<div class="name"><span>${esc(a.name)}${ex ? ` <span class="ex">${ex}</span>` : ''}</span><div class="tag-m">${tag}${ex ? `<span class="ex-m">${ex}</span>` : ''}</div></div>`; })()}
         <span class="cat">${tag}</span>
         ${charged.has(a.id) && inFatura({ ...a, shownDate: dateIn(view.month, a.day) }, view.month)
           ? `<span class="val num absorbed" title="Já está dentro da fatura do ${esc(payCardOf(a).name)}">${money(a.amount)}${suffix}<small>na fatura</small></span>`
-          : `<span class="val num">${money(a.amount)}<small style="color:var(--muted);font-weight:500">${suffix}</small>${partOf(a)}</span>`}
+          : `<span class="val num">${money(a.amount)}<small style="color:var(--muted);font-weight:500">${suffix}</small></span>`}
         <button class="edit" data-edit="${a.id}" aria-label="Editar">${ico('pencil', 'width:14px;height:14px')}</button>
       </div>`;
     }).join('');
@@ -3205,7 +3056,6 @@ button:focus-visible, a:focus-visible, [role="button"]:focus-visible, [tabindex]
       </div>
       <p class="help" id="cyHelp"></p>
       ${payField(item ? a : null)}
-      ${whoField(item, 'both')}
       ${footer(editing)}</form>`, m => {
       const amount = m.querySelector('#fAmount');
       let chosen = !!(a.brand || a.name);
@@ -3255,7 +3105,7 @@ button:focus-visible, a:focus-visible, [role="button"]:focus-visible, [tabindex]
         const name = (m.querySelector('#fName')?.value || '').trim();
         if (!name) return showErr('Escolha o serviço ou dê um nome.');
         const data = { brand: a.brand || '', name, color: a.color || '', amount: cents(amount), cycle: a.cycle,
-          day: +m.querySelector('#fDay').value, month: +m.querySelector('#fMonth').value, ...readPay(m), ...readWho(m) };
+          day: +m.querySelector('#fDay').value, month: +m.querySelector('#fMonth').value, ...readPay(m) };
         if (!data.amount) return showErr('Digite o valor.');
         if (!editing) {
           state.assinaturas.push({ ...data, id: uid(), created: Date.now(), start: view.month });
@@ -3307,7 +3157,7 @@ button:focus-visible, a:focus-visible, [role="button"]:focus-visible, [tabindex]
     return state.assinaturas.find(a => activeIn(a, key) && ((b && a.brand === b) || (squash(a.name).length >= 4 && n.includes(squash(a.name)))));
   }
   // Gastos que se repetem todo mês com valor parecido (ou serviços conhecidos) e ainda não estão em Assinaturas
-  function detectSubs() { return cached('subs', raw(detectSubsRaw)); }
+  function detectSubs() { return cached('subs', detectSubsRaw); }
   function detectSubsRaw() {
     const ignore = new Set(state.subIgnore || []), groups = {};
     for (const v of state.variaveis) {
@@ -3495,7 +3345,7 @@ button:focus-visible, a:focus-visible, [role="button"]:focus-visible, [tabindex]
       ${state.accounts.length ? `<label class="fl" for="fPayAcc">De qual conta sai o pagamento?</label>
       <select class="select" id="fPayAcc"><option value="">Prefiro não dizer</option>${state.accounts.map(a => `<option value="${a.id}" ${a.id === c.payAccount ? 'selected' : ''}>${esc(a.name)}</option>`).join('')}</select>
       <p class="help">Quando você marcar a fatura como paga, o valor sai do saldo dessa conta.</p>` : ''}
-      ${whoField(item, meId(), { label: 'De quem é o cartão?', payer: false })}
+      ${whoField(item, meId(), 'De quem é o cartão?')}
       ${checkField('fCount', 'Contar a fatura no que saiu', 'Desmarque se você já lança cada compra deste cartão em Gastos, pra não contar duas vezes.', c.count !== false)}
       ${footer(editing)}</form>`, m => {
       bindWho(m);
@@ -3657,8 +3507,8 @@ button:focus-visible, a:focus-visible, [role="button"]:focus-visible, [tabindex]
   function renderInvestTable() {
     $('#tableTitle').textContent = 'Investimentos';
     const q = norm(view.query);
-    const rows = investmentsV().filter(({ i }) => !q || norm(i.name + ' ' + (i.institution || '')).includes(q))
-      .map(({ i, w }) => ({ ...i, now: Math.round(estimate(i) * w), full: w < 1 ? estimate(i) : 0, w })).sort((a, b) => b.now - a.now);
+    const rows = state.investments.filter(i => !q || norm(i.name + ' ' + (i.institution || '')).includes(q))
+      .map(i => ({ ...i, now: estimate(i) })).sort((a, b) => b.now - a.now);
     if (!rows.length) {
       $('#table').innerHTML = `<div class="empty">${q ? 'Nada encontrado com esse filtro.' : 'Nenhum investimento cadastrado.<br>Ex.: sua conta do Mercado Pago rendendo 120% do CDI.'}${q ? '' : `<br><button class="btn-soft" data-add>${ico('plus')}Adicionar</button>`}</div>`;
       return;
@@ -3668,21 +3518,21 @@ button:focus-visible, a:focus-visible, [role="button"]:focus-visible, [tabindex]
       const tag = `<span class="tag rate">${rateText(i)}</span>`;
       return `<div class="row">
         <span class="date num" title="Última vez que você informou o saldo">${ddmm(i.updatedAt)}</span>
-        <div class="name has-ic">${investMark(i)}<div class="nm"><span>${whoBadge(i)}${esc(i.name)}${i.institution ? `<span class="ex"><small class="inst">${esc(i.institution)}</small></span>` : ''}</span><div class="tag-m">${tag}${i.institution ? `<span class="ex-m"><small class="inst">${esc(i.institution)}</small></span>` : ''}</div></div></div>
+        <div class="name has-ic">${investMark(i)}<div class="nm"><span>${esc(i.name)}${i.institution ? `<span class="ex"><small class="inst">${esc(i.institution)}</small></span>` : ''}</span><div class="tag-m">${tag}${i.institution ? `<span class="ex-m"><small class="inst">${esc(i.institution)}</small></span>` : ''}</div></div></div>
         <span class="cat">${tag}</span>
-        <span class="val num">${money(i.now)}${i.full ? `<small class="of">de ${money(i.full)}</small>` : ''}</span>
+        <span class="val num">${money(i.now)}</span>
         <button class="edit" data-edit="${i.id}" aria-label="Editar">${ico('pencil', 'width:14px;height:14px')}</button>
       </div>`;
     }).join('');
     const total = rows.reduce((s, i) => s + i.now, 0);
-    const month = Math.round(rows.reduce((s, i) => s + monthlyYield(i) * i.w, 0));
+    const month = rows.reduce((s, i) => s + monthlyYield(i), 0);
     $('#table').innerHTML = head + body + `
       <div class="total"><span>Total investido</span><strong class="num pos">${money(total)}</strong></div>
       <div class="yield"><span>Rendimento estimado (bruto, antes do IR)</span><span>≈ <strong class="num">${money(month)}</strong> / mês</span></div>`;
   }
 
   function renderInvestChart() {
-    const rows = investmentsV().map(({ i, w }, n) => { const b = investBrand(i); return { name: i.name, color: PALETTE[n % PALETTE.length], value: Math.round(estimate(i) * w), icon: 'trending-up', mono: b ? monoMark(b) : '', color: b ? BRANDS[b].color : PALETTE[n % PALETTE.length] }; })
+    const rows = state.investments.map((i, n) => { const b = investBrand(i); return { name: i.name, color: PALETTE[n % PALETTE.length], value: estimate(i), icon: 'trending-up', mono: b ? monoMark(b) : '', color: b ? BRANDS[b].color : PALETTE[n % PALETTE.length] }; })
       .filter(g => g.value > 0).sort((a, b) => b.value - a.value);
     const total = rows.reduce((s, g) => s + g.value, 0);
     $('#chart').innerHTML = total ? donutHtml(rows, total, 'Patrimônio')
@@ -3703,7 +3553,6 @@ button:focus-visible, a:focus-visible, [role="button"]:focus-visible, [tabindex]
       </div>
       <p class="help" id="rateHelp"></p>
       ${moneyField('fAmount', now || inv.balance, editing ? 'Saldo hoje' : 'Quanto tem guardado hoje')}
-      ${whoField(item, meId(), { label: 'De quem é?', payer: false })}
       ${editing ? `<p class="help">Estimado pelo rendimento desde ${ddmm(inv.updatedAt)}. Se no app do banco estiver diferente, é só corrigir aqui.</p>
       <div class="divider"></div>
       <label class="fl">Aporte ou resgate <span style="color:var(--muted);font-weight:500">(opcional)</span></label>
@@ -3713,7 +3562,6 @@ button:focus-visible, a:focus-visible, [role="button"]:focus-visible, [tabindex]
       ${state.accounts.length ? `<label class="fl" for="fMvAcc" id="mvAccLbl">Sai da conta</label>
       <select class="select" id="fMvAcc"><option value="">Não mexer nas contas</option>${state.accounts.map(a => `<option value="${a.id}">${esc(a.name)}</option>`).join('')}</select>` : ''}` : ''}
       ${footer(editing)}</form>`, m => {
-      bindWho(m);
       const type = m.querySelector('#fType'), rate = m.querySelector('#fRate'), amount = m.querySelector('#fAmount');
       let mv = 'in';
       const refresh = () => {
@@ -3751,7 +3599,7 @@ button:focus-visible, a:focus-visible, [role="button"]:focus-visible, [tabindex]
         if (editing) { const mvC = cents(m.querySelector('#fMove')); balance += mv === 'in' ? mvC : -mvC; }
         if (balance < 0) return showErr('O resgate é maior que o saldo.');
         const data = { name, institution: m.querySelector('#fInst').value.trim(), type: type.value,
-          rate: Math.max(0, +rate.value || 0), balance, updatedAt: todayIso, ...readWho(m) };
+          rate: Math.max(0, +rate.value || 0), balance, updatedAt: todayIso };
         if (editing) {
           Object.assign(state.investments.find(x => x.id === item.id), data);
           // aporte tirado de uma conta / resgate que caiu numa conta: o saldo da conta acompanha (vira uma transferência)
@@ -3779,7 +3627,7 @@ button:focus-visible, a:focus-visible, [role="button"]:focus-visible, [tabindex]
     const draft = state.accounts.map(a => { const cur = accBalance(a); return { ...a, cur, moves: accountMoves(a), brand: a.brand || brandByName(a.name) || '', neg: cur < 0, abs: Math.abs(cur) }; });
     openModal(`<form id="f" novalidate>${modalHead('Meus bancos', 'Quanto tem em cada um agora. A soma aparece em Seu dinheiro hoje.')}
       <div id="accList"></div>
-      ${coupleOn() ? `<p class="help">Toque na bolinha de cada banco pra dizer de quem é: seu, de ${esc(personName(otherOf(meId())))} ou dos dois (conta conjunta). Isso diz quem pagou cada gasto no acerto do casal.</p>` : ''}
+      ${multi() ? '<p class="help">Toque na bolinha de cada banco pra dizer de quem é (ou da família, numa conta conjunta).</p>' : ''}
       <p class="fl" style="margin-top:16px">Adicionar banco</p>
       <div class="bank-chips" id="bankChips"></div>
       <div class="acc-total"><span>Saldo total</span><strong class="num" id="accTotal"></strong></div>
@@ -3796,7 +3644,7 @@ button:focus-visible, a:focus-visible, [role="button"]:focus-visible, [tabindex]
       };
       const draw = focusIdx => {
         list.innerHTML = draft.length ? draft.map((a, i) => `<div class="acc ${a.neg ? 'neg' : ''}" data-i="${i}">
-          <span class="acc-ic"><span data-icon>${logoHtml(a)}</span>${coupleOn() ? `<button type="button" class="acc-who" data-whocycle title="De quem é: ${whoOf(a) === 'both' ? 'dos dois' : esc(personName(whoOf(a)))} (tocar troca)">${avatarsOf(whoOf(a), true)}</button>` : ''}</span>
+          <span class="acc-ic"><span data-icon>${logoHtml(a)}</span>${multi() ? `<button type="button" class="acc-who" data-whocycle title="De quem é: ${whoOf(a) ? esc(memberName(whoOf(a))) : 'da família'} (tocar troca)">${whoOf(a) ? avatar(whoOf(a), true) : `<span class="fam">${ico('users')}</span>`}</button>` : ''}</span>
           <input class="input" data-name value="${esc(a.name)}" maxlength="30" placeholder="Nome da conta" aria-label="Nome da conta" />
           <div class="money"><button type="button" class="sign" data-sign tabindex="-1" title="Tocar para marcar como negativo (cheque especial)">${a.neg ? '–R$' : 'R$'}</button>
             <input inputmode="numeric" data-money value="${centsText(a.abs)}" data-cents="${a.abs}" aria-label="Saldo" /></div>
@@ -3832,12 +3680,12 @@ button:focus-visible, a:focus-visible, [role="button"]:focus-visible, [tabindex]
         const i = +row.dataset.i;
         if (e.target.closest('[data-rm]')) { draft.splice(i, 1); draw(); }
         if (e.target.closest('[data-sign]')) { draft[i].neg = !draft[i].neg; draw(); }
-        if (e.target.closest('[data-whocycle]')) { const order = [meId(), otherOf(meId()), 'both']; draft[i].who = order[(order.indexOf(whoOf(draft[i])) + 1) % 3]; draw(); }
+        if (e.target.closest('[data-whocycle]')) { const order = [...members().map(x => x.id), '']; draft[i].who = order[(order.indexOf(whoOf(draft[i])) + 1) % order.length] || undefined; draw(); }
       });
       m.querySelector('#bankChips').addEventListener('click', e => {
         const b = e.target.closest('[data-bank]'); if (!b) return;
         const k = b.dataset.bank;
-        draft.push({ id: uid(), brand: k, name: k ? BRANDS[k].name : '', color: k ? BRANDS[k].color : PALETTE[draft.length % PALETTE.length], abs: 0, neg: false, balance: 0, ...(coupleOn() ? { who: meId() } : {}) });
+        draft.push({ id: uid(), brand: k, name: k ? BRANDS[k].name : '', color: k ? BRANDS[k].color : PALETTE[draft.length % PALETTE.length], abs: 0, neg: false, balance: 0, ...(multi() ? { who: meId() } : {}) });
         draw(draft.length - 1);
       });
       draw();
@@ -4157,7 +4005,7 @@ button:focus-visible, a:focus-visible, [role="button"]:focus-visible, [tabindex]
       <label class="fl" for="fDesc">Descrição</label><input class="input" id="fDesc" maxlength="60" placeholder="Ex.: Salário, Freela…" value="${esc(r.desc)}" />
       ${catSelect('receita', r.category, 'Tipo de renda')}
       ${payField(item || prefill ? r : null, true)}
-      ${whoField(item, meId(), { label: 'De quem é essa entrada?', payer: false })}
+      ${whoField(item, meId(), 'De quem é essa entrada?')}
       ${checkField('fRecurring', 'Recebo todo mês', 'Como o salário: aparece sozinho nos próximos meses.', r.recurring)}
       <div id="variaBox" ${r.recurring ? '' : 'hidden'}>${checkField('fVaria', 'O valor muda um pouco todo mês', 'O app usa a média dos últimos meses até você dizer quanto caiu.', !!r.varia)}</div>
       ${footer(editing, true)}</form>`, m => {
@@ -4202,7 +4050,7 @@ button:focus-visible, a:focus-visible, [role="button"]:focus-visible, [tabindex]
       ${editing ? '' : checkField('fInst', 'Parcelou?', 'Divide o valor em parcelas nos próximos meses.', false) +
         `<div class="inline" id="instBox" hidden><input type="number" class="input" id="fN" min="2" max="48" value="2" /><span id="instHint"></span></div>`}
       ${payField(item || prefill ? v : null)}
-      ${whoField(item || (prefill && prefill.who ? prefill : null), ui.lastWho || meId())}
+      ${whoField(item, ui.lastWho || '')}
       ${editing && v.installment ? checkField('fAllParc', `Aplicar a todas as ${v.installment.n} parcelas`, 'Descrição, categoria e forma de pagamento. Data e valor mudam só nesta parcela.', true) : ''}
       ${footer(editing, true)}</form>`, m => {
       m.querySelector('#fDup')?.addEventListener('click', () => openVariavel(null, { amount: item.amount, desc: item.desc, category: item.category, payCard: item.payCard || '', payAccount: item.payAccount || '' }));
@@ -4252,7 +4100,7 @@ button:focus-visible, a:focus-visible, [role="button"]:focus-visible, [tabindex]
           Object.assign(state.variaveis.find(x => x.id === item.id), data);
           if (item.installment && m.querySelector('#fAllParc')?.checked)
             state.variaveis.filter(x => x.installment?.group === item.installment.group)
-              .forEach(x => Object.assign(x, { desc: data.desc, category: data.category, payCard: data.payCard, payAccount: data.payAccount, ...(data.who ? { who: data.who, paidBy: data.paidBy } : {}) }));
+              .forEach(x => Object.assign(x, { desc: data.desc, category: data.category, payCard: data.payCard, payAccount: data.payAccount, ...('who' in data ? { who: data.who } : {}) }));
           undoToast('Gasto atualizado', undoSnap);
         } else if (m.querySelector('#fInst').checked) {
           const n = Math.max(2, Math.min(48, +m.querySelector('#fN').value || 2));
@@ -4309,10 +4157,9 @@ button:focus-visible, a:focus-visible, [role="button"]:focus-visible, [tabindex]
       <p class="help" id="fWhenHelp"></p>
       ${editing ? '' : `<div id="paidNowBox" hidden>${checkField('fPaidNow', 'Já paguei a deste mês', 'O vencimento deste mês já passou. Desmarque se ainda não pagou.', true)}</div>`}
       ${payField(item ? f : null).replace('id="fPay"', 'id="fPay" data-fixa="1"')}
-      ${whoField(item, 'both')}
       ${footer(editing)}</form>`, m => {
       bindMoney(m.querySelector('#fAmount'));
-      bindPay(m); bindWho(m);
+      bindPay(m);
       // sugestões de nome e "quando você paga" com a frase mostrando o resultado
       m.querySelector('#fixSug')?.addEventListener('click', e => { const b = e.target.closest('[data-sug]'); if (!b) return; m.querySelector('#fDesc').value = b.dataset.sug; m.querySelectorAll('#fixSug button').forEach(x => x.classList.toggle('on', x === b)); m.querySelector('#fAmount').focus(); });
       const drawWhen = () => {
@@ -4336,7 +4183,7 @@ button:focus-visible, a:focus-visible, [role="button"]:focus-visible, [tabindex]
       m.querySelector('#f').addEventListener('submit', e => {
         e.preventDefault();
         const undoSnap = JSON.stringify(state);
-        const data = { amount: cents(m.querySelector('#fAmount')), desc: m.querySelector('#fDesc').value.trim(), day: +m.querySelector('#fDay').value, dueNext: m.querySelector('#fDueNext').checked, varia: m.querySelector('#fVaria').checked, ...readPay(m), ...readWho(m) };
+        const data = { amount: cents(m.querySelector('#fAmount')), desc: m.querySelector('#fDesc').value.trim(), day: +m.querySelector('#fDay').value, dueNext: m.querySelector('#fDueNext').checked, varia: m.querySelector('#fVaria').checked, ...readPay(m) };
         if (!data.amount) return showErr('Digite o valor.');
         // conta que varia: o valor digitado vale só para este mês (o de costume e os outros meses ficam como estão)
         if (editing && item.varia && data.varia) {
@@ -4414,39 +4261,22 @@ button:focus-visible, a:focus-visible, [role="button"]:focus-visible, [tabindex]
     });
     help();
   }
-  // ---------- Modo casal: "De quem é?" e "Quem pagou?" ----------
-  // "Quem pagou?" só aparece quando é dos dois e a forma de pagamento não diz (banco/cartão com dono já responde)
-  function whoField(item, def, { label = 'De quem é?', payer = true } = {}) {
-    if (!coupleOn()) return '';
-    const cur = item && item.who ? item.who : def;
-    const pb = item && item.paidBy ? item.paidBy : item && item.who === 'both' ? '' : meId();
-    return `<label class="fl">${label}</label><div class="who-pick" id="fWho">${['a', 'b', 'both'].map(p => `<button type="button" data-who="${p}" class="${p === cur ? 'on' : ''}">${avatarsOf(p, true)}${p === 'both' ? 'Dos dois' : esc(personName(p))}</button>`).join('')}</div>
-      ${payer ? `<div id="fPaidByBox" hidden><label class="fl">Quem pagou?</label><div class="who-pick" id="fPaidBy">${['a', 'b'].map(p => `<button type="button" data-pb="${p}" class="${p === pb ? 'on' : ''}">${avatar(p, true)}${esc(personName(p))}</button>`).join('')}<button type="button" data-pb="" class="${pb === '' ? 'on' : ''}">Dinheiro dos dois</button></div>
-        <p class="help">Entra no acerto do mês: quem pagou recebe a parte do outro.</p></div>` : ''}`;
-  }
-  // Dono da forma de pagamento escolhida no formulário ('a', 'b', 'both' ou '' se não tem)
-  function payOwnerIn(m) {
-    const v = m.querySelector('#fPay .on')?.dataset.card || '';
-    const x = v.startsWith('card:') ? state.cards.find(c => c.id === v.slice(5)) : v.startsWith('acc:') ? state.accounts.find(a => a.id === v.slice(4)) : null;
-    return x ? whoOf(x) : '';
+  // ---------- Família: "De quem é?" (só aparece com 2 pessoas ou mais) ----------
+  function whoField(item, def, label = 'De quem é?') {
+    if (!multi()) return '';
+    const cur = item ? whoOf(item) : (member(def) ? def : '');
+    return `<label class="fl">${label}</label><div class="who-pick" id="fWho">${members().map(mb => `<button type="button" data-who="${mb.id}" class="${mb.id === cur ? 'on' : ''}">${avatar(mb.id, true)}${esc(mb.name)}</button>`).join('')}<button type="button" data-who="" class="${cur ? '' : 'on'}" style="padding-left:8px">${famAvatars(true)}Da família</button></div>`;
   }
   function bindWho(m) {
     const box = m.querySelector('#fWho'); if (!box) return;
-    const pbBox = m.querySelector('#fPaidByBox');
-    const sync = () => { if (pbBox) pbBox.hidden = !(box.querySelector('.on')?.dataset.who === 'both' && !payOwnerIn(m)); };
-    box.addEventListener('click', e => { const b = e.target.closest('[data-who]'); if (!b) return; box.querySelectorAll('button').forEach(x => x.classList.toggle('on', x === b)); sync(); });
-    m.querySelector('#fPaidBy')?.addEventListener('click', e => { const b = e.target.closest('[data-pb]'); if (!b) return; m.querySelectorAll('#fPaidBy button').forEach(x => x.classList.toggle('on', x === b)); });
-    m.querySelector('#fPay')?.addEventListener('click', () => setTimeout(sync));
-    sync();
+    box.addEventListener('click', e => { const b = e.target.closest('[data-who]'); if (!b) return; box.querySelectorAll('button').forEach(x => x.classList.toggle('on', x === b)); });
   }
-  // {} com o modo desligado (não mexe em nada); senão { who, paidBy }
+  // {} sem família (não mexe em nada); senão { who } (undefined = da família)
   function readWho(m, remember) {
     const box = m.querySelector('#fWho'); if (!box) return {};
-    const who = box.querySelector('.on')?.dataset.who || meId();
-    const pbBox = m.querySelector('#fPaidByBox');
-    const paidBy = who === 'both' && pbBox && !pbBox.hidden ? m.querySelector('#fPaidBy .on')?.dataset.pb || '' : '';
+    const who = box.querySelector('.on')?.dataset.who || '';
     if (remember) { ui.lastWho = who; saveUi(); }
-    return { who, paidBy: paidBy || undefined };
+    return { who: who || undefined };
   }
   // Devolve { payCard, payAccount } e lembra a escolha para o próximo lançamento
   function readPay(m) {
@@ -4464,10 +4294,8 @@ button:focus-visible, a:focus-visible, [role="button"]:focus-visible, [tabindex]
     const a = item.payAccount && state.accounts.find(x => x.id === item.payAccount);
     return a ? `<span class="via" title="Conta ${esc(a.name)}">${logoHtml(a)}<span class="vt">${esc(a.name)}</span></span>` : '';
   }
-  // Na visão de uma pessoa, o que é dos dois mostra a parte dela e o total embaixo
-  const partOf = x => x.part ? `<small class="of">de ${money(x.full)}</small>` : '';
   function valHtml(item, key, text) {
-    if (!inFatura(item, key)) return item.est ? `<span class="val num est" title="Média dos últimos meses. Confirme quando a conta chegar.">${text}<small>estimado</small>${partOf(item)}</span>` : `<span class="val num">${text}${partOf(item)}</span>`;
+    if (!inFatura(item, key)) return item.est ? `<span class="val num est" title="Média dos últimos meses. Confirme quando a conta chegar.">${text}<small>estimado</small></span>` : `<span class="val num">${text}</span>`;
     return `<span class="val num absorbed" title="Já está dentro da fatura do ${esc(payCardOf(item).name)}">${text}<small>na fatura</small></span>`;
   }
 
@@ -4486,6 +4314,7 @@ button:focus-visible, a:focus-visible, [role="button"]:focus-visible, [tabindex]
     if (old.recurring && startKey < view.month && data.recurring) {
       const changed = old.amount !== data.amount || old.desc !== data.desc || old.category !== data.category || +old.date.slice(8) !== +data.date.slice(8)
         || !!old.pending !== !!data.pending || (old.payAccount || '') !== (data.payAccount || '');
+      if (!changed && 'who' in data) { if (data.who) old.who = data.who; else delete old.who; }
       // ligar/desligar "o valor muda" ou mudar só o valor deste mês: fica no mesmo item, sem dividir em dois
       if (!changed) { if (!old.varia && data.varia) old.variaSince = view.month; old.varia = !!data.varia; if (data.amounts) old.amounts = data.amounts; return; }
       if (changed) {
@@ -4642,7 +4471,7 @@ button:focus-visible, a:focus-visible, [role="button"]:focus-visible, [tabindex]
       <div class="pal-pick" id="mPal">${Object.entries(PALETTES).map(([k, v]) => `<button type="button" data-pal="${k}" class="${k === ui.palette ? 'on' : ''}"><span class="sw">${(v.cols || PALETTE).slice(0, 5).map(c => `<i style="background:${c}"></i>`).join('')}</span>${v.name}</button>`).join('')}</div>
       <p class="fl">Fonte</p>
       <div class="font-pick" id="mFonts">${FONTS.map(f => `<button type="button" data-font="${f}" style="font-family:'${f}'" class="${f === ui.font ? 'on' : ''}"><span>Aa</span>${f}</button>`).join('')}</div>
-      <button class="menu-item" id="mCouple">Modo casal <span style="margin-left:auto;font-weight:500;font-size:.78rem;color:var(--muted)">${coupleOn() ? esc(personName('a')) + ' e ' + esc(personName('b')) : 'desligado'}</span></button>
+      <button class="menu-item" id="mFamily">Uso do app <span style="margin-left:auto;font-weight:500;font-size:.78rem;color:var(--muted)">${familyOn() ? (multi() ? esc(familyNames()) : 'em família') : 'só eu'}</span></button>
       <p class="fl">App</p>
       <button class="menu-item" id="mInstall">Instalar como app</button>
       <button class="menu-item" id="mLock">Senha para abrir o app <span id="lockBadge" style="margin-left:auto;font-weight:500;font-size:.78rem;color:var(--muted)"></span></button>
@@ -4663,7 +4492,7 @@ button:focus-visible, a:focus-visible, [role="button"]:focus-visible, [tabindex]
         m.querySelectorAll('#mFonts button').forEach(x => x.classList.toggle('on', x === b));
       };
       m.querySelector('#mAccount').onclick = () => openAccountSettings();
-      m.querySelector('#mCouple').onclick = () => openCouple();
+      m.querySelector('#mFamily').onclick = () => openFamily();
       m.querySelector('#mPal').onclick = e => {
         const b = e.target.closest('[data-pal]'); if (!b) return;
         ui.palette = b.dataset.pal; saveUi(); render();
@@ -4688,49 +4517,125 @@ button:focus-visible, a:focus-visible, [role="button"]:focus-visible, [tabindex]
     });
   }
 
-  // ================= Convite pro celular do par =================
+  // ================= Uso do app: só eu ou em família =================
+  const usePickHtml = fam => `<div class="use-pick" id="usePick">
+      <button type="button" data-use="solo" class="${fam ? '' : 'on'}"><b>${ico('user')}Só eu</b><small>Minhas contas, do meu jeito.</small></button>
+      <button type="button" data-use="fam" class="${fam ? 'on' : ''}"><b>${ico('users')}Em família</b><small>Casal ou casa toda: o salário de cada um, tudo somado junto.</small></button></div>`;
+  function bindUsePick(root, onChange) {
+    const box = root.querySelector('#usePick');
+    box.addEventListener('click', e => { const b = e.target.closest('[data-use]'); if (!b) return; box.querySelectorAll('button').forEach(x => x.classList.toggle('on', x === b)); onChange(b.dataset.use === 'fam'); });
+  }
+  // Campo "adicionar pessoa" (nome + botão) que monta a lista em "list" (array de nomes)
+  const memberAddHtml = p => `<div class="mem-list" id="${p}MemList"></div><div class="mem-add"><input class="input" id="${p}MemIn" maxlength="20" placeholder="Nome ou apelido. Ex.: Ana" autocapitalize="words" /><button type="button" class="btn-soft" id="${p}MemAdd">${ico('plus')}Adicionar</button></div>`;
+  function bindMemberAdd(root, p, list, onChange) {
+    const draw = () => {
+      root.querySelector(`#${p}MemList`).innerHTML = list.map((n, i) => `<div class="mem-row"><span class="av sm" style="--av:${FAM_COLORS[(i + 1) % FAM_COLORS.length]};width:24px;height:24px;font-size:.66rem">${esc(n.charAt(0).toUpperCase())}</span><span>${esc(n)}</span><button type="button" class="x" data-rmmem="${i}" aria-label="Tirar ${esc(n)}">${ico('x')}</button></div>`).join('');
+      onChange();
+    };
+    const add = () => { const inp = root.querySelector(`#${p}MemIn`), n = inp.value.trim().replace(/\s+/g, ' '); if (!n) return; if (list.length < 7 && !list.some(x => norm(x) === norm(n))) list.push(n.charAt(0).toUpperCase() + n.slice(1)); inp.value = ''; inp.focus(); draw(); };
+    root.querySelector(`#${p}MemAdd`).addEventListener('click', add);
+    root.querySelector(`#${p}MemIn`).addEventListener('keydown', e => { if (e.key === 'Enter') { e.preventDefault(); add(); } });
+    root.querySelector(`#${p}MemList`).addEventListener('click', e => { const b = e.target.closest('[data-rmmem]'); if (b) { list.splice(+b.dataset.rmmem, 1); draw(); } });
+    draw();
+  }
+  function openFamily() {
+    const fam = familyOn(), cur = (state.family?.members || []).map(x => ({ ...x }));
+    let useFam = fam || false;
+    if (!cur.length) cur.push({ id: 'a', name: userName() || 'Eu' });
+    let device = meId() || cur[0].id;
+    openModal(`<form id="f" novalidate>${modalHead('Uso do app', 'Só muda o jeito do app falar e deixa marcar de quem é cada coisa. Os números continuam somando tudo junto.')}
+      ${usePickHtml(fam)}
+      <div id="famBox" ${fam ? '' : 'hidden'}>
+        <label class="fl">Quem faz parte</label>
+        <div class="mem-list" id="famList"></div>
+        <div class="mem-add"><input class="input" id="famIn" maxlength="20" placeholder="Nome ou apelido" autocapitalize="words" /><button type="button" class="btn-soft" id="famAdd">${ico('plus')}Adicionar</button></div>
+        <p class="help">"Você" é quem usa este aparelho (toque na bolinha de outra pessoa pra trocar): as entradas lançadas aqui já vêm com esse nome.</p>
+        <label class="fl">Outro celular</label>
+        <button type="button" class="btn-soft" id="famInvite">${ico('plus')}Convidar alguém da família</button>
+      </div>
+      <div class="err" id="fErr"></div>
+      <div class="actions"><span class="grow"></span><button type="button" class="btn cancel" data-close>Cancelar</button><button type="submit" class="btn save">Salvar</button></div></form>`, m => {
+      const list = m.querySelector('#famList');
+      const draw = () => {
+        list.innerHTML = cur.map((x, i) => `<div class="mem-row"><button type="button" data-dev="${x.id}" title="${x.id === device ? 'Usa este aparelho' : 'Tocar: é quem usa este aparelho'}" style="border:0;background:none;padding:0;display:inline-flex;${x.id === device ? '' : 'opacity:.55'}"><span class="av" style="--av:${FAM_COLORS[i % FAM_COLORS.length]}">${esc((x.name || '?').charAt(0).toUpperCase())}</span></button>
+          <span style="display:flex;align-items:center;gap:8px;min-width:0"><input class="input" data-mem="${i}" value="${esc(x.name)}" maxlength="20" aria-label="Nome" />${x.id === device ? '<span class="tag-me">você</span>' : ''}</span>
+          ${cur.length > 1 ? `<button type="button" class="x" data-rmmem="${i}" aria-label="Tirar ${esc(x.name)}">${ico('x')}</button>` : '<span></span>'}</div>`).join('');
+      };
+      bindUsePick(m, f => { useFam = f; m.querySelector('#famBox').hidden = !f; });
+      list.addEventListener('input', e => { const inp = e.target.closest('[data-mem]'); if (inp) cur[+inp.dataset.mem].name = inp.value; });
+      list.addEventListener('click', e => {
+        const d = e.target.closest('[data-dev]'); if (d) { device = d.dataset.dev; draw(); return; }
+        const r = e.target.closest('[data-rmmem]'); if (r) { const [gone] = cur.splice(+r.dataset.rmmem, 1); if (gone.id === device) device = cur[0].id; draw(); }
+      });
+      const add = () => { const inp = m.querySelector('#famIn'), n = inp.value.trim(); if (!n || cur.length >= 8) return;
+        const id = 'abcdefghijklmnop'.split('').find(c => !cur.some(x => x.id === c) && !(state.family?.members || []).some(x => x.id === c && !cur.some(y => y.id === c))) || uid();
+        cur.push({ id, name: n.charAt(0).toUpperCase() + n.slice(1) }); inp.value = ''; draw(); };
+      m.querySelector('#famAdd').onclick = add;
+      m.querySelector('#famIn').addEventListener('keydown', e => { if (e.key === 'Enter') { e.preventDefault(); add(); } });
+      m.querySelector('#famInvite').onclick = () => openInvite();
+      draw();
+      m.querySelector('#f').addEventListener('submit', e => {
+        e.preventDefault();
+        const undoSnap = JSON.stringify(state);
+        if (useFam) {
+          const ms = cur.map(x => ({ id: x.id, name: x.name.trim().slice(0, 20) })).filter(x => x.name);
+          if (!ms.length) return showErr('Coloque pelo menos um nome.');
+          state.family = { members: ms };
+          ui.me = ms.some(x => x.id === device) ? device : ms[0].id; saveUi();
+        } else if (state.family) state.family.solo = true;   // guarda os nomes, caso volte pra família
+        closeModal(); commit();
+        undoToast(useFam ? 'Pronto: app em família' : 'Pronto: app só pra você', undoSnap);
+      });
+    });
+  }
+
+  // ================= Convite pro celular de alguém da família =================
   // O link leva a configuração da sincronização criptografada com um código curto (que vai separado, falado ou em
-  // outra mensagem). Sem o código, o link não abre nada. O celular de quem aceita passa a ser da outra pessoa.
+  // outra mensagem). Sem o código, o link não abre nada.
   const INV_ABC = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789';
   const b64url = buf => b64(buf).replace(/\+/g, '-').replace(/\//g, '_').replace(/=+$/, '');
   const unb64url = str => unb64(str.replace(/-/g, '+').replace(/_/g, '/') + '==='.slice((str.length + 3) % 4));
-  async function inviteKey(code, saltB64) { return deriveKey(code.toUpperCase().replace(/[^A-Z0-9]/g, ''), saltB64); }
-  async function openInvite() {
+  const inviteKey = (code, saltB64) => deriveKey(code.toUpperCase().replace(/[^A-Z0-9]/g, ''), saltB64);
+  async function openInvite(forId) {
+    const others = members().filter(x => x.id !== meId());
     if (!sync) {
-      openModal(`${modalHead(`Celular de ${esc(personName(otherOf(meId())))}`, 'Pra usar em dois celulares, os dados precisam ficar guardados na nuvem.')}
-        <p class="help" style="font-size:.86rem">Primeiro ligue a sincronização (grátis, criptografada, pelo GitHub). Depois volte aqui e o app gera um convite: ${esc(personName(otherOf(meId())))} só abre o link e digita um código, sem precisar de conta no GitHub.</p>
+      openModal(`${modalHead('Usar em outro celular', 'Pra cada um usar no seu celular, os dados precisam ficar guardados na nuvem.')}
+        <p class="help" style="font-size:.86rem">Primeiro ligue a sincronização (grátis, criptografada, pelo GitHub). Depois volte aqui e o app gera um convite: a outra pessoa só abre o link e digita um código, sem precisar de conta no GitHub.</p>
         <div class="actions"><span class="grow"></span><button type="button" class="btn cancel" data-close>Agora não</button><button type="button" class="btn save" id="invSync">Ligar sincronização</button></div>`,
         m => { m.querySelector('#invSync').onclick = () => openSync(); });
       return;
     }
+    if (!others.length) return toast('Adicione primeiro quem vai usar o outro celular');
+    const to = others.find(x => x.id === forId) || others[0];
     const code = Array.from(crypto.getRandomValues(new Uint8Array(10)), x => INV_ABC[x % 32]).join('');
     const pretty = code.replace(/(.{4})(.{4})(.{2})/, '$1-$2-$3');
     const salt = b64(crypto.getRandomValues(new Uint8Array(16))), iv = crypto.getRandomValues(new Uint8Array(12));
-    const other = otherOf(meId());
-    const body = { token: sync.token, gistId: sync.gistId, salt: sync.salt, key: sync.key, me: other, from: personName(meId()) };
+    const body = { token: sync.token, gistId: sync.gistId, salt: sync.salt, key: sync.key, me: to.id, from: memberName(meId()) || userName() };
     const data = await crypto.subtle.encrypt({ name: 'AES-GCM', iv }, await inviteKey(code, salt), new TextEncoder().encode(JSON.stringify(body)));
     const link = `${location.origin}${location.pathname}#convite=${b64url(new TextEncoder().encode(JSON.stringify({ s: salt, i: b64(iv), d: b64(data) })))}`;
-    const name = esc(personName(other));
-    openModal(`${modalHead(`Convidar ${name}`, `Dois passos no celular de ${name}. O código vale só pra este link.`)}
+    const name = esc(to.name);
+    openModal(`${modalHead(`Convidar ${name}`, 'O código vale só pra este link.')}
+      ${others.length > 1 ? `<div class="who-pick" id="invWho" style="margin-bottom:6px">${others.map(x => `<button type="button" data-inv="${x.id}" class="${x.id === to.id ? 'on' : ''}">${avatar(x.id, true)}${esc(x.name)}</button>`).join('')}</div>` : ''}
       <ol class="sync-steps">
         <li>Mande este link pra ${name} (WhatsApp, e-mail…):
           <div class="inline" style="margin-top:6px"><input class="input" id="invLink" readonly value="${esc(link)}" style="font-size:.78rem;flex:1;min-width:0" /><button type="button" class="btn-soft" id="invCopy">Copiar</button></div></li>
         <li>Fale o código pessoalmente ou mande numa mensagem separada:
           <div class="inv-code" id="invCode">${pretty}</div></li>
       </ol>
-      <p class="help">No celular de ${name}: abrir o link, criar uma conta no app e digitar o código. Pronto: vocês passam a ver e lançar nos mesmos dados, cada um no seu celular.</p>
+      <p class="help">No celular de ${name}: abrir o link, criar uma conta no app e digitar o código. Pronto: os dois lançam nos mesmos dados.</p>
       <div class="actions"><span class="grow"></span>${navigator.share ? '<button type="button" class="btn cancel" id="invShare">Compartilhar link</button>' : ''}<button type="button" class="btn save" data-close>Feito</button></div>`, m => {
+      m.querySelector('#invWho')?.addEventListener('click', e => { const b = e.target.closest('[data-inv]'); if (b) openInvite(b.dataset.inv); });
       m.querySelector('#invCopy').onclick = async () => { try { await navigator.clipboard.writeText(link); toast('Link copiado'); } catch (_) { m.querySelector('#invLink').select(); document.execCommand('copy'); toast('Link copiado'); } };
-      m.querySelector('#invShare')?.addEventListener('click', () => navigator.share({ title: 'Orçamento do casal', text: `${personName(meId())} te convidou pro orçamento do casal. Abra o link e use o código que eu te passar.`, url: link }).catch(() => {}));
+      m.querySelector('#invShare')?.addEventListener('click', () => navigator.share({ title: 'Orçamento da família', text: `${body.from} te convidou pro orçamento da família. Abra o link e use o código que eu te passar.`, url: link }).catch(() => {}));
     });
   }
   // Quem recebeu o link: guarda o convite até entrar no app e então pede o código
   function checkInvite() {
     let inv = null; try { inv = sessionStorage.getItem('orcamento:convite'); } catch (_) {}
     if (!inv || document.documentElement.classList.contains('auth') || document.documentElement.classList.contains('locked')) return;
-    openModal(`<form id="f" novalidate>${modalHead('Convite pro modo casal', 'Digite o código que te passaram junto com o link.')}
+    openModal(`<form id="f" novalidate>${modalHead('Convite da família', 'Digite o código que te passaram junto com o link.')}
       <label class="fl" for="invIn">Código</label><input class="input" id="invIn" maxlength="14" autocomplete="off" autocapitalize="characters" spellcheck="false" placeholder="XXXX-XXXX-XX" style="text-transform:uppercase;letter-spacing:.12em;font-weight:700" />
-      ${state.receitas.length + state.variaveis.length + state.fixas.length > 0 ? '<p class="help">Os lançamentos deste celular vão ser trocados pelos do casal (fica uma cópia guardada em ⚙ → Voltar aos dados de antes).</p>' : ''}
+      ${state.receitas.length + state.variaveis.length + state.fixas.length > 0 ? '<p class="help">Os lançamentos deste celular vão ser trocados pelos da família (fica uma cópia guardada em ⚙ → Voltar aos dados de antes).</p>' : ''}
       <div class="err" id="fErr"></div>
       <div class="actions"><button type="button" class="btn del" id="invNo">Recusar</button><span class="grow"></span><button type="submit" class="btn save" id="fSave">Entrar</button></div></form>`, m => {
       const drop = () => { try { sessionStorage.removeItem('orcamento:convite'); } catch (_) {} };
@@ -4748,71 +4653,13 @@ button:focus-visible, a:focus-visible, [role="button"]:focus-visible, [tabindex]
           try { localStorage.setItem(KEY + ':antes-sync', JSON.stringify(state)); } catch (_) {}
           sync = { token: body.token, gistId: body.gistId, salt: body.salt, key: body.key, lastRemote: payload.updatedAt, lastSyncAt: Date.now() };
           saveSync(); applyRemote(remote, payload.updatedAt); saveBase(remote);
-          ui.me = body.me === 'b' ? 'b' : 'a'; ui.whoView = ''; saveUi();
+          ui.me = body.me; saveUi();
           drop(); closeModal(); render();
-          toast(`Pronto! Você e ${body.from || personName(otherOf(meId()))} estão conectados`);
+          toast(`Pronto! Você está no orçamento da família${body.from ? ` com ${body.from}` : ''}`);
         } catch (err) {
           btn.disabled = false; btn.textContent = 'Entrar';
           showErr(err.message === 'Failed to fetch' ? 'Sem conexão com a internet.' : err.message);
         }
-      });
-    });
-  }
-  // ================= Modo casal: configurar =================
-  function openCouple() {
-    const on = coupleOn(), c = state.couple || {}, me = on ? meId() : 'a', other = otherOf(me);
-    const seg = (id, opts, cur) => `<div class="seg2${opts.length === 3 ? ' three' : ''}" id="${id}">${opts.map(([v, t]) => `<button type="button" data-v="${v}" class="${v === cur ? 'on' : ''}">${t}</button>`).join('')}</div>`;
-    openModal(`<form id="f" novalidate>${modalHead('Modo casal', on ? 'Cada lançamento pode ser seu, do seu par ou dos dois. O app mostra a visão de cada um e quem deve quanto pra quem.' : 'Organizem o dinheiro juntos: cada um vê o seu, o dos dois e o acerto do mês.')}
-      <div class="two">
-        <div><label class="fl" for="cMe">Seu nome</label><input class="input" id="cMe" maxlength="20" value="${esc(on ? personName(me) : userName() || '')}" placeholder="Ex.: Gu" /></div>
-        <div><label class="fl" for="cOther">Nome do seu par</label><input class="input" id="cOther" maxlength="20" value="${esc(on ? personName(other) : '')}" placeholder="Ex.: Ana" /></div>
-      </div>
-      <label class="fl">Como dividir as contas dos dois?</label>
-      ${seg('cSplit', [['half', 'Meio a meio'], ['income', 'Pela renda'], ['custom', 'Outra']], c.split || 'half')}
-      <div id="cRatioBox" hidden><label class="fl" for="cRatio">Quanto você paga das contas dos dois?</label>
-        <div class="inline"><input type="number" class="input" id="cRatio" min="5" max="95" step="5" value="${me === 'a' ? (c.ratioA || 50) : 100 - (c.ratioA || 50)}" style="max-width:110px" /><span>% (o seu par paga o resto)</span></div></div>
-      <p class="help" id="cSplitHelp"></p>
-      ${on ? '' : `<label class="fl">O que já está lançado é de quem?</label>${seg('cLegacy', [['both', 'Dos dois'], ['a', 'Só meu']], 'both')}<p class="help">Dá pra mudar um por um depois, em cada lançamento.</p>`}
-      ${on ? `<label class="fl">Quem usa este aparelho?</label><div class="who-pick" id="cDevice">${['a', 'b'].map(p => `<button type="button" data-p="${p}" class="${p === me ? 'on' : ''}">${avatar(p)}${esc(personName(p))}</button>`).join('')}</div>
-        <p class="help">Lançamentos novos feitos aqui já vêm como dessa pessoa.</p>
-        <label class="fl">Celular do seu par</label>
-        <button type="button" class="btn-soft" id="cInvite">${ico('plus')}Convidar ${esc(personName(other))} pelo celular</button>` : ''}
-      <div class="err" id="fErr"></div>
-      <div class="actions">${on ? '<button type="button" class="btn del" id="cOff">Desligar</button>' : ''}<span class="grow"></span>
-        <button type="button" class="btn cancel" data-close>Cancelar</button><button type="submit" class="btn save">${on ? 'Salvar' : 'Ligar modo casal'}</button></div></form>`, m => {
-      let split = c.split || 'half', legacy = 'both', device = me;
-      const help = () => {
-        m.querySelectorAll('#cSplit button').forEach(b => b.classList.toggle('on', b.dataset.v === split));
-        m.querySelector('#cRatioBox').hidden = split !== 'custom';
-        m.querySelector('#cSplitHelp').textContent = { half: 'Cada um paga metade do que é dos dois.', income: 'Quem ganha mais paga uma parte maior: a divisão segue o que cada um recebeu no mês.', custom: 'Uma proporção fixa, do jeito que vocês combinaram.' }[split];
-      };
-      m.querySelector('#cSplit').onclick = e => { const b = e.target.closest('[data-v]'); if (b) { split = b.dataset.v; help(); } };
-      m.querySelector('#cLegacy')?.addEventListener('click', e => { const b = e.target.closest('[data-v]'); if (!b) return; legacy = b.dataset.v; m.querySelectorAll('#cLegacy button').forEach(x => x.classList.toggle('on', x === b)); });
-      m.querySelector('#cDevice')?.addEventListener('click', e => { const b = e.target.closest('[data-p]'); if (!b) return; device = b.dataset.p; m.querySelectorAll('#cDevice button').forEach(x => x.classList.toggle('on', x === b)); });
-      m.querySelector('#cInvite')?.addEventListener('click', () => openInvite());
-      m.querySelector('#cOff')?.addEventListener('click', () => {
-        if (!confirm('Desligar o modo casal? De quem é cada lançamento fica guardado, caso liguem de novo.')) return;
-        const undoSnap = JSON.stringify(state); state.couple.on = false; ui.whoView = ''; saveUi(); closeModal(); commit(); undoToast('Modo casal desligado', undoSnap);
-      });
-      help();
-      m.querySelector('#f').addEventListener('submit', e => {
-        e.preventDefault();
-        const myName = m.querySelector('#cMe').value.trim(), otherName = m.querySelector('#cOther').value.trim();
-        if (!myName) return showErr('Diga seu nome.');
-        if (!otherName) return showErr('Diga o nome do seu par.');
-        const r = Math.min(95, Math.max(5, Math.round(+m.querySelector('#cRatio').value) || 50));
-        const undoSnap = JSON.stringify(state);
-        if (!on) {
-          state.couple = { on: true, people: { a: { name: myName }, b: { name: otherName } }, split, ratioA: r, legacy };
-          ui.me = 'a';
-        } else {
-          state.couple.people[me].name = myName; state.couple.people[other].name = otherName;
-          state.couple.split = split; state.couple.ratioA = me === 'a' ? r : 100 - r;
-          ui.me = device;
-        }
-        state.couple.on = true; ui.whoView = ''; saveUi();
-        closeModal(); commit();
-        undoToast(on ? 'Modo casal atualizado' : `Modo casal ligado: ${myName} e ${otherName}`, undoSnap);
       });
     });
   }
@@ -4876,8 +4723,6 @@ button:focus-visible, a:focus-visible, [role="button"]:focus-visible, [tabindex]
         <section class="r-sec"><h2>Para onde foi o dinheiro</h2>${catTotal ? `<div class="r-where">${donut}<div class="r-cats">${catRows}</div></div>` : '<p class="r-empty">Sem despesas neste mês.</p>'}</section>
         <section class="r-sec"><h2>Últimos 6 meses</h2>${evo}<div class="r-tips">${tips}</div></section>
       </div>
-      ${coupleOn() ? (ac => `<section class="r-sec"><h2>Acerto do casal</h2><p style="margin:0">${ac.amount < 100 ? 'Tudo certo entre vocês neste mês.' : `<b>${esc(personName(ac.from))} passa ${R(ac.amount)} pra ${esc(personName(ac.to))}</b>.`}
-        Contas dos dois: ${esc(personName('a'))} pagou ${R(ac.paid.a)}, ${esc(personName('b'))} pagou ${R(ac.paid.b)} (divisão ${splitText()}).</p></section>`)(acertoOf(key)) : ''}
       ${table('Maiores gastos', topGastos, 'Nenhuma despesa variável.')}
       <div class="r-grid">
         ${table('Contas fixas', fixas, 'Nenhuma conta fixa.', `<p class="r-foot">Total <b>${R(fixasOf(key).reduce((s, f) => s + f.amount, 0))}</b></p>`)}
@@ -5670,7 +5515,7 @@ button:focus-visible, a:focus-visible, [role="button"]:focus-visible, [tabindex]
           applyRemote(remote, payload.updatedAt);
           sync.lastRemote = payload.updatedAt; saveBase(remote);
           if (localSnap) toast('Chegaram dados mais novos de outro aparelho. Guardei uma cópia do que estava aqui.', 'Manter os deste aparelho', () => restoreBeforeSync(), 10000);
-          else if (!quiet || document.visibilityState === 'visible') toast(coupleOn() ? `Chegaram lançamentos de ${personName(otherOf(meId()))}` : 'Dados atualizados de outro aparelho');
+          else if (!quiet || document.visibilityState === 'visible') toast(multi() ? 'Chegaram lançamentos de outro celular da família' : 'Dados atualizados de outro aparelho');
         }
       } else if (localChanged) {
         await pushNow();
@@ -5817,10 +5662,10 @@ button:focus-visible, a:focus-visible, [role="button"]:focus-visible, [tabindex]
       const found = state.accounts.map(a => ({ a, i: pos(a) })).filter(x => x.i !== undefined).sort((x, y) => x.i - y.i);
       if (found.length >= 2) return { ...out, kind: 'transfer', from: found[0].a.id, to: found[1].a.id, desc: 'Transferência', category: '' };
     }
-    // modo casal: "casal", "dos dois", "nosso" → dos dois; nome de alguém → dessa pessoa
-    if (coupleOn()) {
-      if (/\b(casal|dos dois|nos dois|nosso|nossa|juntos|de casa)\b/.test(t)) { out.who = 'both'; t = t.replace(/\b(casal|dos dois|nos dois|nosso|nossa|juntos|de casa)\b/g, ' '); }
-      else for (const p of ['a', 'b']) { const n = norm(personName(p)); if (n.length >= 2 && new RegExp('\\b(d[ao] |pr[ao] |pra )?' + n.replace(/[.*+?^${}()|[\]\\]/g, '\\$&') + '\\b').test(t)) { out.who = p; t = t.replace(new RegExp('\\b(d[ao] |pr[ao] |pra )?' + n.replace(/[.*+?^${}()|[\]\\]/g, '\\$&') + '\\b'), ' '); break; } }
+    // família: o nome de alguém marca como dessa pessoa; "família", "casa", "nosso" → da família
+    if (multi()) {
+      if (/\b(familia|da casa|nosso|nossa|dos dois|casal)\b/.test(t)) { out.who = ''; t = t.replace(/\b(familia|da casa|nosso|nossa|dos dois|casal)\b/g, ' '); }
+      else for (const mb of members()) { const n = norm(mb.name).replace(/[.*+?^${}()|[\]\\]/g, '\\$&'), re = new RegExp('\\b(d[ao] |pr[ao] |pra )?' + n + '\\b'); if (n.length >= 2 && re.test(t)) { out.who = mb.id; t = t.replace(re, ' '); break; } }
     }
     // entrada?
     if (/\b(recebi|receb\w*|entrada|ganhei|salario|pagamento recebido)\b/.test(t) || /^\s*\+/.test(text)) { out.kind = 'receita'; t = t.replace(/\b(recebi|entrada|ganhei)\b/, ' '); }
@@ -5852,8 +5697,8 @@ button:focus-visible, a:focus-visible, [role="button"]:focus-visible, [tabindex]
       commit();
       return undoToast(`${brl.format(q.amount / 100)} transferidos para ${state.accounts.find(a => a.id === q.to)?.name || 'a conta'}`, undoSnap);
     }
-    const base = { id: uid(), created: Date.now(), date: q.date, amount: q.amount, desc: q.desc.slice(0, 60), category: q.category,
-      ...(coupleOn() ? { who: q.who || (q.kind === 'receita' ? meId() : ui.lastWho || meId()) } : {}) };
+    const who = !multi() ? '' : q.who !== undefined ? q.who : q.kind === 'receita' ? meId() : member(ui.lastWho) ? ui.lastWho : '';
+    const base = { id: uid(), created: Date.now(), date: q.date, amount: q.amount, desc: q.desc.slice(0, 60), category: q.category, ...(who ? { who } : {}) };
     if (q.kind !== 'receita' && q.parcelas) {
       // compra parcelada: uma parcela por mês, a primeira leva os centavos que sobram (igual ao formulário)
       const undoSnap = JSON.stringify(state), n = q.parcelas, group = uid(), each = Math.floor(q.amount / n), rest = q.amount - each * n;
@@ -5904,7 +5749,7 @@ button:focus-visible, a:focus-visible, [role="button"]:focus-visible, [tabindex]
           ${q.parcelas && q.kind !== 'receita' ? `<div class="l"><span>Parcelado</span><b>${q.parcelas}x de ${brl.format(Math.floor(q.amount / q.parcelas) / 100)}</b></div>` : ''}
           <div class="l"><span>Descrição</span><b>${esc(q.desc || '—')}</b></div>
           <div class="l"><span>Categoria</span><b>${esc(cat(q.category)?.name || 'Sem categoria')}</b></div>
-          ${coupleOn() ? (w => `<div class="l"><span>De quem</span><b style="display:inline-flex;align-items:center;gap:6px">${avatarsOf(w, true)}${w === 'both' ? 'Dos dois' : esc(personName(w))}</b></div>`)(q.who || (q.kind === 'receita' ? meId() : ui.lastWho || meId())) : ''}
+          ${multi() ? (w => `<div class="l"><span>De quem</span><b style="display:inline-flex;align-items:center;gap:6px">${w ? avatar(w, true) + esc(memberName(w)) : famAvatars(true) + 'Da família'}</b></div>`)(q.who !== undefined ? q.who : q.kind === 'receita' ? meId() : member(ui.lastWho) ? ui.lastWho : '') : ''}
           <div class="l"><span>${q.kind === 'receita' ? 'Recebido em' : 'Pago com'}</span><b>${payLabel(q)}</b></div>
           <div class="l"><span>Data</span><b>${q.date === todayIso ? 'Hoje' : new Date(q.date + 'T12:00:00').toLocaleDateString('pt-BR', { day: '2-digit', month: 'short', ...(q.date.slice(0, 4) !== todayIso.slice(0, 4) ? { year: 'numeric' } : {}) })}</b></div>`;
       };
@@ -6105,7 +5950,9 @@ button:focus-visible, a:focus-visible, [role="button"]:focus-visible, [tabindex]
       <input class="input" id="auUser" maxlength="20" autocomplete="username" autocapitalize="none" spellcheck="false" value="${creating ? '' : esc(account.user)}" />
       ${creating ? `<label class="fl" for="auFull">Nome completo</label>
       <input class="input" id="auFull" maxlength="60" autocomplete="name" autocapitalize="words" />
-      ${nickField('', 'au')}` : ''}
+      ${nickField('', 'au')}
+      ${(() => { try { return sessionStorage.getItem('orcamento:convite'); } catch (_) { return null; } })() ? '<p class="help" style="margin-top:14px">Você recebeu um convite: depois de criar a conta, é só digitar o código.</p>' : `<label class="fl">Como vai usar o app?</label>${usePickHtml(false)}
+      <div id="auFamBox" hidden><label class="fl" for="auMemIn">Quem mais faz parte?</label>${memberAddHtml('au')}</div>`}` : ''}
       <label class="fl" for="auPass">Senha</label>
       <input class="input" id="auPass" type="password" autocomplete="${creating ? 'new-password' : 'current-password'}" ${creating ? '' : 'autofocus'} />
       ${creating ? `<label class="fl" for="auPass2">Repita a senha</label><input class="input" id="auPass2" type="password" autocomplete="new-password" />` : ''}
@@ -6118,6 +5965,11 @@ button:focus-visible, a:focus-visible, [role="button"]:focus-visible, [tabindex]
     const f = $('#authForm'), err = t => { $('#auErr').textContent = t; };
     setTimeout(() => (creating ? $('#auUser') : $('#auPass')).focus(), 50);
     pwToggles($('#authScreen'));
+    let famDraft = [];
+    if (creating && $('#auFamBox')) {
+      bindUsePick($('#authScreen'), fam => { $('#auFamBox').hidden = !fam; });
+      bindMemberAdd($('#authScreen'), 'au', famDraft, () => {});
+    }
     if (creating) {
       bindNick($('#authScreen'), 'au');
       // sugere o nome de usuário a partir do primeiro nome, até a pessoa mexer nele
@@ -6138,6 +5990,11 @@ button:focus-visible, a:focus-visible, [role="button"]:focus-visible, [tabindex]
         const salt = b64(crypto.getRandomValues(new Uint8Array(16)));
         account = { user, fullName, nick: nick || firstName(fullName), salt, hash: await hashPin(pass, salt), created: Date.now() };
         saveAccount();
+        // em família: a pessoa da conta e quem ela colocou; o app passa a falar com "vocês"
+        if ($('#auFamBox') && !$('#auFamBox').hidden) {
+          state.family = { members: [{ id: 'a', name: account.nick }, ...famDraft.map((n, i) => ({ id: 'abcdefgh'[i + 1], name: n }))] };
+          ui.me = 'a'; saveUi(); save();
+        }
       } else {
         $('#auGo').disabled = true;
         const ok = user.toLowerCase() === account.user.toLowerCase() && await hashPin(pass, account.salt) === account.hash;
@@ -6370,7 +6227,7 @@ button:focus-visible, a:focus-visible, [role="button"]:focus-visible, [tabindex]
   });
   setInterval(refreshDay, 60000);
 
-  // link de convite do modo casal: guarda (sai do endereço) até a pessoa entrar no app
+  // link de convite da família: guarda (sai do endereço) até a pessoa entrar no app
   if (location.hash.startsWith('#convite=')) {
     try { sessionStorage.setItem('orcamento:convite', location.hash.slice(9)); } catch (_) {}
     history.replaceState(null, '', location.pathname + location.search);
