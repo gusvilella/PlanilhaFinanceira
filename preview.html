@@ -1856,7 +1856,7 @@ button:focus-visible, a:focus-visible, [role="button"]:focus-visible, [tabindex]
   const avatar = (id, sm) => `<span class="av${sm ? ' sm' : ''}" style="--av:${memberColor(id)}" aria-hidden="true">${esc((memberName(id) || '?').trim().charAt(0).toUpperCase())}</span>`;
   const famAvatars = sm => `<span class="av-pair">${members().slice(0, 3).map(m => avatar(m.id, sm)).join('')}</span>`;
   const whoBadge = x => { const w = multi() && whoOf(x); return w ? `<span class="who-b" title="De ${esc(memberName(w))}">${avatar(w, true)}</span>` : ''; };
-  // "Gu e Ana", "Gu, Ana e Leo"; mais de 3: "família"
+  // "Gu e Ane", "Gu, Ane e Leo"; mais de 3: "família"
   const familyNames = () => { const n = members().map(m => m.name); return n.length > 3 ? 'família' : n.length > 1 ? n.slice(0, -1).join(', ') + ' e ' + n[n.length - 1] : n[0] || ''; };
 
   // Valor de um item recorrente num mês: o que você confirmou naquele mês; se o valor varia e ainda não foi
@@ -4609,7 +4609,7 @@ button:focus-visible, a:focus-visible, [role="button"]:focus-visible, [tabindex]
     box.addEventListener('click', e => { const b = e.target.closest('[data-use]'); if (!b) return; box.querySelectorAll('button').forEach(x => x.classList.toggle('on', x === b)); onChange(b.dataset.use === 'fam'); });
   }
   // Campo "adicionar pessoa" (nome + botão) que monta a lista em "list" (array de nomes)
-  const memberAddHtml = p => `<div class="mem-list" id="${p}MemList"></div><div class="mem-add"><input class="input" id="${p}MemIn" maxlength="20" placeholder="Nome ou apelido. Ex.: Ana" autocapitalize="words" /><button type="button" class="btn-soft" id="${p}MemAdd">${ico('plus')}Adicionar</button></div>`;
+  const memberAddHtml = p => `<div class="mem-list" id="${p}MemList"></div><div class="mem-add"><input class="input" id="${p}MemIn" maxlength="20" placeholder="Nome ou apelido. Ex.: Ane" autocapitalize="words" /><button type="button" class="btn-soft" id="${p}MemAdd">${ico('plus')}Adicionar</button></div>`;
   function bindMemberAdd(root, p, list, onChange) {
     const draw = () => {
       root.querySelector(`#${p}MemList`).innerHTML = list.map((n, i) => `<div class="mem-row"><span class="av sm" style="--av:${FAM_COLORS[(i + 1) % FAM_COLORS.length]};width:24px;height:24px;font-size:.66rem">${esc(n.charAt(0).toUpperCase())}</span><span>${esc(n)}</span><button type="button" class="x" data-rmmem="${i}" aria-label="Tirar ${esc(n)}">${ico('x')}</button></div>`).join('');
