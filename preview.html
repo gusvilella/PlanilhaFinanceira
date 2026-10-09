@@ -968,7 +968,7 @@ html.auth .auth-screen { display: grid; place-items: center; }
 .ob-splash.gone { opacity: 0; visibility: hidden; }
 /* no escuro: noite azul-arroxeada com luzes, em vez de preto chapado */
 :root[data-theme="dark"] .ob-splash { background: radial-gradient(60vmax 60vmax at 0% 0%, rgba(20, 110, 245, .42), transparent 62%), radial-gradient(55vmax 55vmax at 100% 25%, rgba(139, 92, 246, .4), transparent 62%), radial-gradient(55vmax 55vmax at 50% 115%, rgba(236, 72, 153, .26), transparent 62%), #0b0c1d; }
-:root[data-theme="dark"] .ob-splash .ob-word span { padding-bottom: .14em; margin-bottom: -.14em; background: linear-gradient(100deg, #fff 30%, #c9bcff 70%, #ffc2e0); -webkit-background-clip: text; background-clip: text; color: transparent; }
+:root[data-theme="dark"] .ob-splash .ob-word span { padding: 0 .1em .14em; margin: 0 -.1em -.14em; background: linear-gradient(100deg, #fff 30%, #c9bcff 70%, #ffc2e0); -webkit-background-clip: text; background-clip: text; color: transparent; }
 :root[data-theme="dark"] .ob-splash .ob-word small { color: rgba(255, 255, 255, .65); }
 .ob-splash.gone .stk { transform: translate(var(--ox), var(--oy)) rotate(25deg) scale(.6); }
 .ob-splash .ob-word { position: relative; z-index: 1; color: var(--ink); transition: transform .6s cubic-bezier(.6, 0, .3, 1), opacity .4s; }
