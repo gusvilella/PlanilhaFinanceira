@@ -1629,6 +1629,40 @@ button:focus-visible, a:focus-visible, [role="button"]:focus-visible, [tabindex]
   .tabs button { min-height: 40px; }
   .theme-btn { overflow: visible; }
 }
+
+/* ===== Cores da apresentação na planilha: fundo com luzes coloridas, degradê azul→roxo nos destaques ===== */
+:root { --grad: linear-gradient(135deg, #146ef5, #8b5cf6); --grad-glow: rgba(98, 84, 246, .55); --in: #19b884; --out: #ff7a8a; --r: 22px; }
+:root[data-theme="dark"] { --in: #34d399; --out: #ff7a8a; }
+@media screen {
+  body::after { content: ""; position: fixed; inset: 0; z-index: -1; pointer-events: none;
+    background: radial-gradient(60vmax 60vmax at -8% -12%, rgba(20, 110, 245, .2), transparent 60%), radial-gradient(52vmax 52vmax at 108% 18%, rgba(139, 92, 246, .18), transparent 60%), radial-gradient(48vmax 48vmax at 40% 115%, rgba(236, 72, 153, .1), transparent 60%); }
+  :root[data-theme="dark"] body::after { background: radial-gradient(60vmax 60vmax at -8% -12%, rgba(20, 110, 245, .2), transparent 60%), radial-gradient(52vmax 52vmax at 108% 18%, rgba(139, 92, 246, .16), transparent 60%), radial-gradient(48vmax 48vmax at 40% 115%, rgba(236, 72, 153, .08), transparent 60%); }
+  .hello { display: flex; align-items: center; gap: 8px; } .hello .av.avc.sm { width: 22px; height: 22px; } .hello .av-pair .av.avc.sm { width: 22px; height: 22px; }
+  /* cartões de resumo: o primeiro em degradê; os outros com luz colorida no canto */
+  .kpi { background: radial-gradient(170px 150px at 92% -10%, color-mix(in srgb, var(--kc, transparent) 17%, transparent), transparent 72%), var(--card); }
+  .kpi.receita { --kc: #19b884; } .kpi.despesas { --kc: #ff7a8a; } .kpi.sobra { --kc: #8b5cf6; }
+  .kpi.contas { background: radial-gradient(190px 160px at 92% -10%, rgba(255, 255, 255, .2), transparent 72%), var(--grad); box-shadow: 0 20px 40px -22px var(--grad-glow); }
+  .kpi.contas, .kpi.contas .kpi-value { color: #fff; }
+  .kpi.contas .kpi-label, .kpi.contas .kpi-sub { color: rgba(255, 255, 255, .82); }
+  .kpi.contas button.kpi-label { text-decoration-color: rgba(255, 255, 255, .45); } .kpi.contas button.kpi-label:hover { color: #fff; }
+  .kpi.contas .adjust, .kpi.contas .adjust.dark { color: #fff; text-decoration-color: rgba(255, 255, 255, .5); }
+  .kpi.contas .logo.tile { box-shadow: 0 0 0 1.5px rgba(255, 255, 255, .7); }
+  .kpi.receita .kpi-value { color: var(--green); }
+  /* abas, botão +, calendário e botões principais com o degradê */
+  .tab-ind { background: var(--grad); box-shadow: 0 10px 22px -12px var(--grad-glow); }
+  .tabs button.active { color: #fff; }
+  .fab { background: var(--grad); color: #fff; box-shadow: 0 16px 30px -12px var(--grad-glow); }
+  .cal button.today { box-shadow: inset 0 0 0 1.5px #8b5cf6; color: var(--ink); }
+  .cal button.sel, .cal button.today.sel { background: var(--grad); color: #fff; box-shadow: 0 8px 16px -8px var(--grad-glow); }
+  .btn.save:not(:disabled) { background: var(--grad); color: #fff; border-color: transparent; }
+  /* títulos dos quadros com um pontinho colorido, como na apresentação */
+  .ov h3::before, .evo-head h2::before, .card-head h2::before { content: ""; width: 8px; height: 8px; border-radius: 50%; flex: none; background: var(--hc, #6d5dfc); box-shadow: 0 0 0 4px color-mix(in srgb, var(--hc, #6d5dfc) 18%, transparent); }
+  .evo-head h2, .card-head h2 { display: flex; align-items: center; gap: 8px; }
+  #ovForecast { --hc: #146ef5; } #ovCal { --hc: #8b5cf6; } #ovWhere { --hc: #f472b6; } #ovCards { --hc: #ff8a5c; } #ovGoals { --hc: #19b884; } .evo { --hc: #22c1ee; }
+  .month { box-shadow: var(--shadow); }
+  .meter i { background: linear-gradient(90deg, #19b884, #2dd4bf); } .meter.info i { background: var(--grad); }
+  .meter.warn i { background: linear-gradient(90deg, #ffb36b, #ff8a5c); } .meter.over i { background: linear-gradient(90deg, #ff8a5c, #ff5f8f); }
+}
   </style>
 </head>
 <body>
@@ -2050,8 +2084,9 @@ button:focus-visible, a:focus-visible, [role="button"]:focus-visible, [tabindex]
   if (!['light', 'dark'].includes(ui.theme)) ui.theme = null;
   if (![6, 12].includes(ui.evoRange)) delete ui.evoRange;
   if (typeof ui.name !== 'string') delete ui.name;
-  if (!['vivas', 'salvia', 'nevoa', 'terracota', 'pastel', 'grafite'].includes(ui.palette)) ui.palette = 'nevoa';
+  if (!['aurora', 'vivas', 'salvia', 'nevoa', 'terracota', 'pastel', 'grafite'].includes(ui.palette)) ui.palette = 'aurora';
   if (!ui.pal2) { ui.palette = 'nevoa'; ui.pal2 = 1; }   // Névoa virou o padrão (vale uma vez; depois fica a escolha da pessoa)
+  if (!ui.pal3) { if (ui.palette === 'nevoa') ui.palette = 'aurora'; ui.pal3 = 1; }   // Aurora (as cores da apresentação) virou o padrão, também uma vez só
   // visual novo: quem estava na fonte padrão antiga passa para a nova (uma vez só)
   if (!ui.look2) { if (ui.font === 'Urbanist') ui.font = 'Instrument Sans'; ui.look2 = 1; }
   const saveUi = () => { try { localStorage.setItem(UI_KEY, JSON.stringify(ui)); } catch (_) {} };
@@ -2461,7 +2496,7 @@ button:focus-visible, a:focus-visible, [role="button"]:focus-visible, [tabindex]
         if (!matchMedia('(prefers-reduced-motion: reduce)').matches) { fillAnim(); donutAnim = true; requestAnimationFrame(() => { countUpDonuts(); countUpMarked(); donutAnim = false; }); }
       } }
     // saudação pela hora do dia
-    $('#hello').textContent = greet() + (multi() ? ', ' + familyNames() : account ? ', ' + userName() : '');
+    $('#hello').innerHTML = (multi() ? famAvatars(true) : account ? avBadge(avFor(account.av, userName()), 'sm') : '') + esc(greet() + (multi() ? ', ' + familyNames() : account ? ', ' + userName() : ''));
     document.querySelector('[data-explain="contas"]').innerHTML = familyOn() ? 'Dinheiro<span class="lg"> de vocês</span>' : 'Seu dinheiro<span class="lg"> hoje</span>';
     const [y, m] = view.month.split('-').map(Number);
     const lbl = new Date(y, m - 1, 1).toLocaleDateString('pt-BR', { month: 'long', year: 'numeric' });
@@ -2671,6 +2706,7 @@ button:focus-visible, a:focus-visible, [role="button"]:focus-visible, [tabindex]
   // As cores padrão (categorias, contas fixas, investimentos) viram as da paleta escolhida;
   // cores escolhidas na mão e cores de marca ficam suavizadas para combinar.
   const PALETTES = {
+    aurora: { name: 'Aurora', cols: ['#4f7cff', '#ff5f8f', '#6d5dfc', '#2dd4bf', '#ff8a5c', '#a78bfa', '#f472b6', '#22c1ee', '#ffb36b', '#94a3b8', '#34d399', '#b8c2d6'], keep: true, map: { '#475569': '#6d5dfc', '#1d4ed8': '#22c1ee', '#d97706': '#ff8a5c' } },
     vivas: { name: 'Vivas', cols: null },
     salvia: { name: 'Sálvia', cols: ['#8fae9d', '#d2ab85', '#9aa9c9', '#d9a7a7', '#b9b48c', '#a898bf', '#7fa6ab', '#dcc093', '#a4958a', '#b7bec6'] },
     nevoa: { name: 'Névoa', cols: ['#94afc8', '#c9b49d', '#a5b8a7', '#b3a5c6', '#c7a3a9', '#9dbab5', '#8c9cb0', '#d2c2a8', '#aab2bd', '#b9c7d6'] },
@@ -2687,8 +2723,9 @@ button:focus-visible, a:focus-visible, [role="button"]:focus-visible, [tabindex]
   function pc(hex) {
     const pal = PALETTES[ui.palette]?.cols;
     if (!pal || !hex || hex[0] !== '#') return hex;
+    const mp = PALETTES[ui.palette].map?.[hex.toLowerCase()]; if (mp) return mp;
     const i = DEFAULT_COLORS.indexOf(hex.toLowerCase());
-    return i >= 0 ? pal[i % pal.length] : ui.palette === 'grafite' ? '#7b8896' : mixWhite(hex, .42);
+    return i >= 0 ? pal[i % pal.length] : ui.palette === 'grafite' ? '#7b8896' : PALETTES[ui.palette].keep ? hex : mixWhite(hex, .42);
   }
 
 
@@ -2905,8 +2942,10 @@ button:focus-visible, a:focus-visible, [role="button"]:focus-visible, [tabindex]
     wrap.innerHTML = `<svg viewBox="0 0 ${W} ${H}" height="${H}" role="img" aria-label="Previsão do saldo nos próximos 30 dias">
       ${ticks.map(t => `<line class="${t === 0 ? 'zero' : 'grid-line'}" x1="${padL}" x2="${W}" y1="${y(t)}" y2="${y(t)}"/><text class="tick" x="${padL - 8}" y="${y(t) + 3.5}" text-anchor="end">${ui.hidden ? '•' : (t < 0 ? '–' : '') + compact(Math.abs(t))}</text>`).join('')}
       ${neg ? `<rect x="${padL}" y="${y(0)}" width="${plotW}" height="${Math.max(y(lo) - y(0), 0)}" fill="var(--amber)" opacity=".07"/>` : ''}
-      <path d="M${pts[0]} L${pts.join(' L')} L${x(days.length - 1)},${y(Math.max(lo, 0))} L${x(0)},${y(Math.max(lo, 0))} Z" fill="${color}" opacity=".08"/>
-      <polyline class="fc-line" pathLength="1" points="${pts.join(' ')}" fill="none" stroke="${color}" stroke-width="2" stroke-linejoin="round" stroke-linecap="round"/>
+      <defs><linearGradient id="fcG" gradientUnits="userSpaceOnUse" x1="${padL}" x2="${W}" y1="0" y2="0"><stop offset="0" stop-color="#146ef5"/><stop offset="1" stop-color="#8b5cf6"/></linearGradient>
+        <linearGradient id="fcA" gradientUnits="userSpaceOnUse" x1="0" x2="0" y1="${padT}" y2="${y(Math.max(lo, 0))}"><stop offset="0" stop-color="#6d5dfc" stop-opacity=".22"/><stop offset="1" stop-color="#6d5dfc" stop-opacity=".02"/></linearGradient></defs>
+      <path d="M${pts[0]} L${pts.join(' L')} L${x(days.length - 1)},${y(Math.max(lo, 0))} L${x(0)},${y(Math.max(lo, 0))} Z" fill="url(#fcA)"/>
+      <polyline class="fc-line" pathLength="1" points="${pts.join(' ')}" fill="none" stroke="url(#fcG)" stroke-width="2.5" stroke-linejoin="round" stroke-linecap="round"/>
       ${marks}${xl}
       <line class="cross" id="fcCross" x1="0" x2="0" y1="${padT}" y2="${padT + plotH}"/>
       <circle class="dot" id="fcDot" r="4.5" fill="${color}" stroke="var(--card)" stroke-width="2"/>
@@ -2949,12 +2988,12 @@ button:focus-visible, a:focus-visible, [role="button"]:focus-visible, [tabindex]
       const iso = `${key}-${pad(d)}`, list = byDay[iso] || [];
       const hasIn = list.some(e => e.dir === 'in'), hasOut = list.some(e => e.dir === 'out');
       cells.push(`<button type="button" data-day="${iso}" class="${iso === todayIso ? 'today' : ''} ${iso === calSel ? 'sel' : ''}" aria-label="${d}: ${list.length} movimentos">${d}
-        <span class="dots">${hasIn ? '<i style="background:var(--green)"></i>' : ''}${hasOut ? '<i style="background:var(--out)"></i>' : ''}</span></button>`);
+        <span class="dots">${hasIn ? '<i style="background:var(--in)"></i>' : ''}${hasOut ? '<i style="background:var(--out)"></i>' : ''}</span></button>`);
     }
     const sel = (byDay[calSel] || []).sort((a, b) => (a.dir === 'in' ? -1 : 1) - (b.dir === 'in' ? -1 : 1));
     box.innerHTML = `<h3>Calendário</h3>
       <div class="cal">${['D', 'S', 'T', 'Q', 'Q', 'S', 'S'].map(w => `<span class="wd">${w}</span>`).join('')}${cells.join('')}</div>
-      <div class="cal-legend"><span><i style="background:var(--green)"></i>Entrada</span><span><i style="background:var(--out)"></i>Saída</span></div>
+      <div class="cal-legend"><span><i style="background:var(--in)"></i>Entrada</span><span><i style="background:var(--out)"></i>Saída</span></div>
       <div class="cal-list"><div class="cal-day">${(() => { const d = daysUntil(calSel), rel = d === 0 ? 'Hoje' : d === -1 ? 'Ontem' : d === 1 ? 'Amanhã' : ''; return rel ? `<span class="cal-rel${d === 0 ? ' today' : ''}">${rel}</span>` : ''; })()}<span>${new Date(calSel + 'T12:00:00').toLocaleDateString('pt-BR', { weekday: 'long', day: '2-digit', month: 'long' })}</span></div>
         ${sel.length ? sel.map(e => `<div class="ev" ${e.ref ? `data-open="${esc(e.ref)}" role="button" tabindex="0" title="Abrir"` : ''}>${e.logo || icoTile(e.icon || 'tag')}<span>${esc(e.label)}${e.done ? ' <small style="color:var(--muted)">✓</small>' : ''}</span><span class="v ${e.dir === 'in' ? 'in' : ''}">${e.dir === 'in' ? '+' : '–'}${money(e.amount)}</span></div>`).join('')
           : '<div class="ov-empty" style="padding:6px 0;text-align:left">Nada neste dia.</div>'}</div>`;
@@ -3054,7 +3093,7 @@ button:focus-visible, a:focus-visible, [role="button"]:focus-visible, [tabindex]
     box.innerHTML = `<div class="evo-head"><h2>Evolução</h2>
       <div class="evo-ctl"><div class="pills" id="evoRange">${[6, 12].map(x => `<button type="button" data-n="${x}" class="${x === n ? 'on' : ''}">${x} meses</button>`).join('')}</div>
         <button class="btn-soft" id="evoTableBtn" type="button">${table ? 'Ver gráfico' : 'Ver tabela'}</button></div></div>
-      <div class="evo-body"><div>${table ? evoTable(data) : `<div class="evo-legend"><span><i style="background:var(--green)"></i>Entrou</span><span><i style="background:var(--out)"></i>Saiu</span></div><div class="evo-chart" id="evoChart"></div>`}</div>
+      <div class="evo-body"><div>${table ? evoTable(data) : `<div class="evo-legend"><span><i style="background:var(--in)"></i>Entrou</span><span><i style="background:var(--out)"></i>Saiu</span></div><div class="evo-chart" id="evoChart"></div>`}</div>
         <div class="insights">${insights()}</div></div>`;
     if (!table) drawEvoChart(data);
     box.querySelector('#evoRange').onclick = e => { const b = e.target.closest('[data-n]'); if (b && +b.dataset.n !== n) { ui.evoRange = +b.dataset.n; saveUi(); evoSwap(); } };
@@ -3105,7 +3144,7 @@ button:focus-visible, a:focus-visible, [role="button"]:focus-visible, [tabindex]
         const cx = padL + slot * i + slot / 2, x1 = cx - bw - 1, x2 = cx + 1;   // 2px entre as colunas
         return `<g class="m" tabindex="0" data-i="${i}" aria-label="${monthLabel(d.k)}: receita ${brl.format(d.receita / 100)}, despesas ${brl.format(d.despesas / 100)}">
           <rect class="band" x="${padL + slot * i + 2}" y="${padT}" width="${slot - 4}" height="${plotH}" rx="6"/>
-          ${bar(x1, d.receita, 'var(--green)', i * 2)}${bar(x2, d.despesas, 'var(--out)', i * 2 + 1)}
+          ${bar(x1, d.receita, 'var(--in)', i * 2)}${bar(x2, d.despesas, 'var(--out)', i * 2 + 1)}
           <text class="xl ${d.k === view.month ? 'cur' : ''}" x="${cx}" y="${H - 8}" text-anchor="middle">${shortMonth(d.k)}</text>
           <rect class="hit" x="${padL + slot * i}" y="0" width="${slot}" height="${H}"/></g>`;
       }).join('')}</svg><div class="evo-tip" id="evoTip"></div>`;
@@ -3114,7 +3153,7 @@ button:focus-visible, a:focus-visible, [role="button"]:focus-visible, [tabindex]
     const show = g => {
       const d = data[+g.dataset.i];
       tip.innerHTML = `<div class="tt">${monthLabel(d.k)}</div>
-        <div class="r"><span><i style="background:var(--green)"></i>Entrou</span><b>${money(d.receita)}</b></div>
+        <div class="r"><span><i style="background:var(--in)"></i>Entrou</span><b>${money(d.receita)}</b></div>
         <div class="r"><span><i style="background:var(--out)"></i>Saiu</span><b>${money(d.despesas)}</b></div>
         <div class="r"><span>Sobra</span><b style="color:${d.saldo < 0 ? 'var(--amber)' : 'inherit'}">${d.saldo < 0 && !ui.hidden ? '–' : ''}${money(Math.abs(d.saldo))}</b></div>`;
       // abre ao lado da coluna (à esquerda se couber, senão à direita), sem cobrir o mês que você está olhando
