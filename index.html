@@ -1024,9 +1024,10 @@ html.auth .auth-screen { display: grid; place-items: center; }
 .duo-in .duo-col { padding-top: 2.3em; }
 .duo-scr { position: relative; height: 100%; border-radius: 1.7em; background: var(--card); border: .45em solid #0c0d11; overflow: hidden; }
 /* a base é o aparelho aberto inteiro; fechado/girando, só a metade direita aparece */
-.duo-base { left: 0; width: 100%; clip-path: inset(0 0 0 50% round 0 1.9em 1.9em 0); }
-.duo.shut .duo-base { clip-path: inset(0 0 0 50% round .6em 1.9em 1.9em .6em); }
-.duo.flat .duo-base { clip-path: none; }
+/* os cantos do lado da dobra só mudam quando a tampa passa do meio do giro (aí quem aparece por cima já tem o mesmo canto) */
+.duo-base { left: 0; width: 100%; clip-path: inset(0 0 0 50% round 0 1.9em 1.9em 0); transition: clip-path .15s linear .55s; }
+.duo:not(.open) .duo-base { clip-path: inset(0 0 0 50% round .6em 1.9em 1.9em .6em); }
+.duo.flat .duo-base { clip-path: inset(0 0 0 0 round 1.9em); transition: none; }
 .duo-cover { position: absolute; inset: 0 0 0 50%; transform-style: preserve-3d; transform-origin: left center; transition: transform 1.1s cubic-bezier(.65, 0, .25, 1); }
 .duo.open .duo-cover { transform: rotateY(-180deg); }
 .duo.flat .duo-cover { visibility: hidden; }
@@ -1037,7 +1038,6 @@ html.auth .auth-screen { display: grid; place-items: center; }
 .duo-back .duo-in { right: auto; width: 200%; }
 .duo-in { position: absolute; inset: 0; display: grid; grid-template-columns: 1fr 1fr; }
 .duo-col { padding: 1.5em 1.15em 0; min-width: 0; }
-/* fechado: a dobradiça aparece na lateral esquerda */
 .duo-front { border-radius: .6em 1.9em 1.9em .6em; } .duo-front .duo-scr { border-radius: .4em 1.7em 1.7em .4em; }
 /* sombra enquanto gira: a tampa escurece de lado, como um objeto de verdade */
 .duo-cover .duo-half::after { content: ""; position: absolute; inset: 0; border-radius: inherit; background: #000; opacity: 0; pointer-events: none; }
@@ -1046,7 +1046,6 @@ html.auth .auth-screen { display: grid; place-items: center; }
 .duo-col:first-child { position: relative; }
 .duo-plus { position: absolute; right: 1.15em; bottom: 2.2em; width: 2.6em; height: 2.6em; border-radius: 50%; display: grid; place-items: center; font-style: normal; font-weight: 700; font-size: 1.15em; color: #fff;
   background: linear-gradient(135deg, var(--ob-c), var(--ob-c2)); box-shadow: 0 .6em 1.2em -.5em color-mix(in srgb, var(--ob-c) 70%, #000); }
-.duo-front::before { content: ""; position: absolute; left: -.15em; top: 12%; bottom: 12%; width: .5em; border-radius: .4em; background: var(--duo-hinge); }
 .duo-front .duo-scr { padding: 2.6em 1.15em 0; }
 .duo-front .duo-sb { left: 1.3em; right: 1.1em; }
 .duo-cam { position: absolute; top: .55em; left: 50%; width: .85em; height: .85em; margin-left: -.42em; border-radius: 50%; background: #0c0d11; }
@@ -1079,7 +1078,7 @@ html.auth .auth-screen { display: grid; place-items: center; }
 .ob-hero:has(.duo:not(.open)) .ob-floatw { opacity: 0; transform: translate(-14px, 18px) scale(.9) rotate(-4deg); transition: opacity .2s ease, transform .3s ease-in; }
 .ob-hero:has(.duo:not(.open)) .ob-float { pointer-events: none; }
 @media (max-width: 640px) { .ob-hero { height: 270px; } .duo-tilt { --dw: min(310px, 84vw); } .ob-float { right: 2px; bottom: 14px; } .ob-panel { padding: 14px 14px 16px; } .ob-ph .hint { display: none; } }
-@media (prefers-reduced-motion: reduce) { .duo, .duo-cover, .duo::after, .ob-floatw { transition: none; } .stk-in, .stk-face, .duo-tilt, .duo .ob-bars i, .duo-row, .ob-float, .ob-panel, .ob-bars i, .ob-note { animation: none !important; } .ob-splash { display: none; } .stk { transition: none; } }
+@media (prefers-reduced-motion: reduce) { .duo, .duo-cover, .duo::after, .ob-floatw, .duo-base { transition: none; } .stk-in, .stk-face, .duo-tilt, .duo .ob-bars i, .duo-row, .ob-float, .ob-panel, .ob-bars i, .ob-note { animation: none !important; } .ob-splash { display: none; } .stk { transition: none; } }
 
 /* ----- bichinhos (avatar) ----- */
 .av.avc { background: var(--avbg); padding: 0; overflow: hidden; color: inherit; }
