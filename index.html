@@ -1591,6 +1591,8 @@ button.kpi-label:hover { color: var(--ink); text-decoration-color: currentColor;
 @keyframes slide-in { from { opacity: 0; transform: translateX(var(--dx, 0)) translateY(var(--dy, 0)); } }
 @keyframes row-in { 0% { opacity: 0; transform: translateY(-6px); background-color: color-mix(in srgb, #12a588 16%, transparent); } 25% { opacity: 1; transform: none; background-color: color-mix(in srgb, #12a588 16%, transparent); } }
 #table .row.just-in { animation: row-in 1.4s cubic-bezier(.2, .75, .25, 1) both; border-radius: 10px; }
+#table .row.just-edit { animation: row-edit 1.2s ease-out both; border-radius: 10px; }
+@keyframes row-edit { 0%, 20% { background-color: color-mix(in srgb, #ff9416 16%, transparent); } }
 .enter > .ov, .enter .evo, #mainGrid.enter > .card, #mainGrid.enter > div > .card { animation: slide-in .38s cubic-bezier(.2, .75, .25, 1) both; }
 @keyframes dn-roll { from { opacity: 0; transform: rotate(-360deg) scale(.82); } }
 @keyframes arc-draw { from { stroke-dasharray: 0 100; } }
@@ -2549,12 +2551,15 @@ button:focus-visible, a:focus-visible, [role="button"]:focus-visible, [tabindex]
 
   // ================= Render =================
   const renderMemo = withMemo(renderNow);
-  // depois de lançar: só a linha nova acende (o resto fica quieto)
-  const tableIds = () => new Set([...document.querySelectorAll('#table [data-edit]')].map(b => b.dataset.edit));
+  // depois de lançar: só a linha nova acende (o resto fica quieto); depois de editar, a linha editada pisca de leve
+  const tableRows = () => new Map([...document.querySelectorAll('#table [data-edit]')].map(b => [b.dataset.edit, b.closest('.row')?.textContent || '']));
   const render = (...a) => {
-    const before = tableIds(); renderMemo(...a);
+    const before = tableRows(); renderMemo(...a);
     if (!sameView || !before.size && !document.querySelector('#table [data-edit]') || matchMedia('(prefers-reduced-motion: reduce)').matches) return;
-    tableIds().forEach(id => { if (!before.has(id)) document.querySelector(`#table [data-edit="${CSS.escape(id)}"]`)?.closest('.row')?.classList.add('just-in'); });
+    tableRows().forEach((txt, id) => {
+      const cls = !before.has(id) ? 'just-in' : before.get(id) !== txt ? 'just-edit' : '';
+      if (cls) document.querySelector(`#table [data-edit="${CSS.escape(id)}"]`)?.closest('.row')?.classList.add(cls);
+    });
   };
   // Entrada suave ao trocar de aba ou de mês: linhas e cards sobem e aparecem em sequência, o gráfico gira de leve
 
