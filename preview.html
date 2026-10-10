@@ -41,8 +41,8 @@
   --edge: rgba(17, 17, 17, .075);
   --green: #13845d;
   --green-soft: #e3f1ea;
-  --blue: #1467e0;
-  --blue-soft: #e8f0fd;
+  --blue: #0a7598;
+  --blue-soft: #e1f2f6;
   --accent: #0a8370;
   --accent-ink: #0a7d69;   /* menta da Capi para texto (no escuro, mais claro pra ler bem) */
   --accent-soft: #dcf5ee;
@@ -74,8 +74,8 @@
   --edge: rgba(255, 255, 255, .075);
   --green: #3cc88c;
   --green-soft: #12261c;
-  --blue: #4a90f7;
-  --blue-soft: #13223a;
+  --blue: #4cc3e0;
+  --blue-soft: #0f2a31;
   --accent: #0d8670;
   --accent-ink: #4fd8b8;   /* menta da Capi para texto (no escuro, mais claro pra ler bem) */
   --accent-soft: #0f2a24;
@@ -161,7 +161,7 @@ svg.i { width: 16px; height: 16px; flex: none; fill: none; stroke: currentColor;
   margin-left: auto; border: 0; border-radius: 999px;
   background: var(--blue); color: #fff; font-size: .72rem; font-weight: 700;
   padding: 5px 10px; display: inline-flex; align-items: center; gap: 5px;
-  box-shadow: 0 4px 10px rgba(29, 95, 214, .25);
+  box-shadow: 0 4px 10px rgba(10, 131, 112, .25);
 }
 .adjust svg.i { width: 12px; height: 12px; }
 .adjust.dark { background: var(--ink); color: var(--card); box-shadow: 0 4px 10px rgba(20, 23, 28, .18); }
@@ -446,7 +446,7 @@ svg.i { width: 16px; height: 16px; flex: none; fill: none; stroke: currentColor;
 @media (min-width: 981px) and (max-width: 1180px) { .ov-where, .ov-cards, .ov-goals { grid-column: span 6; } .ov-goals { grid-column: span 12; } }
 
 /* Lançamento rápido */
-.fab { position: fixed; right: max(20px, env(safe-area-inset-right)); bottom: calc(22px + env(safe-area-inset-bottom)); z-index: 20; width: 58px; height: 58px; border: 0; border-radius: 18px; background: var(--accent); color: #fff; display: grid; place-items: center; box-shadow: 0 10px 28px rgba(20, 110, 245, .32); transition: transform .15s; }
+.fab { position: fixed; right: max(20px, env(safe-area-inset-right)); bottom: calc(22px + env(safe-area-inset-bottom)); z-index: 20; width: 58px; height: 58px; border: 0; border-radius: 18px; background: var(--accent); color: #fff; display: grid; place-items: center; box-shadow: 0 10px 28px rgba(10, 131, 112, .32); transition: transform .15s; }
 .fab:hover { transform: translateY(-2px); }
 .fab:active { transform: scale(.95); }
 .fab svg.i { width: 26px; height: 26px; stroke-width: 2.4; }
@@ -472,7 +472,8 @@ html.locked .lock { display: grid; }
 .lock-box { width: 100%; max-width: 300px; text-align: center; margin: auto; }
 /* tela baixa (celular deitado, celular pequeno): rola e o teclado fica menor, pra alcançar o 0 e o apagar */
 html.locked .lock { place-items: normal; overflow-y: auto; }
-.lock-box img { width: 64px; height: 64px; border-radius: 18px; margin-bottom: 14px; }
+.lock-capi { display: block; width: 80px; margin: 0 auto 10px; }
+.lock-capi svg { display: block; width: 100%; height: auto; }
 .lock-box h2 { margin: 0 0 4px; font-size: 1.2rem; font-weight: 700; }
 .lock-box p { margin: 0; color: var(--muted); font-size: .85rem; min-height: 1.3em; }
 .lock-box p.err { color: var(--red); }
@@ -489,7 +490,7 @@ html.locked .lock { place-items: normal; overflow-y: auto; }
 .lock-forgot { margin-top: 22px; border: 0; background: none; color: var(--muted); font-size: .8rem; text-decoration: underline; }
 @media (max-height: 620px) {
   .pin-dots { margin: 14px 0 16px; }
-  .lock-box img { width: 44px; height: 44px; margin-bottom: 8px; }
+  .lock-capi { width: 54px; margin-bottom: 6px; }
   .keypad { grid-template-columns: repeat(3, 58px); gap: 10px; }
   .keypad button { width: 58px; height: 58px; font-size: 1.25rem; }
 }
@@ -498,7 +499,7 @@ html.locked .lock { place-items: normal; overflow-y: auto; }
   .lock-box { max-width: 560px; display: grid; grid-template-columns: 1fr auto; column-gap: 32px; align-items: center; align-content: center; }
   .lock-box > * { grid-column: 1; }
   .lock-box .keypad { grid-column: 2; grid-row: 1 / span 6; }
-  .lock-box img { justify-self: center; }
+  .lock-capi { justify-self: center; }
 }
 .pin-input { letter-spacing: .5em; text-align: center; font-size: 1.3rem; }
 
@@ -596,6 +597,9 @@ html.locked .lock { place-items: normal; overflow-y: auto; }
 
 .empty { text-align: center; color: var(--muted); font-size: .85rem; padding: 22px 0 14px; }
 .empty .btn-soft { margin-top: 10px; }
+/* telas vazias com a Capi de boa na lagoa */
+div.empty::before, .ov-forecast > .ov-empty::before, .ov-where > .ov-empty::before, .ov-cards > .ov-empty::before, .ov-goals > .ov-empty::before {
+  content: ""; display: block; width: 62px; height: 60px; margin: 0 auto 8px; background: var(--capi-lagoa) center / contain no-repeat; }
 
 /* Rosca */
 .chart-card { padding: 22px 20px; }
@@ -731,7 +735,7 @@ body::before { content: ""; position: fixed; inset: 0; z-index: 0; pointer-event
 :root[data-theme="dark"] .overlay { background: rgba(0, 0, 0, .62); }
 :root[data-theme="dark"] .modal { background: #131313; }
 .toast { background: rgba(24, 24, 24, .94); color: #fefefe; box-shadow: 0 0 0 1px rgba(255, 255, 255, .08), 0 18px 40px -12px rgba(0, 0, 0, .5); backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px); }
-.toast button { color: #8cb8ff; }
+.toast button { color: #7ae3d1; }
 @media (max-width: 640px) { .hello, .title { font-size: 1.6rem; } .kpi-label { font-size: .76rem; white-space: nowrap; } .kpi-head { gap: 8px; justify-content: space-between; } .kpi-head .adjust { font-size: .76rem; flex: none; } }
 @media (max-width: 400px) { .kpi-label .lg { display: none; } }
 .kpi.receita .kpi-value, .kpi.investir .kpi-value, .kpi.despesas .kpi-value { color: var(--ink); }
@@ -903,11 +907,14 @@ html.auth, html.auth body { overflow: hidden; }
 .ob-note > svg.i { color: var(--amber); flex: none; }
 .ob-note b { display: block; font-size: .88rem; } .ob-note small { color: var(--muted); font-size: .76rem; }
 /* 7: pronto */
-.ob-done { width: 96px; height: 96px; margin: 0 auto; }
-.ob-done svg { width: 100%; height: 100%; fill: none; stroke: var(--green); stroke-width: 3; stroke-linecap: round; stroke-linejoin: round; }
-.ob-done circle { stroke-dasharray: 1; stroke-dashoffset: 0; animation: ob-stroke .8s cubic-bezier(.4, 0, .2, 1) .1s both; }
-.ob-done path { stroke-dasharray: 1; animation: ob-stroke .45s cubic-bezier(.4, 0, .2, 1) .75s both; }
-.ob-done circle, .ob-done path { stroke-dasharray: 1 1; }
+.ob-done { width: 132px; margin: 0 auto; }
+.ob-done > svg { display: block; width: 100%; height: auto; animation: ob-bob 2.8s ease-in-out 1s infinite; }
+.ob-done .fruit { transform-box: fill-box; transform-origin: 50% 100%; animation: ob-fruit .7s cubic-bezier(.3, 1.6, .5, 1) .55s both; }
+.ob-check { position: absolute; right: -4px; top: 14px; width: 38px; height: 38px; border-radius: 50%; background: var(--ob-c, var(--accent)); display: grid; place-items: center; box-shadow: 0 0 0 4px var(--bg); animation: ob-pop .45s cubic-bezier(.2, .9, .3, 1.5) .6s both; }
+.ob-check svg { width: 26px; height: 26px; fill: none; stroke: #fff; stroke-width: 5; stroke-linecap: round; stroke-linejoin: round; }
+.ob-check path { stroke-dasharray: 1 1; animation: ob-stroke .4s cubic-bezier(.4, 0, .2, 1) .9s both; }
+@keyframes ob-bob { 50% { transform: translateY(-2px); } }
+@keyframes ob-fruit { 0% { transform: translateY(-14px); opacity: 0; } 60% { transform: scale(1.15, .85); opacity: 1; } }
 @media (max-width: 640px) { .ob-title { font-size: 1.7rem; } .ob-art { min-height: 200px; margin-bottom: 20px; } .ob-kpi b { font-size: .9rem; } }
 @media (prefers-reduced-motion: reduce) { .ob *, .ob-slide { animation: none !important; transition: none !important; } .ob-chips span { opacity: 1; } }
 /* ----- cor: cada tela tem a sua (--ob-c → --ob-c2) ----- */
@@ -940,7 +947,7 @@ html.auth, html.auth body { overflow: hidden; }
 .ob-kpi.k-left { --kc: #0c917a; background: linear-gradient(140deg, #0fae90, #0a7393); }
 @keyframes ob-fly { from { opacity: 0; transform: translateY(70px) rotate(var(--r)) scale(.5); } }
 @keyframes ob-float { 50% { transform: translateY(-6px); } }
-.ob-bar i { background: linear-gradient(90deg, #10b981, #0ea5e9, #8b5cf6); }
+.ob-bar i { background: linear-gradient(90deg, #3fd9bd, #0fae90, #0a85a8); }
 /* ----- ícones, listas e gráfico com cor ----- */
 .ob-ic { width: 38px; height: 38px; border-radius: 12px; display: grid; place-items: center; color: #fff; background: var(--c); box-shadow: 0 8px 18px -10px var(--c); }
 .ob-ic svg.i { width: 18px; height: 18px; }
@@ -948,7 +955,6 @@ html.auth, html.auth body { overflow: hidden; }
 .ob-chips.on span { background: color-mix(in srgb, var(--ob-c) 14%, var(--card)); color: var(--ink); }
 .ob-chips span b { color: var(--ob-c); }
 .ob-note > svg.i { color: var(--ob-c); }
-.ob-done svg { stroke: url(#obDoneGrad); stroke: var(--ob-c); stroke-width: 3.5; }
 .ob-done { filter: drop-shadow(0 12px 22px color-mix(in srgb, var(--ob-c) 45%, transparent)); }
 .ob-person .av { box-shadow: 0 0 0 3px var(--bg), 0 10px 20px -10px var(--av); }
 
@@ -1685,7 +1691,7 @@ button:focus-visible, a:focus-visible, [role="button"]:focus-visible, [tabindex]
   .hello { display: flex; align-items: center; gap: 8px; } .hello .av.avc.sm { width: 22px; height: 22px; } .hello .av-pair .av.avc.sm { width: 22px; height: 22px; }
   /* cartões de resumo: o primeiro em degradê; os outros com luz colorida no canto */
   .kpi { background: radial-gradient(170px 150px at 92% -10%, color-mix(in srgb, var(--kc, transparent) 17%, transparent), transparent 72%), var(--card); }
-  .kpi.receita { --kc: #19b884; } .kpi.despesas { --kc: #ff7a8a; } .kpi.sobra { --kc: #8b5cf6; }
+  .kpi.receita { --kc: #19b884; } .kpi.despesas { --kc: #ff7a8a; } .kpi.sobra { --kc: #ff9416; }
   .kpi.contas { background: radial-gradient(190px 160px at 92% -10%, rgba(255, 255, 255, .2), transparent 72%), var(--grad); box-shadow: 0 20px 40px -22px var(--grad-glow); }
   .kpi.contas, .kpi.contas .kpi-value { color: #fff; }
   .kpi.contas .kpi-label, .kpi.contas .kpi-sub { color: rgba(255, 255, 255, .82); }
@@ -1701,9 +1707,9 @@ button:focus-visible, a:focus-visible, [role="button"]:focus-visible, [tabindex]
   .cal button.sel, .cal button.today.sel { background: var(--grad); color: #fff; box-shadow: 0 8px 16px -8px var(--grad-glow); }
   .btn.save:not(:disabled) { background: var(--grad); color: #fff; border-color: transparent; }
   /* títulos dos quadros com um pontinho colorido, como na apresentação */
-  .ov h3::before, .evo-head h2::before, .card-head h2::before { content: ""; width: 8px; height: 8px; border-radius: 50%; flex: none; background: var(--hc, #6d5dfc); box-shadow: 0 0 0 4px color-mix(in srgb, var(--hc, #6d5dfc) 18%, transparent); }
+  .ov h3::before, .evo-head h2::before, .card-head h2::before { content: ""; width: 8px; height: 8px; border-radius: 50%; flex: none; background: var(--hc, var(--accent)); box-shadow: 0 0 0 4px color-mix(in srgb, var(--hc, var(--accent)) 18%, transparent); }
   .evo-head h2, .card-head h2 { display: flex; align-items: center; gap: 8px; }
-  #ovForecast { --hc: #12a588; } #ovCal { --hc: #8b5cf6; } #ovWhere { --hc: #f472b6; } #ovCards { --hc: #ff8a5c; } #ovGoals { --hc: #19b884; } .evo { --hc: #22c1ee; }
+  #ovForecast { --hc: #12a588; } #ovCal { --hc: #0a85a8; } #ovWhere { --hc: #ff6b7f; } #ovCards { --hc: #ff9416; } #ovGoals { --hc: #b8733f; } .evo { --hc: #5cc8f5; }
   .month { box-shadow: var(--shadow); }
   .meter i { background: linear-gradient(90deg, #19b884, #2dd4bf); } .meter.info i { background: var(--grad); }
   .meter.warn i { background: linear-gradient(90deg, #ffb36b, #ff8a5c); } .meter.over i { background: linear-gradient(90deg, #ff8a5c, #ff5f8f); }
@@ -1960,7 +1966,7 @@ button:focus-visible, a:focus-visible, [role="button"]:focus-visible, [tabindex]
 
   <div class="auth-screen" id="authScreen" role="dialog" aria-modal="true" aria-label="Boas-vindas"></div>
   <div class="lock" id="lockScreen" role="dialog" aria-modal="true" aria-label="App bloqueado">
-    <div class="lock-box"><img src="icon-192.png" alt="" onerror="this.style.display='none'" />
+    <div class="lock-box"><span class="lock-capi" aria-hidden="true"></span>
       <h2>Capi</h2><p id="lockMsg">Digite sua senha</p>
       <div class="pin-dots" id="pinDots"></div>
       <div class="keypad" id="keypad"></div>
@@ -2273,6 +2279,17 @@ button:focus-visible, a:focus-visible, [role="button"]:focus-visible, [tabindex]
     sol: { name: 'Sol', bg: '#fff0c2', say: 'Brilha!', svg: `<g class="rays" stroke="#ffb020" stroke-width="3" stroke-linecap="round"><path d="M32 6v6M32 52v6M6 32h6M52 32h6M13.6 13.6l4.2 4.2M46.2 46.2l4.2 4.2M13.6 50.4l4.2-4.2M46.2 17.8l4.2-4.2"/></g><circle cx="32" cy="32" r="16" fill="#ffc533"/><path d="M24 30q2.5-3 5 0M35 30q2.5-3 5 0" fill="none" stroke="${K}" stroke-width="2" stroke-linecap="round"/><path d="M26 37q6 6 12 0" fill="none" stroke="${K}" stroke-width="2" stroke-linecap="round"/>${blush(36, 11)}` },
     estrela: { name: 'Estrela', bg: '#e8e0ff', say: 'Tcharam!', svg: `<path d="M32 7l7.3 14.8 16.3 2.4-11.8 11.5 2.8 16.2L32 44.3l-14.6 7.6 2.8-16.2L8.4 24.2l16.3-2.4z" fill="#8b6cff" stroke="#8b6cff" stroke-width="3" stroke-linejoin="round"/>${eyes(29, 6)}<path d="M28 34q4 3.4 8 0" fill="none" stroke="#fff" stroke-width="1.9" stroke-linecap="round"/>` },
   };
+  // A Capi relaxando na lagoa (só o rosto pra fora d'água): telas vazias, senha e fim da apresentação. happy = olhinhos fechados de alegria
+  const capiLagoa = (happy = false, xmlns = false) => {
+    let face = AVATARS.capivara.svg;
+    if (happy) face = face.replace(/<circle cx="(22\.5|41\.5)" cy="27" r="2\.1" fill="[^"]+"\/>/g, (_, x) => `<path d="M${x - 2.6} 27.8q2.6-3.4 5.2 0" fill="none" stroke="${K}" stroke-width="1.7" stroke-linecap="round"/>`)
+      .replace(/<circle cx="(23\.2|42\.2)" cy="26\.3" r="\.7" fill="#fff"\/>/g, '');
+    return `<svg ${xmlns ? 'xmlns="http://www.w3.org/2000/svg" ' : ''}viewBox="0 0 64 63" aria-hidden="true">${face}
+      <ellipse cx="32" cy="58" rx="31" ry="5" fill="#9fe3cf"/><path d="M4 56.5q6-2.6 12 0t12 0t12 0t12 0t8 0" fill="none" stroke="#5cc9ad" stroke-width="1.5" stroke-linecap="round"/>
+      <path d="M14 59.5h7M42 60h7" stroke="#fff" stroke-width="1.3" stroke-linecap="round" opacity=".75"/></svg>`;
+  };
+  document.documentElement.style.setProperty('--capi-lagoa', `url("data:image/svg+xml,${encodeURIComponent(capiLagoa(false, true))}")`);
+  { const lc = document.querySelector('#lockScreen .lock-capi'); if (lc) lc.innerHTML = capiLagoa(); }
   const AV_KEYS = Object.keys(AVATARS);
   const avatarSvg = key => `<svg viewBox="0 0 64 64" aria-hidden="true">${AVATARS[key].svg}</svg>`;
   // bichinho de alguém: o escolhido, ou um que combina com o nome (sempre o mesmo pro mesmo nome)
@@ -2844,7 +2861,7 @@ button:focus-visible, a:focus-visible, [role="button"]:focus-visible, [tabindex]
   // As cores padrão (categorias, contas fixas, investimentos) viram as da paleta escolhida;
   // cores escolhidas na mão e cores de marca ficam suavizadas para combinar.
   const PALETTES = {
-    aurora: { name: 'Aurora', cols: ['#4f7cff', '#ff5f8f', '#6d5dfc', '#2dd4bf', '#ff8a5c', '#a78bfa', '#f472b6', '#22c1ee', '#ffb36b', '#94a3b8', '#34d399', '#b8c2d6'], keep: true, map: { '#475569': '#6d5dfc', '#1d4ed8': '#22c1ee', '#d97706': '#ff8a5c' } },
+    aurora: { name: 'Aurora', cols: ['#0a85a8', '#ff6b7f', '#12a588', '#5cc8f5', '#ff9416', '#e66aa6', '#b8733f', '#7ae3d1', '#f5b82e', '#9aa8a6', '#2fbf71', '#c9b8a8'], keep: true, map: { '#475569': '#8d5a37', '#1d4ed8': '#5cc8f5', '#d97706': '#ff9416' } },
     vivas: { name: 'Vivas', cols: null },
     salvia: { name: 'Sálvia', cols: ['#8fae9d', '#d2ab85', '#9aa9c9', '#d9a7a7', '#b9b48c', '#a898bf', '#7fa6ab', '#dcc093', '#a4958a', '#b7bec6'] },
     nevoa: { name: 'Névoa', cols: ['#94afc8', '#c9b49d', '#a5b8a7', '#b3a5c6', '#c7a3a9', '#9dbab5', '#8c9cb0', '#d2c2a8', '#aab2bd', '#b9c7d6'] },
@@ -6666,7 +6683,7 @@ button:focus-visible, a:focus-visible, [role="button"]:focus-visible, [tabindex]
           <div class="ob-chips" id="obParsed"><span style="--d:0ms">Gasto <b>R$ 45,90</b></span><span style="--d:120ms">${ico('tag', 'width:12px;height:12px')}Mercado</span><span style="--d:240ms">Ontem</span></div></div>
           <p class="ob-cap">Também dá pra importar o extrato do banco.</p>` },
       { k: 'veja', c: ['#f2711c', '#b8733f'], expl: true, panel: 'Para onde vai', next: 'Próximo', title: 'Veja pra onde <em>vai</em>', sub: 'O gráfico mostra cada parte, e o app avisa o que vai vencer pra nada atrasar.',
-        art: () => { const sl = [[40, '#ec4899', 'house'], [26, '#f97316', 'shopping-cart'], [20, '#8b5cf6', 'utensils'], [14, '#0ea5e9', 'car']]; let o = 0;
+        art: () => { const sl = [[40, '#ff6b7f', 'house'], [26, '#ff9416', 'shopping-cart'], [20, '#0a85a8', 'utensils'], [14, '#12a588', 'car']]; let o = 0;
           const arcs = sl.map(([len, col], n) => { const c = `<circle cx="21" cy="21" r="15.915" fill="none" stroke="${col}" stroke-width="6" stroke-dasharray="${len - 1.6} ${100 - len + 1.6}" stroke-dashoffset="${-o}" style="--d:${n * 160}ms"/>`; o += len; return c; }).join('');
           o = 0; const icons = sl.map(([len, , ic], n) => { const a = (o + (len - 1.6) / 2) / 100 * Math.PI * 2; o += len; return `<span class="ob-dic" style="left:${(50 + 37.9 * Math.sin(a)).toFixed(1)}%;top:${(50 - 37.9 * Math.cos(a)).toFixed(1)}%;--d:${700 + n * 120}ms"><svg class="i"><use href="#c-${ic}"/></svg></span>`; }).join('');
           return `<div class="ob-donut"><svg viewBox="0 0 42 42">${arcs}</svg>${icons}
@@ -6675,7 +6692,7 @@ button:focus-visible, a:focus-visible, [role="button"]:focus-visible, [tabindex]
       { k: 'pronto', c: ['#0fae90', '#22c55e'], last: true, next: 'Começar a usar', title: () => `Tudo pronto, <em>${esc(nickOf())}</em>!`, sub: () => invited ? 'Agora é só digitar o código do convite que te passaram.' : 'Seus dados ficam só neste aparelho. Se quiser, dá pra colocar senha ou usar em outro celular depois, em ⚙.',
         art: () => `<div class="ob-confetti" aria-hidden="true">${Array.from({ length: 34 }, (_, n) => { const a = n / 34 * Math.PI * 2 + (n % 3) * .2, r = 110 + (n * 47) % 90;
             return `<i style="--x:${Math.round(Math.cos(a) * r)}px;--y:${Math.round(Math.sin(a) * r * .8 - 30)}px;--r:${(n * 97) % 360}deg;--c:${['#12a588', '#ff9416', '#ec4899', '#f97316', '#22c55e', '#0ea5e9', '#facc15'][n % 7]};--d:${120 + (n % 5) * 40}ms;${n % 2 ? 'border-radius:50%;width:8px;height:8px' : ''}"></i>`; }).join('')}</div>
-          <div class="ob-done"><svg viewBox="0 0 52 52"><circle cx="26" cy="26" r="24" pathLength="1"/><path d="M15 27l7 7 15-16" pathLength="1"/></svg></div>` },
+          <div class="ob-done">${capiLagoa(true)}<span class="ob-check"><svg viewBox="0 0 52 52"><path d="M15 27l7 7 15-16" pathLength="1"/></svg></span></div>` },
     ].filter(s => !s.skip);
     const first = !reduced && !showOnboarding.seen; showOnboarding.seen = true;
     const SPLASH_MS = 2050;   // quando a abertura da capivara termina de sair
