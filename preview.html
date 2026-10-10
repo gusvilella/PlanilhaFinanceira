@@ -5659,6 +5659,7 @@ button:focus-visible, a:focus-visible, [role="button"]:focus-visible, [tabindex]
     if (/lançad|salv|pront|marcad|paga|recebid|guardad|adicionad|importad|ligad|instalad|juntei|boas-vindas|atualizad|copiad/i.test(msg) && !/não |inválid|ilegív|erro/i.test(msg)) {
       const c = document.createElement('span'); c.className = 'toast-capi'; c.setAttribute('aria-hidden', 'true');
       c.innerHTML = `<svg viewBox="0 0 64 64">${AVATARS.capivara.svg}</svg>`; el.prepend(c);
+      $('#capiScene')?._cheer?.();
     }
     if (actionLabel) {
       const b = document.createElement('button');
@@ -6572,9 +6573,14 @@ button:focus-visible, a:focus-visible, [role="button"]:focus-visible, [tabindex]
           <g class="cs-fruit"><circle cx="64" cy="17" r="5.4" fill="#ff9416"/><circle cx="62.2" cy="15.5" r="1.5" fill="#ffc06b" opacity=".8"/><path d="M64 12q2.5-3 6-1.6" fill="none" stroke="#2f9e57" stroke-width="2" stroke-linecap="round"/></g>
         </g></g></svg>`;
     const drop = () => { if (document.hidden) return; el.classList.remove('drop'); void el.offsetWidth; el.classList.add('drop'); };
-    el.addEventListener('click', drop);
+    const reduced = matchMedia('(prefers-reduced-motion: reduce)').matches;
+    let loop = 0;
+    const again = () => { clearInterval(loop); if (!reduced) loop = setInterval(drop, 9000); };   // reinicia a contagem pra não repetir logo em seguida
+    el.addEventListener('click', () => { drop(); again(); });
     el.addEventListener('animationend', e => { if (e.target.classList?.contains('cs-capi')) el.classList.remove('drop'); });
-    if (!matchMedia('(prefers-reduced-motion: reduce)').matches) { setTimeout(drop, 1100); setInterval(drop, 9000); }
+    // deu certo um lançamento (aviso de sucesso): ela comemora guardando uma moedinha, se não estiver no meio de uma
+    el._cheer = () => { if (reduced || el.classList.contains('drop') || el.getBoundingClientRect().bottom < 0) return; drop(); again(); };
+    if (!reduced) { setTimeout(drop, 1100); again(); }
   }
   function introAnim() {
     drawCapiScene();
