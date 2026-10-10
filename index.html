@@ -741,7 +741,7 @@ body::before { content: ""; position: fixed; inset: 0; z-index: 0; pointer-event
 .toast { background: rgba(24, 24, 24, .94); color: #fefefe; box-shadow: 0 0 0 1px rgba(255, 255, 255, .08), 0 18px 40px -12px rgba(0, 0, 0, .5); backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px); }
 .toast button { color: #7ae3d1; }
 @media (max-width: 640px) { .hello, .title { font-size: 1.6rem; } .kpi-label { font-size: .76rem; white-space: nowrap; } .kpi-head { gap: 8px; justify-content: space-between; } .kpi-head .adjust { font-size: .76rem; flex: none; } }
-@media (max-width: 400px) { .kpi-label .lg { display: none; } }
+@media (max-width: 480px) { .kpi-label .lg { display: none; } }   /* "hoje" só cabe ao lado do "Adicionar/Bancos" com mais espaço */
 .kpi.receita .kpi-value, .kpi.investir .kpi-value, .kpi.despesas .kpi-value { color: var(--ink); }
 .kpi.saldo .kpi-value.neg { color: var(--red); }
 .ov-link { color: var(--muted); font-weight: 600; transition: color .15s; }
@@ -1792,6 +1792,10 @@ button:focus-visible, a:focus-visible, [role="button"]:focus-visible, [tabindex]
 @media (max-width: 640px) {
   .top { position: relative; } .top > div:first-child { padding-right: 100px; }
   .capi-scene { position: absolute; right: -8px; top: -12px; width: 118px; margin: 0; }
+}
+@media (max-width: 380px) {
+  .top > div:first-child { padding-right: 84px; }
+  .capi-scene { width: 100px; right: -10px; top: -8px; }
 }
 @media (prefers-reduced-motion: reduce) { .capi-scene, .capi-scene * { animation: none !important; } }
   </style>
