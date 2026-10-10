@@ -1,5 +1,32 @@
 # Melhorias noturnas
 
+## Noite da identidade da Capi (10/out)
+
+Tudo está na **prévia** (https://gusvilella.github.io/PlanilhaFinanceira/preview.html). O site principal não foi mexido. Nenhum dado mudou de formato.
+
+### Para você testar
+1. **Cena do topo:** abra a planilha. A Capi, agora de perfil, joga a moedinha da boca para o cofrinho, que balança com faíscas e "+R$". Toque nela para repetir.
+2. **Comemoração:** lance um gasto pelo **+**. A Capi guarda uma moedinha na hora e também aparece pulando no aviso de baixo.
+3. **Mês no vermelho:** se a Sobra virar "Falta no mês", ela fica com uma sobrancelha preocupada e uma gotinha de suor.
+4. **Telas vazias, senha e fim da apresentação:** a Capi aparece "de boa na lagoa". Com a senha errada, ela balança a cabeça fazendo que não.
+5. **Cores:** os gráficos (paleta Aurora), os pontinhos dos títulos e a cor de "investir" agora seguem a família da Capi (menta, laranja, petróleo, caramelo, coral).
+6. **Editar:** depois de salvar uma edição, só aquela linha pisca de leve. O olho de esconder valores não faz nada piscar.
+
+### Correções
+- No celular, trocar de aba ou de mês não abre mais rolagem para o lado.
+- O aviso de baixo agora é igual nos dois temas. Antes, no escuro, ele ficava branco e o "Desfazer" quase sumia.
+- A etiqueta "Hoje" do calendário não pula mais a cada lançamento.
+- Os nomes das fontes nos Ajustes não aparecem mais cortados.
+- Em 320px, a Capi do topo não fica mais colada no texto. Até 480px, "Seu dinheiro hoje" não gruda mais no botão "Adicionar".
+- Com muitos lançamentos, o app ficou cerca de 3 vezes mais rápido (com 2.000 itens no mês, lançar passou de ~1 s para ~0,3 s).
+
+### Para você decidir
+- **Nome do repositório:** renomear para algo como `capi` muda o endereço do site para `gusvilella.github.io/capi/`. Os dados não se perdem, mas o app instalado no celular precisa ser instalado de novo pelo endereço novo. Se renomear, me diga o nome que eu atualizo os links.
+
+---
+
+## Noite anterior
+
 Trabalho feito durante a noite, sem mudar o jeito como seus dados são guardados (tudo que já existe continua funcionando).
 
 Resumo: **70 itens** — uns 30 bugs corrigidos (incluindo 10 que eu mesmo tinha introduzido e achei em 3 revisões do código) (alguns graves: sincronização que apagava lançamentos do outro aparelho, receita recorrente que sumia do passado, sininho fora da tela no celular, saldo que não descontava gastos do mesmo dia, limite do cartão errado), importação de extrato de mais bancos (inclusive Excel), app ~3x mais rápido com muitos lançamentos, e várias facilidades novas (desfazer, buscar em todos os meses, duplicar, transferir entre contas, pular um mês, parcelado e transferência no lançamento rápido, importar planilha do Excel…).
