@@ -6673,11 +6673,11 @@ button:focus-visible, a:focus-visible, [role="button"]:focus-visible, [tabindex]
       <span class="n">${who ? `<span style="margin-right:6px;display:inline-flex">${avBadge(myAv(), 'sm')}</span>` : ''}${esc(name)}<small>${tag}</small></span><b class="${pos ? 'pos' : ''}">${pos ? '+ ' : '- '}${R(val)}</b></div>`;
     const SLIDES = [
       { k: 'oi', c: ['#0fae90', '#0a85a8'], next: 'Vamos lá', title: 'Oi! Bora organizar seu <em>dinheiro</em>?', sub: 'Em menos de um minuto você vê como tudo funciona.',
-        art: () => { const wait = first && !introDone ? SPLASH_MS : 80, rows = [['briefcase', 'Salário', 320000, true, '#10b981'], ['house', 'Aluguel', 120000, false, '#f59e0b']];
+        art: () => { const wait = first && !introDone ? SPLASH_MS : 80, rows = [['briefcase', 'Salário', 320000, true, '#12a588'], ['house', 'Aluguel', 120000, false, '#ff9416']];
           // tela de dentro (aberto): uma tela só, de ponta a ponta; a metade da tampa mostra a parte esquerda dela
           const inner = `<div class="duo-in"><div class="duo-col">
               <small>${greet()}</small><b class="duo-l">Sobra do mês</b><b class="num duo-big">${R(105000)}</b>
-              <div class="duo-mini">${[['Entrou', 320000, '#10b981'], ['Saiu', 215000, '#ff7a1a']].map(([l, v, c]) => `<div style="--c:${c}"><small>${l}</small><b class="num">${R(v)}</b></div>`).join('')}</div><i class="duo-plus">+</i></div>
+              <div class="duo-mini">${[['Entrou', 320000, '#12a588'], ['Saiu', 215000, '#ff7a1a']].map(([l, v, c]) => `<div style="--c:${c}"><small>${l}</small><b class="num">${R(v)}</b></div>`).join('')}</div><i class="duo-plus">+</i></div>
             <div class="duo-col"><small class="duo-k">Últimos 6 meses</small>
               <div class="ob-bars">${[42, 64, 38, 80, 56, 92].map((h, n) => `<i style="--h:${h}%;--d:${n * 70}ms;--c:${STK_COLORS[(n + 2) % 8][0]};--c2:${STK_COLORS[(n + 2) % 8][1]}"></i>`).join('')}</div>
               ${rows.map(([ic, n, v, pos, c], k) => `<div class="duo-row" style="--d:${300 + k * 90}ms"><span class="ob-ic" style="--c:${c}"><svg class="i"><use href="#c-${ic}"/></svg></span><span>${n}</span><b class="${pos ? 'pos' : ''}">${pos ? '+' : '-'} ${R(v)}</b></div>`).join('')}</div>
@@ -6693,7 +6693,7 @@ button:focus-visible, a:focus-visible, [role="button"]:focus-visible, [tabindex]
                   <span class="duo-hint">abra pra ver tudo</span><i class="duo-home"></i></div></div>
                 <div class="duo-half duo-back" aria-hidden="true"><div class="duo-scr">${inner}</div></div>
               </div></button></div>
-            <div class="ob-floatw"><div class="ob-float" style="--d:${wait + 2100}ms"><span class="ob-ic" style="--c:#0ea5e9"><svg class="i"><use href="#c-shopping-cart"/></svg></span><span><b>Mercado</b><small>agora mesmo</small></span><b class="neg">- ${R(4590)}</b></div></div>
+            <div class="ob-floatw"><div class="ob-float" style="--d:${wait + 2100}ms"><span class="ob-ic" style="--c:#0a85a8"><svg class="i"><use href="#c-shopping-cart"/></svg></span><span><b>Mercado</b><small>agora mesmo</small></span><b class="neg">- ${R(4590)}</b></div></div>
           </div>`; } },
       { k: 'nome', c: ['#f2711c', '#e0533d'], q: true, panel: 'Seu perfil', next: 'Continuar', title: 'Como quer ser <em>chamado</em>?', sub: 'É assim que o app vai falar com você.',
         art: () => `<div class="ob-hello"><span class="ob-me-av" id="obMeAv">${avBadge(myAv())}</span><span id="obGreet">${greet()}${d.name ? ', ' + esc(nickOf()) : ''}</span><i class="ob-caret"></i></div>
@@ -6704,7 +6704,7 @@ button:focus-visible, a:focus-visible, [role="button"]:focus-visible, [tabindex]
         art: () => `<div class="ob-people" id="obPeople"></div>${usePickHtml(d.fam)}
           <div id="obFamBox" ${d.fam ? '' : 'hidden'}><label class="fl" for="obMemIn">Quem mais faz parte?</label>${memberAddHtml('ob')}</div>` },
       { k: 'como', c: ['#0fae90', '#0a85a8'], expl: true, panel: 'Este mês', next: 'Próximo', title: 'Tudo num <em>lugar só</em>', sub: 'Anote o que você recebe, as contas que chegam todo mês e os gastos do dia a dia. O app faz a conta e mostra quanto sobra.',
-        art: () => `<div class="ob-list">${row('briefcase', 'Salário', 'Entrada · o que chega', 320000, true, 150, d.fam ? nickOf() : '', '#10b981')}${row('house', 'Aluguel', 'Conta fixa · todo mês', 120000, false, 450, '', '#f59e0b')}${row('shopping-cart', 'Mercado', 'Gasto · dia a dia', 24590, false, 750, '', '#0ea5e9')}</div>
+        art: () => `<div class="ob-list">${row('briefcase', 'Salário', 'Entrada · o que chega', 320000, true, 150, d.fam ? nickOf() : '', '#12a588')}${row('house', 'Aluguel', 'Conta fixa · todo mês', 120000, false, 450, '', '#ff9416')}${row('shopping-cart', 'Mercado', 'Gasto · dia a dia', 24590, false, 750, '', '#0a85a8')}</div>
           <div class="ob-sum" style="--d:1050ms"><span>Sobra do mês</span><b class="num">${R(320000 - 120000 - 24590)}</b></div>` },
       { k: 'rapido', c: ['#0a85a8', '#0fae90'], expl: true, panel: 'Lançamento rápido', next: 'Próximo', title: 'Lançar é <em>rapidinho</em>', sub: 'Toque no <b>+</b> e escreva do seu jeito. O app entende o resto.',
         art: () => `<div class="ob-quick"><div class="ob-input"><span id="obTyped"></span><i class="ob-caret"></i></div>
@@ -6719,7 +6719,7 @@ button:focus-visible, a:focus-visible, [role="button"]:focus-visible, [tabindex]
           <div class="ob-note">${ico('bell', 'width:15px;height:15px')}<span><b>Amanhã vence a conta de luz</b><small>R$ 180,00 · o app te lembra antes de vencer</small></span></div>`; } },
       { k: 'pronto', c: ['#0fae90', '#22c55e'], last: true, next: 'Começar a usar', title: () => `Tudo pronto, <em>${esc(nickOf())}</em>!`, sub: () => invited ? 'Agora é só digitar o código do convite que te passaram.' : 'Seus dados ficam só neste aparelho. Se quiser, dá pra colocar senha ou usar em outro celular depois, em ⚙.',
         art: () => `<div class="ob-confetti" aria-hidden="true">${Array.from({ length: 34 }, (_, n) => { const a = n / 34 * Math.PI * 2 + (n % 3) * .2, r = 110 + (n * 47) % 90;
-            return `<i style="--x:${Math.round(Math.cos(a) * r)}px;--y:${Math.round(Math.sin(a) * r * .8 - 30)}px;--r:${(n * 97) % 360}deg;--c:${['#12a588', '#ff9416', '#ec4899', '#f97316', '#22c55e', '#0ea5e9', '#facc15'][n % 7]};--d:${120 + (n % 5) * 40}ms;${n % 2 ? 'border-radius:50%;width:8px;height:8px' : ''}"></i>`; }).join('')}</div>
+            return `<i style="--x:${Math.round(Math.cos(a) * r)}px;--y:${Math.round(Math.sin(a) * r * .8 - 30)}px;--r:${(n * 97) % 360}deg;--c:${['#12a588', '#ff9416', '#ec4899', '#f97316', '#22c55e', '#0a85a8', '#facc15'][n % 7]};--d:${120 + (n % 5) * 40}ms;${n % 2 ? 'border-radius:50%;width:8px;height:8px' : ''}"></i>`; }).join('')}</div>
           <div class="ob-done">${capiLagoa(true)}<span class="ob-check"><svg viewBox="0 0 52 52"><path d="M15 27l7 7 15-16" pathLength="1"/></svg></span></div>` },
     ].filter(s => !s.skip);
     const first = !reduced && !showOnboarding.seen; showOnboarding.seen = true;
