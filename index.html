@@ -911,7 +911,8 @@ html.auth .auth-screen { display: grid; place-items: center; }
 @keyframes ob-blob1 { to { transform: translate(8vmax, 6vmax) scale(1.12); } }
 @keyframes ob-blob2 { to { transform: translate(-7vmax, -5vmax) scale(.9); } }
 .ob { position: relative; z-index: 1; }
-.ob-title em { font-style: normal; background: linear-gradient(100deg, var(--ob-c), var(--ob-c2)); -webkit-background-clip: text; background-clip: text; color: transparent; padding-right: .04em; }
+:root[data-theme="dark"] .ob-title em { background: linear-gradient(100deg, color-mix(in srgb, var(--ob-c) 70%, #fff), color-mix(in srgb, var(--ob-c2) 70%, #fff)); -webkit-background-clip: text; background-clip: text; }
+.ob-title em { font-style: normal; background: linear-gradient(100deg, color-mix(in srgb, var(--ob-c) 82%, #000), color-mix(in srgb, var(--ob-c2) 82%, #000)); -webkit-background-clip: text; background-clip: text; color: transparent; padding-right: .04em; }
 .ob-dots i.on { width: 26px; background: linear-gradient(90deg, var(--ob-c), var(--ob-c2)); }
 .ob-nav .btn.save { background: linear-gradient(100deg, var(--ob-c), var(--ob-c2)); box-shadow: 0 10px 28px -10px var(--ob-c); transition: opacity .2s, transform .15s, box-shadow .3s, background .6s; }
 .ob-nav .btn.save:not(:disabled):hover { transform: translateY(-1px); box-shadow: 0 14px 32px -10px var(--ob-c); }
@@ -6479,7 +6480,8 @@ button:focus-visible, a:focus-visible, [role="button"]:focus-visible, [tabindex]
     };
     const FACE_KEYS = Object.keys(FACES);
     // degradês (aurora/doce): fogem do vermelho-amarelo-verde de semáforo
-    const STK_COLORS = [['#ff5fa2', '#ff9a7b'], ['#6d5dfc', '#b28dff'], ['#ffb547', '#ff7a59'], ['#2dd4bf', '#38bdf8'], ['#c084fc', '#f472b6'], ['#4f7cff', '#22d3ee'], ['#5eead4', '#818cf8'], ['#8b5cf6', '#ec4899']];   // vizinhas sempre bem diferentes
+    // família da Capi: menta, laranja, coral, azul-água, caramelo... (vizinhas sempre bem diferentes)
+    const STK_COLORS = [['#3fd9bd', '#0fae90'], ['#ffb547', '#ff7a1a'], ['#ff9a8a', '#ff5f7e'], ['#5cc8f5', '#0a85a8'], ['#e8a764', '#b8733f'], ['#7ae3d1', '#22c1ee'], ['#ffc46b', '#f2711c'], ['#f9a8d4', '#ec6aa8']];
     const faceSvg = f => `<svg viewBox="0 0 100 100" aria-hidden="true">${FACES[f]}</svg>`;
     // posições (em % da tela) por tela: [x, y, tamanho, giro, cara]; no celular ficam nos cantos, meio pra fora
     const STK = {
@@ -6527,29 +6529,29 @@ button:focus-visible, a:focus-visible, [role="button"]:focus-visible, [tabindex]
               </div></button></div>
             <div class="ob-floatw"><div class="ob-float" style="--d:${wait + 2100}ms"><span class="ob-ic" style="--c:#0ea5e9"><svg class="i"><use href="#c-shopping-cart"/></svg></span><span><b>Mercado</b><small>agora mesmo</small></span><b class="neg">- ${R(4590)}</b></div></div>
           </div>`; } },
-      { k: 'nome', c: ['#8b5cf6', '#ec4899'], q: true, panel: 'Seu perfil', next: 'Continuar', title: 'Como quer ser <em>chamado</em>?', sub: 'É assim que o app vai falar com você.',
+      { k: 'nome', c: ['#f2711c', '#e0533d'], q: true, panel: 'Seu perfil', next: 'Continuar', title: 'Como quer ser <em>chamado</em>?', sub: 'É assim que o app vai falar com você.',
         art: () => `<div class="ob-hello"><span class="ob-me-av" id="obMeAv">${avBadge(myAv())}</span><span id="obGreet">${greet()}${d.name ? ', ' + esc(nickOf()) : ''}</span><i class="ob-caret"></i></div>
           <label class="fl" for="obName">Seu nome</label><input class="input" id="obName" maxlength="60" autocomplete="name" autocapitalize="words" value="${esc(d.name)}" />
           <div class="nick-chips" id="obChips"></div>
           <label class="fl">Seu bichinho</label>${avPickHtml(myAv(), 'obAv')}` },
-      { k: 'uso', c: ['#f97316', '#f43f5e'], q: true, panel: 'Quem usa', skip: !!invited, next: 'Continuar', title: 'Vai usar sozinho ou em <em>família</em>?', sub: 'Em família, cada um lança o seu e tudo soma junto: o salário de um, o do outro, as contas da casa.',
+      { k: 'uso', c: ['#b8733f', '#e0892f'], q: true, panel: 'Quem usa', skip: !!invited, next: 'Continuar', title: 'Vai usar sozinho ou em <em>família</em>?', sub: 'Em família, cada um lança o seu e tudo soma junto: o salário de um, o do outro, as contas da casa.',
         art: () => `<div class="ob-people" id="obPeople"></div>${usePickHtml(d.fam)}
           <div id="obFamBox" ${d.fam ? '' : 'hidden'}><label class="fl" for="obMemIn">Quem mais faz parte?</label>${memberAddHtml('ob')}</div>` },
-      { k: 'como', c: ['#10b981', '#0ea5e9'], expl: true, panel: 'Este mês', next: 'Próximo', title: 'Tudo num <em>lugar só</em>', sub: 'Anote o que você recebe, as contas que chegam todo mês e os gastos do dia a dia. O app faz a conta e mostra quanto sobra.',
+      { k: 'como', c: ['#0fae90', '#0a85a8'], expl: true, panel: 'Este mês', next: 'Próximo', title: 'Tudo num <em>lugar só</em>', sub: 'Anote o que você recebe, as contas que chegam todo mês e os gastos do dia a dia. O app faz a conta e mostra quanto sobra.',
         art: () => `<div class="ob-list">${row('briefcase', 'Salário', 'Entrada · o que chega', 320000, true, 150, d.fam ? nickOf() : '', '#10b981')}${row('house', 'Aluguel', 'Conta fixa · todo mês', 120000, false, 450, '', '#f59e0b')}${row('shopping-cart', 'Mercado', 'Gasto · dia a dia', 24590, false, 750, '', '#0ea5e9')}</div>
           <div class="ob-sum" style="--d:1050ms"><span>Sobra do mês</span><b class="num">${R(320000 - 120000 - 24590)}</b></div>` },
-      { k: 'rapido', c: ['#0ea5e9', '#6366f1'], expl: true, panel: 'Lançamento rápido', next: 'Próximo', title: 'Lançar é <em>rapidinho</em>', sub: 'Toque no <b>+</b> e escreva do seu jeito. O app entende o resto.',
+      { k: 'rapido', c: ['#0a85a8', '#0fae90'], expl: true, panel: 'Lançamento rápido', next: 'Próximo', title: 'Lançar é <em>rapidinho</em>', sub: 'Toque no <b>+</b> e escreva do seu jeito. O app entende o resto.',
         art: () => `<div class="ob-quick"><div class="ob-input"><span id="obTyped"></span><i class="ob-caret"></i></div>
           <div class="ob-chips" id="obParsed"><span style="--d:0ms">Gasto <b>R$ 45,90</b></span><span style="--d:120ms">${ico('tag', 'width:12px;height:12px')}Mercado</span><span style="--d:240ms">Ontem</span></div></div>
           <p class="ob-cap">Também dá pra importar o extrato do banco.</p>` },
-      { k: 'veja', c: ['#ec4899', '#f97316'], expl: true, panel: 'Para onde vai', next: 'Próximo', title: 'Veja pra onde <em>vai</em>', sub: 'O gráfico mostra cada parte, e o app avisa o que vai vencer pra nada atrasar.',
+      { k: 'veja', c: ['#f2711c', '#b8733f'], expl: true, panel: 'Para onde vai', next: 'Próximo', title: 'Veja pra onde <em>vai</em>', sub: 'O gráfico mostra cada parte, e o app avisa o que vai vencer pra nada atrasar.',
         art: () => { const sl = [[40, '#ec4899', 'house'], [26, '#f97316', 'shopping-cart'], [20, '#8b5cf6', 'utensils'], [14, '#0ea5e9', 'car']]; let o = 0;
           const arcs = sl.map(([len, col], n) => { const c = `<circle cx="21" cy="21" r="15.915" fill="none" stroke="${col}" stroke-width="6" stroke-dasharray="${len - 1.6} ${100 - len + 1.6}" stroke-dashoffset="${-o}" style="--d:${n * 160}ms"/>`; o += len; return c; }).join('');
           o = 0; const icons = sl.map(([len, , ic], n) => { const a = (o + (len - 1.6) / 2) / 100 * Math.PI * 2; o += len; return `<span class="ob-dic" style="left:${(50 + 37.9 * Math.sin(a)).toFixed(1)}%;top:${(50 - 37.9 * Math.cos(a)).toFixed(1)}%;--d:${700 + n * 120}ms"><svg class="i"><use href="#c-${ic}"/></svg></span>`; }).join('');
           return `<div class="ob-donut"><svg viewBox="0 0 42 42">${arcs}</svg>${icons}
           <div class="ob-dc"><small>Saiu</small><b>${R(215000)}</b></div></div>
           <div class="ob-note">${ico('bell', 'width:15px;height:15px')}<span><b>Amanhã vence a conta de luz</b><small>R$ 180,00 · o app te lembra antes de vencer</small></span></div>`; } },
-      { k: 'pronto', c: ['#22c55e', '#14b8a6'], last: true, next: 'Começar a usar', title: () => `Tudo pronto, <em>${esc(nickOf())}</em>!`, sub: () => invited ? 'Agora é só digitar o código do convite que te passaram.' : 'Seus dados ficam só neste aparelho. Se quiser, dá pra colocar senha ou usar em outro celular depois, em ⚙.',
+      { k: 'pronto', c: ['#0fae90', '#22c55e'], last: true, next: 'Começar a usar', title: () => `Tudo pronto, <em>${esc(nickOf())}</em>!`, sub: () => invited ? 'Agora é só digitar o código do convite que te passaram.' : 'Seus dados ficam só neste aparelho. Se quiser, dá pra colocar senha ou usar em outro celular depois, em ⚙.',
         art: () => `<div class="ob-confetti" aria-hidden="true">${Array.from({ length: 34 }, (_, n) => { const a = n / 34 * Math.PI * 2 + (n % 3) * .2, r = 110 + (n * 47) % 90;
             return `<i style="--x:${Math.round(Math.cos(a) * r)}px;--y:${Math.round(Math.sin(a) * r * .8 - 30)}px;--r:${(n * 97) % 360}deg;--c:${['#12a588', '#ff9416', '#ec4899', '#f97316', '#22c55e', '#0ea5e9', '#facc15'][n % 7]};--d:${120 + (n % 5) * 40}ms;${n % 2 ? 'border-radius:50%;width:8px;height:8px' : ''}"></i>`; }).join('')}</div>
           <div class="ob-done"><svg viewBox="0 0 52 52"><circle cx="26" cy="26" r="24" pathLength="1"/><path d="M15 27l7 7 15-16" pathLength="1"/></svg></div>` },
