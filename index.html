@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
-  <title>Orçamento — Planilha Financeira</title>
+  <title>Capi — seu dinheiro de boa</title>
   <meta name="description" content="Planilha financeira simples para organizar o dia a dia." />
   <meta name="theme-color" content="#f3f2ee" />
   <link rel="manifest" href="manifest.webmanifest" />
@@ -11,7 +11,7 @@
   <meta name="apple-mobile-web-app-capable" content="yes" />
   <meta name="mobile-web-app-capable" content="yes" />
   <meta name="apple-mobile-web-app-status-bar-style" content="default" />
-  <meta name="apple-mobile-web-app-title" content="Orçamento" />
+  <meta name="apple-mobile-web-app-title" content="Capi" />
   <script>/* esconde tudo desde o primeiro instante se o app tiver senha ou se for preciso entrar na conta */ document.documentElement.classList.add('booting'); try { if (localStorage.getItem('orcamento:lock')) document.documentElement.classList.add('locked'); if (!localStorage.getItem('orcamento:conta')) document.documentElement.classList.add('auth'); } catch (e) {}</script>
   <link rel="icon" type="image/svg+xml" href="favicon.svg" />
   <link rel="icon" type="image/png" sizes="192x192" href="icon-192.png" />
@@ -969,13 +969,14 @@ html.auth .auth-screen { display: grid; place-items: center; }
 .ob-splash.gone { opacity: 0; visibility: hidden; }
 /* no escuro: noite azul-arroxeada com luzes, em vez de preto chapado */
 :root[data-theme="dark"] .ob-splash { background: radial-gradient(60vmax 60vmax at 0% 0%, rgba(20, 110, 245, .42), transparent 62%), radial-gradient(55vmax 55vmax at 100% 25%, rgba(139, 92, 246, .4), transparent 62%), radial-gradient(55vmax 55vmax at 50% 115%, rgba(236, 72, 153, .26), transparent 62%), #0b0c1d; }
-:root[data-theme="dark"] .ob-splash .ob-word span { padding: 0 .1em .14em; margin: 0 -.1em -.14em; background: linear-gradient(100deg, #fff 30%, #c9bcff 70%, #ffc2e0); -webkit-background-clip: text; background-clip: text; color: transparent; }
+:root[data-theme="dark"] .ob-splash .ob-word > span { padding: 0 .1em .14em; margin: 0 -.1em -.14em; background: linear-gradient(100deg, #fff 30%, #c9bcff 70%, #ffc2e0); -webkit-background-clip: text; background-clip: text; color: transparent; }
 :root[data-theme="dark"] .ob-splash .ob-word small { color: rgba(255, 255, 255, .65); }
 .ob-splash.gone .stk { transform: translate(var(--ox), var(--oy)) rotate(25deg) scale(.6); }
 .ob-splash .ob-word { position: relative; z-index: 1; color: var(--ink); transition: transform .6s cubic-bezier(.6, 0, .3, 1), opacity .4s; }
 .ob-splash.gone .ob-word { transform: scale(1.15); opacity: 0; }
 .ob-word { text-align: center; }
-.ob-word span { display: block; font-size: clamp(2.8rem, 10vw, 5rem); font-weight: 600; letter-spacing: -.055em; line-height: 1; animation: ob-word .9s cubic-bezier(.2, .9, .25, 1.25) .25s both; }
+.ob-mascot { display: block; width: clamp(72px, 9vw, 96px); margin: 0 auto 14px; animation: ob-word .9s cubic-bezier(.2, .9, .25, 1.4) .1s both; } .ob-mascot .av { width: 100%; height: auto; aspect-ratio: 1; box-shadow: 0 18px 36px -16px rgba(140, 90, 50, .55); }
+.ob-word > span { display: block; font-size: clamp(2.8rem, 10vw, 5rem); font-weight: 600; letter-spacing: -.055em; line-height: 1; animation: ob-word .9s cubic-bezier(.2, .9, .25, 1.25) .25s both; }
 .ob-word small { display: block; margin-top: 12px; font-size: 1rem; color: var(--muted); letter-spacing: .01em; animation: ob-up .6s ease .7s both; }
 @keyframes ob-word { from { opacity: 0; transform: scale(.6) translateY(20px); filter: blur(8px); } }
 /* cartões limpos com etiqueta no topo */
@@ -1098,8 +1099,8 @@ html.auth .auth-screen { display: grid; place-items: center; }
   box-shadow: 0 8px 20px -8px rgba(20, 20, 40, .45), 0 0 0 1px var(--edge); pointer-events: none; animation: av-say 1.7s cubic-bezier(.2, .9, .3, 1.3) both; }
 @keyframes av-say { 0% { opacity: 0; transform: translateY(6px) scale(.4) rotate(-8deg); } 15% { opacity: 1; transform: none; } 80% { opacity: 1; transform: translateY(-3px); } 100% { opacity: 0; transform: translateY(-8px) scale(.9); } }
 
-.av.avc .ear, .av.avc .rays, .av.avc .tongue { transform-box: fill-box; }
-.av.avc .ear { transform-origin: 50% 100%; } .av.avc .rays { transform-origin: 50% 50%; } .av.avc .tongue { transform-origin: 50% 0; }
+.av.avc .ear, .av.avc .rays, .av.avc .tongue, .av.avc .fruit { transform-box: fill-box; }
+.av.avc .ear { transform-origin: 50% 100%; } .av.avc .fruit { transform-origin: 50% 100%; } .av.avc .rays { transform-origin: 50% 50%; } .av.avc .tongue { transform-origin: 50% 0; }
 .av.act-gato { animation: av-tilt 1.2s ease-in-out; } .av.act-gato .ear { animation: av-twitch .5s ease-in-out 2; }
 .av.act-cachorro { animation: av-shake .9s ease-in-out; } .av.act-cachorro .el { animation: av-flapl .3s ease-in-out 4; } .av.act-cachorro .er { animation: av-flapr .3s ease-in-out 4; } .av.act-cachorro .tongue { animation: av-tongue .3s ease-in-out 4; }
 .av.act-coelho { animation: av-hop .55s cubic-bezier(.3, 0, .4, 1) 2; } .av.act-coelho .el { animation: av-flapl .55s ease-in-out 2; } .av.act-coelho .er { animation: av-flapr .55s ease-in-out 2; }
@@ -1110,6 +1111,9 @@ html.auth .auth-screen { display: grid; place-items: center; }
 .av.act-pintinho { animation: av-peck .35s ease-in-out 3; }
 .av.act-sol .rays { animation: av-spin 1.2s cubic-bezier(.4, 0, .2, 1); } .av.act-sol { animation: av-glow 1.2s ease; }
 .av.act-estrela { animation: av-star 1.1s cubic-bezier(.3, 1.3, .5, 1); }
+.av.act-capivara { animation: av-chill 1.5s ease-in-out; } .av.act-capivara .fruit { animation: av-fruit .5s cubic-bezier(.3, 1.5, .5, 1) 2; }
+@keyframes av-chill { 30% { transform: rotate(-7deg); } 70% { transform: rotate(5deg); } }
+@keyframes av-fruit { 50% { transform: translateY(-22%) rotate(-12deg); } }
 @keyframes av-tilt { 25% { transform: rotate(-12deg); } 60% { transform: rotate(9deg); } }
 @keyframes av-twitch { 50% { transform: scaleY(.7) rotate(-6deg); } }
 @keyframes av-shake { 15%, 45%, 75% { transform: rotate(-9deg); } 30%, 60%, 90% { transform: rotate(9deg); } }
@@ -1862,7 +1866,7 @@ button:focus-visible, a:focus-visible, [role="button"]:focus-visible, [tabindex]
   <div class="auth-screen" id="authScreen" role="dialog" aria-modal="true" aria-label="Boas-vindas"></div>
   <div class="lock" id="lockScreen" role="dialog" aria-modal="true" aria-label="App bloqueado">
     <div class="lock-box"><img src="icon-192.png" alt="" onerror="this.style.display='none'" />
-      <h2>Orçamento</h2><p id="lockMsg">Digite sua senha</p>
+      <h2>Capi</h2><p id="lockMsg">Digite sua senha</p>
       <div class="pin-dots" id="pinDots"></div>
       <div class="keypad" id="keypad"></div>
       <button class="lock-forgot" id="lockForgot" type="button">Esqueci a senha</button></div>
@@ -2162,6 +2166,7 @@ button:focus-visible, a:focus-visible, [role="button"]:focus-visible, [tabindex]
   const eyes = (y = 38, dx = 8) => `<circle cx="${32 - dx}" cy="${y}" r="2.6" fill="${K}"/><circle cx="${32 + dx}" cy="${y}" r="2.6" fill="${K}"/>`;
   const blush = (y = 43, dx = 13, c = '#ff8fab') => `<ellipse cx="${32 - dx}" cy="${y}" rx="3.4" ry="2.2" fill="${c}" opacity=".7"/><ellipse cx="${32 + dx}" cy="${y}" rx="3.4" ry="2.2" fill="${c}" opacity=".7"/>`;
   const AVATARS = {
+    capivara: { name: 'Capivara', bg: '#f6e3cc', say: 'De boa…', svg: `<g class="ear"><circle cx="19" cy="19" r="5" fill="#8f5d3b"/><circle cx="45" cy="19" r="5" fill="#8f5d3b"/></g><rect x="11" y="17" width="42" height="38" rx="18" fill="#b47b50"/><rect x="17" y="35" width="30" height="19" rx="9.5" fill="#9a6540"/><ellipse cx="27" cy="40" rx="1.8" ry="1.3" fill="${K}"/><ellipse cx="37" cy="40" rx="1.8" ry="1.3" fill="${K}"/><path d="M28 47q4 2.6 8 0" fill="none" stroke="${K}" stroke-width="1.7" stroke-linecap="round"/><path d="M20 29q3-2 6 0M38 29q3-2 6 0" fill="none" stroke="${K}" stroke-width="2" stroke-linecap="round"/>${blush(34, 15)}<g class="fruit"><circle cx="32" cy="12" r="6.5" fill="#ff9f1c"/><path d="M32 6q3-3 6-1" fill="none" stroke="#3aa655" stroke-width="2" stroke-linecap="round"/></g>` },
     gato: { name: 'Gato', bg: '#ffe7b3', say: 'Miau!', svg: `<g class="ear"><path d="M14 26 17 10 27 19M50 26 47 10 37 19" fill="#ffb020"/><path d="M18 15 19.5 22M46 15 44.5 22" stroke="#ff8a3d" stroke-width="2.4" stroke-linecap="round"/></g><circle cx="32" cy="36" r="19" fill="#ffb020"/>${eyes(35)}${blush(41)}<path d="M30 41h4l-2 2.2z" fill="#ff6f91"/><path d="M28.5 45q3.5 2.6 7 0" fill="none" stroke="${K}" stroke-width="1.8" stroke-linecap="round"/><path d="M12 39h8M12 43l8-1M52 39h-8M52 43l-8-1" stroke="${K}" stroke-width="1.3" stroke-linecap="round" opacity=".55"/>` },
     coelho: { name: 'Coelho', bg: '#ffd9e8', say: 'Hop hop!', svg: `<g class="ear el"><ellipse cx="24" cy="14" rx="5.5" ry="13" fill="#fff"/><ellipse cx="24" cy="15" rx="2.6" ry="9" fill="#ffadc8"/></g><g class="ear er"><ellipse cx="40" cy="14" rx="5.5" ry="13" fill="#fff"/><ellipse cx="40" cy="15" rx="2.6" ry="9" fill="#ffadc8"/></g><circle cx="32" cy="38" r="18" fill="#fff"/>${eyes(37)}${blush(42)}<ellipse cx="32" cy="42" rx="2.4" ry="1.7" fill="#ff7aa2"/><path d="M29 45.5q3 2.2 6 0" fill="none" stroke="${K}" stroke-width="1.7" stroke-linecap="round"/>` },
     urso: { name: 'Urso', bg: '#f1e2d1', say: 'Grrr… abraço!', svg: `<circle cx="17" cy="21" r="7" fill="#a86f45"/><circle cx="47" cy="21" r="7" fill="#a86f45"/><circle cx="17" cy="21" r="3.4" fill="#e3b78f"/><circle cx="47" cy="21" r="3.4" fill="#e3b78f"/><circle cx="32" cy="36" r="19" fill="#a86f45"/><ellipse cx="32" cy="43" rx="9" ry="7" fill="#e3b78f"/>${eyes(33)}<ellipse cx="32" cy="40.5" rx="3.2" ry="2.3" fill="${K}"/><path d="M29 45q3 2.4 6 0" fill="none" stroke="${K}" stroke-width="1.7" stroke-linecap="round"/>` },
@@ -2176,7 +2181,9 @@ button:focus-visible, a:focus-visible, [role="button"]:focus-visible, [tabindex]
   const AV_KEYS = Object.keys(AVATARS);
   const avatarSvg = key => `<svg viewBox="0 0 64 64" aria-hidden="true">${AVATARS[key].svg}</svg>`;
   // bichinho de alguém: o escolhido, ou um que combina com o nome (sempre o mesmo pro mesmo nome)
-  const avFor = (key, name) => AVATARS[key] ? key : AV_KEYS[[...norm(name || '?')].reduce((a, c) => a + c.charCodeAt(0), 0) % AV_KEYS.length];
+  // (a capivara chegou depois: fica de fora do sorteio pra ninguém trocar de bichinho sozinho)
+  const AV_AUTO = AV_KEYS.filter(k => k !== 'capivara');
+  const avFor = (key, name) => AVATARS[key] ? key : AV_AUTO[[...norm(name || '?')].reduce((a, c) => a + c.charCodeAt(0), 0) % AV_AUTO.length];
   // Escolher bichinho: grade de opções (data-av)
   const avPickHtml = (cur, id) => `<div class="av-pick" id="${id}" role="radiogroup">${AV_KEYS.map(k => `<button type="button" data-av="${k}" class="${k === cur ? 'on' : ''}" role="radio" aria-checked="${k === cur}" title="${AVATARS[k].name}"><span class="av avc" style="--avbg:${AVATARS[k].bg}">${avatarSvg(k)}</span></button>`).join('')}</div>`;
   // Cada bichinho reage do seu jeito (gato mia, cachorro late...): movimento próprio + balãozinho
@@ -4967,7 +4974,7 @@ button:focus-visible, a:focus-visible, [role="button"]:focus-visible, [tabindex]
       m.querySelector('#mCsv').onclick = () => { exportCsv(); closeModal(); };
       m.querySelector('#mCsvAll').onclick = () => { exportCsvAll(); closeModal(); };
       m.querySelector('#mPdf').onclick = () => printReport();
-      m.querySelector('#mBackup').onclick = () => { ui.lastBackup = todayIso; saveUi(); download(`orcamento-backup-${todayIso}.json`, JSON.stringify(state, null, 2), 'application/json'); closeModal(); };
+      m.querySelector('#mBackup').onclick = () => { ui.lastBackup = todayIso; saveUi(); download(`capi-backup-${todayIso}.json`, JSON.stringify(state, null, 2), 'application/json'); closeModal(); };
       m.querySelector('#mRestore').onclick = () => $('#importFile').click();
       m.querySelector('#mBeforeSync')?.addEventListener('click', () => { if (confirm('Trocar os dados atuais pela cópia guardada antes da última sincronização? A cópia vai para a nuvem também.')) restoreBeforeSync(); });
       m.querySelector('#mClear').onclick = () => openClear();
@@ -4983,7 +4990,7 @@ button:focus-visible, a:focus-visible, [role="button"]:focus-visible, [tabindex]
       </div>
       <p class="clr-tip">Quer guardar uma cópia antes? <button type="button" class="link" id="cBackup">Fazer backup</button></p>
       <div class="actions"><span class="grow"></span><button type="button" class="btn cancel" data-close>Cancelar</button></div>`, m => {
-      m.querySelector('#cBackup').onclick = () => { ui.lastBackup = todayIso; saveUi(); download(`orcamento-backup-${todayIso}.json`, JSON.stringify(state, null, 2), 'application/json'); };
+      m.querySelector('#cBackup').onclick = () => { ui.lastBackup = todayIso; saveUi(); download(`capi-backup-${todayIso}.json`, JSON.stringify(state, null, 2), 'application/json'); };
       m.querySelector('#cLanc').onclick = () => {
         if (!confirm(`Apagar todos os lançamentos deste aparelho?${sync ? '\n\nA sincronização está ligada: os dados da nuvem (e dos outros aparelhos) também serão apagados.' : ''}\n\nDepois só dá para desfazer por alguns segundos.`)) return;
         const undoSnap = JSON.stringify(state); state = blank(); closeModal(); commit(); undoToast('Tudo apagado', undoSnap);
@@ -5114,7 +5121,7 @@ button:focus-visible, a:focus-visible, [role="button"]:focus-visible, [tabindex]
       <div class="actions"><span class="grow"></span>${navigator.share ? '<button type="button" class="btn cancel" id="invShare">Compartilhar link</button>' : ''}<button type="button" class="btn save" data-close>Feito</button></div>`, m => {
       m.querySelector('#invWho')?.addEventListener('click', e => { const b = e.target.closest('[data-inv]'); if (b) openInvite(b.dataset.inv); });
       m.querySelector('#invCopy').onclick = async () => { try { await navigator.clipboard.writeText(link); toast('Link copiado'); } catch (_) { m.querySelector('#invLink').select(); document.execCommand('copy'); toast('Link copiado'); } };
-      m.querySelector('#invShare')?.addEventListener('click', () => navigator.share({ title: 'Orçamento da família', text: `${body.from} te convidou pro orçamento da família. Abra o link e use o código que eu te passar.`, url: link }).catch(() => {}));
+      m.querySelector('#invShare')?.addEventListener('click', () => navigator.share({ title: 'Capi da família', text: `${body.from} te convidou pra organizar o dinheiro da família no Capi. Abra o link e use o código que eu te passar.`, url: link }).catch(() => {}));
     });
   }
   // Quem recebeu o link: guarda o convite até entrar no app e então pede o código
@@ -5143,7 +5150,7 @@ button:focus-visible, a:focus-visible, [role="button"]:focus-visible, [tabindex]
           saveSync(); applyRemote(remote, payload.updatedAt); saveBase(remote);
           ui.me = body.me; saveUi();
           drop(); closeModal(); render();
-          toast(`Pronto! Você está no orçamento da família${body.from ? ` com ${body.from}` : ''}`);
+          toast(`Pronto! Você está no Capi da família${body.from ? ` com ${body.from}` : ''}`);
         } catch (err) {
           btn.disabled = false; btn.textContent = 'Entrar';
           showErr(err.message === 'Failed to fetch' ? 'Sem conexão com a internet.' : err.message);
@@ -5201,7 +5208,7 @@ button:focus-visible, a:focus-visible, [role="button"]:focus-visible, [tabindex]
     const goals = state.metas.map(g => { const i = goalInfo(g); return `<div class="r-goal"><span>${esc(g.name)}</span><span class="bar"><i style="width:${i.pct * 100}%"></i></span><b>${Math.round(i.pct * 100)}%</b></div>`; }).join('');
     const tips = insights().replace(/<span class="ic"[^>]*>.*?<\/span>/g, '');
     const lbl = new Date(+key.slice(0, 4), +key.slice(5) - 1, 1).toLocaleDateString('pt-BR', { month: 'long', year: 'numeric' });
-    return `<header class="r-head"><div><p>Orçamento</p><h1>Resumo de ${lbl}</h1></div><small>Gerado em ${new Date().toLocaleDateString('pt-BR')}</small></header>
+    return `<header class="r-head"><div><p>Capi</p><h1>Resumo de ${lbl}</h1></div><small>Gerado em ${new Date().toLocaleDateString('pt-BR')}</small></header>
       <div class="r-kpis">${kpi('Entrou', t.receita, delta(t.receita, tp.receita, true) + (t.aReceber ? `<small>+ ${R(t.aReceber)} a receber</small>` : ''), '#15803d')}
         ${kpi('Saiu', t.despesas, delta(t.despesas, tp.despesas, false), '#111827')}
         ${kpi('Pretende guardar', t.investir, t.pct ? `<small>${fmtPct(t.pct)} do que entrou</small>` : '', '#1d4ed8')}
@@ -5259,7 +5266,7 @@ button:focus-visible, a:focus-visible, [role="button"]:focus-visible, [tabindex]
     state.accounts.forEach(a => lines.push([d(todayIso), 'Conta (saldo atual)', a.name, '', '', val(accBalance(a))]));
     state.investments.forEach(i => lines.push([d(todayIso), 'Investimento (saldo estimado)', i.name + (i.institution ? ` · ${i.institution}` : ''), rateText(i), '', val(estimate(i))]));
     lines.push([], ['', 'Receita', '', '', '', val(t.receita)], ['', 'Investir', '', fmtPct(t.pct), '', val(-t.investir)], ['', 'Despesas', '', '', '', val(-t.despesas)], ['', 'Saldo', '', '', '', val(t.saldo)]);
-    download(`orcamento-${key}.csv`, '﻿' + lines.map(l => l.map(cell).join(';')).join('\r\n'), 'text/csv;charset=utf-8');
+    download(`capi-${key}.csv`, '﻿' + lines.map(l => l.map(cell).join(';')).join('\r\n'), 'text/csv;charset=utf-8');
   }
 
   // Todos os meses, do primeiro lançamento até o mês atual (ou o último lançado), uma linha por lançamento com a coluna Mês
@@ -5283,7 +5290,7 @@ button:focus-visible, a:focus-visible, [role="button"]:focus-visible, [tabindex]
     const accN = id => state.accounts.find(a => a.id === id)?.name || '';
     (state.transfers || []).slice().sort((a, b) => a.date.localeCompare(b.date))
       .forEach(t => lines.push([monthOf(t.date), d(t.date), t.inv ? (String(t.inv).startsWith('meta:') ? 'Meta' : 'Investimento') : 'Transferência entre contas', t.inv ? t.desc : `${accN(t.from)} → ${accN(t.to)}`, t.inv ? accN(t.from || t.to) : t.desc || '', '', val(t.amount)]));
-    download(`orcamento-completo-${todayIso}.csv`, '\ufeff' + lines.map(l => l.map(cell).join(';')).join('\r\n'), 'text/csv;charset=utf-8');
+    download(`capi-completo-${todayIso}.csv`, '\ufeff' + lines.map(l => l.map(cell).join(';')).join('\r\n'), 'text/csv;charset=utf-8');
     toast(`${lines.length - 1} lançamentos exportados`);
   }
 
@@ -5458,7 +5465,7 @@ button:focus-visible, a:focus-visible, [role="button"]:focus-visible, [tabindex]
     if (e.target.closest('[data-bellsync]')) { togglePop($('#bellPop'), false); pullNow(false); return; }
     if (e.target.closest('[data-bellbackup]')) {
       ui.lastBackup = todayIso; saveUi();
-      download(`orcamento-backup-${todayIso}.json`, JSON.stringify(state, null, 2), 'application/json');
+      download(`capi-backup-${todayIso}.json`, JSON.stringify(state, null, 2), 'application/json');
       togglePop($('#bellPop'), false); render(); return;
     }
     const bo = e.target.closest('[data-bellopen]');
@@ -6099,7 +6106,7 @@ button:focus-visible, a:focus-visible, [role="button"]:focus-visible, [tabindex]
             const key = await deriveKey(pass, salt);
             state.updatedAt = state.updatedAt || Date.now();
             const content = await encryptState(key, salt);
-            const g = await gh('/gists', token, { method: 'POST', body: JSON.stringify({ description: 'Orçamento: dados sincronizados (criptografados)', public: false, files: { [SYNC_FILE]: { content } } }) });
+            const g = await gh('/gists', token, { method: 'POST', body: JSON.stringify({ description: 'Capi: dados sincronizados (criptografados)', public: false, files: { [SYNC_FILE]: { content } } }) });
             sync = { token, gistId: g.id, salt, key: b64(await crypto.subtle.exportKey('raw', key)), lastRemote: state.updatedAt, lastSyncAt: Date.now() };
             saveSync(); saveBase(state);
           }
@@ -6283,8 +6290,8 @@ button:focus-visible, a:focus-visible, [role="button"]:focus-visible, [tabindex]
   const bioAvailable = async () => !!(window.PublicKeyCredential && isSecureContext && location.protocol !== 'file:' && await PublicKeyCredential.isUserVerifyingPlatformAuthenticatorAvailable().catch(() => false));
   async function bioRegister() {
     const cred = await navigator.credentials.create({ publicKey: {
-      challenge: crypto.getRandomValues(new Uint8Array(32)), rp: { name: 'Orçamento' },
-      user: { id: crypto.getRandomValues(new Uint8Array(16)), name: 'orcamento', displayName: 'Orçamento' },
+      challenge: crypto.getRandomValues(new Uint8Array(32)), rp: { name: 'Capi' },
+      user: { id: crypto.getRandomValues(new Uint8Array(16)), name: 'capi', displayName: 'Capi' },
       pubKeyCredParams: [{ type: 'public-key', alg: -7 }, { type: 'public-key', alg: -257 }],
       authenticatorSelection: { authenticatorAttachment: 'platform', userVerification: 'required', residentKey: 'discouraged' }, timeout: 60000 } });
     return b64(cred.rawId);
@@ -6538,7 +6545,7 @@ button:focus-visible, a:focus-visible, [role="button"]:focus-visible, [tabindex]
     $('#authScreen').innerHTML = `<div class="ob-bg" aria-hidden="true"><i></i><i></i><i></i></div><div class="ob-stk" id="obStk"></div>
       ${first ? `<div class="ob-splash" id="obSplash" aria-hidden="true">${[[22, 24, 1.6, -12, 'moeda'], [76, 20, 1.25, 14, 'grafico'], [16, 70, 1.2, 10, 'cartao'], [80, 72, 1.7, -8, 'cofrinho'], [50, 12, .9, 6, 'carteira'], [52, 86, 1, -10, 'nota']]
           .map(([x, y, sz, rot, f], n) => stickerHtml(x, y, sz, rot, f, STK_COLORS[n], n, `--ox:${(x - 50) * 3}vw;--oy:${(y - 50) * 3}vh`)).join('')}
-        <div class="ob-word"><span>Orçamento</span><small>seu dinheiro, em ordem</small></div></div>` : ''}
+        <div class="ob-word"><i class="ob-mascot">${avBadge('capivara')}</i><span>Capi</span><small>seu dinheiro, de boa</small></div></div>` : ''}
       <div class="ob" id="ob">
       <div class="ob-top"><div class="ob-dots" id="obDots"></div><div class="ob-tr">
         <button type="button" class="ob-theme" id="obTheme" role="switch" aria-checked="${document.documentElement.dataset.theme === 'dark'}" aria-label="Modo escuro" title="Modo escuro">
@@ -6871,7 +6878,7 @@ button:focus-visible, a:focus-visible, [role="button"]:focus-visible, [tabindex]
       <p class="fl">${ios ? 'No iPhone (Safari)' : 'No celular Android (Chrome)'}</p>
       <p class="help" style="font-size:.85rem">${ios ? 'Toque em <b>Compartilhar</b> (o quadrado com a seta) e depois em <b>Adicionar à Tela de Início</b>.' : 'Toque nos <b>⋮</b> no canto de cima e depois em <b>Instalar app</b> ou <b>Adicionar à tela inicial</b>.'}</p>
       <p class="fl">No computador (Chrome ou Edge)</p>
-      <p class="help" style="font-size:.85rem">Clique no ícone de instalar na barra de endereço (um monitor com uma seta) ou no menu <b>⋮ → Instalar Orçamento</b>.</p>
+      <p class="help" style="font-size:.85rem">Clique no ícone de instalar na barra de endereço (um monitor com uma seta) ou no menu <b>⋮ → Instalar Capi</b>.</p>
       <div class="actions"><span class="grow"></span><button class="btn save" data-close>Entendi</button></div>`);
   }
   // O service worker só funciona quando o app está publicado (http/https), não abrindo o arquivo direto

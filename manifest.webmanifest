@@ -1,7 +1,7 @@
 {
-  "name": "Orçamento — Planilha Financeira",
-  "short_name": "Orçamento",
-  "description": "Planilha financeira simples para organizar o dia a dia.",
+  "name": "Capi — seu dinheiro de boa",
+  "short_name": "Capi",
+  "description": "Capi: organize o dinheiro do mês (sozinho ou em família), de boa.",
   "lang": "pt-BR",
   "start_url": "./",
   "scope": "./",

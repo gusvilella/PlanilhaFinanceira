@@ -1,4 +1,4 @@
-# Orçamento — Planilha Financeira
+# Capi — seu dinheiro de boa
 
 
 **Abrir o app:** https://gusvilella.github.io/PlanilhaFinanceira/ (atualiza sozinho a cada mudança publicada)
@@ -70,7 +70,7 @@ Cada aba tem um gráfico de rosca mostrando para onde vai o dinheiro, filtro/bus
 
 Outros detalhes:
 
-- O olho ao lado de "Orçamento" esconde os valores.
+- O olho no topo esconde os valores.
 - Alterar algo recorrente num mês posterior vale daquele mês em diante, e o passado não muda. Ao excluir, dá para escolher *só este mês* (pula o mês) ou *deste mês em diante*.
 - O ícone de lua/sol ao lado da engrenagem alterna entre tema claro e escuro.
 - A engrenagem tem a escolha de fonte (Urbanist, Outfit, Sora, Parkinsans ou Syne, embutidas no arquivo, funcionam sem internet), exportação do mês ou de todos os meses para CSV (abre no Excel / Google Planilhas), backup e restauração.
