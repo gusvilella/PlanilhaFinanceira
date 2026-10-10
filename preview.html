@@ -1709,43 +1709,71 @@ button:focus-visible, a:focus-visible, [role="button"]:focus-visible, [tabindex]
   .meter.warn i { background: linear-gradient(90deg, #ffb36b, #ff8a5c); } .meter.over i { background: linear-gradient(90deg, #ff8a5c, #ff5f8f); }
 }
 
-/* Cena da Capi no topo da planilha */
-.capi-scene { flex: none; align-self: center; width: 168px; aspect-ratio: 1.4; margin: -18px auto -22px; padding: 0; border: 0; background: none; cursor: pointer; border-radius: 20px; }
+/* Cena da Capi no topo da planilha: de perfil, joga a moedinha da boca pro cofrinho */
+.capi-scene { flex: none; align-self: center; width: 196px; aspect-ratio: 1.6; margin: -20px auto -24px; padding: 0; border: 0; background: none; cursor: pointer; border-radius: 20px; -webkit-tap-highlight-color: transparent; }
 .capi-scene svg { width: 100%; height: 100%; display: block; overflow: visible; }
-.capi-scene svg * { transform-box: fill-box; }
-.capi-scene .cs-sh { fill: rgba(20, 60, 50, .14); }
-:root[data-theme="dark"] .capi-scene .cs-sh { fill: rgba(0, 0, 0, .45); }
-.capi-scene .cs-plus { font: 800 9px var(--font), sans-serif; fill: #0a8370; opacity: 0; }
-:root[data-theme="dark"] .capi-scene .cs-plus { fill: #4fd8b8; }
-.capi-scene .cs-spark { opacity: 0; }
-.capi-scene .cs-body { transform-origin: 50% 100%; animation: cs-breathe 3s ease-in-out infinite; }
-.capi-scene .cs-head { transform-origin: 50% 90%; animation: cs-nod 3s ease-in-out infinite; }
-.capi-scene .cs-arm { transform-origin: 8% 50%; }
-.capi-scene .cs-pig { transform-origin: 50% 100%; }
-.capi-scene .cs-coin { transform-origin: 50% 50%; }
+.capi-scene svg * { transform-box: view-box; }
 .capi-scene:focus-visible { outline: 2px solid var(--accent); outline-offset: 4px; }
+.capi-scene .cs-sh { fill: rgba(20, 60, 50, .13); }
+:root[data-theme="dark"] .capi-scene .cs-sh { fill: rgba(0, 0, 0, .45); }
+.capi-scene .cs-plus { font: 800 10px var(--font), sans-serif; fill: #0a8370; opacity: 0; }
+:root[data-theme="dark"] .capi-scene .cs-plus { fill: #4fd8b8; }
+.capi-scene .cs-spark, .capi-scene .cs-eh, .capi-scene .cs-fly { opacity: 0; }
+.capi-scene .cs-capi { transform-origin: 40px 90px; }
+.capi-scene .cs-body { transform-origin: 40px 90px; animation: cs-breathe 3.2s ease-in-out infinite; }
+.capi-scene .cs-head { transform-origin: 60px 52px; animation: cs-bob 3.2s ease-in-out infinite; }
+.capi-scene .cs-ear { transform-origin: 57px 25px; animation: cs-ear 5.3s ease-in-out infinite; }
+.capi-scene .cs-eo { transform-origin: 70px 31px; animation: cs-blink 4.6s ease-in-out infinite; }
+.capi-scene .cs-fruit { transform-origin: 64px 22px; }
+.capi-scene .cs-mcoin { transform-origin: 94px 53px; }
+.capi-scene .cs-pig { transform-origin: 133px 88px; }
+.capi-scene .cs-tail { transform-origin: 153px 64px; animation: cs-tail 1.6s ease-in-out infinite; }
+.capi-scene .cs-fs { transform-origin: 94px 53px; }
+.capi-scene .cs-spark { transform-origin: 135px 46px; }
 .top.intro .capi-scene { animation: cs-in .7s cubic-bezier(.2, .9, .3, 1.35) .2s both; }
-.capi-scene.drop .cs-coin { animation: cs-coin 1.9s cubic-bezier(.45, 0, .3, 1) both; }
-.capi-scene.drop .cs-arm { animation: cs-arm 1.9s ease-in-out both; }
-.capi-scene.drop .cs-head { animation: cs-look 1.9s ease-in-out both; }
-.capi-scene.drop .cs-pig { animation: cs-pig 1.9s ease both; }
-.capi-scene.drop .cs-spark { animation: cs-spark 1.9s ease both; }
-.capi-scene.drop .cs-plus { animation: cs-plus 1.9s ease both; }
-.capi-scene.drop .cs-head .fruit { animation: cs-fruit 1.9s ease both; }
+.capi-scene.drop .cs-capi { animation: cs-capi 2.6s ease-in-out both; }
+.capi-scene.drop .cs-head { animation: cs-toss 2.6s ease-in-out both; }
+.capi-scene.drop .cs-mcoin { animation: cs-mcoin 2.6s ease both; }
+.capi-scene.drop .cs-fly { animation: cs-fly 2.6s linear both; }
+.capi-scene.drop .cs-fx { animation: cs-fx 2.6s linear both; }
+.capi-scene.drop .cs-fy { animation: cs-fy 2.6s both; }
+.capi-scene.drop .cs-fs { animation: cs-spin .34s linear 4 .57s; }
+.capi-scene.drop .cs-pig { animation: cs-pig 2.6s ease both; }
+.capi-scene.drop .cs-spark { animation: cs-spark 2.6s ease-out both; }
+.capi-scene.drop .cs-plus { animation: cs-plus 2.6s ease-out both; }
+.capi-scene.drop .cs-eo { animation: cs-eo 2.6s step-end both; }
+.capi-scene.drop .cs-eh { animation: cs-eh 2.6s step-end both; }
+.capi-scene.drop .cs-bl { animation: cs-bl 2.6s ease both; }
+.capi-scene.drop .cs-fruit { animation: cs-fruit 2.6s ease both; }
 @keyframes cs-in { from { opacity: 0; transform: translateY(14px) scale(.8); } }
-@keyframes cs-breathe { 50% { transform: scale(1.02, 1.035); } }
-@keyframes cs-nod { 50% { transform: rotate(-2deg) translateY(-.6px); } }
-@keyframes cs-arm { 0%, 6% { transform: none; } 22% { transform: rotate(-38deg); } 42% { transform: rotate(-58deg) translateX(3px); } 54% { transform: rotate(-30deg) translateX(6px); } 72%, 100% { transform: none; } }
-@keyframes cs-coin { 0%, 6% { transform: none; opacity: 1; } 22% { transform: translate(-2px, -15px) rotate(-30deg); opacity: 1; } 42% { transform: translate(15px, -33px) rotate(160deg); opacity: 1; } 53% { transform: translate(31px, -21px) rotate(270deg) scale(.95); opacity: 1; }
-  58% { transform: translate(31px, -13px) rotate(330deg) scale(.82); opacity: 1; } 62% { transform: translate(31px, -8px) rotate(360deg) scale(.6); opacity: 0; } 86% { transform: none; opacity: 0; } 100% { transform: none; opacity: 1; } }
-@keyframes cs-look { 0%, 10% { transform: none; } 40% { transform: rotate(6deg) translateY(-1px); } 60% { transform: rotate(3deg); } 70% { transform: translateY(-3px) rotate(-3deg); } 82%, 100% { transform: none; } }
-@keyframes cs-pig { 0%, 58% { transform: none; } 64% { transform: scale(1.07, .9); } 72% { transform: scale(.97, 1.05) translateY(-2px); } 80%, 100% { transform: none; } }
-@keyframes cs-spark { 0%, 59% { opacity: 0; transform: scale(.5); } 66% { opacity: 1; transform: scale(1); } 80%, 100% { opacity: 0; transform: scale(1.3); } }
-@keyframes cs-plus { 0%, 60% { opacity: 0; transform: none; } 68% { opacity: 1; } 90% { opacity: 0; transform: translateY(-12px); } 100% { opacity: 0; } }
-@keyframes cs-fruit { 0%, 64% { transform: none; } 72% { transform: translateY(-4px) rotate(-12deg); } 82%, 100% { transform: none; } }
+@keyframes cs-breathe { 50% { transform: scale(1.015, 1.03); } }
+@keyframes cs-bob { 50% { transform: translateY(-.7px) rotate(-1deg); } }
+@keyframes cs-ear { 0%, 86%, 100% { transform: none; } 89% { transform: rotate(-22deg); } 92% { transform: rotate(6deg); } 95% { transform: rotate(-10deg); } }
+@keyframes cs-blink { 0%, 90%, 96%, 100% { transform: none; } 93% { transform: scaleY(.1); } }
+@keyframes cs-tail { 50% { transform: rotate(18deg); } }
+/* 0-14% abaixa a cabeça e amassa · 14-22% joga · 22-56% moeda voando · 56-62% cai na fenda · 60-86% feliz · 88-100% moeda volta */
+@keyframes cs-capi { 0% { transform: none; } 13% { transform: scale(1.05, .93); } 21% { transform: scale(.97, 1.05) translateY(-1px); } 30%, 58% { transform: none; } 66% { transform: translateY(-4px) scale(.98, 1.03); } 74% { transform: scale(1.03, .96); } 82%, 100% { transform: none; } }
+@keyframes cs-toss { 0% { transform: none; } 13% { transform: rotate(13deg) translateY(1px); } 21% { transform: rotate(-20deg); } 34% { transform: rotate(-14deg); } 52% { transform: rotate(-4deg); } 66% { transform: rotate(-9deg); } 80%, 100% { transform: none; } }
+@keyframes cs-mcoin { 0%, 20% { opacity: 1; transform: none; } 20.5%, 88% { opacity: 0; transform: scale(0); } 94% { opacity: 1; transform: scale(1.2); } 100% { opacity: 1; transform: none; } }
+@keyframes cs-fly { 0%, 20% { opacity: 0; } 20.5%, 60% { opacity: 1; } 61%, 100% { opacity: 0; } }
+@keyframes cs-fx { 0%, 20.5% { transform: translate(-1.7px, -11.7px); } 56%, 100% { transform: translate(40.5px, -11.7px); } }
+@keyframes cs-fy { 0%, 20.5% { transform: none; animation-timing-function: cubic-bezier(.3, .7, .6, 1); } 38% { transform: translateY(-32px); animation-timing-function: cubic-bezier(.45, 0, .8, .4); } 56% { transform: translateY(7px); animation-timing-function: ease-in; } 61%, 100% { transform: translateY(17px); } }
+@keyframes cs-spin { 50% { transform: scaleX(.15); } }
+@keyframes cs-pig { 0%, 58% { transform: none; } 63% { transform: scale(1.08, .88); } 71% { transform: scale(.96, 1.06) translateY(-3px); } 78% { transform: scale(1.02, .98); } 84%, 100% { transform: none; } }
+@keyframes cs-spark { 0%, 58% { opacity: 0; transform: scale(.4); } 64% { opacity: 1; transform: scale(1); } 78%, 100% { opacity: 0; transform: scale(1.35); } }
+@keyframes cs-plus { 0%, 60% { opacity: 0; transform: translateY(4px); } 68% { opacity: 1; transform: none; } 88% { opacity: 1; } 96%, 100% { opacity: 0; transform: translateY(-12px); } }
+@keyframes cs-eo { 0% { opacity: 1; } 61% { opacity: 0; } 87% { opacity: 1; } }
+@keyframes cs-eh { 0% { opacity: 0; } 61% { opacity: 1; } 87% { opacity: 0; } }
+@keyframes cs-bl { 0%, 58% { opacity: .45; } 66%, 82% { opacity: 1; } 94%, 100% { opacity: .45; } }
+@keyframes cs-fruit { 0%, 62% { transform: none; } 68% { transform: translateY(-6px) rotate(-10deg); } 74% { transform: translateY(0) scale(1.1, .9); } 79% { transform: translateY(-2px) rotate(5deg); } 84%, 100% { transform: none; } }
+@media (min-width: 641px) and (max-width: 1100px) {
+  .top { position: relative; }
+  .capi-scene { position: absolute; right: 8px; bottom: -32px; width: 132px; margin: 0; }
+  .top-right { position: relative; z-index: 1; }
+}
 @media (max-width: 640px) {
-  .top { position: relative; } .top > div:first-child { padding-right: 96px; }
-  .capi-scene { position: absolute; right: -6px; top: -14px; width: 108px; margin: 0; }
+  .top { position: relative; } .top > div:first-child { padding-right: 100px; }
+  .capi-scene { position: absolute; right: -8px; top: -12px; width: 118px; margin: 0; }
 }
 @media (prefers-reduced-motion: reduce) { .capi-scene, .capi-scene * { animation: none !important; } }
   </style>
@@ -6472,25 +6500,41 @@ button:focus-visible, a:focus-visible, [role="button"]:focus-visible, [tabindex]
   // Cena do topo: a Capi guarda uma moedinha no cofrinho (de vez em quando, e quando você toca nela)
   function drawCapiScene() {
     const el = $('#capiScene'); if (!el || el.firstChild) return;
-    const face = AVATARS.capivara.svg;
-    el.innerHTML = `<svg viewBox="0 0 140 100" aria-hidden="true">
-      <ellipse class="cs-sh" cx="40" cy="91" rx="27" ry="4"/><ellipse class="cs-sh" cx="107" cy="91" rx="24" ry="3.6"/>
-      <g class="cs-pig"><path d="M84 68q-6-3-6 2" fill="none" stroke="#f07d98" stroke-width="2.4" stroke-linecap="round"/>
-        <rect x="92" y="78" width="6" height="11" rx="3" fill="#f07d98"/><rect x="117" y="78" width="6" height="11" rx="3" fill="#f07d98"/>
-        <ellipse cx="106" cy="70" rx="24" ry="18" fill="#ff9fb4"/><path d="M110 55l5-8 5 9z" fill="#f07d98"/>
-        <ellipse cx="129" cy="71" rx="6" ry="7" fill="#ff8aa3"/><ellipse cx="127.5" cy="70" rx="1.2" ry="1.8" fill="#b84d68"/><ellipse cx="130.8" cy="70" rx="1.2" ry="1.8" fill="#b84d68"/>
-        <circle cx="119" cy="64" r="2" fill="#2b1d14"/><ellipse cx="114" cy="72" rx="3" ry="1.8" fill="#ff6f91" opacity=".45"/>
-        <rect x="98" y="52.5" width="15" height="3.4" rx="1.7" fill="#b84d68"/><ellipse cx="99" cy="64" rx="7" ry="4" fill="#fff" opacity=".22"/></g>
-      <g class="cs-spark" stroke="#ffc23d" stroke-width="2" stroke-linecap="round"><path d="M98 46l-3-4M105.5 44v-5M113 46l3-4"/></g>
-      <text class="cs-plus" x="106" y="44" text-anchor="middle">+R$</text>
-      <g class="cs-capi"><g class="cs-body"><path d="M15 64q0-18 24-18t24 18v12q0 14-24 14t-24-14z" fill="#a86f43"/><ellipse cx="39" cy="74" rx="14" ry="11" fill="#c08a5d" opacity=".55"/>
-        <ellipse cx="28" cy="89" rx="7" ry="3.4" fill="#7c4b2a"/><ellipse cx="50" cy="89" rx="7" ry="3.4" fill="#7c4b2a"/></g>
-        <g class="cs-head"><g transform="translate(10 7) scale(.9)">${face}</g></g>
-        <g class="cs-arm"><rect x="54" y="60" width="17" height="8.5" rx="4.25" fill="#a86f43"/></g></g>
-      <g class="cs-coin"><circle cx="74" cy="62" r="6" fill="#ffc23d" stroke="#e39a10" stroke-width="1.6"/><path d="M74 59v6" stroke="#e39a10" stroke-width="1.6" stroke-linecap="round"/><circle cx="72" cy="60" r="1.4" fill="#fff" opacity=".6"/></g></svg>`;
+    const coin = (x, y) => `<circle cx="${x}" cy="${y}" r="5.6" fill="#ffc23d" stroke="#e39a10" stroke-width="1.5"/><path d="M${x} ${y - 2.8}v5.6" stroke="#e39a10" stroke-width="1.5" stroke-linecap="round"/><circle cx="${x - 2}" cy="${y - 2}" r="1.3" fill="#fff" opacity=".65"/>`;
+    el.innerHTML = `<svg viewBox="0 0 160 100" aria-hidden="true">
+      <ellipse class="cs-sh" cx="41" cy="91" rx="31" ry="4"/><ellipse class="cs-sh" cx="133" cy="91" rx="22" ry="3.6"/>
+      <g class="cs-fly"><g class="cs-fx"><g class="cs-fy"><g class="cs-fs">${coin(94, 53)}</g></g></g></g>
+      <g class="cs-pig"><path class="cs-tail" d="M153 64q6-5 6 1q0 5 4 2" fill="none" stroke="#f07d98" stroke-width="2.2" stroke-linecap="round"/>
+        <rect x="120" y="78" width="7" height="11" rx="3.5" fill="#f07d98"/><rect x="140" y="78" width="7" height="11" rx="3.5" fill="#f07d98"/>
+        <ellipse cx="133" cy="68" rx="21" ry="16" fill="#ff9fb4"/><ellipse cx="139" cy="61" rx="9" ry="4.5" fill="#fff" opacity=".25"/>
+        <path d="M119 56l-2-9 9 5z" fill="#f07d98"/>
+        <ellipse cx="112.5" cy="69" rx="5" ry="6.4" fill="#ff8aa3"/><ellipse cx="111.2" cy="67.4" rx="1" ry="1.7" fill="#b84d68"/><ellipse cx="111.2" cy="71.2" rx="1" ry="1.7" fill="#b84d68"/>
+        <circle cx="121" cy="62" r="1.9" fill="#2b1d14"/><ellipse cx="123" cy="70" rx="3" ry="1.8" fill="#ff6f91" opacity=".45"/>
+        <rect x="128.5" y="51.4" width="12" height="3.2" rx="1.6" fill="#b84d68"/></g>
+      <g class="cs-spark" stroke="#ffc23d" stroke-width="2" stroke-linecap="round"><path d="M127 46l-3-4M134.5 43.5v-5M142 46l3-4"/></g>
+      <text class="cs-plus" x="135" y="38" text-anchor="middle">+R$</text>
+      <g class="cs-capi"><g class="cs-body">
+        <rect x="16" y="75" width="9" height="15" rx="4.5" fill="#6b3f24"/><rect x="52" y="75" width="9" height="15" rx="4.5" fill="#6b3f24"/>
+        <path d="M12 67c0-13 11-20 28-20h13c12 0 18 7 18 17c0 12-8 19-22 19H30c-12 0-18-6-18-16z" fill="#a9714a"/>
+        <path d="M18 58q12-9 30-9" fill="none" stroke="#c08a5d" stroke-width="2" stroke-linecap="round" opacity=".6"/>
+        <ellipse cx="45" cy="77" rx="17" ry="5.5" fill="#8d5a37" opacity=".35"/>
+        <rect x="24" y="76" width="9.5" height="14.5" rx="4.75" fill="#7e4c2b"/><rect x="59" y="76" width="9.5" height="14.5" rx="4.75" fill="#7e4c2b"/></g>
+        <g class="cs-head">
+          <path class="cs-ear" d="M54 26c-3-5 1-8.5 4.5-5.5c1.5 1.4 1.2 4-.5 5.5z" fill="#7e4c2b"/>
+          <path d="M51 46V33c0-7 5-11 12-11l19 1.5c6 .5 9 4 9 10V50c0 5.5-3.5 9-9 9H64c-8 0-13-5-13-13z" fill="#a9714a"/>
+          <path d="M75 37q-3 12 4 21" fill="none" stroke="#8d5a37" stroke-width="1.4" stroke-linecap="round" opacity=".6"/>
+          <path d="M83 25c4.5-.3 8 2.5 8 7v3c-3.5.5-6.5-.5-8-3.5c-1-2-1-5 0-6.5z" fill="#6b3f24"/>
+          <ellipse cx="88" cy="29.5" rx="1" ry="1.8" fill="${K}"/>
+          <path d="M91 49q-3 2.6-6.5 1.4" fill="none" stroke="${K}" stroke-width="1.4" stroke-linecap="round"/>
+          <ellipse class="cs-bl" cx="77" cy="44" rx="3.6" ry="2.2" fill="#ff9d8a" opacity=".45"/>
+          <g class="cs-eo"><circle cx="70" cy="31" r="2.3" fill="${K}"/><circle cx="70.8" cy="30.2" r=".8" fill="#fff"/></g>
+          <path class="cs-eh" d="M67.4 32q2.6-3.4 5.2 0" fill="none" stroke="${K}" stroke-width="1.7" stroke-linecap="round"/>
+          <g class="cs-mcoin">${coin(94, 53)}</g>
+          <g class="cs-fruit"><circle cx="64" cy="17" r="5.4" fill="#ff9416"/><circle cx="62.2" cy="15.5" r="1.5" fill="#ffc06b" opacity=".8"/><path d="M64 12q2.5-3 6-1.6" fill="none" stroke="#2f9e57" stroke-width="2" stroke-linecap="round"/></g>
+        </g></g></svg>`;
     const drop = () => { if (document.hidden) return; el.classList.remove('drop'); void el.offsetWidth; el.classList.add('drop'); };
     el.addEventListener('click', drop);
-    el.addEventListener('animationend', e => { if (e.target.classList?.contains('cs-coin')) el.classList.remove('drop'); });
+    el.addEventListener('animationend', e => { if (e.target.classList?.contains('cs-capi')) el.classList.remove('drop'); });
     if (!matchMedia('(prefers-reduced-motion: reduce)').matches) { setTimeout(drop, 1100); setInterval(drop, 9000); }
   }
   function introAnim() {
