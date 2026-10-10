@@ -1593,6 +1593,8 @@ button.kpi-label:hover { color: var(--ink); text-decoration-color: currentColor;
 /* troca de aba/mês: os quadros deslizam de leve na direção da troca (só os quadros, sem cascata de linha por linha) */
 @keyframes slide-in { from { opacity: 0; transform: translateX(var(--dx, 0)) translateY(var(--dy, 0)); } }
 @keyframes row-in { 0% { opacity: 0; transform: translateY(-6px); background-color: color-mix(in srgb, #12a588 16%, transparent); } 25% { opacity: 1; transform: none; background-color: color-mix(in srgb, #12a588 16%, transparent); } }
+/* muitas linhas: o navegador só calcula as que estão perto da tela (com 2.000 lançamentos, lançar ficava ~1 s) */
+#table .row:not(.head) { content-visibility: auto; contain-intrinsic-size: auto 56px; }
 #table .row.just-in { animation: row-in 1.4s cubic-bezier(.2, .75, .25, 1) both; border-radius: 10px; }
 #table .row.just-edit { animation: row-edit 1.2s ease-out both; border-radius: 10px; }
 @keyframes row-edit { 0%, 20% { background-color: color-mix(in srgb, #ff9416 16%, transparent); } }
@@ -6584,14 +6586,15 @@ button:focus-visible, a:focus-visible, [role="button"]:focus-visible, [tabindex]
           <g class="cs-mcoin">${coin(94, 53)}</g>
           <g class="cs-fruit"><circle cx="64" cy="17" r="5.4" fill="#ff9416"/><circle cx="62.2" cy="15.5" r="1.5" fill="#ffc06b" opacity=".8"/><path d="M64 12q2.5-3 6-1.6" fill="none" stroke="#2f9e57" stroke-width="2" stroke-linecap="round"/></g>
         </g></g></svg>`;
-    const drop = () => { if (document.hidden) return; el.classList.remove('drop'); void el.offsetWidth; el.classList.add('drop'); };
+    const drop = () => { if (document.hidden) return; if (el.classList.contains('drop')) { el.classList.remove('drop'); void el.offsetWidth; } el.classList.add('drop'); };   // reinicia só se já estava no meio
     const reduced = matchMedia('(prefers-reduced-motion: reduce)').matches;
     let loop = 0;
     const again = () => { clearInterval(loop); if (!reduced) loop = setInterval(drop, 9000); };   // reinicia a contagem pra não repetir logo em seguida
     el.addEventListener('click', () => { drop(); again(); });
     el.addEventListener('animationend', e => { if (e.target.classList?.contains('cs-capi')) el.classList.remove('drop'); });
     // deu certo um lançamento (aviso de sucesso): ela comemora guardando uma moedinha, se não estiver no meio de uma
-    el._cheer = () => { if (reduced || el.classList.contains('drop') || el.getBoundingClientRect().bottom < 0) return; drop(); again(); };
+    let nearTop = true; addEventListener('scroll', () => { nearTop = scrollY < 220; }, { passive: true });   // guardado aqui: ler na hora forçaria recalcular a página toda
+    el._cheer = () => { if (reduced || el.classList.contains('drop') || !nearTop) return; drop(); again(); };
     if (!reduced) { setTimeout(drop, 1100); again(); }
   }
   function introAnim() {
