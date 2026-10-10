@@ -1118,6 +1118,7 @@ html.auth, html.auth body { overflow: hidden; }
 .av-pick button:hover { transform: scale(1.1) rotate(-6deg); }
 .av-pick button.on { box-shadow: 0 0 0 2.5px var(--ob-c, var(--accent)); transform: scale(1.06); }
 .ob-hello { display: flex; align-items: center; gap: 10px; }
+.ob-hello .ob-caret { margin-left: -8px; }   /* cursor colado no fim do nome (o gap do flex afastava ele) */
 /* reações dos bichinhos */
 .ob-me-av, .ob-person { position: relative; } .ob-me-av { cursor: pointer; }
 .av-say { position: absolute; left: 70%; bottom: 88%; z-index: 3; white-space: nowrap; background: var(--card); color: var(--ink); font-size: .72rem; font-weight: 700; padding: 5px 10px; border-radius: 12px 12px 12px 3px;
