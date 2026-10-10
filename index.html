@@ -1543,7 +1543,7 @@ button.kpi-label:hover { color: var(--ink); text-decoration-color: currentColor;
 .divider { height: 1px; background: var(--line); margin: 18px 0 4px; }
 
 /* Menu */
-.font-pick { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 8px; }
+.font-pick { display: grid; grid-template-columns: repeat(auto-fill, minmax(156px, 1fr)); gap: 8px; }   /* colunas conforme o espaço: nome da fonte sempre inteiro */
 .font-pick button { display: flex; align-items: center; gap: 7px; min-width: 0; white-space: nowrap; overflow: hidden; border: 1.5px solid var(--field-line); background: var(--field); border-radius: 12px; padding: 10px; font-size: .82rem; font-weight: 600; color: var(--ink); text-align: left; transition: border-color .15s, background .15s; }
 .font-pick button span { font-size: 1.15rem; font-weight: 700; line-height: 1; }
 .font-pick button:hover { border-color: var(--muted); }
