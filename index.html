@@ -1264,7 +1264,8 @@ svg.i.mono { fill: currentColor; stroke: none; }
 /* Calendário: Hoje / Ontem / Amanhã */
 .cal-day { display: flex; align-items: center; gap: 8px; font-size: .78rem; font-weight: 700; }
 .cal-day > span:last-child::first-letter { text-transform: uppercase; }
-.cal-rel { font-size: .7rem; font-weight: 600; padding: 3px 8px; border-radius: 99px; background: var(--field); color: var(--ink-2); animation: ic-pop .35s ease-out both; }
+.cal-rel { font-size: .7rem; font-weight: 600; padding: 3px 8px; border-radius: 99px; background: var(--field); color: var(--ink-2); }
+.cal-rel.pop { animation: ic-pop .35s ease-out both; }   /* só quando você escolhe outro dia, não a cada lançamento */
 .cal-rel.today { background: #0a7a67; color: #fff; }
 .cal button.today.sel { background: var(--accent); color: #fff; box-shadow: none; }
 @media (prefers-reduced-motion: reduce) { #headline, .top.intro *, .kpis.intro *, .cal-rel, .ghost-ico svg.i, .month button svg.i { animation: none !important; transition: none !important; } }
@@ -3152,13 +3153,15 @@ button:focus-visible, a:focus-visible, [role="button"]:focus-visible, [tabindex]
       cells.push(`<button type="button" data-day="${iso}" class="${iso === todayIso ? 'today' : ''} ${iso === calSel ? 'sel' : ''}" aria-label="${d}: ${list.length} movimentos">${d}
         <span class="dots">${hasIn ? '<i style="background:var(--in)"></i>' : ''}${hasOut ? '<i style="background:var(--out)"></i>' : ''}</span></button>`);
     }
+    renderCalendar.last ??= calSel;   // na primeira vez a tela inteira já está entrando
     const sel = (byDay[calSel] || []).sort((a, b) => (a.dir === 'in' ? -1 : 1) - (b.dir === 'in' ? -1 : 1));
     box.innerHTML = `<h3>Calendário</h3>
       <div class="cal">${['D', 'S', 'T', 'Q', 'Q', 'S', 'S'].map(w => `<span class="wd">${w}</span>`).join('')}${cells.join('')}</div>
       <div class="cal-legend"><span><i style="background:var(--in)"></i>Entrada</span><span><i style="background:var(--out)"></i>Saída</span></div>
-      <div class="cal-list"><div class="cal-day">${(() => { const d = daysUntil(calSel), rel = d === 0 ? 'Hoje' : d === -1 ? 'Ontem' : d === 1 ? 'Amanhã' : ''; return rel ? `<span class="cal-rel${d === 0 ? ' today' : ''}">${rel}</span>` : ''; })()}<span>${new Date(calSel + 'T12:00:00').toLocaleDateString('pt-BR', { weekday: 'long', day: '2-digit', month: 'long' })}</span></div>
+      <div class="cal-list"><div class="cal-day">${(() => { const d = daysUntil(calSel), rel = d === 0 ? 'Hoje' : d === -1 ? 'Ontem' : d === 1 ? 'Amanhã' : ''; return rel ? `<span class="cal-rel${d === 0 ? ' today' : ''}${calSel !== renderCalendar.last ? ' pop' : ''}">${rel}</span>` : ''; })()}<span>${new Date(calSel + 'T12:00:00').toLocaleDateString('pt-BR', { weekday: 'long', day: '2-digit', month: 'long' })}</span></div>
         ${sel.length ? sel.map(e => `<div class="ev" ${e.ref ? `data-open="${esc(e.ref)}" role="button" tabindex="0" title="Abrir"` : ''}>${e.logo || icoTile(e.icon || 'tag')}<span>${esc(e.label)}${e.done ? ' <small style="color:var(--muted)">✓</small>' : ''}</span><span class="v ${e.dir === 'in' ? 'in' : ''}">${e.dir === 'in' ? '+' : '–'}${money(e.amount)}</span></div>`).join('')
           : '<div class="ov-empty" style="padding:6px 0;text-align:left">Nada neste dia.</div>'}</div>`;
+    renderCalendar.last = calSel;
     box.querySelector('.cal').addEventListener('click', e => { const b = e.target.closest('[data-day]'); if (b) { calSel = b.dataset.day; renderCalendar(); } });
     // tocar num item do dia abre ele para editar
     const openRef = el => {
