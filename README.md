@@ -1,4 +1,4 @@
-# Capi — seu dinheiro de boa
+# Capi — seu dinheiro, de boa na lagoa
 
 
 **Abrir o app:** https://gusvilella.github.io/PlanilhaFinanceira/ (atualiza sozinho a cada mudança publicada)
