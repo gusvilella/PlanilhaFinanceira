@@ -475,6 +475,9 @@ html.locked .lock { display: grid; }
 html.locked .lock { place-items: normal; overflow-y: auto; }
 .lock-capi { display: block; width: 80px; margin: 0 auto 10px; }
 .lock-capi svg { display: block; width: 100%; height: auto; }
+.lock-capi.shake .cb, .lock-capi.shake .fruit, .lock-capi.shake .ear { transform-box: view-box; transform-origin: 32px 50px; animation: capi-no .5s ease-in-out; }   /* senha errada: a Capi faz que não */
+@keyframes capi-no { 20%, 60% { transform: rotate(-7deg); } 40%, 80% { transform: rotate(7deg); } }
+@media (prefers-reduced-motion: reduce) { .lock-capi * { animation: none !important; } }
 .lock-box h2 { margin: 0 0 4px; font-size: 1.2rem; font-weight: 700; }
 .lock-box p { margin: 0; color: var(--muted); font-size: .85rem; min-height: 1.3em; }
 .lock-box p.err { color: var(--red); }
@@ -6963,7 +6966,7 @@ button:focus-visible, a:focus-visible, [role="button"]:focus-visible, [tabindex]
       const ok = (await hashPin(pinBuf, lockCfg.salt)) === lockCfg.hash;
       if (ok) return unlock();
       pinBuf = ''; drawLock('Senha errada, tente de novo', true);
-      $('#pinDots').classList.remove('shake'); void $('#pinDots').offsetWidth; $('#pinDots').classList.add('shake');
+      for (const el of [$('#pinDots'), $('#lockScreen .lock-capi')]) { if (!el) continue; el.classList.remove('shake'); void el.offsetWidth; el.classList.add('shake'); }
     }
   }
   $('#keypad').addEventListener('click', e => {
