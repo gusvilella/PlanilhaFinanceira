@@ -2568,8 +2568,9 @@ button:focus-visible, a:focus-visible, [role="button"]:focus-visible, [tabindex]
   // depois de lançar: só a linha nova acende (o resto fica quieto); depois de editar, a linha editada pisca de leve
   const tableRows = () => new Map([...document.querySelectorAll('#table [data-edit]')].map(b => [b.dataset.edit, b.closest('.row')?.textContent || '']));
   const render = (...a) => {
-    const before = tableRows(); renderMemo(...a);
-    if (!sameView || !before.size && !document.querySelector('#table [data-edit]') || matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+    const before = tableRows(), hidden = render.hidden; renderMemo(...a); render.hidden = ui.hidden;
+    // esconder/mostrar valores muda o texto de todas as linhas: não é lançamento nem edição
+    if (!sameView || hidden !== undefined && hidden !== ui.hidden || !before.size && !document.querySelector('#table [data-edit]') || matchMedia('(prefers-reduced-motion: reduce)').matches) return;
     tableRows().forEach((txt, id) => {
       const cls = !before.has(id) ? 'just-in' : before.get(id) !== txt ? 'just-edit' : '';
       if (cls) document.querySelector(`#table [data-edit="${CSS.escape(id)}"]`)?.closest('.row')?.classList.add(cls);
@@ -5668,7 +5669,7 @@ button:focus-visible, a:focus-visible, [role="button"]:focus-visible, [tabindex]
     const el = $('#toast');
     el.textContent = msg;
     // deu certo: a Capi aparece pulando de alegria no cantinho do aviso
-    if (/lançad|salv|pront|marcad|paga|recebid|guardad|adicionad|importad|ligad|instalad|juntei|boas-vindas|atualizad|copiad/i.test(msg) && !/não |inválid|ilegív|erro/i.test(msg)) {
+    if (/lançad|salv|pront|marcad|paga|recebid|guardad|adicionad|importad|ligad|instalad|juntei|boas-vindas|atualizad|copiad/i.test(msg) && !/não |inválid|ilegív|erro|deslig|apagad|excluíd|removid/i.test(msg)) {
       const c = document.createElement('span'); c.className = 'toast-capi'; c.setAttribute('aria-hidden', 'true');
       c.innerHTML = `<svg viewBox="0 0 64 64">${AVATARS.capivara.svg}</svg>`; el.prepend(c);
       $('#capiScene')?._cheer?.();
