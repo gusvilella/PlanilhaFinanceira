@@ -3106,7 +3106,7 @@ button:focus-visible, a:focus-visible, [role="button"]:focus-visible, [tabindex]
       ${marks}${xl}
       <line class="cross" id="fcCross" x1="0" x2="0" y1="${padT}" y2="${padT + plotH}"/>
       <circle class="dot" id="fcDot" r="4.5" fill="${color}" stroke="var(--card)" stroke-width="2"/>
-      <rect x="${padL}" y="0" width="${plotW}" height="${H}" fill="transparent" id="fcHit" tabindex="0" aria-label="Passe o mouse para ver cada dia"/></svg>
+      <rect x="${padL}" y="0" width="${plotW}" height="${H}" fill="transparent" id="fcHit" tabindex="0" aria-label="Saldo de cada dia: use as setas para os lados"/></svg>
       <div class="fc-tip" id="fcTip"></div>`;
     const hit = wrap.querySelector('#fcHit'), tip = wrap.querySelector('#fcTip'), cross = wrap.querySelector('#fcCross'), dot = wrap.querySelector('#fcDot');
     const show = i => {
