@@ -1737,6 +1737,11 @@ button:focus-visible, a:focus-visible, [role="button"]:focus-visible, [tabindex]
 .capi-scene .cs-plus { font: 800 10px var(--font), sans-serif; fill: #0a8370; opacity: 0; }
 :root[data-theme="dark"] .capi-scene .cs-plus { fill: #4fd8b8; }
 .capi-scene .cs-spark, .capi-scene .cs-eh, .capi-scene .cs-fly { opacity: 0; }
+.capi-scene .cs-brow, .capi-scene .cs-sweat { opacity: 0; transition: opacity .4s; }
+.capi-scene.tight .cs-brow { opacity: 1; }
+.capi-scene.tight .cs-sweat { opacity: 1; transform-origin: 56px 33px; animation: cs-sweat 2.6s ease-in infinite; }
+.capi-scene.tight.drop .cs-brow, .capi-scene.tight.drop .cs-sweat { opacity: 0; animation: none; }   /* guardando a moedinha ela esquece a preocupação */
+@keyframes cs-sweat { 0%, 30% { transform: none; opacity: 1; } 75% { transform: translateY(5px) scale(.8); opacity: 0; } 76% { transform: none; opacity: 0; } 100% { opacity: 1; } }
 .capi-scene .cs-capi { transform-origin: 40px 90px; }
 .capi-scene .cs-body { transform-origin: 40px 90px; animation: cs-breathe 3.2s ease-in-out infinite; }
 .capi-scene .cs-head { transform-origin: 60px 52px; animation: cs-bob 3.2s ease-in-out infinite; }
@@ -2711,6 +2716,7 @@ button:focus-visible, a:focus-visible, [role="button"]:focus-visible, [tabindex]
     }
     // Sobra do mês: entrou − saiu − o que você guarda. Quando falta, mostra "Falta no mês" sem alarme
     $('#kSobraLabel').textContent = t.saldo < 0 ? 'Falta no mês' : 'Sobra do mês';
+    $('#capiScene')?.classList.toggle('tight', t.saldo < 0);   // mês no vermelho: a Capi fica preocupadinha
     cnt($('#kSobra'), Math.abs(t.saldo));
     countZero = false;
     $('#kSobra').classList.toggle('short', t.saldo < 0);
@@ -6573,6 +6579,8 @@ button:focus-visible, a:focus-visible, [role="button"]:focus-visible, [tabindex]
           <ellipse class="cs-bl" cx="77" cy="44" rx="3.6" ry="2.2" fill="#ff9d8a" opacity=".45"/>
           <g class="cs-eo"><circle cx="70" cy="31" r="2.3" fill="${K}"/><circle cx="70.8" cy="30.2" r=".8" fill="#fff"/></g>
           <path class="cs-eh" d="M67.4 32q2.6-3.4 5.2 0" fill="none" stroke="${K}" stroke-width="1.7" stroke-linecap="round"/>
+          <path class="cs-brow" d="M66.6 27.4q3.4-.4 6.6-2.6" fill="none" stroke="#5a341d" stroke-width="1.5" stroke-linecap="round"/>
+          <path class="cs-sweat" d="M56 30.5q-2.6 3.6-2.6 5.2a2.6 2.6 0 0 0 5.2 0q0-1.6-2.6-5.2z" fill="#8fdcf7" stroke="#4fb8e0" stroke-width=".6"/>
           <g class="cs-mcoin">${coin(94, 53)}</g>
           <g class="cs-fruit"><circle cx="64" cy="17" r="5.4" fill="#ff9416"/><circle cx="62.2" cy="15.5" r="1.5" fill="#ffc06b" opacity=".8"/><path d="M64 12q2.5-3 6-1.6" fill="none" stroke="#2f9e57" stroke-width="2" stroke-linecap="round"/></g>
         </g></g></svg>`;
