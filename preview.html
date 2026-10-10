@@ -974,6 +974,15 @@ html.auth .auth-screen { display: grid; place-items: center; }
 .ob-splash.gone .stk { transform: translate(var(--ox), var(--oy)) rotate(25deg) scale(.6); }
 .ob-splash .ob-word { position: relative; z-index: 1; color: var(--ink); transition: transform .6s cubic-bezier(.6, 0, .3, 1), opacity .4s; }
 .ob-splash.gone .ob-word { transform: scale(1.15); opacity: 0; }
+/* abertura no estilo Duolingo: só o rosto da capivara, grande, pulando pra dentro, a laranja quicando */
+.ob-face { width: clamp(170px, 44vw, 240px); aspect-ratio: 1; filter: drop-shadow(0 26px 34px rgba(110, 70, 40, .35)); animation: face-in .8s cubic-bezier(.2, .9, .25, 1.45) .1s both, face-chill 2.4s ease-in-out 1s infinite; transition: transform .55s cubic-bezier(.6, 0, .3, 1), opacity .4s; }
+.ob-face svg { width: 100%; height: 100%; display: block; overflow: visible; }
+.ob-face .fruit { transform-box: fill-box; transform-origin: 50% 100%; animation: face-fruit .6s cubic-bezier(.3, 1.6, .5, 1) .75s 2 both; }
+:root[data-theme="dark"] .ob-face { filter: drop-shadow(0 0 40px rgba(255, 190, 120, .25)) drop-shadow(0 24px 30px rgba(0, 0, 0, .5)); }
+.ob-splash.gone .ob-face { transform: scale(1.25); opacity: 0; }
+@keyframes face-in { from { opacity: 0; transform: translateY(40px) scale(.35) rotate(-10deg); } }
+@keyframes face-chill { 50% { transform: rotate(-4deg) translateY(-4px); } }
+@keyframes face-fruit { 40% { transform: translateY(-38%) rotate(-14deg); } 70% { transform: translateY(4%); } }
 .ob-word { text-align: center; }
 .ob-mascot { display: block; width: clamp(72px, 9vw, 96px); margin: 0 auto 14px; animation: ob-word .9s cubic-bezier(.2, .9, .25, 1.4) .1s both; } .ob-mascot .av { width: 100%; height: auto; aspect-ratio: 1; box-shadow: 0 18px 36px -16px rgba(140, 90, 50, .55); }
 .ob-word > span { display: block; font-size: clamp(2.8rem, 10vw, 5rem); font-weight: 600; letter-spacing: -.055em; line-height: 1; animation: ob-word .9s cubic-bezier(.2, .9, .25, 1.25) .25s both; }
@@ -6543,9 +6552,8 @@ button:focus-visible, a:focus-visible, [role="button"]:focus-visible, [tabindex]
     const first = !reduced && !showOnboarding.seen; showOnboarding.seen = true;
     let introDone = false;
     $('#authScreen').innerHTML = `<div class="ob-bg" aria-hidden="true"><i></i><i></i><i></i></div><div class="ob-stk" id="obStk"></div>
-      ${first ? `<div class="ob-splash" id="obSplash" aria-hidden="true">${[[22, 24, 1.6, -12, 'moeda'], [76, 20, 1.25, 14, 'grafico'], [16, 70, 1.2, 10, 'cartao'], [80, 72, 1.7, -8, 'cofrinho'], [50, 12, .9, 6, 'carteira'], [52, 86, 1, -10, 'nota']]
-          .map(([x, y, sz, rot, f], n) => stickerHtml(x, y, sz, rot, f, STK_COLORS[n], n, `--ox:${(x - 50) * 3}vw;--oy:${(y - 50) * 3}vh`)).join('')}
-        <div class="ob-word"><i class="ob-mascot">${avBadge('capivara')}</i><span>Capi</span><small>seu dinheiro, de boa</small></div></div>` : ''}
+      ${first ? `<div class="ob-splash" id="obSplash" aria-hidden="true">
+        <div class="ob-face"><svg viewBox="0 0 64 64">${AVATARS.capivara.svg}</svg></div></div>` : ''}
       <div class="ob" id="ob">
       <div class="ob-top"><div class="ob-dots" id="obDots"></div><div class="ob-tr">
         <button type="button" class="ob-theme" id="obTheme" role="switch" aria-checked="${document.documentElement.dataset.theme === 'dark'}" aria-label="Modo escuro" title="Modo escuro">
