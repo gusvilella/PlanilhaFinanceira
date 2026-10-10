@@ -41,8 +41,8 @@
   --edge: rgba(17, 17, 17, .075);
   --green: #13845d;
   --green-soft: #e3f1ea;
-  --blue: #1467e0;
-  --blue-soft: #e8f0fd;
+  --blue: #0a7598;
+  --blue-soft: #e1f2f6;
   --accent: #0a8370;
   --accent-ink: #0a7d69;   /* menta da Capi para texto (no escuro, mais claro pra ler bem) */
   --accent-soft: #dcf5ee;
@@ -74,8 +74,8 @@
   --edge: rgba(255, 255, 255, .075);
   --green: #3cc88c;
   --green-soft: #12261c;
-  --blue: #4a90f7;
-  --blue-soft: #13223a;
+  --blue: #4cc3e0;
+  --blue-soft: #0f2a31;
   --accent: #0d8670;
   --accent-ink: #4fd8b8;   /* menta da Capi para texto (no escuro, mais claro pra ler bem) */
   --accent-soft: #0f2a24;
@@ -161,7 +161,7 @@ svg.i { width: 16px; height: 16px; flex: none; fill: none; stroke: currentColor;
   margin-left: auto; border: 0; border-radius: 999px;
   background: var(--blue); color: #fff; font-size: .72rem; font-weight: 700;
   padding: 5px 10px; display: inline-flex; align-items: center; gap: 5px;
-  box-shadow: 0 4px 10px rgba(29, 95, 214, .25);
+  box-shadow: 0 4px 10px rgba(10, 131, 112, .25);
 }
 .adjust svg.i { width: 12px; height: 12px; }
 .adjust.dark { background: var(--ink); color: var(--card); box-shadow: 0 4px 10px rgba(20, 23, 28, .18); }
@@ -446,7 +446,7 @@ svg.i { width: 16px; height: 16px; flex: none; fill: none; stroke: currentColor;
 @media (min-width: 981px) and (max-width: 1180px) { .ov-where, .ov-cards, .ov-goals { grid-column: span 6; } .ov-goals { grid-column: span 12; } }
 
 /* Lançamento rápido */
-.fab { position: fixed; right: max(20px, env(safe-area-inset-right)); bottom: calc(22px + env(safe-area-inset-bottom)); z-index: 20; width: 58px; height: 58px; border: 0; border-radius: 18px; background: var(--accent); color: #fff; display: grid; place-items: center; box-shadow: 0 10px 28px rgba(20, 110, 245, .32); transition: transform .15s; }
+.fab { position: fixed; right: max(20px, env(safe-area-inset-right)); bottom: calc(22px + env(safe-area-inset-bottom)); z-index: 20; width: 58px; height: 58px; border: 0; border-radius: 18px; background: var(--accent); color: #fff; display: grid; place-items: center; box-shadow: 0 10px 28px rgba(10, 131, 112, .32); transition: transform .15s; }
 .fab:hover { transform: translateY(-2px); }
 .fab:active { transform: scale(.95); }
 .fab svg.i { width: 26px; height: 26px; stroke-width: 2.4; }
@@ -735,7 +735,7 @@ body::before { content: ""; position: fixed; inset: 0; z-index: 0; pointer-event
 :root[data-theme="dark"] .overlay { background: rgba(0, 0, 0, .62); }
 :root[data-theme="dark"] .modal { background: #131313; }
 .toast { background: rgba(24, 24, 24, .94); color: #fefefe; box-shadow: 0 0 0 1px rgba(255, 255, 255, .08), 0 18px 40px -12px rgba(0, 0, 0, .5); backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px); }
-.toast button { color: #8cb8ff; }
+.toast button { color: #7ae3d1; }
 @media (max-width: 640px) { .hello, .title { font-size: 1.6rem; } .kpi-label { font-size: .76rem; white-space: nowrap; } .kpi-head { gap: 8px; justify-content: space-between; } .kpi-head .adjust { font-size: .76rem; flex: none; } }
 @media (max-width: 400px) { .kpi-label .lg { display: none; } }
 .kpi.receita .kpi-value, .kpi.investir .kpi-value, .kpi.despesas .kpi-value { color: var(--ink); }
@@ -947,7 +947,7 @@ html.auth, html.auth body { overflow: hidden; }
 .ob-kpi.k-left { --kc: #0c917a; background: linear-gradient(140deg, #0fae90, #0a7393); }
 @keyframes ob-fly { from { opacity: 0; transform: translateY(70px) rotate(var(--r)) scale(.5); } }
 @keyframes ob-float { 50% { transform: translateY(-6px); } }
-.ob-bar i { background: linear-gradient(90deg, #10b981, #0ea5e9, #8b5cf6); }
+.ob-bar i { background: linear-gradient(90deg, #3fd9bd, #0fae90, #0a85a8); }
 /* ----- ícones, listas e gráfico com cor ----- */
 .ob-ic { width: 38px; height: 38px; border-radius: 12px; display: grid; place-items: center; color: #fff; background: var(--c); box-shadow: 0 8px 18px -10px var(--c); }
 .ob-ic svg.i { width: 18px; height: 18px; }
@@ -1691,7 +1691,7 @@ button:focus-visible, a:focus-visible, [role="button"]:focus-visible, [tabindex]
   .hello { display: flex; align-items: center; gap: 8px; } .hello .av.avc.sm { width: 22px; height: 22px; } .hello .av-pair .av.avc.sm { width: 22px; height: 22px; }
   /* cartões de resumo: o primeiro em degradê; os outros com luz colorida no canto */
   .kpi { background: radial-gradient(170px 150px at 92% -10%, color-mix(in srgb, var(--kc, transparent) 17%, transparent), transparent 72%), var(--card); }
-  .kpi.receita { --kc: #19b884; } .kpi.despesas { --kc: #ff7a8a; } .kpi.sobra { --kc: #8b5cf6; }
+  .kpi.receita { --kc: #19b884; } .kpi.despesas { --kc: #ff7a8a; } .kpi.sobra { --kc: #ff9416; }
   .kpi.contas { background: radial-gradient(190px 160px at 92% -10%, rgba(255, 255, 255, .2), transparent 72%), var(--grad); box-shadow: 0 20px 40px -22px var(--grad-glow); }
   .kpi.contas, .kpi.contas .kpi-value { color: #fff; }
   .kpi.contas .kpi-label, .kpi.contas .kpi-sub { color: rgba(255, 255, 255, .82); }
@@ -1707,9 +1707,9 @@ button:focus-visible, a:focus-visible, [role="button"]:focus-visible, [tabindex]
   .cal button.sel, .cal button.today.sel { background: var(--grad); color: #fff; box-shadow: 0 8px 16px -8px var(--grad-glow); }
   .btn.save:not(:disabled) { background: var(--grad); color: #fff; border-color: transparent; }
   /* títulos dos quadros com um pontinho colorido, como na apresentação */
-  .ov h3::before, .evo-head h2::before, .card-head h2::before { content: ""; width: 8px; height: 8px; border-radius: 50%; flex: none; background: var(--hc, #6d5dfc); box-shadow: 0 0 0 4px color-mix(in srgb, var(--hc, #6d5dfc) 18%, transparent); }
+  .ov h3::before, .evo-head h2::before, .card-head h2::before { content: ""; width: 8px; height: 8px; border-radius: 50%; flex: none; background: var(--hc, var(--accent)); box-shadow: 0 0 0 4px color-mix(in srgb, var(--hc, var(--accent)) 18%, transparent); }
   .evo-head h2, .card-head h2 { display: flex; align-items: center; gap: 8px; }
-  #ovForecast { --hc: #12a588; } #ovCal { --hc: #8b5cf6; } #ovWhere { --hc: #f472b6; } #ovCards { --hc: #ff8a5c; } #ovGoals { --hc: #19b884; } .evo { --hc: #22c1ee; }
+  #ovForecast { --hc: #12a588; } #ovCal { --hc: #0a85a8; } #ovWhere { --hc: #ff6b7f; } #ovCards { --hc: #ff9416; } #ovGoals { --hc: #b8733f; } .evo { --hc: #5cc8f5; }
   .month { box-shadow: var(--shadow); }
   .meter i { background: linear-gradient(90deg, #19b884, #2dd4bf); } .meter.info i { background: var(--grad); }
   .meter.warn i { background: linear-gradient(90deg, #ffb36b, #ff8a5c); } .meter.over i { background: linear-gradient(90deg, #ff8a5c, #ff5f8f); }
@@ -2861,7 +2861,7 @@ button:focus-visible, a:focus-visible, [role="button"]:focus-visible, [tabindex]
   // As cores padrão (categorias, contas fixas, investimentos) viram as da paleta escolhida;
   // cores escolhidas na mão e cores de marca ficam suavizadas para combinar.
   const PALETTES = {
-    aurora: { name: 'Aurora', cols: ['#4f7cff', '#ff5f8f', '#6d5dfc', '#2dd4bf', '#ff8a5c', '#a78bfa', '#f472b6', '#22c1ee', '#ffb36b', '#94a3b8', '#34d399', '#b8c2d6'], keep: true, map: { '#475569': '#6d5dfc', '#1d4ed8': '#22c1ee', '#d97706': '#ff8a5c' } },
+    aurora: { name: 'Aurora', cols: ['#0a85a8', '#ff6b7f', '#12a588', '#5cc8f5', '#ff9416', '#e66aa6', '#b8733f', '#7ae3d1', '#f5b82e', '#9aa8a6', '#2fbf71', '#c9b8a8'], keep: true, map: { '#475569': '#8d5a37', '#1d4ed8': '#5cc8f5', '#d97706': '#ff9416' } },
     vivas: { name: 'Vivas', cols: null },
     salvia: { name: 'Sálvia', cols: ['#8fae9d', '#d2ab85', '#9aa9c9', '#d9a7a7', '#b9b48c', '#a898bf', '#7fa6ab', '#dcc093', '#a4958a', '#b7bec6'] },
     nevoa: { name: 'Névoa', cols: ['#94afc8', '#c9b49d', '#a5b8a7', '#b3a5c6', '#c7a3a9', '#9dbab5', '#8c9cb0', '#d2c2a8', '#aab2bd', '#b9c7d6'] },
@@ -6683,7 +6683,7 @@ button:focus-visible, a:focus-visible, [role="button"]:focus-visible, [tabindex]
           <div class="ob-chips" id="obParsed"><span style="--d:0ms">Gasto <b>R$ 45,90</b></span><span style="--d:120ms">${ico('tag', 'width:12px;height:12px')}Mercado</span><span style="--d:240ms">Ontem</span></div></div>
           <p class="ob-cap">Também dá pra importar o extrato do banco.</p>` },
       { k: 'veja', c: ['#f2711c', '#b8733f'], expl: true, panel: 'Para onde vai', next: 'Próximo', title: 'Veja pra onde <em>vai</em>', sub: 'O gráfico mostra cada parte, e o app avisa o que vai vencer pra nada atrasar.',
-        art: () => { const sl = [[40, '#ec4899', 'house'], [26, '#f97316', 'shopping-cart'], [20, '#8b5cf6', 'utensils'], [14, '#0ea5e9', 'car']]; let o = 0;
+        art: () => { const sl = [[40, '#ff6b7f', 'house'], [26, '#ff9416', 'shopping-cart'], [20, '#0a85a8', 'utensils'], [14, '#12a588', 'car']]; let o = 0;
           const arcs = sl.map(([len, col], n) => { const c = `<circle cx="21" cy="21" r="15.915" fill="none" stroke="${col}" stroke-width="6" stroke-dasharray="${len - 1.6} ${100 - len + 1.6}" stroke-dashoffset="${-o}" style="--d:${n * 160}ms"/>`; o += len; return c; }).join('');
           o = 0; const icons = sl.map(([len, , ic], n) => { const a = (o + (len - 1.6) / 2) / 100 * Math.PI * 2; o += len; return `<span class="ob-dic" style="left:${(50 + 37.9 * Math.sin(a)).toFixed(1)}%;top:${(50 - 37.9 * Math.cos(a)).toFixed(1)}%;--d:${700 + n * 120}ms"><svg class="i"><use href="#c-${ic}"/></svg></span>`; }).join('');
           return `<div class="ob-donut"><svg viewBox="0 0 42 42">${arcs}</svg>${icons}
